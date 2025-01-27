@@ -134,3 +134,11 @@ export function handleProblemDetails(problemDetails: ProblemDetails): HandledPro
 
     return {...problemDetails, $messages};
 }
+
+/**
+ * Vérifie si l'erreur retournée par un appel a bien été traitée et est donc bien au format attendu.
+ * @param error L'erreur.
+ */
+export function isHandledError(error: unknown): error is HandledProblemDetails {
+    return typeof error === "object" && !!error && "$messages" in error;
+}

@@ -21,7 +21,7 @@ interface FormActionHandlers<
     create?: ((event: "create", data: C) => void)[];
     update?: ((event: "update", data: U) => void)[];
     save?: ((event: "save", data: S) => void)[];
-    error?: ((event: "error") => void)[];
+    error?: ((event: "error", data: "load" | "init" | "save" | "create" | "update", error: unknown) => void)[];
 }
 
 /** Props passées au composant de formulaire. */
@@ -140,15 +140,16 @@ export class FormActions<
             this.errorDisplay = "always";
         }
 
+        const service = this.builder.saveService
+            ? "save"
+            : this.builder.updateService && this.params
+            ? "update"
+            : this.builder.createService && !this.params
+            ? "create"
+            : undefined;
+
         // On ne fait rien si on est déjà en chargement et qu'on a pas le bon service disponible à appeler.
-        if (
-            this.isLoading ||
-            !(
-                this.builder.saveService ||
-                (this.builder.createService && !this.params) ||
-                (this.builder.updateService && this.params)
-            )
-        ) {
+        if (this.isLoading || !service) {
             return;
         }
 
@@ -216,17 +217,17 @@ export class FormActions<
                 this.errorDisplay = "after-focus";
             }
 
-            if (this.builder.saveService) {
-                (this.builder.handlers.save ?? []).forEach(handler => handler("save", data as S));
-            } else if (this.builder.updateService && this.params) {
-                (this.builder.handlers.update ?? []).forEach(handler => handler("update", data as U));
-            } else {
-                (this.builder.handlers.create ?? []).forEach(handler => handler("create", data as C));
-            }
+            (this.builder.handlers[service] ?? []).forEach(handler => handler(service as never, data as any));
         } catch (e: unknown) {
-            (this.builder.handlers.error ?? []).forEach(handler => handler("error"));
+            (this.builder.handlers.error ?? []).forEach(handler => handler("error", service, e));
             throw e;
         }
+    }
+
+    /** Vide le noeud de formulaire et ainsi son noeud source. */
+    override clear() {
+        super.clear();
+        this.formNode.clear();
     }
 
     override register(node?: FN["sourceNode"], builder?: NodeLoadBuilder<FN["sourceNode"], A>) {
@@ -398,7 +399,11 @@ export class FormActionsBuilder<
      */
     override on<E extends keyof FormActionHandlers<FN, C, U, S>>(
         event: E | E[],
-        handler: (event: E, data: Parameters<NonNullable<FormActionHandlers<FN, C, U, S>[E]>[0]>[1]) => void
+        handler: (
+            event: E,
+            data: Parameters<NonNullable<FormActionHandlers<FN, C, U, S>[E]>[0]>[1],
+            error: Parameters<NonNullable<FormActionHandlers<FN, C, U, S>[E]>[0]>[2]
+        ) => void
     ): FormActionsBuilder<FN, P, C, U, S> {
         return super.on(event as any, handler as any) as any;
     }

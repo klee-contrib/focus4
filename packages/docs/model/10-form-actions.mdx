@@ -123,19 +123,21 @@ nécessairement défini dans le `useFormActions` en cours.
 La fonction `on` est étendue pour les actions de formulaires et propose de définir des handlers pour les évènements suivant en plus de `"load"` :
 
 -   `"init"` : appelé après l'appel à `init()`
--   `"error"` : appelé en cas d'erreur retournée par le serveur lors de la sauvegarde.
+-   `"error"` : appelé en cas d'erreur retournée par le serveur lors du chargement ou de la sauvegarde.
 -   `"create"` : appelé après une sauvegarde en succès sur le serveur, avec `create`.
 -   `"update"` : appelé après une sauvegarde en succès sur le serveur, avec `update`.
 -   `"save"` : appelé après une sauvegarde en succès sur le serveur, avec `save`.
 -   `"cancel"` : appelé avec `onClickCancel()`.
 -   `"edit"` : appelé avec `onClickEdit()`.
 
-On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec les deux paramètres suivants :
+On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec les trois paramètres suivants :
 
 -   Le nom de l'évènement qui l'a déclenché.
--   La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"` ou `"save"`).
-
+-   La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"`, `"save"`),
+    ou le nom du service en erreur pour `"error"`.
     En particulier, si votre service de création retourne un `id` par exemple, vous pourrez le récupérer ici.
+
+-   Pour `"error"`, la réponse du serveur retournée par le service en erreur.
 
 ### `errorDisplay(mode)`
 

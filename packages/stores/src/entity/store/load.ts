@@ -1,5 +1,5 @@
 import {isFunction} from "lodash";
-import {autorun, computed, makeObservable, observable, runInAction} from "mobx";
+import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
@@ -15,6 +15,11 @@ import {
 } from "../types";
 
 import {defaultLoad} from "./store";
+
+interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode> {
+    load?: ((event: "load", data: NodeToType<SN>) => void)[];
+    error?: ((event: "error", data: "load", error: unknown) => void)[];
+}
 
 /** Enregistrement de chargement. */
 export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A extends readonly any[] = any[]> {
@@ -51,7 +56,8 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
             builder: observable.ref,
             isLoading: computed,
             node: observable.ref,
-            params: computed.struct
+            params: computed.struct,
+            clear: action.bound
         });
     }
 
@@ -83,21 +89,32 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      */
     async load() {
         if (this.params !== undefined && this.builder.loadService) {
-            const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                this.builder.loadService!(...this.params!)
-            );
-            runInAction(() => {
-                if (data) {
-                    if (isStoreNode(this.node)) {
-                        this.node.replace(data as EntityToType<any>);
-                    } else if (isStoreListNode(this.node)) {
-                        this.node.replaceNodes(data as EntityToType<any>[]);
+            try {
+                const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
+                    this.builder.loadService!(...this.params!)
+                );
+                runInAction(() => {
+                    if (data) {
+                        if (isStoreNode(this.node)) {
+                            this.node.replace(data as EntityToType<any>);
+                        } else if (isStoreListNode(this.node)) {
+                            this.node.replaceNodes(data as EntityToType<any>[]);
+                        }
                     }
-                }
 
-                (this.builder.handlers.load ?? []).forEach(handler => handler("load", data));
-            });
+                    (this.builder.handlers.load ?? []).forEach(handler => handler("load", data));
+                });
+            } catch (e: unknown) {
+                this.clear();
+                (this.builder.handlers.error ?? []).forEach(handler => handler("error", "load", e));
+                throw e;
+            }
         }
+    }
+
+    /** Vide le noeud de store associé au service de chargement. */
+    clear() {
+        this.node.clear();
     }
 
     /**
@@ -140,7 +157,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
 /** Objet de configuration pour un enregistrement de chargement. */
 export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends readonly any[] = never> {
     /** @internal */
-    readonly handlers: {load?: ((event: "load", data: NodeToType<SN>) => void)[]} = {};
+    readonly handlers: LoadRegistrationHandlers<SN> = {};
 
     /** @internal */
     getLoadParams?: () => any | undefined;
@@ -192,16 +209,23 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends rea
      * @param event Nom de l'évènement.
      * @param handler Handler de l'évènement.
      */
-    on(event: "load"[] | "load", handler: (event: "load", data?: NodeToType<SN>) => void): NodeLoadBuilder<SN, P> {
+    on<E extends keyof LoadRegistrationHandlers<SN>>(
+        event: E | E[],
+        handler: (
+            event: E,
+            data: Parameters<NonNullable<LoadRegistrationHandlers<SN>[E]>[0]>[1],
+            error: Parameters<NonNullable<LoadRegistrationHandlers<SN>[E]>[0]>[2]
+        ) => void
+    ): NodeLoadBuilder<SN, P> {
         if (!Array.isArray(event)) {
             event = [event];
         }
 
         event.forEach(e => {
             if (!this.handlers[e]) {
-                this.handlers[e] = [handler];
+                this.handlers[e] = [handler as any];
             } else {
-                this.handlers[e].push(handler);
+                this.handlers[e].push(handler as any);
             }
         });
 

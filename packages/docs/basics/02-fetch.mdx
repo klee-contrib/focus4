@@ -48,7 +48,7 @@ Après traitement des erreurs, `coreFetch` renverra une Promise rejetée avec la
 -   De `type` et `status` si ce n'était pas un `ProblemDetails`.
 -   D'une propriété `$messages` qui contient la liste des messages générés (dans l'ordre) par la lecture de la réponse.
 
-Vous pouvez utiliser le type exporté `HandledProblemDetails` si besoin pour la représenter.
+Vous pouvez utiliser la fonction `isHandledError` dans vos catchs (ou dans `on("error")` sur un formulaire) pour récupérer ces données.
 
 ## `RequestStore`
 
