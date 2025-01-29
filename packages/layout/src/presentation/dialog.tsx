@@ -7,7 +7,7 @@ import {Button, ButtonProps} from "@focus4/toolbox";
 import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
-import {Overlay} from "./overlay";
+import {useOverlay} from "./overlay";
 
 import dialogCss, {DialogCss} from "./__style__/dialog.css";
 export {dialogCss};
@@ -50,26 +50,25 @@ export function Dialog({
 
     const [displayed, tClassName] = useActiveTransition(active, theme);
 
-    return portal(
-        <>
-            <Overlay active={active} onClick={onOverlayClick} />
-            {displayed ? (
-                <div className={classNames(tClassName, theme.wrapper())}>
-                    <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
-                        {title ? <h5 className={theme.title()}>{title}</h5> : null}
-                        <section className={theme.body()} role="body">
-                            {children}
-                        </section>
-                        {actions.length ? (
-                            <nav className={theme.navigation()}>
-                                {actions.map((action, idx) => (
-                                    <Button key={idx} {...action} />
-                                ))}
-                            </nav>
-                        ) : null}
-                    </div>
-                </div>
-            ) : null}
-        </>
-    );
+    useOverlay(active, onOverlayClick, true);
+
+    return displayed
+        ? portal(
+              <div className={classNames(tClassName, theme.wrapper())}>
+                  <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
+                      {title ? <h5 className={theme.title()}>{title}</h5> : null}
+                      <section className={theme.body()} role="body">
+                          {children}
+                      </section>
+                      {actions.length ? (
+                          <nav className={theme.navigation()}>
+                              {actions.map((action, idx) => (
+                                  <Button key={idx} {...action} />
+                              ))}
+                          </nav>
+                      ) : null}
+                  </div>
+              </div>
+          )
+        : null;
 }

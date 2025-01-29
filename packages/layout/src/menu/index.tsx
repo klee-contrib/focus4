@@ -1,15 +1,16 @@
 import {useObserver} from "mobx-react";
-import {PropsWithChildren} from "react";
+import {PropsWithChildren, useContext} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Overlay} from "../presentation/overlay";
+import {OverlayContext} from "../utils/contexts";
 
 import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
 
 import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
-export {MainMenuItem, mainMenuCss};
+export {mainMenuCss, MainMenuItem};
 export type {MainMenuCss};
 
 /** Props du Menu. */
@@ -33,12 +34,13 @@ export interface MainMenuProps {
  */
 export function MainMenu({activeRoute, children, showOverlay, theme: pTheme}: PropsWithChildren<MainMenuProps>) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
+    const overlay = useContext(OverlayContext);
     return useObserver(() => (
         <nav className={theme.menu()}>
             <MainMenuList activeRoute={activeRoute} theme={theme}>
                 {children}
             </MainMenuList>
-            {showOverlay ? <Overlay active isAdditional /> : null}
+            {showOverlay ? <Overlay active={overlay.activeLevel >= 0} close={overlay.close} /> : null}
         </nav>
     ));
 }

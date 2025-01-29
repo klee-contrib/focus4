@@ -4,7 +4,7 @@ export {Dialog, dialogCss} from "./dialog";
 export {FilAriane, filArianeCss} from "./fil-ariane";
 export {LateralMenu, lateralMenuCss} from "./lateral-menu";
 export {LayoutBase, layoutCss} from "./layout";
-export {overlayCss} from "./overlay";
+export {overlayCss, useOverlay} from "./overlay";
 export {Popin, popinCss} from "./popin";
 export {Scrollable, scrollableCss} from "./scrollable";
 export {useStickyClip} from "./sticky-clip";

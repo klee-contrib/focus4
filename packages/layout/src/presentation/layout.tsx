@@ -4,6 +4,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {MessageCenter, MessageCenterProps} from "../utils";
 
+import {OverlayProvider} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import layoutCss, {LayoutCss} from "./__style__/layout.css";
@@ -38,7 +39,7 @@ export function LayoutBase({
 }: LayoutProps) {
     const theme = useTheme("layout", layoutCss, pTheme);
     return (
-        <>
+        <OverlayProvider>
             <MessageCenter {...messageCenterProps} />
             <div className={theme.layout()}>
                 {menu}
@@ -52,6 +53,6 @@ export function LayoutBase({
                     {children}
                 </Scrollable>
             </div>
-        </>
+        </OverlayProvider>
     );
 }

@@ -5,7 +5,7 @@ export interface PanelDescriptor {
     title?: string;
 }
 
-/** Context d'un header, pour gérer son caractère sticky avec la présence ou non d'un `HeaderContent` */
+/** Contexte d'un header, pour gérer son caractère sticky avec la présence ou non d'un `HeaderContent` */
 export const HeaderContext = createContext({
     /** Si le header est sticky (s'il n'y pas de `HeaderContent`, ou s'il est sorti du viewport). */
     sticky: true,
@@ -16,10 +16,39 @@ export const HeaderContext = createContext({
     }
 });
 
+/**
+ * Contexte pour gérer les overlays, posé par le Layout.
+ * Utilisé par le `MainMenu` et le `Layout` pour poser l'`Overlay` et par `useOverlay` pour l'activer.
+ */
+export const OverlayContext = createContext<{
+    /** Niveau de scrollable à partir du quel il faut afficher l'overlay. */
+    activeLevel: number;
+    /** Pour fermer l'overlay. Correspond au `close` passé par le dernier `useOverlay` (via `toggle`) de la pile. */
+    close(): void;
+    /**
+     * Active ou désactive l'overlay pour un composant donné.
+     * @param id Id unique pour le composant (via `useId` par exemple).
+     * @param level Niveau du scrollable courant dans lequel se trouve le composant (via `useContext(ScrollableContext).level`).
+     * @param active Actif/inactif
+     * @param close Fonction pour fermer l'overlay au clic.
+     */
+    toggle(id: string, level: number, active: boolean, close?: () => void): void;
+}>({
+    activeLevel: -1,
+    close() {
+        /** */
+    },
+    toggle() {
+        /** */
+    }
+});
+
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = createContext<{
     /** Hauteur calculée du `HeaderTopRow` (s'il y en a un) */
     headerHeight: number;
+    /** Niveau d'empilement de scrollable. Celui du `Layout` sera le niveau 0, augmenté pour chaque `Scrollable` posé à l'intérieur. */
+    level: number;
     /**
      * Affiche un élement dans le Scrollable.
      * @param node Le noeud React.
@@ -43,6 +72,7 @@ export const ScrollableContext = createContext<{
     scrollTo(options?: ScrollToOptions): void;
 }>({
     headerHeight: 0,
+    level: -1,
     portal: () => null,
     registerIntersect: () => () => {
         /** */

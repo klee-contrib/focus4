@@ -1,13 +1,16 @@
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
 import {range} from "lodash";
-import {ReactElement, ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useObserver} from "mobx-react";
+import {ReactElement, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FloatingActionButton} from "@focus4/toolbox";
 
-import {ScrollableContext} from "../utils";
+import {OverlayContext, ScrollableContext} from "../utils";
+
+import {Overlay} from "./overlay";
 
 import scrollableCss, {ScrollableCss} from "./__style__/scrollable.css";
 export {scrollableCss};
@@ -53,6 +56,9 @@ export function Scrollable({
     theme: pTheme
 }: ScrollableProps) {
     const theme = useTheme("scrollable", scrollableCss, pTheme);
+
+    const overlay = useContext(OverlayContext);
+    const level = useContext(ScrollableContext).level + 1;
 
     const containerNode = useRef<HTMLDivElement>(null);
     const scrollableNode = useRef<HTMLDivElement>(null);
@@ -125,11 +131,13 @@ export function Scrollable({
     }, [backToTopOffset]);
 
     const [headerHeight, setHeaderHeight] = useState(0);
-    return (
+
+    return useObserver(() => (
         <ScrollableContext.Provider
             value={useMemo(
                 () => ({
                     headerHeight,
+                    level,
                     setHeaderHeight,
                     portal,
                     registerIntersect,
@@ -139,6 +147,7 @@ export function Scrollable({
             )}
         >
             <div ref={containerNode} className={classNames(theme.container(), className)}>
+                <Overlay active={overlay.activeLevel >= level} close={overlay.close} />
                 <div ref={scrollableNode} className={theme.scrollable()}>
                     {children}
                 </div>
@@ -160,5 +169,5 @@ export function Scrollable({
                 </AnimatePresence>
             </div>
         </ScrollableContext.Provider>
-    );
+    ));
 }

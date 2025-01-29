@@ -1,10 +1,12 @@
 import classNames from "classnames";
-import {isFunction} from "lodash";
-import {computed, observable} from "mobx";
-import {useObserver} from "mobx-react";
-import {PropsWithChildren, useEffect} from "react";
+import {max} from "lodash";
+import {observable} from "mobx";
+import {useLocalObservable} from "mobx-react";
+import {PropsWithChildren, ReactNode, useContext, useId, useLayoutEffect, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
+
+import {OverlayContext, ScrollableContext} from "../utils/contexts";
 
 import {useActiveTransition} from "./active-transition";
 
@@ -12,53 +14,63 @@ import overlayCss, {OverlayCss} from "./__style__/overlay.css";
 export {overlayCss};
 export type {OverlayCss};
 
-export interface OverlayProps {
-    active: boolean;
-    onClick?: () => void;
-    isAdditional?: boolean;
-    theme?: CSSProp<OverlayCss>;
+/**
+ * Active l'overlay, utilisé pour faire un Dialog ou une Popin.
+ * @param active Active/désactive l'overlay
+ * @param close Pour fermer l'overlay au clic dessus.
+ * @param overAll Force l'affichage de l'overlay sur tous les `Scrollable`.
+ */
+export function useOverlay(active: boolean, close?: () => void, overAll = false) {
+    const {toggle} = useContext(OverlayContext);
+    const scrollable = useContext(ScrollableContext);
+    const level = overAll ? Infinity : scrollable.level;
+    const overlayId = useId();
+    useLayoutEffect(() => {
+        toggle(overlayId, level, active, close);
+    }, [active, close, level]);
+    useLayoutEffect(() => () => toggle(overlayId, level, false), []);
 }
 
-const overlays = observable<(() => void) | {handler: string}>([], {deep: false});
-const hasOneOverlay = computed(() => !!overlays.length);
-
-function onOverlayClick() {
-    const topOverlay = overlays[overlays.length - 1];
-    if (isFunction(topOverlay)) {
-        topOverlay();
-        overlays.pop();
-    }
-}
-
+/** Composant pour afficher un overlay. */
 export function Overlay({
-    active,
-    children,
-    isAdditional = false,
-    onClick,
+    active = false,
+    close,
     theme: pTheme
-}: PropsWithChildren<OverlayProps>) {
+}: PropsWithChildren<{
+    active: boolean;
+    close: () => void;
+    theme?: CSSProp<OverlayCss>;
+}>) {
     const theme = useTheme("overlay", overlayCss, pTheme);
+    const [displayed, tClassName] = useActiveTransition(active, theme);
+    return displayed ? <div className={classNames(tClassName, theme.overlay())} onClick={close} /> : null;
+}
 
-    useEffect(() => {
-        if (isAdditional || !active) {
-            return;
-        }
-        const noop = {handler: "none"};
-        overlays.push(onClick ?? noop);
-        return () => {
-            const oIdx = overlays.findIndex(o => o === (onClick ?? noop));
-            if (oIdx >= 0) {
-                overlays.splice(oIdx);
+/** Provider de contexte pour l'overlay, pour que chaque Scrollable (et le MainMenu) puissent afficher l'overlay quand il est demandé par un composant. */
+export function OverlayProvider({children}: {children: ReactNode}) {
+    const [overlays] = useState(() => observable.array<{id: string; level: number; close?: () => void}>([]));
+
+    const context = useLocalObservable(() => ({
+        get activeLevel() {
+            return max(overlays.map(o => o.level)) ?? -1;
+        },
+        toggle(id: string, level: number, active: boolean, close?: () => void) {
+            const overlay = overlays.find(o => o.id === id);
+            if (!overlay && active) {
+                overlays.push({id, level, close});
+            } else if (overlay && !active) {
+                overlays.remove(overlay);
+            } else if (overlay) {
+                overlay.close = close;
             }
-        };
-    }, [active, onClick]);
+        },
+        close() {
+            if (overlays.length > 0) {
+                const topOverlay = overlays[overlays.length - 1];
+                topOverlay.close?.();
+            }
+        }
+    }));
 
-    return useObserver(() => {
-        const [displayed, tClassName] = useActiveTransition(isAdditional ? hasOneOverlay.get() : active, theme);
-        return displayed ? (
-            <div className={classNames(tClassName, theme.overlay())} onClick={onOverlayClick}>
-                {children}
-            </div>
-        ) : null;
-    });
+    return <OverlayContext.Provider value={context}>{children}</OverlayContext.Provider>;
 }

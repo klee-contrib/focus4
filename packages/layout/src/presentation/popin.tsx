@@ -1,12 +1,12 @@
 import classNames from "classnames";
-import {PropsWithChildren, useContext} from "react";
+import {PropsWithChildren, useCallback, useContext} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
-import {Overlay} from "./overlay";
+import {useOverlay} from "./overlay";
 import {Scrollable} from "./scrollable";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";
@@ -57,22 +57,24 @@ export function Popin({
 
     const [displayed, tClassName] = useActiveTransition(opened, theme);
 
-    return portal(
-        <>
-            <Overlay active={opened} onClick={(!preventOverlayClick && closePopin) || undefined} />
-            {displayed ? (
-                <Scrollable
-                    backToTopOffset={backToTopOffset}
-                    className={classNames(
-                        tClassName,
-                        theme.popin({left: type === "from-left", right: type === "from-right"})
-                    )}
-                    hideBackToTop={hideBackToTop}
-                    scrollBehaviour={scrollBehaviour}
-                >
-                    {children}
-                </Scrollable>
-            ) : null}
-        </>
+    useOverlay(
+        opened,
+        useCallback(() => (!preventOverlayClick ? closePopin() : undefined), [closePopin, preventOverlayClick])
     );
+
+    return displayed
+        ? portal(
+              <Scrollable
+                  backToTopOffset={backToTopOffset}
+                  className={classNames(
+                      tClassName,
+                      theme.popin({left: type === "from-left", right: type === "from-right"})
+                  )}
+                  hideBackToTop={hideBackToTop}
+                  scrollBehaviour={scrollBehaviour}
+              >
+                  {children}
+              </Scrollable>
+          )
+        : null;
 }
