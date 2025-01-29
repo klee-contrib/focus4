@@ -193,7 +193,7 @@ export class FormActions<
                 }
                 updateInitialData(this.formNode, this.formNode.form._initialData);
 
-                if (data && typeof data === "object") {
+                if (data && typeof data === "object" && !(data instanceof Response)) {
                     // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                     if (isStoreNode(this.formNode.sourceNode)) {
                         this.formNode.sourceNode.replace(data);
