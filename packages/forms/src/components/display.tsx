@@ -65,7 +65,6 @@ export function Display<T extends DomainFieldType>({
                     if (Array.isArray(value)) {
                         Promise.all(
                             value.map((v: DomainType<SingleDomainFieldType<T>>) =>
-                                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                                 keyResolver(v).then(res => res ?? `${v}`)
                             )
                         ).then(setLabel);

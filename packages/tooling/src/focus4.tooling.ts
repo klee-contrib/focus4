@@ -3,6 +3,7 @@
 import {generateCSSTypings} from "./generator";
 export {generateCSSTypings};
 
+export {eslintConfig} from "./eslint";
 export {baseConfig, cssAutoModules, ssiVariables} from "./vite";
 
 if (process.argv?.[1]?.includes("focus4.tooling")) {

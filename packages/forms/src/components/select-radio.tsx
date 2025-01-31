@@ -90,7 +90,6 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
                     allowUndefined={hasUndefined === "no-option"}
                     disabled={disabled === true}
                     onChange={handleChange}
-                    // eslint-disable-next-line @typescript-eslint/no-base-to-string
                     value={value === undefined ? undefinedKey : `${value}`}
                 >
                     {definitiveValues.map(option => {
