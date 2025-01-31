@@ -188,7 +188,7 @@ export function makeFormActions<
     componentClass: Component | null,
     formNode: FN,
     builder: (s: FormActionsBuilder<FN>) => FormActionsBuilder<FN, A, C, U, S>
-): FormActions<FN, A> {
+) {
     const formActions = new FormActions(formNode, builder(new FormActionsBuilder()));
     if (componentClass) {
         disposeOnUnmount(componentClass, formActions.register());
