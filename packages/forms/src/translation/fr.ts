@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 export const fr = {
     boolean: {
         no: "Non",

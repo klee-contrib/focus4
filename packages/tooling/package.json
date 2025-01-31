@@ -3,6 +3,7 @@
     "version": "11.24.0",
     "description": "Focus v4, tooling module",
     "main": "lib/focus4.tooling.js",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"
@@ -17,14 +18,13 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
+        "@eslint/js": "9.20.0",
         "@types/glob": "8.1.0",
         "@types/postcss-modules-extract-imports": "3.0.5",
         "@types/postcss-modules-local-by-default": "4.0.2",
         "@types/postcss-modules-scope": "3.0.4",
-        "@typescript-eslint/eslint-plugin": "8.24.0",
-        "@typescript-eslint/parser": "8.24.0",
         "@vitejs/plugin-react": "4.3.4",
-        "eslint": "8.57.1",
+        "eslint": "9.20.0",
         "eslint-config-prettier": "10.0.1",
         "eslint-plugin-import": "2.31.0",
         "eslint-plugin-only-warn": "1.1.0",
@@ -37,6 +37,7 @@
         "postcss-modules-scope": "3.2.1",
         "postcss-nesting": "13.0.1",
         "typescript": "5.7.3",
+        "typescript-eslint": "8.24.0",
         "vite": "6.1.0",
         "vite-plugin-checker": "0.8.0"
     }
