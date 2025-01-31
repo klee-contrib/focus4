@@ -739,7 +739,6 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
         }
 
         function add(key?: any) {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
         }
 

@@ -3,6 +3,7 @@
   "version": "11.0.0",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "",
+  "type": "module",
   "workspaces": [
     "packages/tooling",
     "packages/core",
@@ -29,7 +30,7 @@
     "docgen": "node scripts/docgen.mjs",
     "docs": "storybook dev --docs -p 6006 -c packages/docs/.storybook",
     "docs-build": "storybook build --docs -c packages/docs/.storybook -o docs",
-    "eslint": "eslint --ext .ts,.tsx packages",
+    "eslint": "eslint packages",
     "publish": "lerna publish --exact",
     "stylelint": "stylelint packages/**/*.css",
     "test": "vitest run",

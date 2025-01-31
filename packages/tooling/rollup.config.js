@@ -9,10 +9,10 @@ export default {
     input: "src/focus4.tooling.ts",
     plugins: [typescript(), shebang()],
     treeshake: {
-        moduleSideEffects: false
+        moduleSideEffects: true
     },
     output: {
-        format: "cjs",
+        format: "esm",
         dir: "lib"
     },
     external: [...Object.keys(pkg.dependencies || {}), "crypto", "dns", "fs", "path"]
