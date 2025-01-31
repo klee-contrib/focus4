@@ -2,7 +2,7 @@ import {promises as fs} from "fs";
 import path from "path";
 
 import {glob} from "glob";
-import {camelCase, sortBy, upperFirst} from "lodash";
+import _ from "lodash";
 import postcss from "postcss";
 import extractImports from "postcss-modules-extract-imports";
 import localByDefault from "postcss-modules-local-by-default";
@@ -38,7 +38,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             }
             const parts = file.replace(/\\/g, "/").split("/");
             const fileName = parts[parts.length - 1];
-            const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
+            const interfaceName = _.camelCase(fileName.substring(0, fileName.length - 4));
             return {file, interfaceName};
         })
         .filter(f => !!f.file);
@@ -50,10 +50,10 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             const exportTokens = await loadCSS(content.toString());
             const elements = new Set<string>();
             let hasModifier = false;
-            const tokens = sortBy(
+            const tokens = _.sortBy(
                 exportTokens.map(token => {
                     const [element, modifier] = token.split("--");
-                    const Element = upperFirst(element);
+                    const Element = _.upperFirst(element);
                     elements.add(Element);
                     if (modifier) {
                         hasModifier = true;
@@ -79,11 +79,11 @@ ${Array.from(elements)
     )
     .join("\r\n")}
 
-export interface ${upperFirst(interfaceName)}Css {
+export interface ${_.upperFirst(interfaceName)}Css {
     ${tokens.map(([name, value]) => `${name.includes("-") ? `"${name}"` : name}: ${value};`).join("\r\n    ")}
 }
 
-declare const ${interfaceName}Css: ${upperFirst(interfaceName)}Css;
+declare const ${interfaceName}Css: ${_.upperFirst(interfaceName)}Css;
 export default ${interfaceName}Css;
 `;
 

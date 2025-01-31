@@ -68,6 +68,7 @@ export async function coreFetch(
                 }
             } else {
                 // Retour en erreur
+                // eslint-disable-next-line no-useless-assignment
                 errorHandled = true;
 
                 // On détermine le type de retour en fonction du Content-Type dans le header.

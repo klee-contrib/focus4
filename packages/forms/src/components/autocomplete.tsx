@@ -89,7 +89,6 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
                       r(pQuery);
                   })
             ).then(async label => {
-                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 setQuery(label ?? `${value}`);
                 if (!values.find(v => getKey(v) === value) && label && querySearcher) {
                     setValues(await querySearcher(label));
