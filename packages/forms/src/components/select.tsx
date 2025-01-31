@@ -55,7 +55,6 @@ export function Select<const T extends DomainFieldTypeSingle>({
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? i18next.t(undefinedLabel) : undefinedLabel}
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             value={value !== undefined ? `${value}` : undefined}
             values={values.slice()}
         />
