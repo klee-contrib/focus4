@@ -86,7 +86,6 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
                 {icon: `arrow_drop_down`, error: !!error},
                 ...(Array.isArray(trailing) ? trailing : trailing ? [trailing] : [])
             ]}
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             value={value !== undefined ? `${value}` : undefined}
             values={finalValues}
         />
