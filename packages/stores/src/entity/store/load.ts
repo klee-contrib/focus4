@@ -1,4 +1,4 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 

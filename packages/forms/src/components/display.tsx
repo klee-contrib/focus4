@@ -1,4 +1,4 @@
-import {chunk} from "lodash";
+import {chunk} from "es-toolkit";
 import {autorun} from "mobx";
 import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";

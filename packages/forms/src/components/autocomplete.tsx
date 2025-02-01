@@ -1,4 +1,4 @@
-import {debounce} from "lodash";
+import {debounce} from "es-toolkit";
 import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState} from "react";
 
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";

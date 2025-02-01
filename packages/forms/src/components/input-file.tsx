@@ -1,6 +1,6 @@
+import {take} from "es-toolkit";
 import {fileTypeFromBlob} from "file-type";
 import i18next from "i18next";
-import {take} from "lodash";
 import {useCallback, useRef, useState} from "react";
 
 import {messageStore} from "@focus4/core";

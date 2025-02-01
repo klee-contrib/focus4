@@ -13,7 +13,7 @@ export {Group, groupCss};
 export type {GroupCss, GroupHeaderProps};
 
 /** Props de Results. */
-export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
+export interface ResultsProps<T extends object, P extends ListBaseProps<T> = ListProps<T>> {
     /** Groupes pliés par défauts (par groupingKey) */
     defaultFoldedGroups?: Record<string, string[]>;
     /** Header de groupe personnalisé. */
@@ -54,7 +54,7 @@ export interface ResultsProps<T, P extends ListBaseProps<T> = ListProps<T>> {
  *
  * Toutes les listes sont des [`listFor`](/docs/listes-composants-de-listes-listfor--list) (par défaut, on peut également utiliser un autre composant de liste) et peuvent donc utiliser toutes leurs fonctionnalités.
  */
-export function Results<T, P extends ListBaseProps<T> = ListProps<T>>({
+export function Results<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
     defaultFoldedGroups,
     GroupHeader,
     groupOperationList,

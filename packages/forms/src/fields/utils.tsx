@@ -1,4 +1,4 @@
-import {upperFirst} from "lodash";
+import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
 
 import {
