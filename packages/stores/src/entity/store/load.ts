@@ -1,5 +1,5 @@
 import {isFunction} from "es-toolkit";
-import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
+import {action, computed, observable, reaction, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
@@ -30,9 +30,9 @@ export class LoadRegistration<A extends readonly any[] = never> {
      */
     readonly trackingId: string;
 
-    protected builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
+    @observable protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
 
-    private node: StoreNode | StoreListNode;
+    @observable private accessor node: StoreNode | StoreListNode;
 
     /**
      * Enregistre un service de chargement sur un noeud.
@@ -52,25 +52,16 @@ export class LoadRegistration<A extends readonly any[] = never> {
         this.node = node;
         this.builder = builder;
         this.trackingId = trackingId;
-
-        this.load = this.load.bind(this);
-        this.register = this.register.bind(this);
-
-        makeObservable<this, "builder" | "node">(this, {
-            builder: observable.ref,
-            isLoading: computed,
-            node: observable.ref,
-            params: computed.struct,
-            clear: action.bound
-        });
     }
 
     /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
+    @computed
     get isLoading() {
         return requestStore.isLoading(this.trackingId);
     }
 
     /** La valeur courante des paramètres de chargement. */
+    @computed.struct
     get params(): A | undefined {
         const params = this.builder.getLoadParams?.();
         if (!params) {
@@ -91,6 +82,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
      *
      * Cette méthode est également accessible depuis le store (via `node.load()`).
      */
+    @action.bound
     async load() {
         if (this.params !== undefined && this.builder.loadService) {
             try {
@@ -117,6 +109,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
     }
 
     /** Vide le noeud de store associé au service de chargement. */
+    @action.bound
     clear() {
         this.node.clear();
     }
@@ -129,6 +122,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
      * @param node Éventuel nouveau noeud de store, pour remplacer l'ancien.
      * @param builder Éventuel nouveau builder, pour remplace l'ancien.
      */
+    @action.bound
     register(node?: StoreNode | StoreListNode, builder?: NodeLoadBuilder<StoreNode | StoreListNode, A>) {
         if (node) {
             if (isAnyFormNode(node) && !!builder?.loadService) {
@@ -143,7 +137,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
 
         if (this.builder.getLoadParams && this.builder.loadService) {
             this.node.load = this.load;
-            const disposer = autorun(() => this.load());
+            const disposer = reaction(() => this.params, this.load, {fireImmediately: true});
             return () => {
                 disposer?.();
                 if (this.node.load === this.load) {

@@ -23,7 +23,7 @@ export {
 } from "./components";
 export {domain} from "./domain";
 export {autocompleteFor, Field, fieldCss, fieldFor, Form, FormContext, formCss, selectFor} from "./fields";
-export {makeFormActions, makeFormNode, useFormActions, useFormNode, useLoad, useReferenceTracking} from "./stores";
+export {useFormActions, useFormNode, useLoad, useReferenceTracking} from "./stores";
 export {translation} from "./translation";
 export {stringToDomainType, toSimpleType, useInput} from "./utils";
 
