@@ -44,7 +44,7 @@ export function CircularProgressIndicator({
     const theme = useTheme("progressIndicator", progressIndicatorCss, pTheme);
 
     const indicatorRef = useRef<SVGCircleElement>(null);
-    const animation = useRef<Animation>();
+    const animation = useRef<Animation>(null);
 
     useEffect(() => {
         if (indicatorRef.current) {
@@ -126,7 +126,7 @@ export function LinearProgressIndicator({
     const theme = useTheme("progressIndicator", progressIndicatorCss, pTheme);
 
     const indicatorRef = useRef<SVGLineElement>(null);
-    const animation = useRef<Animation>();
+    const animation = useRef<Animation>(null);
 
     useEffect(() => {
         if (indicatorRef.current) {

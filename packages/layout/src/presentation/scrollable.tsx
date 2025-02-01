@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {range} from "es-toolkit";
-import {AnimatePresence, motion} from "framer-motion";
 import {useObserver} from "mobx-react";
+import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 
@@ -66,7 +66,7 @@ export function Scrollable({
     const containerNode = useRef<HTMLDivElement>(null);
     const scrollableNode = useRef<HTMLDivElement>(null);
 
-    const intersectionObserver = useRef<IntersectionObserver>();
+    const intersectionObserver = useRef<IntersectionObserver>(null);
     const [onIntersects] = useState(() => new Map<Element, (ratio: number, isIntersecting: boolean) => void>());
 
     useLayoutEffect(() => {

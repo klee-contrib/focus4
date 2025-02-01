@@ -1,10 +1,10 @@
-import docgen from "react-docgen-typescript";
-import {glob} from "glob";
+import {findAll, parse, walk} from "css-tree";
+import {kebabCase} from "es-toolkit";
 import fs from "fs";
-import {fileURLToPath} from "url";
+import {glob} from "glob";
 import path from "path";
-import _ from "es-toolkit";
-import {parse, findAll, walk} from "css-tree";
+import docgen from "react-docgen-typescript";
+import {fileURLToPath} from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -132,7 +132,7 @@ function generateDocFile(module, globPath, componentFilter) {
         );
 
         fs.writeFileSync(
-            path.resolve(__filename, `../../packages/docs/${module}/metas/${_.kebabCase(component.displayName)}.ts`),
+            path.resolve(__filename, `../../packages/docs/${module}/metas/${kebabCase(component.displayName)}.ts`),
             `import {${component.displayName}} from "@focus4/${module.split("/")[module.split("/").length - 1]}";
 
 import type {Meta} from "@storybook/react";
