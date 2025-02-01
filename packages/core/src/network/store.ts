@@ -1,5 +1,5 @@
 import {uniq} from "es-toolkit";
-import {action, computed, makeObservable, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {computedFn} from "mobx-utils";
 import {v4} from "uuid";
 
@@ -23,10 +23,6 @@ export class RequestStore {
     /** @internal */
     /** Requêtes suivies en cours. */
     private readonly trackedRequests = observable.map<string, string[]>({}, {deep: false});
-
-    constructor() {
-        makeObservable(this);
-    }
 
     /** Indique s'il y a au moins une requête en cours. */
     @computed
