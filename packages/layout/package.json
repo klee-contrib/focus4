@@ -18,11 +18,11 @@
         "@focus4/core": "11.23.3",
         "@focus4/styling": "11.23.3",
         "@focus4/toolbox": "11.23.3",
-        "react-transition-state": "2.2.0"
+        "react-transition-state": "2.3.0"
     },
     "devDependencies": {
         "@focus4/tooling": "11.23.0",
-        "@testing-library/react": "16.1.0",
-        "jsdom": "25.0.1"
+        "@testing-library/react": "16.2.0",
+        "jsdom": "26.0.0"
     }
 }

@@ -110,19 +110,21 @@ export const Calendar = forwardRef(function Calendar(
 
                 const id = ++animationId.current;
                 const lineHeight = displayed.current.querySelector("button")?.parentElement?.clientHeight ?? 0;
-                await animate(displayed.current, {y: -lineHeight * newLinesAbove.length}, {duration: 0});
-                await animate(
-                    displayed.current,
-                    {
-                        y:
-                            direction === "up"
-                                ? 0
-                                : -lineHeight *
-                                  differenceBy(oldLines.concat(newLinesAbove), linesBelow, l => l.line).length
-                    },
-                    {duration: 0.275}
-                );
-                await animate(displayed.current, {y: 0}, {duration: 0});
+                await animate([
+                    [displayed.current, {y: -lineHeight * newLinesAbove.length}, {duration: 0}],
+                    [
+                        displayed.current,
+                        {
+                            y:
+                                direction === "up"
+                                    ? 0
+                                    : -lineHeight *
+                                      differenceBy(oldLines.concat(newLinesAbove), linesBelow, l => l.line).length
+                        },
+                        {duration: 0.275}
+                    ],
+                    [displayed.current, {y: 0}, {duration: 0}]
+                ]);
                 if (id === animationId.current) {
                     for (const line of newTransitionLines) {
                         const dLine = displayed.current.querySelector<HTMLElement>(`[data-line='${line.line}']`);
