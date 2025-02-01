@@ -1,5 +1,3 @@
-import {ForwardedRef, forwardRef, ReactElement} from "react";
-
 import {DomainFieldTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
@@ -20,24 +18,21 @@ export interface InputProps<T extends DomainFieldTypeSingle>
  *
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
-export const Input = forwardRef(function Input<const T extends DomainFieldTypeSingle>(
-    {
-        error,
-        mask,
-        noNegativeNumbers = false,
-        hasThousandsSeparator = false,
-        maxDecimals = 10,
-        onChange,
-        onKeyDown,
-        onPaste,
-        showSupportingText = "always",
-        supportingText,
-        type,
-        value,
-        ...props
-    }: InputProps<T>,
-    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
-) {
+export function Input<const T extends DomainFieldTypeSingle>({
+    error,
+    mask,
+    noNegativeNumbers = false,
+    hasThousandsSeparator = false,
+    maxDecimals = 10,
+    onChange,
+    onKeyDown,
+    onPaste,
+    showSupportingText = "always",
+    supportingText,
+    type,
+    value,
+    ...props
+}: InputProps<T>) {
     const {handleChange, handleKeyDown, handlePaste, stringValue} = useInput({
         hasThousandsSeparator,
         mask,
@@ -51,7 +46,6 @@ export const Input = forwardRef(function Input<const T extends DomainFieldTypeSi
     return (
         <TextField
             {...props}
-            ref={ref}
             error={!!error}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -62,6 +56,4 @@ export const Input = forwardRef(function Input<const T extends DomainFieldTypeSi
             value={stringValue}
         />
     );
-}) as <const T extends DomainFieldTypeSingle>(
-    props: InputProps<T> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
-) => ReactElement;
+}

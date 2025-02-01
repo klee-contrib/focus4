@@ -1,4 +1,4 @@
-import {AnimatePresence, motion} from "framer-motion";
+import {AnimatePresence, motion} from "motion/react";
 import i18next from "i18next";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";

@@ -1,4 +1,4 @@
-import {AnimatePresence, motion} from "framer-motion";
+import {AnimatePresence, motion} from "motion/react";
 import {action, toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {

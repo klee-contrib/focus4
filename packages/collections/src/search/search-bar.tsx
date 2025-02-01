@@ -1,5 +1,5 @@
 import {difference} from "es-toolkit";
-import {AnimatePresence, motion} from "framer-motion";
+import {AnimatePresence, motion} from "motion/react";
 import i18next from "i18next";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ReactElement, useEffect, useRef, useState} from "react";

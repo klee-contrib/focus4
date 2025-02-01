@@ -4,9 +4,8 @@ import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {
     ComponentType,
-    ForwardedRef,
-    forwardRef,
     ReactNode,
+    Ref,
     RefObject,
     useCallback,
     useContext,
@@ -38,6 +37,8 @@ export interface ScrollspyContainerProps {
      * Par défaut calculé avec la hauteur du header.
      */
     offsetTopOverride?: number;
+    /** Ref pour accéder à `scrollToPanel`. */
+    ref?: Ref<ScrollspyContainerRef>;
     /** Menu rétractable. */
     retractable?: boolean;
     /** CSS. */
@@ -56,17 +57,15 @@ export interface ScrollspyContainerRef {
 /**
  * Le `ScrollspyContainer` est un composant du mise en page qui permet d'affiche un menu sur la gauche qui recapitule les titres de tous les [`Panel`](/docs/mise-en-page-panel--docs) posés à l'intérieur, avec la possibilité de naviguer vers eux en cliquant dessus.
  */
-export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
-    {
-        children,
-        contentRef,
-        MenuComponent = ScrollspyMenu,
-        offsetTopOverride,
-        retractable = true,
-        theme: pTheme
-    }: ScrollspyContainerProps,
-    ref: ForwardedRef<ScrollspyContainerRef>
-) {
+export function ScrollspyContainer({
+    children,
+    contentRef,
+    MenuComponent = ScrollspyMenu,
+    offsetTopOverride,
+    ref,
+    retractable = true,
+    theme: pTheme
+}: ScrollspyContainerProps) {
     const theme = useTheme("scrollspy", scrollspyCss, pTheme);
     const {headerHeight, registerIntersect, scrollTo} = useContext(ScrollableContext);
     const innerRef = useRef<HTMLDivElement>(null);
@@ -153,7 +152,7 @@ export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
             </ScrollspyContext.Provider>
         </div>
     ));
-});
+}
 
 /**
  * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.

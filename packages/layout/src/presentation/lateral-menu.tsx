@@ -1,4 +1,4 @@
-import {motion} from "framer-motion";
+import {motion} from "motion/react";
 import {ReactNode, useState} from "react";
 
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
