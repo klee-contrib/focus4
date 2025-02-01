@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {pick} from "lodash";
+import {pick} from "es-toolkit";
 
 import {BemFunction, CSSElement, CSSMod, CSSToStrings} from "./common";
 
@@ -63,7 +63,7 @@ export function toBem<CSS>(css: CSS): ToBem<CSS> {
                         ...data[key].filter(mod => mods[mod]).map(mod => (css as any)[`${key}--${mod}`])
                     );
                 } else {
-                    return pick(css, key, ...data[key].map(mod => `${key}--${mod}`));
+                    return pick(css as any, [key, ...data[key].map(mod => `${key}--${mod}`)]);
                 }
             }
         }),

@@ -1,4 +1,4 @@
-import {intersection} from "lodash";
+import {intersection} from "es-toolkit";
 import {makeObservable, observable} from "mobx";
 
 /** Store utilisateur de base, standardisant la gestion des rôles. A étendre pour y ajouter du métier. */

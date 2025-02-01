@@ -14,7 +14,7 @@ export {summaryCss};
 export type {SummaryCss};
 
 /** Props du Summary. */
-export interface SummaryProps<T> {
+export interface SummaryProps<T extends object> {
     /** Permet de supprimer le tri. Par défaut : true */
     canRemoveSort?: boolean;
     /**
@@ -72,7 +72,7 @@ export interface SummaryProps<T> {
  * (Note : le tri et le groupe ne sont jamais effectifs en même temps)
  */
 
-export function Summary<T>({
+export function Summary<T extends object>({
     canRemoveSort = true,
     chipKeyResolver,
     chipThemer,

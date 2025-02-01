@@ -1,5 +1,5 @@
+import {sortBy} from "es-toolkit";
 import i18next from "i18next";
-import {sortBy} from "lodash";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {
@@ -78,19 +78,21 @@ export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
         headerHeight: offsetTopOverride ?? headerHeight,
         panels: observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>(),
         get sortedPanels() {
-            return sortBy(Array.from(state.panels.entries()), ([_, {node}]) => getOffsetTop(node));
+            return sortBy(Array.from(state.panels.entries()), [([_, {node}]) => getOffsetTop(node)]);
         },
         get activeItem() {
-            const panels = sortBy(state.sortedPanels, ([_, {ratio, node}]) => {
-                const rect = node.getBoundingClientRect();
-                const headerRatio =
-                    rect.height === 0
-                        ? 1
-                        : !state.headerHeight
-                        ? 0
-                        : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
-                return headerRatio - (ratio >= 0.95 ? 1 : ratio);
-            });
+            const panels = sortBy(state.sortedPanels, [
+                ([_, {ratio, node}]) => {
+                    const rect = node.getBoundingClientRect();
+                    const headerRatio =
+                        rect.height === 0
+                            ? 1
+                            : !state.headerHeight
+                            ? 0
+                            : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
+                    return headerRatio - (ratio >= 0.95 ? 1 : ratio);
+                }
+            ]);
             return panels[0]?.[0];
         }
     }));

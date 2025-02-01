@@ -3,7 +3,7 @@ import {glob} from "glob";
 import fs from "fs";
 import {fileURLToPath} from "url";
 import path from "path";
-import _ from "lodash";
+import _ from "es-toolkit";
 import {parse, findAll, walk} from "css-tree";
 
 const __filename = fileURLToPath(import.meta.url);

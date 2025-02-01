@@ -19,7 +19,7 @@ export default {
     external: [
         ...Object.keys(pkg.dependencies || {}),
         "i18next",
-        "lodash",
+        "es-toolkit",
         "mobx",
         "react",
         "react/jsx-runtime",
