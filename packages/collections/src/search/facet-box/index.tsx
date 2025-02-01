@@ -28,7 +28,7 @@ export interface AdditionalFacet {
 }
 
 /** Props de la FacetBox. */
-export interface FacetBoxProps<T> {
+export interface FacetBoxProps<T extends object> {
     /** Composants additionnels à afficher dans la FacetBox, pour y intégrer des filtres par exemple.  */
     additionalFacets?: {
         [facet: string]: AdditionalFacet;
@@ -63,7 +63,7 @@ const noAdditionalFacets = {};
  *
  * Par défaut, les facettes n'ayant qu'une seule valeur ne sont pas affichées ; il est possible de forcer leur affichage avec la prop `showSingleValuedFacets`.
  */
-export function FacetBox<T>({
+export function FacetBox<T extends object>({
     additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
     defaultFoldedFacets,

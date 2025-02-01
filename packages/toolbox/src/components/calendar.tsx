@@ -1,6 +1,6 @@
 import classnames from "classnames";
+import {differenceBy, groupBy, range, sortBy, uniqBy, upperFirst} from "es-toolkit";
 import {animate, AnimatePresence, motion} from "framer-motion";
-import {differenceBy, groupBy, map, range, sortBy, uniqBy, upperFirst} from "lodash";
 import {DateTime} from "luxon";
 import {ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
@@ -80,7 +80,7 @@ export const Calendar = forwardRef(function Calendar(
 
     const allLines = sortBy(
         uniqBy(transitionLines.concat(lines), l => l.line),
-        l => l.line
+        [l => l.line]
     );
 
     const root = useRef<HTMLDivElement>(null);
@@ -493,13 +493,12 @@ function handleValue(value: string | undefined, format: string) {
 
 function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
     if (view === "days") {
-        const w = map(
+        const w = Object.entries(
             groupBy(
-                range(1, displayedMonth.daysInMonth).map(day => displayedMonth.set({day})),
+                range(1, displayedMonth.daysInMonth!).map(day => displayedMonth.set({day})),
                 getWeekNumber
-            ),
-            (items, line) => ({line, items})
-        );
+            )
+        ).map(([line, items]) => ({line, items}));
 
         while (w[0].items.length < 7) {
             w[0].items.splice(0, 0, w[0].items[0].minus({day: 1}));
@@ -520,23 +519,21 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
         return w;
     } else if (view === "months") {
         const startMonth = DateTime.fromObject({year: displayedMonth.year, month: 1});
-        return map(
+        return Object.entries(
             groupBy(
                 range(0, 12).map(month => startMonth.plus({month})),
                 m => `${m.year}-${`${m.month - ((m.month - 1) % 3)}`.padStart(2, "0")}`
-            ),
-            (items, line) => ({line, items})
-        );
+            )
+        ).map(([line, items]) => ({line, items}));
     } else {
         const start = +`${displayedMonth.year.toString().substring(0, 3)}0`;
 
-        const years = map(
+        const years = Object.entries(
             groupBy(
                 range(0, 10).map(i => DateTime.fromObject({year: start + i})),
                 y => y.year - (y.year % 3)
-            ),
-            (items, line) => ({line, items})
-        );
+            )
+        ).map(([line, items]) => ({line, items}));
 
         while (years[0].items.length < 3) {
             years[0].items.splice(0, 0, years[0].items[0].minus({year: 1}));

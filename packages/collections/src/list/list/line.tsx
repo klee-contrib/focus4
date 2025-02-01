@@ -11,7 +11,7 @@ import {ContextualActions, OperationListItem} from "../contextual-actions";
 import {ListCss} from "../__style__/list.css";
 
 /** Props de base d'un composant de ligne. */
-export interface LineProps<T> {
+export interface LineProps<T extends object> {
     /** Elément de la liste. */
     data: T;
     /** Handler pour ouvrir et fermer le détail. */
@@ -19,7 +19,7 @@ export interface LineProps<T> {
 }
 
 /** Props du wrapper autour des lignes de liste. */
-export interface LineWrapperProps<T> {
+export interface LineWrapperProps<T extends object> {
     /** L'élément de liste. */
     data: T;
     /** Ref vers l'élement DOM racine de la ligne. */
@@ -41,7 +41,7 @@ export interface LineWrapperProps<T> {
 }
 
 /** Wrapper de ligne dans une liste. */
-export function LineWrapper<T>({
+export function LineWrapper<T extends object>({
     domRef,
     LineComponent,
     mosaic,

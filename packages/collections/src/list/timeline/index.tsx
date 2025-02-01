@@ -22,7 +22,7 @@ export {timelineCss};
 export type {TimelineCss};
 
 /** Props du composant de TimeLine. */
-export type TimelineProps<T> = ListBaseProps<NoInfer<T>> & {
+export type TimelineProps<T extends object> = ListBaseProps<NoInfer<T>> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
     AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -63,7 +63,7 @@ export type TimelineProps<T> = ListBaseProps<NoInfer<T>> & {
  *
  * Ce composant est très simple et assez limité dans ce qu'il peut faire. A n'utiliser que si son rendu vous intéresse et correspond exactement à votre besoin.
  */
-export function Timeline<T>({
+export function Timeline<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     dateSelector,
@@ -122,6 +122,6 @@ export function Timeline<T>({
  *
  * Ce composant est très simple et assez limité dans ce qu'il peut faire. A n'utiliser que si son rendu vous intéresse et correspond exactement à votre besoin.
  */
-export function timelineFor<T>(props: TimelineProps<T>) {
+export function timelineFor<T extends object>(props: TimelineProps<T>) {
     return <Timeline {...props} />;
 }

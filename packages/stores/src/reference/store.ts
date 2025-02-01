@@ -1,4 +1,4 @@
-import {upperFirst} from "lodash";
+import {upperFirst} from "es-toolkit";
 import {action, extendObservable, observable, when} from "mobx";
 import {v4} from "uuid";
 

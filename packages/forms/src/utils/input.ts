@@ -1,4 +1,4 @@
-import {range, takeWhile} from "lodash";
+import {range, takeWhile} from "es-toolkit";
 import numeral from "numeral";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
 

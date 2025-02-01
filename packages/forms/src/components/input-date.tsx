@@ -1,6 +1,5 @@
-import {uniqueId} from "lodash";
 import {DateTime} from "luxon";
-import {FocusEvent, KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
+import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -151,7 +150,7 @@ export function InputDate({
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
     /** Id unique de l'input date, pour gérer la fermeture en cliquant à l'extérieur. */
-    const [inputDateId] = useState(() => uniqueId("input-date-"));
+    const inputDateId = useId();
 
     /** Date actuelle. */
     const [date, setDate] = useState(() => toLuxon(value));

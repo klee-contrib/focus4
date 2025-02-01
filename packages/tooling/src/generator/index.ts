@@ -1,8 +1,8 @@
 import {promises as fs} from "fs";
 import path from "path";
 
+import {camelCase, sortBy, upperFirst} from "es-toolkit";
 import {glob} from "glob";
-import _ from "lodash";
 import postcss from "postcss";
 import extractImports from "postcss-modules-extract-imports";
 import localByDefault from "postcss-modules-local-by-default";
@@ -34,11 +34,11 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
         .sync(pattern)
         .map(file => {
             if (regex && !regex.test(file)) {
-                return {file: ""};
+                return {file: "", interfaceName: ""};
             }
             const parts = file.replace(/\\/g, "/").split("/");
             const fileName = parts[parts.length - 1];
-            const interfaceName = _.camelCase(fileName.substring(0, fileName.length - 4));
+            const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
             return {file, interfaceName};
         })
         .filter(f => !!f.file);
@@ -50,19 +50,19 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             const exportTokens = await loadCSS(content.toString());
             const elements = new Set<string>();
             let hasModifier = false;
-            const tokens = _.sortBy(
+            const tokens = sortBy(
                 exportTokens.map(token => {
                     const [element, modifier] = token.split("--");
-                    const Element = _.upperFirst(element);
+                    const Element = upperFirst(element);
                     elements.add(Element);
                     if (modifier) {
                         hasModifier = true;
-                        return [token, `CSSMod<"${modifier}", ${Element}>`];
+                        return [token, `CSSMod<"${modifier}", ${Element}>`] as [string, string];
                     } else {
-                        return [token, `CSSElement<${Element}>`];
+                        return [token, `CSSElement<${Element}>`] as [string, string];
                     }
                 }),
-                ([name]) => name
+                [([name]) => name]
             );
 
             if (!tokens.length) {
@@ -79,11 +79,11 @@ ${Array.from(elements)
     )
     .join("\r\n")}
 
-export interface ${_.upperFirst(interfaceName)}Css {
+export interface ${upperFirst(interfaceName)}Css {
     ${tokens.map(([name, value]) => `${name.includes("-") ? `"${name}"` : name}: ${value};`).join("\r\n    ")}
 }
 
-declare const ${interfaceName}Css: ${_.upperFirst(interfaceName)}Css;
+declare const ${interfaceName}Css: ${upperFirst(interfaceName)}Css;
 export default ${interfaceName}Css;
 `;
 

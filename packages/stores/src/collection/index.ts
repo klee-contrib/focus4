@@ -1,4 +1,4 @@
-import {debounce, flatten, isFunction, isString, orderBy, toPairs} from "lodash";
+import {debounce, flatten, isFunction, isString, orderBy} from "es-toolkit";
 import {
     action,
     computed,
@@ -44,7 +44,7 @@ import {
 export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class CollectionStore<T = any, C = any, NC = C> {
+export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Type de store. */
     readonly type: "local" | "server";
 
@@ -138,7 +138,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
         makeObservable(this);
         if (isFunction(firstParam)) {
             this.type = "server";
-            this.service = firstParam;
+            this.service = firstParam as SearchService<T>;
 
             // On gère les paramètres du constructeur dans les deux ordres.
             let initialQuery: CollectionStoreInitProperties<C, NC>;
@@ -189,8 +189,8 @@ export class CollectionStore<T = any, C = any, NC = C> {
             );
         } else {
             this.type = "local";
-            this.localStoreConfig = firstParam;
-            this.availableSearchFields = firstParam?.searchFields ?? [];
+            this.localStoreConfig = firstParam as LocalStoreConfig<T>;
+            this.availableSearchFields = this.localStoreConfig?.searchFields ?? [];
         }
     }
 
@@ -231,15 +231,15 @@ export class CollectionStore<T = any, C = any, NC = C> {
                     isMultiValued: false,
                     canExclude,
                     values: orderBy(
-                        toPairs(groupByFacet(list, fieldName))
+                        Object.entries(groupByFacet(list, fieldName))
                             .map(([value, items]) => ({
                                 code: value,
                                 label: value === "<null>" ? "focus.search.results.missing" : displayFormatter(value),
                                 count: items.length
                             }))
                             .filter(f => f.count !== 0),
-                        f => (ordering.includes("count") ? f.count : f.code),
-                        ordering.includes("desc") ? "desc" : "asc"
+                        [f => (ordering.includes("count") ? f.count : f.code)],
+                        [ordering.includes("desc") ? "desc" : "asc"]
                     )
                 };
             }
@@ -256,7 +256,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
             return [];
         }
 
-        return toPairs(
+        return Object.entries(
             groupByFacet(
                 this.list,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -285,7 +285,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
 
         // Tri.
         if (this.sortBy) {
-            list = orderBy(this.innerList, item => (item as any)[this.sortBy!], this.sortAsc ? "asc" : "desc");
+            list = orderBy(this.innerList, [item => item[this.sortBy as keyof T]], [this.sortAsc ? "asc" : "desc"]);
         }
 
         // Filtrage simple, sur les champs choisis.

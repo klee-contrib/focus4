@@ -1,5 +1,5 @@
+import {merge} from "es-toolkit";
 import i18next from "i18next";
-import {merge, uniqueId} from "lodash";
 import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
@@ -234,7 +234,7 @@ export class FormActions<
         const loadDisposer = super.register(node, builder);
 
         if (this.builder.confirmation) {
-            const confirmationId = uniqueId("FormActions_");
+            const confirmationId = v4();
             const confirmationDisposer = autorun(() => {
                 this.builder.confirmation!.toggle(
                     confirmationId,

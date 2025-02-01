@@ -1,6 +1,6 @@
 import classNames from "classnames";
+import {range} from "es-toolkit";
 import {AnimatePresence, motion} from "framer-motion";
-import {range} from "lodash";
 import {useObserver} from "mobx-react";
 import {ReactElement, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {createPortal} from "react-dom";

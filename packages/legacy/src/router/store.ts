@@ -1,4 +1,4 @@
-import {isEqual, mapValues} from "lodash";
+import {isEqual, mapValues} from "es-toolkit";
 import {action, computed, makeObservable, observable} from "mobx";
 
 /** Crée le type de vue associé à un objet. */

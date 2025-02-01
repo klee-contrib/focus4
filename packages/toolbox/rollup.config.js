@@ -32,7 +32,7 @@ export default (async () => {
             ...Object.keys(pkg.dependencies || {}),
             "classnames",
             "i18next",
-            "lodash",
+            "es-toolkit",
             "react",
             "react/jsx-runtime",
             "react-dom",

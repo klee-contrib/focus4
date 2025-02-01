@@ -36,7 +36,7 @@ export default (async () => {
             "classnames",
             "framer-motion",
             "i18next",
-            "lodash",
+            "es-toolkit",
             "luxon",
             "mobx",
             "mobx-react",

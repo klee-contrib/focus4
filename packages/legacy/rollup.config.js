@@ -21,7 +21,7 @@ const config = {
         "history",
         "i18next",
         "inputmask-core",
-        "lodash",
+        "es-toolkit",
         "luxon",
         "mobx",
         "mobx-react",

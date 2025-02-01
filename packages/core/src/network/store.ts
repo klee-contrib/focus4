@@ -1,4 +1,4 @@
-import {uniq} from "lodash";
+import {uniq} from "es-toolkit";
 import {action, computed, makeObservable, observable} from "mobx";
 import {computedFn} from "mobx-utils";
 import {v4} from "uuid";

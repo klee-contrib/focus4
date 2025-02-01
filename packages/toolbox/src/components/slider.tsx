@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {range} from "lodash";
+import {range} from "es-toolkit";
 import {PointerEvent as RPointerEvent, useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";

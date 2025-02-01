@@ -1,6 +1,5 @@
 import {AnimatePresence, motion} from "framer-motion";
 import i18next from "i18next";
-import {reduce} from "lodash";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";
 import {ReactElement, useEffect, useState} from "react";
@@ -18,7 +17,7 @@ export {actionBarCss};
 export type {ActionBarCss};
 
 /** Props de l'ActionBar. */
-export interface ActionBarProps<T> {
+export interface ActionBarProps<T extends object> {
     /** Composants additionnels à afficher dans la FacetBox, pour y intégrer des filtres par exemple.  */
     additionalFacets?: {
         [facet: string]: AdditionalFacet;
@@ -70,7 +69,7 @@ export interface ActionBarProps<T> {
  * Lorsqu'un élément au moins a été sélectionné, toutes les autres actions disparaissent pour afficher le nombre d'éléments sélectionnés à la place.
  * Ces mêmes actions sont absentes de l'ActionBar d'un groupe et le nom du groupe est affiché à la place.
  */
-export function ActionBar<T>({
+export function ActionBar<T extends object>({
     additionalFacets,
     defaultFoldedFacets,
     group,
@@ -98,7 +97,7 @@ export function ActionBar<T>({
 
     function groupButton() {
         if (hasGrouping && !store.selectedItems.size && !store.groupingKey) {
-            const groupableColumnList = store.facets
+            const groupableColumnList: Record<string, string> = store.facets
                 ? store.facets.reduce((result, facet) => {
                       if (
                           // On ne peut pas grouper sur des facettes avec une seule valeur (qui sont d'ailleurs masquées par défaut).
@@ -114,9 +113,8 @@ export function ActionBar<T>({
                   }, {})
                 : {};
 
-            const menuItems = reduce(
-                groupableColumnList,
-                (oL, label, key) => [
+            const menuItems = Object.entries(groupableColumnList).reduce(
+                (oL, [key, label]) => [
                     ...oL,
                     <MenuItem key={key} caption={i18next.t(label)} onClick={() => (store.groupingKey = key)} />
                 ],
@@ -307,12 +305,4 @@ export function ActionBar<T>({
             ) : null}
         </div>
     ));
-}
-
-/**
- * Crée une ActionBar.
- * @param props Les props de l'ActionBar.
- */
-export function actionBarFor<T>(props: ActionBarProps<T>) {
-    return <ActionBar {...props} />;
 }

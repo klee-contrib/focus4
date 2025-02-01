@@ -1,4 +1,4 @@
-import {isBoolean, isEqual, isFunction, toPairs} from "lodash";
+import {isBoolean, isEqual, isFunction} from "es-toolkit";
 import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
 import {BuildingFormEntityField} from "../field";
@@ -236,7 +236,7 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
             get errors() {
                 return (
                     (isFormNode(node) &&
-                        toPairs(node).reduce((errors, [key, item]) => {
+                        Object.entries(node).reduce((errors, [key, item]) => {
                             if (isFormEntityField(item)) {
                                 if (!item.isValid) {
                                     return {...errors, [key]: item.error};
