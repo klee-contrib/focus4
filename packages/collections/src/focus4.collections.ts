@@ -9,7 +9,6 @@ export {
     Table,
     Timeline,
     actionBarCss,
-    actionBarFor,
     contextualActionsCss,
     listBaseCss,
     listCss,

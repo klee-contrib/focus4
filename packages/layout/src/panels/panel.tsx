@@ -1,5 +1,5 @@
+import {snakeCase} from "es-toolkit";
 import i18next from "i18next";
-import {snakeCase} from "lodash";
 import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";

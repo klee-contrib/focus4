@@ -1,4 +1,4 @@
-import {lowerFirst} from "lodash";
+import {lowerFirst} from "es-toolkit";
 import {action, observable} from "mobx";
 
 export interface Message {

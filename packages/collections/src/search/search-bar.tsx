@@ -1,6 +1,6 @@
+import {difference} from "es-toolkit";
 import {AnimatePresence, motion} from "framer-motion";
 import i18next from "i18next";
-import {difference, toPairs} from "lodash";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
@@ -15,7 +15,7 @@ export {searchBarCss};
 export type {SearchBarCss};
 
 /** Props de la SearchBar. */
-export interface SearchBarProps<T, C> {
+export interface SearchBarProps<T extends object, C> {
     /** Rendu du composant du critère. */
     criteriaComponent?: ReactElement;
     /** Active la gestion des critères dans le champ texte. */
@@ -38,7 +38,7 @@ export interface SearchBarProps<T, C> {
  * Le composant agit naturellement sur le champ `query`, mais également sur les critères personnalisés `criteria`, qu'il va par défaut ajouter dans le champ texte pour une saisie manuelle (du genre `criteriaName:criteriaValue` ; ce comportement est désactivable via la prop `disableInputCriteria`).
  * Il est possible également de lui passer un composant personnalisé de saisie des critères qu'il va pouvoir afficher à la demande pour saisir de manière plus précise les différents critères.
  */
-export function SearchBar<T, C>({
+export function SearchBar<T extends object, C>({
     criteriaComponent,
     enableInputCriteria,
     i18nPrefix = "focus",
@@ -61,7 +61,7 @@ export function SearchBar<T, C>({
         get flatCriteria() {
             const {criteria} = store;
             if (criteria) {
-                return toPairs(toFlatValues(criteria));
+                return Object.entries(toFlatValues(criteria));
             } else {
                 return [];
             }
@@ -100,7 +100,7 @@ export function SearchBar<T, C>({
 
         /** Récupère la liste des erreurs de critère à afficher sous la barre de recherche. */
         get error() {
-            const error = toPairs(store.criteriaErrors)
+            const error = Object.entries(store.criteriaErrors)
                 .filter(([_, isError]) => isError)
                 .map(([crit]) => crit)
                 .join(", ");
