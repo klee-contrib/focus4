@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import {max} from "lodash";
 import {observable} from "mobx";
 import {useLocalObservable} from "mobx-react";
 import {PropsWithChildren, ReactNode, useContext, useId, useLayoutEffect, useState} from "react";
@@ -52,7 +51,7 @@ export function OverlayProvider({children}: {children: ReactNode}) {
 
     const context = useLocalObservable(() => ({
         get activeLevel() {
-            return max(overlays.map(o => o.level)) ?? -1;
+            return Math.max(...overlays.map(o => o.level)) ?? -1;
         },
         toggle(id: string, level: number, active: boolean, close?: () => void) {
             const overlay = overlays.find(o => o.id === id);

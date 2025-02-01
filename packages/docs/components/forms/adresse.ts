@@ -1,4 +1,4 @@
-import {uniqBy} from "lodash";
+import {uniqBy} from "es-toolkit";
 
 export async function searchAdresse(query: string): Promise<{key: string; label: string}[]> {
     if (query.length < 3) {

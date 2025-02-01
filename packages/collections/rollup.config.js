@@ -33,9 +33,9 @@ export default (async () => {
         external: [
             ...Object.keys(pkg.dependencies || {}),
             "classnames",
+            "es-toolkit",
             "framer-motion",
             "i18next",
-            "lodash",
             "mobx",
             "mobx-react",
             "react",

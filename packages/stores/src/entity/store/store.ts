@@ -1,4 +1,4 @@
-import {isArray, isObject, mapValues} from "lodash";
+import {mapValues} from "es-toolkit";
 import {action, extendObservable, isObservableArray, observable, runInAction} from "mobx";
 
 import {
@@ -72,7 +72,7 @@ export function buildNode<E>(entity: E[]): StoreListNode<E>;
 export function buildNode<E>(entity: E): StoreNode<E>;
 export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
     // Cas d'un noeud de type liste : on construit une liste observable à laquelle on greffe les métadonnées et la fonction `set`.
-    if (isArray(entity)) {
+    if (Array.isArray(entity)) {
         const outputEntry = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
 
         // @ts-ignore
@@ -182,11 +182,11 @@ export function replaceNode<E>(
     value: EntityToType<E> | EntityToType<E>[] | StoreListNode<E> | StoreNode<E>
 ): StoreListNode<E> | StoreNode<E> {
     runInAction(() => {
-        if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
+        if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
             const self = this;
             this.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(self, item)));
-        } else if (isStoreNode(this) && isObject(value)) {
+        } else if (isStoreNode(this) && typeof value === "object") {
             // On affecte chaque valeur du noeud avec la valeur demandée, et on réappelle `replaceNode` si la valeur n'est pas primitive.
             for (const entry in this) {
                 const item: any = this[entry];
@@ -226,7 +226,7 @@ export function setNode<E>(
     value: EntityToType<E> | EntityToType<E>[] | StoreListNode<E> | StoreNode<E>
 ): StoreListNode<E> | StoreNode<E> {
     runInAction(() => {
-        if (isStoreListNode<E>(this) && (isArray(value) || isObservableArray(value))) {
+        if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On va appeler récursivement `setNode` sur tous les éléments de la liste.
             const self = this;
             (value as {}[]).forEach((item, i) => {
@@ -235,7 +235,7 @@ export function setNode<E>(
                 }
                 self[i].set(item);
             });
-        } else if (isStoreNode<E>(this) && isObject(value)) {
+        } else if (isStoreNode<E>(this) && typeof value === "object") {
             // On affecte chaque valeur du noeud avec la valeur demandée (si elle existe), et on réappelle `setNode` si la valeur n'est pas primitive.
             for (const item in value as EntityToType<E>) {
                 const itemEntry = (this as any)[item];

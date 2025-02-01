@@ -29,7 +29,7 @@ export {advancedSearchCss};
 export type {AdvancedSearchCss};
 
 /** Props de l'AdvancedSearch. */
-export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T>> {
+export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T> = ListProps<T>> {
     /** Positions des menus de l'ActionBar (boutons de tri et de groupe). */
     actionBarMenuPositions?: MenuProps["position"];
     /** CSS de l'ActionBar. */
@@ -165,7 +165,7 @@ export interface AdvancedSearchProps<T, P extends ListBaseProps<T> = ListProps<T
  *
  * L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `Summary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
  */
-export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
+export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
     actionBarMenuPositions,
     actionBarTheme,
     AddItemComponent = DefaultAddItemComponent,
@@ -359,6 +359,8 @@ export function AdvancedSearch<T, P extends ListBaseProps<T> = ListProps<T>>({
  * Crée un composant de recherche avancée.
  * @param props Les props de l'AdvancedSearch.
  */
-export function advancedSearchFor<T, P extends ListBaseProps<T> = ListProps<T>>(props: AdvancedSearchProps<T, P>) {
+export function advancedSearchFor<T extends object, P extends ListBaseProps<T> = ListProps<T>>(
+    props: AdvancedSearchProps<T, P>
+) {
     return <AdvancedSearch {...props} />;
 }

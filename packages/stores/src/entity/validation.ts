@@ -1,5 +1,5 @@
+import {isFunction} from "es-toolkit";
 import i18next from "i18next";
-import {isFunction} from "lodash";
 import {DateTime} from "luxon";
 
 import {
