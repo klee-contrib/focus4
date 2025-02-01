@@ -4,7 +4,6 @@ import {
     computed,
     IObservableArray,
     isObservableArray,
-    makeObservable,
     observable,
     reaction,
     remove,
@@ -54,7 +53,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     private readonly service?: SearchService<T>;
 
     /** Liste des champs disponibles pour la recherche texte. */
-    @observable.ref availableSearchFields: string[] = [];
+    @observable.ref accessor availableSearchFields: string[] = [];
 
     /** Facettes en entrée de la recherche. */
     private readonly innerInputFacets = observable.map<string, FacetInput>();
@@ -66,20 +65,20 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     private readonly innerList: IObservableArray<T> = observable([]);
 
     /** `isLoading` setté manuellement, pour le mode `local`. */
-    @observable private localIsLoading = false;
+    @observable private accessor localIsLoading = false;
 
     /** Identifiant de la requête en cours. */
-    @observable private pendingQuery?: string;
+    @observable private accessor pendingQuery: string | undefined;
 
     /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
-    @observable private serverCount = 0;
+    @observable private accessor serverCount = 0;
 
     /** Champ sur lequel grouper. */
-    @observable groupingKey: string | undefined;
+    @observable accessor groupingKey: string | undefined;
     /** Filtre texte. */
-    @observable query = "";
+    @observable accessor query = "";
     /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
-    @observable.ref searchFields: string[] | undefined;
+    @observable.ref accessor searchFields: string[] | undefined;
 
     /** Facettes sélectionnées. */
     @computed.struct
@@ -91,16 +90,16 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     }
 
     /** Tri par ordre croissant. */
-    @observable sortAsc = true;
+    @observable accessor sortAsc = true;
     /** Nom du champ sur lequel trier. */
-    @observable sortBy: string | undefined;
+    @observable accessor sortBy: string | undefined;
     /** Nombre maximum de résultat par requête serveur. */
-    @observable top = 50;
+    @observable accessor top = 50;
     /** Token à utiliser pour la pagination. */
     skipToken?: string;
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
-    @observable isItemSelectionnable: (data: T) => boolean = () => true;
+    @observable accessor isItemSelectionnable: (data: T) => boolean = () => true;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
     readonly criteria!: FormNode<NC, C>;
@@ -135,7 +134,6 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         secondParam?: C | CollectionStoreInitProperties<C, NC>,
         thirdParam?: C | CollectionStoreInitProperties<C, NC>
     ) {
-        makeObservable(this);
         if (isFunction(firstParam)) {
             this.type = "server";
             this.service = firstParam as SearchService<T>;

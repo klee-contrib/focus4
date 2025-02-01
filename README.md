@@ -68,11 +68,6 @@ Ces deux modules proposent des composants graphiques de haut niveau qui permette
 -   **`@focus4/layout`**: composants de mise en page.
 -   **`@focus4/collections`** : composants de listes et de recherche avancée.
 
-### Autres modules
-
--   **`@focus4/legacy`** : repackage des fonctionnalités d'anciennes versions Focus qui n'ont pas d'équivalent direct dans la version actuelle.
--   **`focus4`** : méta-package contenant tous les autres (sauf `legacy`).
-
 ### `@focus4/tooling`
 
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
