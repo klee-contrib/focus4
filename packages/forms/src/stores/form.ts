@@ -1,4 +1,4 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 import {disposeOnUnmount} from "mobx-react";
 import {Component, useEffect, useId, useRef, useState} from "react";
 

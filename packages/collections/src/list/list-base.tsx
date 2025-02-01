@@ -1,5 +1,5 @@
+import {isEqual} from "es-toolkit";
 import i18next from "i18next";
-import {isEqual} from "lodash";
 import {extendObservable, observable, observe} from "mobx";
 import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
@@ -33,7 +33,7 @@ export interface ListBaseProps<T> {
     showAllHandler?: () => void;
 }
 
-export function useListBase<T>({
+export function useListBase<T extends object>({
     baseTheme,
     data,
     i18nPrefix = "focus",

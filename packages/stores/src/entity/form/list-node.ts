@@ -1,4 +1,4 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 
 import {nodeToFormNode} from "../store";
 import {FormListNode, StoreListNode} from "../types";
@@ -36,7 +36,7 @@ export class FormListNodeBuilder<E, E0 = E> {
      */
     edit(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
     edit(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
-        this.node.$edit = isFunction(value) ? () => value(this.node) : value;
+        this.node.$edit = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         return this;
     }
 
@@ -64,7 +64,7 @@ export class FormListNodeBuilder<E, E0 = E> {
      */
     required(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
     required(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
-        this.node.$required = isFunction(value) ? () => value(this.node) : value;
+        this.node.$required = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         return this;
     }
 

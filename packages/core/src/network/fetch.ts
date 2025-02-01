@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-import {isObject, merge, toPairs} from "lodash";
+import {merge} from "es-toolkit";
 
 import {config} from "../utils";
 
@@ -22,18 +22,20 @@ export async function coreFetch(
     const queryString = buildQueryString(query);
     url += queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "";
     options = merge(
-        {method, credentials: "include"},
-        body instanceof FormData
-            ? {body}
-            : body
-            ? {
-                  headers: {
-                      "Content-Type": isObject(body) ? "application/json" : "text/plain"
-                  },
-                  body: JSON.stringify(body)
-              }
-            : {},
-        options
+        {method, credentials: "include" as const},
+        merge(
+            body instanceof FormData
+                ? {body}
+                : body
+                ? {
+                      headers: {
+                          "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
+                      },
+                      body: JSON.stringify(body)
+                  }
+                : {},
+            options
+        )
     );
 
     // On crée la requête dans le store.
@@ -146,8 +148,8 @@ export async function getFileObjectUrl(response: Response) {
 /** Construit le query string associé à l'objet donné. */
 function buildQueryString(obj: any, prefix = ""): string {
     let queryString = "";
-    if (isObject(obj)) {
-        queryString = toPairs(obj).reduce(
+    if (typeof obj === "object") {
+        queryString = Object.entries(obj).reduce(
             (acc, [key, value]) =>
                 acc +
                 (acc && acc !== "" && !acc.endsWith("&") && value !== undefined ? "&" : "") +

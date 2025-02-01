@@ -1,5 +1,5 @@
+import {isEqual, uniq} from "es-toolkit";
 import {createHashHistory, HashHistory} from "history";
-import {isEqual, uniq} from "lodash";
 import {action, extendObservable, intercept, observable, runInAction} from "mobx";
 import {computedFn} from "mobx-utils";
 

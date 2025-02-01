@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {take} from "lodash";
+import {take} from "es-toolkit";
 import {
     FocusEvent,
     FocusEventHandler,

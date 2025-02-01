@@ -14,7 +14,7 @@ import {TableColumn} from "./header";
 import {TableCss} from "../__style__/table.css";
 
 /** Ligne de tableau. */
-export function TableLine<T>({
+export function TableLine<T extends object>({
     className,
     columns,
     domRef,
