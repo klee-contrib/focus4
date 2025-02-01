@@ -1,6 +1,6 @@
 import {merge} from "es-toolkit";
 import i18next from "i18next";
-import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
+import {action, autorun, computed, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
@@ -55,8 +55,9 @@ export class FormActions<
     S extends SourceNodeType<FN> | void | string | number = never
 > extends LoadRegistration<FN["sourceNode"], A> {
     /** Mode d'affichage des erreurs du formulaire. */
-    errorDisplay: "after-focus" | "always" | "never";
+    @observable accessor errorDisplay: "after-focus" | "always" | "never";
 
+    // @ts-ignore
     protected declare builder: FormActionsBuilder<FN, A, C, U, S>;
 
     private readonly formNode: FN;
@@ -70,20 +71,11 @@ export class FormActions<
     constructor(formNode: FN, builder: FormActionsBuilder<FN, A, C, U, S>, trackingId = v4()) {
         super(formNode.sourceNode, builder, trackingId);
         this.formNode = formNode;
-
         this.errorDisplay = this.actionsErrorDisplay;
-
-        makeObservable(this, {
-            errorDisplay: observable,
-            formProps: computed,
-            onClickCancel: action.bound,
-            onClickEdit: action.bound,
-            panelProps: computed,
-            save: action.bound
-        });
     }
 
     /** Récupère les props à fournir à un Form pour lui fournir les actions. */
+    @computed
     get formProps(): ActionsFormProps {
         return {
             errorDisplay: this.errorDisplay,
@@ -92,6 +84,7 @@ export class FormActions<
     }
 
     /** Récupère les props à fournir à un Panel pour relier ses boutons aux actions. */
+    @computed
     get panelProps(): ActionsPanelProps {
         return {
             editing: this.formNode.form.isEdit,
@@ -103,6 +96,7 @@ export class FormActions<
     }
 
     /** Mode d'affichage des erreurs choisi dans la configuration. */
+    @computed
     private get actionsErrorDisplay() {
         return this.builder.actionsErrorDisplay ?? (this.formNode.form.isEdit ? "after-focus" : "always");
     }
@@ -112,6 +106,7 @@ export class FormActions<
      *
      * Repasse le formulaire en mode consultation, annule toutes les modification et lance les handlers `"cancel"`.
      */
+    @action.bound
     onClickCancel() {
         if (this.actionsErrorDisplay === "after-focus") {
             this.errorDisplay = "after-focus";
@@ -126,6 +121,7 @@ export class FormActions<
      *
      * Passe le formulaire en mode édition et lance les handlers `"edit"`.
      */
+    @action.bound
     onClickEdit() {
         if (this.actionsErrorDisplay === "after-focus") {
             this.errorDisplay = "after-focus";
@@ -135,6 +131,7 @@ export class FormActions<
     }
 
     /** Appelle le service de sauvegarde avec le contenu du formulaire, si ce dernier est valide. */
+    @action.bound
     async save() {
         if (this.actionsErrorDisplay === "after-focus") {
             this.errorDisplay = "always";
@@ -253,6 +250,7 @@ export class FormActions<
     }
 
     /** Appelle le service d'initilisation enregistré sur le `FormActions`, si aucun `load` ne peut être appelé. */
+    @action.bound
     async init() {
         if (this.builder.hasInit && (!this.params || !this.builder.loadService)) {
             try {

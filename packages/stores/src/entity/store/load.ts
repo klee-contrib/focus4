@@ -1,5 +1,5 @@
 import {isFunction} from "es-toolkit";
-import {action, autorun, computed, makeObservable, observable, runInAction} from "mobx";
+import {action, autorun, computed, observable, runInAction} from "mobx";
 import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
@@ -30,9 +30,9 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      */
     readonly trackingId: string;
 
-    protected builder: NodeLoadBuilder<SN, A>;
+    @observable protected accessor builder: NodeLoadBuilder<SN, A>;
 
-    private node: SN;
+    @observable private accessor node: SN;
 
     /**
      * Enregistre un service de chargement sur un noeud.
@@ -48,25 +48,16 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
         this.node = node;
         this.builder = builder;
         this.trackingId = trackingId;
-
-        this.load = this.load.bind(this);
-        this.register = this.register.bind(this);
-
-        makeObservable<this, "builder" | "node">(this, {
-            builder: observable.ref,
-            isLoading: computed,
-            node: observable.ref,
-            params: computed.struct,
-            clear: action.bound
-        });
     }
 
     /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
+    @computed
     get isLoading() {
         return requestStore.isLoading(this.trackingId);
     }
 
     /** La valeur courante des paramètres de chargement. */
+    @computed.struct
     get params(): A | undefined {
         const params = this.builder.getLoadParams?.();
         if (!params) {
@@ -87,6 +78,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      *
      * Cette méthode est également accessible depuis le store (via `node.load()`).
      */
+    @action.bound
     async load() {
         if (this.params !== undefined && this.builder.loadService) {
             try {
@@ -113,6 +105,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
     }
 
     /** Vide le noeud de store associé au service de chargement. */
+    @action.bound
     clear() {
         this.node.clear();
     }
@@ -125,6 +118,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      * @param node Éventuel nouveau noeud de store, pour remplacer l'ancien.
      * @param builder Éventuel nouveau builder, pour remplace l'ancien.
      */
+    @action.bound
     register(node?: SN, builder?: NodeLoadBuilder<SN, A>) {
         if (node) {
             if (isAnyFormNode(node) && !!builder?.loadService) {
