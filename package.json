@@ -14,7 +14,6 @@
     "packages/layout",
     "packages/collections",
     "packages/focus4",
-    "packages/legacy",
     "packages/docs"
   ],
   "repository": {
