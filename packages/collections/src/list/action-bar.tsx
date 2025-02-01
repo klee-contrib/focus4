@@ -1,7 +1,7 @@
-import {AnimatePresence, motion} from "framer-motion";
 import i18next from "i18next";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";
+import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useState} from "react";
 
 import {CollectionStore} from "@focus4/stores";

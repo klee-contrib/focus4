@@ -1,8 +1,6 @@
 import classNames from "classnames";
 import {
     FocusEventHandler,
-    ForwardedRef,
-    forwardRef,
     ReactElement,
     ReactNode,
     useCallback,
@@ -83,53 +81,51 @@ const undefinedKey = "$$undefined$$";
  * - Le rendu de chaque ligne est paramétrable.
  * - La mise en page du champ et du menu déroulant contenant les valeurs est paramétrable.
  */
-export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; label: string}>(
-    {
-        className,
-        direction = "auto",
-        disableArrowSelectionWhenClosed,
-        disabled,
-        error,
-        getKey = defaultGetKey,
-        getLabel = defaultGetLabel,
-        hasUndefined = true,
-        hideUndefined = false,
-        hint,
-        icon,
-        id,
-        label,
-        LineComponent,
-        loading = false,
-        multiline,
-        name,
-        noCloseOnChange,
-        onBlur,
-        onChange,
-        onContextMenu,
-        onFocus,
-        onKeyDown,
-        onKeyUp,
-        onPaste,
-        onPointerDown,
-        onPointerEnter,
-        onPointerLeave,
-        onPointerUp,
-        prefix,
-        required,
-        rows,
-        sizing = "fit-to-field-and-wrap",
-        showSupportingText = "auto",
-        supportingText,
-        suffix,
-        tabIndex,
-        trailing = [],
-        theme: pTheme,
-        undefinedLabel = "",
-        value,
-        values = []
-    }: DropdownProps<TSource>,
-    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
-) {
+export function Dropdown<TSource = {key: string; label: string}>({
+    className,
+    direction = "auto",
+    disableArrowSelectionWhenClosed,
+    disabled,
+    error,
+    getKey = defaultGetKey,
+    getLabel = defaultGetLabel,
+    hasUndefined = true,
+    hideUndefined = false,
+    hint,
+    icon,
+    id,
+    label,
+    LineComponent,
+    loading = false,
+    multiline,
+    name,
+    noCloseOnChange,
+    onBlur,
+    onChange,
+    onContextMenu,
+    onFocus,
+    onKeyDown,
+    onKeyUp,
+    onPaste,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    prefix,
+    ref,
+    required,
+    rows,
+    sizing = "fit-to-field-and-wrap",
+    showSupportingText = "auto",
+    supportingText,
+    suffix,
+    tabIndex,
+    trailing = [],
+    theme: pTheme,
+    undefinedLabel = "",
+    value,
+    values = []
+}: DropdownProps<TSource>) {
     const theme = useTheme("dropdown", dropdownCss, pTheme);
 
     const rootRef = useRef<HTMLDivElement>(null);
@@ -378,6 +374,4 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
             </Menu>
         </div>
     );
-}) as <TSource = {key: string; label: string}>(
-    props: DropdownProps<TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
-) => ReactElement;
+}

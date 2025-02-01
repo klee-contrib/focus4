@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {AnimatePresence, motion} from "framer-motion";
+import {AnimatePresence, motion} from "motion/react";
 import {
     AriaRole,
     Children,
@@ -26,11 +26,11 @@ import {Ripple} from "./ripple";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
 export {menuCss};
-export {MenuCss};
+export type {MenuCss};
 
 export interface MenuControls<T extends HTMLElement = HTMLDivElement> {
     /** Element HTML parent du menu sur lequel le menu s'attachera (au dessus ou en dessous, selon la position).  */
-    anchor: RefObject<T>;
+    anchor: RefObject<T | null>;
     /** Affiche le menu. */
     active: boolean;
     /** Ferme le menu. */
@@ -170,7 +170,7 @@ export function MenuItem({
 
 /** Hook pour attacher un menu à un élément et des fonctions pour l'ouvrir et le fermer. */
 export function useMenu<T extends HTMLElement = HTMLDivElement>(): MenuControls<T> {
-    const anchor = useRef<T | null>(null);
+    const anchor = useRef<T>(null);
     const [active, setActive] = useState(false);
     return {
         anchor,
@@ -365,8 +365,8 @@ export function Menu({
             e.stopPropagation();
             e.preventDefault();
 
-            if (!item.props.disabled) {
-                item.props.onClick?.();
+            if (!(item.props as any).disabled) {
+                (item.props as any).onClick?.();
             }
 
             if (item.key) {
@@ -526,7 +526,7 @@ export function Menu({
 }
 
 function unselectable(item: ReactNode): boolean {
-    return (item as ReactElement)?.type === "hr" || (item as ReactElement)?.props.disabled;
+    return (item as ReactElement)?.type === "hr" || ((item as ReactElement)?.props as any).disabled;
 }
 
 function isScrollable(ele: HTMLElement) {

@@ -3,14 +3,11 @@ import {take} from "es-toolkit";
 import {
     FocusEvent,
     FocusEventHandler,
-    ForwardedRef,
-    forwardRef,
     KeyboardEventHandler,
     ReactElement,
     ReactNode,
     useCallback,
     useEffect,
-    useImperativeHandle,
     useMemo,
     useRef,
     useState
@@ -95,60 +92,55 @@ const defaultGetLabel = (x: any) => x.label;
  * - Peut être utilisé comme un champ de recherche rapide.
  * - Peut afficher des suggestions complémentaires.
  */
-export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: string; label: string}>(
-    {
-        additionalSuggestions,
-        allowUnmatched = false,
-        className,
-        clearQueryOnChange,
-        direction = "auto",
-        disabled,
-        error,
-        getKey = defaultGetKey,
-        getLabel = defaultGetLabel,
-        hint,
-        icon,
-        id,
-        label,
-        LineComponent,
-        loading = false,
-        maxDisplayed = 50,
-        multiline,
-        name,
-        noCloseOnChange,
-        onBlur,
-        onChange,
-        onContextMenu,
-        onFocus,
-        onKeyDown,
-        onKeyUp,
-        onPaste,
-        onPointerDown,
-        onPointerEnter,
-        onPointerLeave,
-        onPointerUp,
-        onQueryChange,
-        noSuggestionsOnEmptyQuery = false,
-        prefix,
-        query: pQuery,
-        required,
-        rows,
-        showSupportingText = "auto",
-        supportingText,
-        suffix,
-        suggestionMatch = "start",
-        tabIndex,
-        trailing = [],
-        theme: pTheme,
-        value,
-        values = []
-    }: AutocompleteProps<TSource>,
-    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
-) {
+export function Autocomplete<TSource = {key: string; label: string}>({
+    additionalSuggestions,
+    allowUnmatched = false,
+    className,
+    clearQueryOnChange,
+    direction = "auto",
+    disabled,
+    error,
+    getKey = defaultGetKey,
+    getLabel = defaultGetLabel,
+    hint,
+    icon,
+    id,
+    label,
+    LineComponent,
+    loading = false,
+    maxDisplayed = 50,
+    multiline,
+    name,
+    noCloseOnChange,
+    onBlur,
+    onChange,
+    onContextMenu,
+    onFocus,
+    onKeyDown,
+    onKeyUp,
+    onPaste,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    onQueryChange,
+    noSuggestionsOnEmptyQuery = false,
+    prefix,
+    required,
+    ref,
+    query: pQuery,
+    rows,
+    showSupportingText = "auto",
+    supportingText,
+    suffix,
+    suggestionMatch = "start",
+    tabIndex,
+    trailing = [],
+    theme: pTheme,
+    value,
+    values = []
+}: AutocompleteProps<TSource>) {
     const theme = useTheme("autocomplete", autocompleteCss, pTheme);
-
-    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-    useImperativeHandle(ref, () => inputRef.current!, []);
 
     const valueRef = useRef<string | undefined>(value);
     useEffect(() => {
@@ -307,7 +299,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     return (
         <div className={classNames(theme.autocomplete(), className)}>
             <TextField
-                ref={inputRef}
+                ref={ref}
                 aria-activedescendant={id ? `${id}-${selected}` : undefined}
                 aria-autocomplete="list"
                 aria-controls={id ? `${id}-suggestions` : undefined}
@@ -396,9 +388,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
             </Menu>
         </div>
     );
-}) as <TSource = {key: string; label: string}>(
-    props: AutocompleteProps<TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
-) => ReactElement;
+}
 
 function normalize(value: string) {
     return value

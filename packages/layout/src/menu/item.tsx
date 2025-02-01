@@ -1,6 +1,6 @@
-import {AnimatePresence, motion} from "framer-motion";
 import {action, toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
+import {AnimatePresence, motion} from "motion/react";
 import {
     createElement,
     MouseEventHandler,

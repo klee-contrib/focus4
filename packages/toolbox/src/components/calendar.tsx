@@ -1,8 +1,9 @@
 import classnames from "classnames";
 import {differenceBy, groupBy, range, sortBy, uniqBy, upperFirst} from "es-toolkit";
-import {animate, AnimatePresence, motion} from "framer-motion";
 import {DateTime} from "luxon";
-import {ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
+import {animate} from "motion";
+import {AnimatePresence, motion} from "motion/react";
+import {Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
@@ -27,6 +28,8 @@ export interface CalendarProps {
     min?: string;
     /** Handler appelé à la sélection d'une date. */
     onChange?: (value: string, fromKeyDown: boolean) => void;
+    /** Ref vers le calendrier pour le focus. */
+    ref?: Ref<{focus(): void}>;
     /** TabIndex pour le Calendar. Par défaut : 0. */
     tabIndex?: number;
     /** CSS. */
@@ -41,10 +44,17 @@ export interface CalendarProps {
  * - Intégré avec un champ de saisie texte via le composant [`InputDate`](/docs/composants-focus4∕forms-inputdate--docs).
  * - Peut être configuré pour limiter la saisie à un mois ou une année.
  */
-export const Calendar = forwardRef(function Calendar(
-    {className, max, min, format = "yyyy-MM-dd", onChange, tabIndex = 0, theme: pTheme, value}: CalendarProps,
-    ref: ForwardedRef<{focus: () => void}>
-) {
+export function Calendar({
+    className,
+    max,
+    min,
+    format = "yyyy-MM-dd",
+    onChange,
+    ref,
+    tabIndex = 0,
+    theme: pTheme,
+    value
+}: CalendarProps) {
     const theme = useTheme("calendar", calendarCss, pTheme);
 
     const [date, setDate] = useState(handleValue(value, format));
@@ -85,7 +95,7 @@ export const Calendar = forwardRef(function Calendar(
 
     const root = useRef<HTMLDivElement>(null);
     const main = useRef<HTMLDivElement>(null);
-    const displayed = useRef<HTMLDivElement>();
+    const displayed = useRef<HTMLDivElement>(null);
     const animationId = useRef<number>(0);
 
     const changeDisplayedMonth = useCallback(
@@ -475,7 +485,7 @@ export const Calendar = forwardRef(function Calendar(
             </div>
         </div>
     );
-});
+}
 
 function handleValue(value: string | undefined, format: string) {
     if (!value) {
