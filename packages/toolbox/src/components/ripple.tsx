@@ -167,7 +167,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
         [clearRipples, props.onPointerUp]
     );
 
-    return cloneElement(children, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});
+    return cloneElement(children as any, {onPointerDown, onPointerEnter, onPointerLeave, onPointerUp});
 }
 
 function toMs(d: string) {

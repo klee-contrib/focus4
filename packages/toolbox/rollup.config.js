@@ -33,6 +33,7 @@ export default (async () => {
             "classnames",
             "i18next",
             "es-toolkit",
+            "motion/react",
             "react",
             "react/jsx-runtime",
             "react-dom",

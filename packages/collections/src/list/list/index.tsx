@@ -1,6 +1,6 @@
-import {AnimatePresence} from "framer-motion";
 import {autorun, comparer, observable, reaction} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
+import {AnimatePresence} from "motion/react";
 import {ComponentType, Fragment, useContext, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";

@@ -1,5 +1,5 @@
 import {debounce} from "es-toolkit";
-import {ForwardedRef, forwardRef, ReactElement, useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
@@ -51,29 +51,23 @@ const defaultGetKey = (x: any) => x.key;
  *
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
-export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
-    const T extends DomainFieldTypeSingle,
-    TSource = {key: string; label: string}
->(
-    {
-        disabled,
-        error,
-        getKey = defaultGetKey,
-        keyResolver,
-        onChange,
-        onQueryChange,
-        query: pQuery = "",
-        querySearcher,
-        searchOnEmptyQuery = false,
-        searchOnQuerySearcherChange = false,
-        supportingText,
-        showSupportingText = "always",
-        type,
-        value,
-        ...props
-    }: AutocompleteSearchProps<T, TSource>,
-    ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
-) {
+export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>({
+    disabled,
+    error,
+    getKey = defaultGetKey,
+    keyResolver,
+    onChange,
+    onQueryChange,
+    query: pQuery = "",
+    querySearcher,
+    searchOnEmptyQuery = false,
+    searchOnQuerySearcherChange = false,
+    supportingText,
+    showSupportingText = "always",
+    type,
+    value,
+    ...props
+}: AutocompleteSearchProps<T, TSource>) {
     const [query, setQuery] = useState(pQuery);
     useEffect(() => setQuery(pQuery), [pQuery]);
 
@@ -140,7 +134,6 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     return (
         <Autocomplete
             {...props}
-            ref={ref}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
@@ -157,6 +150,4 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             values={values}
         />
     );
-}) as <const T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>(
-    props: AutocompleteSearchProps<T, TSource> & {ref?: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>}
-) => ReactElement;
+}
