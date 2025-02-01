@@ -1,7 +1,7 @@
 import {difference} from "es-toolkit";
-import {AnimatePresence, motion} from "framer-motion";
 import i18next from "i18next";
 import {useLocalObservable, useObserver} from "mobx-react";
+import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
 import {config} from "@focus4/core";
