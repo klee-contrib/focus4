@@ -1,7 +1,7 @@
 import {RefObject, useLayoutEffect} from "react";
 
 /** Calcule le `clip` nécessaire sur l'élément passé en ref pour qu'il se coupe une fois qu'il passe l'élément sticky juste avant lui. */
-export function useStickyClip(ref: RefObject<HTMLElement>) {
+export function useStickyClip(ref: RefObject<HTMLElement | null>) {
     useLayoutEffect(() => {
         const stickyElement = ref.current?.previousElementSibling as HTMLElement;
 

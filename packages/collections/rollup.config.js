@@ -34,10 +34,11 @@ export default (async () => {
             ...Object.keys(pkg.dependencies || {}),
             "classnames",
             "es-toolkit",
-            "framer-motion",
             "i18next",
             "mobx",
             "mobx-react",
+            "motion",
+            "motion/react",
             "react",
             "react/jsx-runtime",
             "tslib"

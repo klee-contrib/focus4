@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {motion} from "framer-motion";
+import {motion} from "motion/react";
 import {AriaAttributes, createElement, CSSProperties, FocusEventHandler, MouseEventHandler} from "react";
 
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
