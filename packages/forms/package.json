@@ -19,8 +19,7 @@
         "@focus4/stores": "11.24.3",
         "@focus4/styling": "11.23.6",
         "@focus4/toolbox": "11.24.0",
-        "@types/numeral": "2.0.5",
-        "numeral": "2.0.6"
+        "intl-number-parser": "1.0.5"
     },
     "devDependencies": {
         "@focus4/tooling": "11.24.0",
