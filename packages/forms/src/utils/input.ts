@@ -1,5 +1,5 @@
-import {range, takeWhile} from "es-toolkit";
-import numeral from "numeral";
+import {takeWhile} from "es-toolkit";
+import NumberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
 
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
@@ -64,27 +64,23 @@ export function useInput<const T extends DomainFieldTypeSingle>({
 }: UseInputProps<T>) {
     const numberFormat = useMemo(
         () =>
-            `${hasThousandsSeparator ? "0," : ""}0${
-                maxDecimals > 0
-                    ? `[.][${range(0, maxDecimals)
-                          .map(_ => "0")
-                          .join("")}]`
-                    : ""
-            }`,
+            new Intl.NumberFormat(navigator.language, {
+                useGrouping: hasThousandsSeparator,
+                maximumFractionDigits: maxDecimals
+            }),
         [hasThousandsSeparator, maxDecimals]
     );
 
+    const parseNumber = useMemo(() => NumberParser(navigator.language, numberFormat.resolvedOptions()), [numberFormat]);
+
     const [numberStringValue, setNumberStringValue] = useState(
-        type === "number" ? (value !== undefined ? numeral(value).format(numberFormat) : "") : undefined
+        type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
     );
     useEffect(() => {
-        if (
-            type === "number" &&
-            (!numberStringValue || (value ?? undefined) !== (numeral(numberStringValue).value() ?? undefined))
-        ) {
-            setNumberStringValue(value !== undefined ? numeral(value).format(numberFormat) : "");
+        if (type === "number" && (!numberStringValue || (value ?? undefined) !== parseNumber(numberStringValue))) {
+            setNumberStringValue(value !== undefined ? numberFormat.format(value as number) : "");
         }
-    }, [numberFormat, value]);
+    }, [numberFormat, parseNumber, value]);
 
     const {handleKeyDown, handlePaste, stringValue} = useMask({
         onChange: onChange as (value: string) => void,
@@ -104,7 +100,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
             } else {
                 let newNumberStringValue = numberStringValue;
 
-                if (numeral.locale() === "fr") {
+                if (navigator.language === "fr") {
                     v = v.replace(".", ",");
                 }
 
@@ -114,7 +110,10 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     isNegative = true;
                 }
 
-                const {decimal, thousands} = numeral.localeData().delimiters;
+                const sample = numberFormat.formatToParts(1000.1);
+                const decimal = sample.find(s => s.type === "decimal")!.value;
+                const thousands = sample.find(s => s.type === "group")!.value;
+
                 const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
                 const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
                 const [left, right, nope] = v.split(decimal);
@@ -124,19 +123,18 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     nope === undefined &&
                     !invalidCharRegex.exec(v)
                 ) {
+                    const newNumberValue = v ? (isNegative ? -1 : 1) * parseNumber(v) : NaN;
                     const newValue =
                         (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
-                        (!left && !right
-                            ? ""
-                            : // On formatte le nombre avec numeral en gardant tous les "0" de tête.
-                              numeral(v).format(
-                                  range(0, left.replace(new RegExp(thousands, "g"), "").length - 1)
-                                      .map(_ => "0")
-                                      .join("") + numberFormat
-                              )) +
+                        (left
+                            ? new Intl.NumberFormat(navigator.language, {
+                                  minimumIntegerDigits: left.replaceAll(thousands, "").length,
+                                  maximumFractionDigits: maxDecimals,
+                                  useGrouping: hasThousandsSeparator
+                              }).format(Math.abs(newNumberValue))
+                            : "") +
                         (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
                         (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
-                    const newNumberValue = numeral(newValue).value() ?? undefined;
 
                     if (!newValue.includes("NaN")) {
                         newNumberStringValue = newValue;
@@ -171,7 +169,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 });
             }
         },
-        [maxDecimals, noNegativeNumbers, numberFormat, numberStringValue, onChange, type]
+        [noNegativeNumbers, numberFormat, numberStringValue, onChange, type]
     );
 
     const finalValue = useMemo(() => {
