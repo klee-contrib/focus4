@@ -34,6 +34,7 @@ export const Showcase: StoryObj<Partial<typeof Input>> = {
                     onChange={setV2}
                     type="number"
                     value={v2}
+                    supportingText={v2?.toString()}
                 />
             </div>
         );

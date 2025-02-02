@@ -21,7 +21,7 @@
         "@focus4/toolbox": "11.24.7",
         "@types/numeral": "2.0.5",
         "file-type": "20.4.1",
-        "numeral": "2.0.6"
+        "intl-number-parser": "1.0.5"
     },
     "devDependencies": {
         "@focus4/tooling": "11.24.7",
