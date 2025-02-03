@@ -47,19 +47,13 @@ export interface ActionsPanelProps {
 }
 
 /** Gère les actions d'un formulaire. A n'utiliser QUE pour des formulaires (avec de la sauvegarde). */
-export class FormActions<
-    FN extends FormListNode | FormNode = any,
-    A extends readonly any[] = never,
-    C extends SourceNodeType<FN> | void | string | number = never,
-    U extends SourceNodeType<FN> | void | string | number = never,
-    S extends SourceNodeType<FN> | void | string | number = never
-> extends LoadRegistration<FN["sourceNode"], A> {
+export class FormActions<A extends readonly any[] = never> extends LoadRegistration<A> {
     /** Mode d'affichage des erreurs du formulaire. */
     errorDisplay: "after-focus" | "always" | "never";
 
-    protected declare builder: FormActionsBuilder<FN, A, C, U, S>;
+    protected declare builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>;
 
-    private readonly formNode: FN;
+    private readonly formNode: FormListNode | FormNode;
 
     /**
      * Enregistre des actions de formulaire sur un noeud.
@@ -67,7 +61,11 @@ export class FormActions<
      * @param builder Builder pour les actions de forumaire.
      * @param trackingId Id de suivi de requête pour ce load.
      */
-    constructor(formNode: FN, builder: FormActionsBuilder<FN, A, C, U, S>, trackingId = v4()) {
+    constructor(
+        formNode: FormListNode | FormNode,
+        builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>,
+        trackingId = v4()
+    ) {
         super(formNode.sourceNode, builder, trackingId);
         this.formNode = formNode;
 
@@ -163,7 +161,7 @@ export class FormActions<
                 };
             }
 
-            const data = await requestStore.track<C | U | S>([this.trackingId, ...this.builder.trackingIds], () => {
+            const data = await requestStore.track<object>([this.trackingId, ...this.builder.trackingIds], () => {
                 const d = toFlatValues(this.formNode);
                 if (this.builder.saveService) {
                     return this.builder.saveService(d);
@@ -230,7 +228,10 @@ export class FormActions<
         this.formNode.clear();
     }
 
-    override register(node?: FN["sourceNode"], builder?: NodeLoadBuilder<FN["sourceNode"], A>) {
+    override register(
+        node?: (FormListNode | FormNode)["sourceNode"],
+        builder?: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>
+    ) {
         const loadDisposer = super.register(node, builder);
 
         if (this.builder.confirmation) {
@@ -260,12 +261,12 @@ export class FormActions<
                     ? await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
                           this.builder.initService!()
                       )
-                    : ({} as SourceNodeType<FN>);
+                    : ({} as SourceNodeType<FormListNode | FormNode>);
 
                 this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
 
                 if (isFormNode(this.formNode)) {
-                    this.formNode.sourceNode.replace(this.formNode.form._initialData!);
+                    this.formNode.sourceNode.replace(this.formNode.form._initialData);
                 } else {
                     this.formNode.sourceNode.replaceNodes(this.formNode.form._initialData!);
                 }

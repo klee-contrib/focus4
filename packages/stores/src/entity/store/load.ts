@@ -22,7 +22,7 @@ interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode> {
 }
 
 /** Enregistrement de chargement. */
-export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A extends readonly any[] = any[]> {
+export class LoadRegistration<A extends readonly any[] = never> {
     /**
      * Id du suivi de requêtes associé à cette enregistrement de chargement.
      *
@@ -30,9 +30,9 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      */
     readonly trackingId: string;
 
-    protected builder: NodeLoadBuilder<SN, A>;
+    protected builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
 
-    private node: SN;
+    private node: StoreNode | StoreListNode;
 
     /**
      * Enregistre un service de chargement sur un noeud.
@@ -40,7 +40,11 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      * @param builder Builder pour le service de chargement.
      * @param trackingId Id de suivi de requête pour ce load.
      */
-    constructor(node: SN, builder: NodeLoadBuilder<SN, A>, trackingId = v4()) {
+    constructor(
+        node: StoreNode | StoreListNode,
+        builder: NodeLoadBuilder<StoreNode | StoreListNode, A>,
+        trackingId = v4()
+    ) {
         if (isAnyFormNode(node) && !!builder.loadService) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
         }
@@ -125,7 +129,7 @@ export class LoadRegistration<SN extends StoreListNode | StoreNode = any, A exte
      * @param node Éventuel nouveau noeud de store, pour remplacer l'ancien.
      * @param builder Éventuel nouveau builder, pour remplace l'ancien.
      */
-    register(node?: SN, builder?: NodeLoadBuilder<SN, A>) {
+    register(node?: StoreNode | StoreListNode, builder?: NodeLoadBuilder<StoreNode | StoreListNode, A>) {
         if (node) {
             if (isAnyFormNode(node) && !!builder?.loadService) {
                 throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
