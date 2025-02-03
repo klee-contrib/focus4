@@ -36,7 +36,7 @@ function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
 /** Props du SelectCheckbox */
 export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     /** Désactive le select en entier (si `true`) ou bien une liste d'options. */
-    disabled?: boolean | DomainType<T>[];
+    disabled?: boolean | DomainType<T>;
     /** Message d'erreur à afficher. */
     error?: string;
     /** Libellé. */
@@ -92,7 +92,7 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                     const isSelected = value ? !!value.find((val: any) => optVal === val) : false;
                     const isDisabled =
                         disabled === true ||
-                        (Array.isArray(disabled) && disabled.includes(optVal)) ||
+                        (Array.isArray(disabled) && (disabled as string[]).includes(optVal)) ||
                         (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected);
                     const clickHandler = clickHandlerFactory(isDisabled, isSelected, value, optVal, onChange);
 
