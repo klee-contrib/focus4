@@ -1,6 +1,6 @@
 {
     "name": "@focus4/tooling",
-    "version": "11.23.0",
+    "version": "11.23.6",
     "description": "Focus v4, tooling module",
     "main": "lib/focus4.tooling.js",
     "repository": {
