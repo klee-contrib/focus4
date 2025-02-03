@@ -191,7 +191,10 @@ export class FormNodeBuilder<E, E0 = E> {
      */
     removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
         for (const key in this.node) {
-            if (!fields.includes(key as F) && !["clear", "replace", "set", "sourceNode"].includes(key)) {
+            if (
+                !fields.includes(key as F) &&
+                !["clear", "replace", "set", "sourceNode", "$edit", "$form", "$required"].includes(key)
+            ) {
                 delete this.node[key as F];
             }
         }
