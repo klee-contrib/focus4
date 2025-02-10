@@ -1,8 +1,7 @@
 import {ReactNode, useContext, useMemo} from "react";
 
-import {themeable} from "@focus4/core";
-
 import {CSSContext, ThemeContext} from "./common";
+import {themeable} from "./themeable";
 import {fromBem} from "./to-bem";
 
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */

@@ -1,7 +1,7 @@
 import {upperFirst} from "es-toolkit";
 import {action, extendObservable, observable, when} from "mobx";
 
-import {config, requestStore} from "@focus4/core";
+import {coreConfig, requestStore} from "@focus4/core";
 
 import {ReferenceDefinition, ReferenceStore} from "./types";
 import {filter, getLabel} from "./util";
@@ -43,7 +43,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     !referenceStore[`_${ref}_loading`] &&
                     !(
                         referenceStore[`_${ref}_cache`] &&
-                        new Date().getTime() - referenceStore[`_${ref}_cache`] < config.referenceCacheDuration
+                        new Date().getTime() - referenceStore[`_${ref}_cache`] < coreConfig.referenceCacheDuration
                     )
                 ) {
                     referenceStore[`_${ref}_loading`] = true;

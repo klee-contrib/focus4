@@ -13,8 +13,7 @@ import {
     useState
 } from "react";
 
-import {config} from "@focus4/core";
-import {CSSProp, useTheme} from "@focus4/styling";
+import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
 
 import {Menu, useMenu} from "./menu";
 import {Ripple} from "./ripple";
@@ -304,7 +303,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 aria-autocomplete="list"
                 aria-controls={id ? `${id}-suggestions` : undefined}
                 aria-expanded={menu.active}
-                autoComplete={config.autocompleteOffValue}
+                autoComplete={uiConfig.autocompleteOffValue}
                 disabled={disabled === true}
                 error={error}
                 fieldRef={menu.anchor}

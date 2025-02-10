@@ -2,8 +2,6 @@ import {isFunction} from "es-toolkit";
 import {computed, extendObservable, observable, remove} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
-import {themeable} from "@focus4/core";
-
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -21,6 +19,7 @@ import {
     WithThemeProps
 } from "../types";
 
+import {themeable} from "./themeable";
 import {UndefinedComponent} from "./utils";
 
 type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps : never;

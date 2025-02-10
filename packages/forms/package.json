@@ -15,7 +15,6 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.23.6",
         "@focus4/stores": "11.23.7",
         "@focus4/styling": "11.23.6",
         "@focus4/toolbox": "11.24.0",
