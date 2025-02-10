@@ -1,23 +1,7 @@
 export const fr = {
-    boolean: {
-        no: "Non",
-        yes: "Oui"
-    },
-    button: {
-        cancel: "Annuler",
-        edit: "Modifier",
-        save: "Enregistrer"
-    },
     detail: {
         deleted: "Élément supprimé avec succès",
         saved: "Élément enregistré avec succès"
-    },
-    select: {
-        noLabel: "",
-        none: "Aucun",
-        selectAll: "Tout sélectionner",
-        unselected: "",
-        unselectAll: "Tout désélectionner"
     },
     validation: {
         date: "La date saisie est invalide",

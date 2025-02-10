@@ -1,15 +1,15 @@
 import {useState} from "react";
 
-import {SelectAutocomplete} from "@focus4/forms";
+import {SelectRadio} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
-import {SelectAutocompleteMeta} from "./metas/select-autocomplete";
+import {SelectRadioMeta} from "./metas/select-radio";
 
 import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
-    ...SelectAutocompleteMeta,
-    title: "Composants/@focus4∕forms/SelectAutocomplete",
+    ...SelectRadioMeta,
+    title: "Composants/@focus4∕form-toolbox/SelectRadio",
     tags: ["autodocs"],
     args: {
         type: "string",
@@ -18,11 +18,11 @@ export default {
             {code: 2, label: "Valeur 2"}
         ])
     }
-} as Meta<typeof SelectAutocomplete>;
+} as Meta<typeof SelectRadio>;
 
-export const Showcase: StoryObj<typeof SelectAutocomplete<"number">> = {
+export const Showcase: StoryObj<typeof SelectRadio<"number">> = {
     render(props) {
         const [value, setValue] = useState<number>();
-        return <SelectAutocomplete {...props} onChange={setValue} value={value} />;
+        return <SelectRadio {...props} onChange={setValue} value={value} />;
     }
 };
