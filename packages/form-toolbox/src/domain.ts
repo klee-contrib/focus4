@@ -1,3 +1,4 @@
+import {FieldOptions} from "@focus4/forms";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -28,7 +29,6 @@ import {
     SelectChipsProps,
     SelectProps
 } from "./components";
-import {FieldOptions} from "./fields";
 
 /** Crée un domaine. */
 export function domain<

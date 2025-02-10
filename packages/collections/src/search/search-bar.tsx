@@ -4,9 +4,10 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
-import {fieldFor, SelectCheckbox} from "@focus4/forms";
+import {SelectCheckbox} from "@focus4/form-toolbox";
+import {fieldFor} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
-import {CSSProp, getSpringTransition, useTheme, uiConfig} from "@focus4/styling";
+import {CSSProp, getSpringTransition, uiConfig, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";

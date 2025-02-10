@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Input} from "@focus4/forms";
+import {Input} from "@focus4/form-toolbox";
 
 import {InputMeta} from "./metas/input";
 
@@ -8,7 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...InputMeta,
-    title: "Composants/@focus4∕forms/Input",
+    title: "Composants/@focus4∕form-toolbox/Input",
     tags: ["autodocs"]
 } as Meta<typeof Input>;
 

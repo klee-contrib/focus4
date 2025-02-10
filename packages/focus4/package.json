@@ -14,6 +14,7 @@
     "dependencies": {
         "@focus4/collections": "11.24.6",
         "@focus4/core": "11.24.5",
+        "@focus4/form-toolbox": "11.24.0",
         "@focus4/forms": "11.24.6",
         "@focus4/layout": "11.24.5",
         "@focus4/stores": "11.24.5",

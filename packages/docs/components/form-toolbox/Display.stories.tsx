@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 
-import {Display} from "@focus4/forms";
+import {Display} from "@focus4/form-toolbox";
 
 import {DisplayMeta} from "./metas/display";
 
@@ -8,7 +8,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...DisplayMeta,
-    title: "Composants/@focus4∕forms/Display",
+    title: "Composants/@focus4∕form-toolbox/Display",
     tags: ["autodocs"],
     args: {type: "string", value: "Valeur"}
 } as Meta<typeof Display>;
