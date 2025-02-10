@@ -15,7 +15,6 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "11.24.5",
         "@focus4/styling": "11.24.5",
         "@types/luxon": "~3.4.2",
         "classnames": "~2.5.1",

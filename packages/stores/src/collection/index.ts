@@ -12,8 +12,6 @@ import {
     toJS
 } from "mobx";
 
-import {config} from "@focus4/core";
-
 import {
     buildNode,
     EntityToType,
@@ -182,7 +180,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
                     this.criteriaMode === "debounced" ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
                     this.query
                 ],
-                debounce(() => this.search(), config.textSearchDelay)
+                debounce(() => this.search(), initialQuery?.textSearchDelay ?? 500)
             );
         } else {
             this.type = "local";
