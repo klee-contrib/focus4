@@ -10,7 +10,8 @@ import {translation as collections} from "@focus4/collections";
 import {translation as forms} from "@focus4/form-toolbox";
 import {translation as layout} from "@focus4/layout";
 import {translation as stores} from "@focus4/stores";
-import {colorScheme, initColorScheme} from "@focus4/styling";
+
+import {colorScheme, initColorScheme} from "@focus4/core";
 
 import {Controls, Description, Primary, Subtitle, Title} from "@storybook/blocks";
 import {addons} from "@storybook/preview-api";
