@@ -1,8 +1,7 @@
 import {DateTime} from "luxon";
 import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 
-import {config} from "@focus4/core";
-import {CSSProp, useTheme} from "@focus4/styling";
+import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
 import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
@@ -269,7 +268,7 @@ export function InputDate({
             <Input
                 {...inputProps}
                 ref={inputRef}
-                autoComplete={config.autocompleteOffValue}
+                autoComplete={uiConfig.autocompleteOffValue}
                 error={error}
                 fieldRef={menu.anchor}
                 id={id}

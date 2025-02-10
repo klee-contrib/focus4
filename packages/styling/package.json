@@ -16,7 +16,6 @@
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
-        "@focus4/core": "11.23.6",
         "@types/react": "~19.0.8",
         "@types/react-dom": "~19.0.3",
         "classnames": "~2.5.1",
