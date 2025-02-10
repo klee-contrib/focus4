@@ -32,16 +32,9 @@ export default (async () => {
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "classnames",
-            "es-toolkit",
-            "i18next",
-            "mobx",
-            "mobx-react",
-            "motion",
+            ...Object.keys(pkg.peerDependencies || {}),
             "motion/react",
-            "react",
-            "react/jsx-runtime",
-            "tslib"
+            "react/jsx-runtime"
         ],
         onwarn: ({code, message}) => {
             if (code === "CIRCULAR_DEPENDENCY") {

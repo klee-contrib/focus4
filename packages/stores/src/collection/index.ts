@@ -11,7 +11,6 @@ import {
     set,
     toJS
 } from "mobx";
-import {v4} from "uuid";
 
 import {config} from "@focus4/core";
 
@@ -472,7 +471,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             top
         };
 
-        const pendingQuery = v4();
+        const pendingQuery = Math.random().toString();
         this.pendingQuery = pendingQuery;
 
         try {
