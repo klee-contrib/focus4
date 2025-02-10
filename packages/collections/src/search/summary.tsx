@@ -247,7 +247,7 @@ export function Summary<T>({
                     <div className={theme.print()}>
                         <Button
                             icon={{i18nKey: `${i18nPrefix}.icons.summary.export`}}
-                            label={`${i18nPrefix}.search.summary.export`}
+                            label={i18next.t(`${i18nPrefix}.search.summary.export`)}
                             onClick={exportAction}
                             type="button"
                         />
