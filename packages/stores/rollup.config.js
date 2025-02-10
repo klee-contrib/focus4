@@ -15,7 +15,7 @@ const config = {
         format: "esm",
         dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {}), "i18next", "es-toolkit", "mobx", "tslib", "uuid"],
+    external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies)],
     onwarn: ({code, message}) => {
         if (code === "CIRCULAR_DEPENDENCY") {
             return;
