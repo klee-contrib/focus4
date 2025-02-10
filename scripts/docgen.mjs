@@ -208,7 +208,7 @@ export const ${component.displayName}Meta = {
 }
 
 generateDocFile("components/toolbox", "./packages/toolbox/src/components/*.tsx");
-generateDocFile("components/forms", "./packages/forms/src/components/*.tsx");
+generateDocFile("components/form-toolbox", "./packages/form-toolbox/src/components/*.tsx");
 generateDocFile("collections", "./packages/collections/src/**/*.tsx", [
     "ActionBar",
     "AdvancedSearch",

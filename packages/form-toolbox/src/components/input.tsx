@@ -1,7 +1,6 @@
+import {useInput, UseInputProps} from "@focus4/forms";
 import {DomainFieldTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
-
-import {useInput, UseInputProps} from "../utils";
 
 export interface InputProps<T extends DomainFieldTypeSingle>
     extends Omit<TextFieldProps, "error" | "onChange" | "type" | "value">,

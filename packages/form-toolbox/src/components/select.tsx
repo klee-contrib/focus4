@@ -1,10 +1,9 @@
 import i18next from "i18next";
 import {useObserver} from "mobx-react";
 
+import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
-
-import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectProps<T extends DomainFieldTypeSingle>

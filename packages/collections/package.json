@@ -15,6 +15,7 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
+        "@focus4/form-toolbox": "11.24.0",
         "@focus4/forms": "11.24.3",
         "@focus4/layout": "11.24.2",
         "@focus4/stores": "11.24.3",

@@ -87,7 +87,7 @@ export interface InputDateProps {
 }
 
 /**
- * Un champ de saisie de date avec double saisie en texte (avec un [`Input`](/docs/composants-focus4∕forms-input--docs)) et un calendrier ([`Calendar`](/docs/composants-focus4∕toolbox-calendar--docs)), qui s'affiche dans un [`Menu`](/docs/composants-focus4∕toolbox-menu--docs) en dessous ou au dessus.
+ * Un champ de saisie de date avec double saisie en texte (avec un [`Input`](/docs/composants-focus4∕form-toolbox-input--docs)) et un calendrier ([`Calendar`](/docs/composants-focus4∕toolbox-calendar--docs)), qui s'affiche dans un [`Menu`](/docs/composants-focus4∕toolbox-menu--docs) en dessous ou au dessus.
  *
  * - Réexpose toutes les options du `TextField` et du `Calendar`.
  * - Affiche un masque de saisie sur le champ texte.
