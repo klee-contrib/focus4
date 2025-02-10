@@ -19,9 +19,18 @@
         "@focus4/stores": "11.24.5",
         "@focus4/styling": "11.24.5",
         "@focus4/toolbox": "11.24.5",
-        "@types/numeral": "2.0.5",
-        "file-type": "20.4.0",
-        "intl-number-parser": "1.0.5"
+        "classnames": "~2.5.1",
+        "es-toolkit": "~1.32.0",
+        "file-type": "~20.4.0",
+        "luxon": "~3.5.0",
+        "intl-number-parser": "~1.0.5"
+    },
+    "peerDependencies": {
+        "i18next": ">= 24.2 && < 25",
+        "mobx": ">= 6.13 && < 7",
+        "mobx-react": ">= 9.2 && < 10",
+        "react": ">= 19.0 && < 20",
+        "tslib": ">= 2.8 && < 3"
     },
     "devDependencies": {
         "@focus4/tooling": "11.24.5",
