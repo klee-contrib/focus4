@@ -13,11 +13,11 @@ export default (async () => {
 
     /** @type {import("rollup").RollupOptions} */
     const config = {
-        input: "src/focus4.forms.ts",
+        input: "src/focus4.form-toolbox.ts",
         plugins: [
             postcss({extract: true, modules: true}),
             typescript(),
-            copy([{files: "src/fields/**/*.css.d.ts", dest: "lib/fields"}])
+            copy([{files: "src/components/**/*.css.d.ts", dest: "lib/components"}])
         ],
         treeshake: {
             moduleSideEffects: false

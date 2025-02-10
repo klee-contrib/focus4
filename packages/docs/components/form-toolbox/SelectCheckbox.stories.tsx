@@ -1,15 +1,15 @@
 import {useState} from "react";
 
-import {SelectChips} from "@focus4/forms";
+import {SelectCheckbox} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
-import {SelectChipsMeta} from "./metas/select-chips";
+import {SelectCheckboxMeta} from "./metas/select-checkbox";
 
 import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
-    ...SelectChipsMeta,
-    title: "Composants/@focus4∕forms/SelectChips",
+    ...SelectCheckboxMeta,
+    title: "Composants/@focus4∕form-toolbox/SelectCheckbox",
     tags: ["autodocs"],
     args: {
         type: "string-array",
@@ -19,11 +19,11 @@ export default {
             {code: "3", label: "Valeur 3"}
         ])
     }
-} as Meta<typeof SelectChips>;
+} as Meta<typeof SelectCheckbox>;
 
-export const Showcase: StoryObj<typeof SelectChips<"string-array">> = {
+export const Showcase: StoryObj<typeof SelectCheckbox<"string-array">> = {
     render(props) {
         const [value, setValue] = useState<string[]>();
-        return <SelectChips {...props} onChange={setValue} value={value} />;
+        return <SelectCheckbox {...props} onChange={setValue} value={value} />;
     }
 };

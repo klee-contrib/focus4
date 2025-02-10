@@ -3,11 +3,10 @@ import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useCallback, useEffect, useState} from "react";
 
+import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {AutocompleteCss, Chip, ChipCss, Icon, TextFieldCss} from "@focus4/toolbox";
-
-import {toSimpleType} from "../utils";
 
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
@@ -67,7 +66,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
 const defaultGetKey = (x: any) => x.key;
 
 /**
- * Un [`AutocompleteSearch`](/docs/composants-focus4∕forms-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
+ * Un [`AutocompleteSearch`](/docs/composants-focus4∕form-toolbox-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
  *
  * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
