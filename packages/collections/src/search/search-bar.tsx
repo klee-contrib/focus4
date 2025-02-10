@@ -4,10 +4,9 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 
-import {config} from "@focus4/core";
 import {fieldFor, SelectCheckbox} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
-import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
+import {CSSProp, getSpringTransition, useTheme, uiConfig} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
@@ -203,7 +202,7 @@ export function SearchBar<T extends object, C>({
                     <FontIcon className={theme.searchIcon()} icon={{i18nKey: `${i18nPrefix}.icons.searchBar.search`}} />
                     <input
                         ref={input}
-                        autoComplete={config.autocompleteOffValue}
+                        autoComplete={uiConfig.autocompleteOffValue}
                         name="search-bar-input"
                         onChange={state.onInputChange}
                         placeholder={i18next.t(state.placeholder || "")}
