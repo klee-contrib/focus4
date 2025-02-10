@@ -1,7 +1,6 @@
 import {merge} from "es-toolkit";
 import i18next from "i18next";
 import {action, autorun, computed, observable, runInAction} from "mobx";
-import {v4} from "uuid";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
@@ -65,7 +64,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
     constructor(
         formNode: FormListNode | FormNode,
         builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>,
-        trackingId = v4()
+        trackingId: string = Math.random().toString()
     ) {
         super(formNode.sourceNode, builder, trackingId);
         this.formNode = formNode;
@@ -232,7 +231,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
         const loadDisposer = super.register(node, builder);
 
         if (this.builder.confirmation) {
-            const confirmationId = v4();
+            const confirmationId = Math.random().toString();
             const confirmationDisposer = autorun(() => {
                 this.builder.confirmation!.toggle(
                     confirmationId,
