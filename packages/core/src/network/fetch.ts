@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import {merge} from "es-toolkit";
 
-import {config} from "../utils";
+import {coreConfig} from "../config";
 
 import {createProblemDetails, handleProblemDetails} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
@@ -46,7 +46,7 @@ export async function coreFetch(
     let tryCount = 0;
 
     // On lance la requête.
-    while (tryCount <= config.retryCountOnFailedFetch) {
+    while (tryCount <= coreConfig.retryCountOnFailedFetch) {
         tryCount++;
         try {
             const response = await window.fetch(url, options);
@@ -93,9 +93,9 @@ export async function coreFetch(
             // Requête en erreur (= pas de retour serveur).
             if (!errorHandled) {
                 // On réessaie si on est en dessous du seuil de réessai.
-                if (tryCount <= config.retryCountOnFailedFetch) {
+                if (tryCount <= coreConfig.retryCountOnFailedFetch) {
                     await new Promise(r => {
-                        setTimeout(r, config.retryDelayOnFailedFetch);
+                        setTimeout(r, coreConfig.retryDelayOnFailedFetch);
                     });
                 } else {
                     // Sinon, on retourne une erreur technique.
