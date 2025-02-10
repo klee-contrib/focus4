@@ -20,7 +20,17 @@
         "@focus4/layout": "11.24.7",
         "@focus4/stores": "11.24.7",
         "@focus4/styling": "11.24.7",
-        "@focus4/toolbox": "11.24.7"
+        "@focus4/toolbox": "11.24.7",
+        "classnames": "~2.5.1",
+        "es-toolkit": "~1.33.0",
+        "motion": "~12.5.0"
+    },
+    "peerDependencies": {
+        "i18next": ">= 24.2 && < 25",
+        "mobx": ">= 6.13 && < 7",
+        "mobx-react": ">= 9.2 && < 10",
+        "react": ">= 19.0 && < 20",
+        "tslib": ">= 2.8 && < 3"
     },
     "devDependencies": {
         "@focus4/tooling": "11.24.7"

@@ -31,16 +31,8 @@ export default (async () => {
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "classnames",
-            "i18next",
-            "es-toolkit",
-            "luxon",
-            "mobx",
-            "mobx-react",
-            "react",
-            "react/jsx-runtime",
-            "react-dom",
-            "tslib"
+            ...Object.keys(pkg.peerDependencies || {}),
+            "react/jsx-runtime"
         ]
     };
 

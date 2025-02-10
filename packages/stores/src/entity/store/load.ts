@@ -1,6 +1,5 @@
 import {isFunction} from "es-toolkit";
 import {action, computed, observable, reaction, runInAction} from "mobx";
-import {v4} from "uuid";
 
 import {requestStore} from "@focus4/core";
 
@@ -43,7 +42,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
     constructor(
         node: StoreNode | StoreListNode,
         builder: NodeLoadBuilder<StoreNode | StoreListNode, A>,
-        trackingId = v4()
+        trackingId: string = Math.random().toString()
     ) {
         if (isAnyFormNode(node) && !!builder.loadService) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
