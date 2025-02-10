@@ -1,8 +1,8 @@
 {
-    "name": "@focus4/forms",
-    "version": "11.24.7",
-    "description": "Focus v4, forms module",
-    "main": "lib/focus4.forms.js",
+    "name": "@focus4/form-toolbox",
+    "version": "11.24.0",
+    "description": "Focus v4, form-toolbox module",
+    "main": "lib/focus4.form-toolbox.js",
     "type": "module",
     "repository": {
         "type": "git",
@@ -10,16 +10,19 @@
     },
     "author": "damien.frikha@kleegroup.com",
     "license": "MIT",
-    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/forms",
+    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/form-toolbox",
     "scripts": {
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
+        "@focus4/core": "11.24.7",
+        "@focus4/forms": "11.24.7",
         "@focus4/stores": "11.24.7",
         "@focus4/styling": "11.24.7",
-        "classnames": "~2.5.1",
+        "@focus4/toolbox": "11.24.7",
         "es-toolkit": "~1.33.0",
-        "intl-number-parser": "~1.0.5"
+        "file-type": "~20.4.1",
+        "luxon": "~3.5.0"
     },
     "peerDependencies": {
         "i18next": ">= 24.2 && < 25",
@@ -29,6 +32,8 @@
         "tslib": ">= 2.8 && < 3"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.24.7"
+        "@focus4/tooling": "11.24.7",
+        "@testing-library/react": "16.2.0",
+        "jsdom": "26.0.0"
     }
 }

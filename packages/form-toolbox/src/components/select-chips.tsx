@@ -2,11 +2,10 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
+import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Chip, ChipCss, DropdownCss, FontIcon, Icon, TextFieldCss} from "@focus4/toolbox";
-
-import {toSimpleType} from "../utils";
 
 import {Select} from "./select";
 import {SelectAutocomplete} from "./select-autocomplete";
@@ -67,7 +66,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
 }
 
 /**
- * Un [`Select`](/docs/composants-focus4∕forms-select--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
+ * Un [`Select`](/docs/composants-focus4∕form-toolbox-select--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
  *
  * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */

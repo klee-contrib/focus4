@@ -59,7 +59,8 @@ Ces modules contiennent les éléments de base d'une application Focus, et serve
 Ces deux modules permettent de construire des formulaires, et représentent donc le coeur d'une application Focus. C'est avec ces deux modules-là que vous passerez le plus de temps.
 
 -   **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
--   **`@focus4/forms`** : composants de formulaires.
+-   **`@focus4/forms`** : champs de formulaires.
+-   **`@focus4/form-toolbox`** : composants de formulaires par défaut, basés sur le module `toolbox`.
 
 ### Modules de présentation
 

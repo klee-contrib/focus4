@@ -2,10 +2,9 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 
+import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
-
-import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>
