@@ -2,11 +2,10 @@ import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback} from "react";
 
+import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
-
-import {stringToDomainType} from "../utils";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 export {selectRadioCss};

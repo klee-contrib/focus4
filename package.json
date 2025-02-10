@@ -11,6 +11,7 @@
     "packages/toolbox",
     "packages/stores",
     "packages/forms",
+    "packages/form-toolbox",
     "packages/layout",
     "packages/collections",
     "packages/focus4",

@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {AutocompleteSearch} from "@focus4/forms";
+import {AutocompleteSearch} from "@focus4/form-toolbox";
 
 import {searchAdresse} from "./adresse";
 import {AutocompleteSearchMeta} from "./metas/autocomplete-search";
@@ -9,7 +9,7 @@ import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...AutocompleteSearchMeta,
-    title: "Composants/@focus4∕forms/AutocompleteSearch",
+    title: "Composants/@focus4∕form-toolbox/AutocompleteSearch",
     tags: ["autodocs"]
 } as Meta<typeof AutocompleteSearch>;
 

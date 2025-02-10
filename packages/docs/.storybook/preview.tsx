@@ -1,4 +1,5 @@
 import "@focus4/collections/lib/focus4.collections.css";
+import "@focus4/form-toolbox/lib/focus4.form-toolbox.css";
 import "@focus4/forms/lib/focus4.forms.css";
 import "@focus4/layout/lib/focus4.layout.css";
 import "@focus4/styling/lib/focus4.styling.css";
@@ -6,13 +7,14 @@ import "@focus4/toolbox/lib/focus4.toolbox.css";
 import "./preview.css";
 
 import {translation as collections} from "@focus4/collections";
-import {translation as forms} from "@focus4/forms";
+import {translation as forms} from "@focus4/form-toolbox";
 import {translation as layout} from "@focus4/layout";
+import {translation as stores} from "@focus4/stores";
 import {colorScheme, initColorScheme} from "@focus4/styling";
 
-import {Title, Subtitle, Description, Primary, Controls} from "@storybook/blocks";
-import type {Preview} from "@storybook/react";
+import {Controls, Description, Primary, Subtitle, Title} from "@storybook/blocks";
 import {addons} from "@storybook/preview-api";
+import type {Preview} from "@storybook/react";
 import i18next from "i18next";
 import React from "react";
 import {DARK_MODE_EVENT_NAME} from "storybook-dark-mode";
@@ -32,6 +34,7 @@ i18next.init({
                 focus: {
                     ...collections.fr,
                     ...forms.fr,
+                    ...stores.fr,
                     icons: {...collections.icons, ...forms.icons, ...layout.icons}
                 },
                 router: {
@@ -76,7 +79,7 @@ export default {
                     "Les bases",
                     "Modèle métier",
                     "Composants",
-                    ["Composants de base", "@focus4∕toolbox", "@focus4∕forms"],
+                    ["Composants de base", "@focus4∕toolbox", "@focus4∕form-toolbox"],
                     "Listes",
                     "Routage",
                     "Mise en page",

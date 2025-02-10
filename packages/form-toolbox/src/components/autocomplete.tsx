@@ -1,10 +1,9 @@
 import {debounce} from "es-toolkit";
 import {useCallback, useEffect, useState} from "react";
 
+import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
-
-import {stringToDomainType} from "../utils";
 
 export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
     extends Omit<
