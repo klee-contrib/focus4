@@ -36,7 +36,7 @@ export {
     shouldDisplayFacet,
     summaryCss
 } from "./search";
-export {translation} from "./translation";
+export {i18nCollections} from "./translation";
 
 export type {
     AddItemProps,
