@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "11.23.8",
+    "version": "11.24.0",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "type": "module",
@@ -18,12 +18,12 @@
         "@focus4/core": "11.23.6",
         "@focus4/stores": "11.23.7",
         "@focus4/styling": "11.23.6",
-        "@focus4/toolbox": "11.23.7",
+        "@focus4/toolbox": "11.24.0",
         "@types/numeral": "2.0.5",
         "numeral": "2.0.6"
     },
     "devDependencies": {
-        "@focus4/tooling": "11.23.6",
+        "@focus4/tooling": "11.24.0",
         "@testing-library/react": "16.2.0",
         "jsdom": "26.0.0"
     }
