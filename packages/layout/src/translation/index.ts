@@ -1,3 +1,3 @@
 import {icons} from "./icons";
 
-export const translation = {icons};
+export const i18nLayout = {icons};

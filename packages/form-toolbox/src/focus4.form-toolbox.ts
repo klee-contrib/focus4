@@ -22,7 +22,7 @@ export {
     selectRadioCss
 } from "./components";
 export {domain} from "./domain";
-export {translation} from "./translation";
+export {i18nFormToolbox} from "./translation";
 
 export {
     AutocompleteChipsProps,
