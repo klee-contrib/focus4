@@ -48,9 +48,7 @@ export const Calendar = forwardRef(function Calendar(
     const theme = useTheme("calendar", calendarCss, pTheme);
 
     const [date, setDate] = useState(handleValue(value, format));
-    const [displayedMonth, setDisplayedMonth] = useState(
-        DateTime.fromISO((date ? date : DateTime.now()).toFormat("yyyyMM"))
-    );
+    const [displayedMonth, setDisplayedMonth] = useState(DateTime.fromISO((date ?? DateTime.now()).toFormat("yyyyMM")));
 
     const [maxDate, setMaxDate] = useState(handleValue(max, format));
     useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);

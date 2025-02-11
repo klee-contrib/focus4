@@ -17,8 +17,8 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
-    /** Désactive le select. */
-    disabled?: boolean;
+    /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
+    disabled?: boolean | DomainType<T>;
     /** Message d'erreur à afficher. */
     error?: string;
     /**
@@ -147,7 +147,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
             <AutocompleteSearch<SingleDomainFieldType<T>, TSource>
                 clearQueryOnChange
                 direction={direction}
-                disabled={disabled}
+                disabled={disabled as any}
                 error={error}
                 getKey={getKey}
                 getLabel={getLabel}
@@ -176,7 +176,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                             key={`${item}`}
                             className={theme.chip()}
                             color="light"
-                            disabled={disabled}
+                            disabled={disabled === true}
                             label={labels.get(item) ?? ""}
                             onDeleteClick={
                                 !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)

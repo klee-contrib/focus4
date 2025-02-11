@@ -114,11 +114,8 @@ export function InputDate({
 }: InputDateProps) {
     const theme = useTheme("inputDate", inputDateCss, pTheme);
 
-    const zone = timezoneCode
-        ? timezoneCode
-        : ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only"
-        ? "utc"
-        : undefined;
+    const zone =
+        timezoneCode ?? (ISOStringFormat === "utc-midnight" || ISOStringFormat === "date-only" ? "utc" : undefined);
 
     /** Convertit le texte en objet Luxon. */
     const toLuxon = useCallback(

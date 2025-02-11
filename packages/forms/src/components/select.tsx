@@ -8,7 +8,9 @@ import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectProps<T extends DomainFieldTypeSingle>
-    extends Omit<DropdownProps<any>, "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
+    extends Omit<DropdownProps<any>, "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
+    /** Désactive la Dropdown (si true), ou une liste d'options de la Dropdown (si liste de valeurs). */
+    disabled?: boolean | DomainType<T>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -29,6 +31,7 @@ export interface SelectProps<T extends DomainFieldTypeSingle>
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function Select<const T extends DomainFieldTypeSingle>({
+    disabled,
     error,
     i18nPrefix = "focus",
     onChange,
@@ -44,6 +47,7 @@ export function Select<const T extends DomainFieldTypeSingle>({
     return useObserver(() => (
         <Dropdown
             {...props}
+            disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={v => `${v[$valueKey]}`}
             getLabel={v => (v[$labelKey] as string) ?? i18next.t(`${i18nPrefix}.select.noLabel`)}

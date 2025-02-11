@@ -9,7 +9,12 @@ import {stringToDomainType} from "../utils";
 
 /** Props du Select. */
 export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>
-    extends Omit<AutocompleteProps<any>, "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
+    extends Omit<
+        AutocompleteProps<any>,
+        "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"
+    > {
+    /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
+    disabled?: boolean | DomainType<T>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
@@ -36,6 +41,7 @@ const undefinedKey = "$$undefined$$";
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
 export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
+    disabled,
     error,
     hasUndefined = true,
     i18nPrefix = "focus",
@@ -66,6 +72,7 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
     return useObserver(() => (
         <Autocomplete
             {...props}
+            disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
             getLabel={getLabel}

@@ -25,13 +25,18 @@ export {dropdownCss};
 export type {DropdownCss};
 
 export interface DropdownProps<TSource = {key: string; label: string}>
-    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
+    extends Omit<
+        TextFieldProps,
+        "autoComplete" | "disabled" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
+    > {
     /** Précise dans quel sens les valeurs doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
+    /** Désactive la Dropdown (si true), ou une liste d'options du Dropdown (si liste de string). */
+    disabled?: boolean | string[];
     /** Désactive la sélection de valeurs au clavier lorsque la Dropdown est fermée. */
     disableArrowSelectionWhenClosed?: boolean;
     /**
-     * Détermine la propriété de l'objet a utiliser comme clé. *
+     * Détermine la propriété de l'objet a utiliser comme clé.
      * Par défaut : `item => item.key`
      */
     getKey?: (item: TSource) => string;
@@ -238,12 +243,12 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         <div
             ref={rootRef}
             aria-activedescendant={id ? `${id}-${selected}` : undefined}
-            aria-disabled={disabled}
+            aria-disabled={disabled === true}
             aria-errormessage={error && id ? `${id}-st` : undefined}
             aria-invalid={error ? true : undefined}
             className={classNames(
                 theme.dropdown({
-                    disabled,
+                    disabled: disabled === true,
                     singleLine: sizing !== "fit-to-field-and-wrap"
                 }),
                 className
@@ -256,7 +261,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
         >
             <TextField
                 ref={inputRef}
-                disabled={disabled}
+                disabled={disabled === true}
                 error={error}
                 fieldRef={menu.anchor}
                 hint={hint}
@@ -353,11 +358,14 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                     </Ripple>
                 ) : null}
                 {values.map(s => (
-                    <Ripple key={getKey(s)}>
+                    <Ripple key={getKey(s)} disabled={Array.isArray(disabled) && disabled.includes(getKey(s))}>
                         <span
                             aria-label={getLabel(s)}
                             aria-selected={getKey(s) === value}
-                            className={theme.value({selected: getKey(s) === value})}
+                            className={theme.value({
+                                disabled: Array.isArray(disabled) && disabled.includes(getKey(s)),
+                                selected: getKey(s) === value
+                            })}
                             data-value={getKey(s)}
                             id={id ? `${id}-${getKey(s)}` : undefined}
                             role="option"

@@ -41,12 +41,17 @@
     transition: opacity var(--animation-duration-short) var(--animation-curve-default);
 }
 
-.value:hover::before {
+.value:not(.value--disabled):hover::before {
     opacity: var(--button-hover-opacity);
 }
 
 .value--selected {
     background: var(--input-on-light-color);
+}
+
+.value--disabled {
+    cursor: default;
+    color: var(--input-disabled-color);
 }
 
 .dropdown--singleLine {

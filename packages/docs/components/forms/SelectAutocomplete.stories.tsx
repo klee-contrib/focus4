@@ -14,15 +14,15 @@ export default {
     args: {
         type: "string",
         values: makeReferenceList([
-            {code: "1", label: "Valeur 1"},
-            {code: "2", label: "Valeur 2"}
+            {code: 1, label: "Valeur 1"},
+            {code: 2, label: "Valeur 2"}
         ])
     }
 } as Meta<typeof SelectAutocomplete>;
 
-export const Showcase: StoryObj<typeof SelectAutocomplete<"string">> = {
+export const Showcase: StoryObj<typeof SelectAutocomplete<"number">> = {
     render(props) {
-        const [value, setValue] = useState<string>();
+        const [value, setValue] = useState<number>();
         return <SelectAutocomplete {...props} onChange={setValue} value={value} />;
     }
 };

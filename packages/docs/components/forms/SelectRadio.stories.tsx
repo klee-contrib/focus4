@@ -14,15 +14,15 @@ export default {
     args: {
         type: "string",
         values: makeReferenceList([
-            {code: "1", label: "Valeur 1"},
-            {code: "2", label: "Valeur 2"}
+            {code: 1, label: "Valeur 1"},
+            {code: 2, label: "Valeur 2"}
         ])
     }
 } as Meta<typeof SelectRadio>;
 
-export const Showcase: StoryObj<typeof SelectRadio<"string">> = {
+export const Showcase: StoryObj<typeof SelectRadio<"number">> = {
     render(props) {
-        const [value, setValue] = useState<string>();
+        const [value, setValue] = useState<number>();
         return <SelectRadio {...props} onChange={setValue} value={value} />;
     }
 };

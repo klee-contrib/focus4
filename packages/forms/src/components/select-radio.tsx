@@ -15,7 +15,7 @@ export type {SelectRadioCss};
 /** Props du SelectRadio. */
 export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     /** Désactive le select. */
-    disabled?: boolean;
+    disabled?: boolean | DomainType<T>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Libellé. */
@@ -88,7 +88,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
                 {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
                 <RadioGroup
                     allowUndefined={hasUndefined === "no-option"}
-                    disabled={disabled}
+                    disabled={disabled === true}
                     onChange={handleChange}
                     // eslint-disable-next-line @typescript-eslint/no-base-to-string
                     value={value === undefined ? undefinedKey : `${value}`}
@@ -100,6 +100,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
                         return (
                             <RadioButton
                                 key={optVal ?? "undefined"}
+                                disabled={Array.isArray(disabled) && disabled.includes(optVal)}
                                 label={i18next.t(optLabel)}
                                 name={`${name!}-${optVal}`}
                                 theme={theme}

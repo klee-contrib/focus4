@@ -20,3 +20,8 @@
 .suggestion--active {
     background: var(--input-on-light-color);
 }
+
+.suggestion--disabled {
+    cursor: default;
+    color: var(--input-disabled-color);
+}

@@ -28,7 +28,10 @@ export {autocompleteCss};
 export type {AutocompleteCss};
 
 export interface AutocompleteProps<TSource = {key: string; label: string}>
-    extends Omit<TextFieldProps, "autoComplete" | "maxLength" | "onChange" | "readonly" | "theme" | "type"> {
+    extends Omit<
+        TextFieldProps,
+        "autoComplete" | "disabled" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
+    > {
     /** Suggestions supplémentaires à afficher en plus des suggestions issues de `values`, pour effectuer des actions différentes.  */
     additionalSuggestions?: {key: string; content: ReactNode; onClick: () => void}[];
     /** Autorise la sélection d'une valeur qui n'existe pas dans `values` (le contenu de la `query` sera retourné en tant que valeur). */
@@ -37,6 +40,8 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     clearQueryOnChange?: boolean;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
+    /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de string). */
+    disabled?: boolean | string[];
     /**
      * Détermine la propriété de l'objet a utiliser comme clé.
      * Par défaut : `item => item.key`
@@ -308,7 +313,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 aria-controls={id ? `${id}-suggestions` : undefined}
                 aria-expanded={menu.active}
                 autoComplete={config.autocompleteOffValue}
-                disabled={disabled}
+                disabled={disabled === true}
                 error={error}
                 fieldRef={menu.anchor}
                 hint={hint}
@@ -360,10 +365,13 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 selected={selected}
             >
                 {(maxDisplayed ? take(suggestions, maxDisplayed) : suggestions).map(s => (
-                    <Ripple key={getKey(s)}>
+                    <Ripple key={getKey(s)} disabled={Array.isArray(disabled) && disabled.includes(getKey(s))}>
                         <span
                             aria-label={getLabel(s)}
-                            className={theme.suggestion({active: getKey(s) === selected})}
+                            className={theme.suggestion({
+                                active: getKey(s) === selected,
+                                disabled: Array.isArray(disabled) && disabled.includes(getKey(s))
+                            })}
                             id={id ? `${id}-${getKey(s)}` : undefined}
                             role="option"
                         >
@@ -372,9 +380,12 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                     </Ripple>
                 ))}
                 {additionalSuggestions?.map(({key, content}) => (
-                    <Ripple key={key}>
+                    <Ripple key={key} disabled={Array.isArray(disabled) && disabled.includes(key)}>
                         <span
-                            className={theme.suggestion({active: key === selected})}
+                            className={theme.suggestion({
+                                active: key === selected,
+                                disabled: Array.isArray(disabled) && disabled.includes(key)
+                            })}
                             id={id ? `${id}-${key}` : undefined}
                             role="option"
                         >

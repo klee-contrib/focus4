@@ -22,8 +22,8 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
-    /** Désactive le champ texte. */
-    disabled?: boolean;
+    /** Désactive le Select (si true), ou une liste d'options du Select (si liste de valeurs). */
+    disabled?: boolean | DomainType<T>;
     /** Message d'erreur à afficher. */
     error?: string;
     /** Permet la sélection de tous les éléments à la fois. */
@@ -192,7 +192,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     allowUnmatched
                     clearQueryOnChange
                     direction={direction}
-                    disabled={disabled}
+                    disabled={disabled as any}
                     error={error}
                     hasUndefined={false}
                     icon={icon}
@@ -211,7 +211,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                 <Select
                     direction={direction}
                     disableArrowSelectionWhenClosed
-                    disabled={disabled}
+                    disabled={disabled as any}
                     error={error}
                     hideUndefined
                     icon={icon}
@@ -235,7 +235,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                             key={`${item}`}
                             className={theme.chip()}
                             color="light"
-                            disabled={disabled}
+                            disabled={disabled === true}
                             label={values.getLabel(item)}
                             onDeleteClick={
                                 !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)

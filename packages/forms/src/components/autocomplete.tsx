@@ -9,8 +9,17 @@ import {stringToDomainType} from "../utils";
 export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
-        "error" | "loading" | "noSuggestionsOnEmptyQuery" | "onChange" | "suggestionMatch" | "value" | "values"
+        | "disabled"
+        | "error"
+        | "loading"
+        | "noSuggestionsOnEmptyQuery"
+        | "onChange"
+        | "suggestionMatch"
+        | "value"
+        | "values"
     > {
+    /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
+    disabled?: boolean | DomainType<T>[];
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Service de résolution de clé. Doit retourner le libellé. */
@@ -47,6 +56,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
     TSource = {key: string; label: string}
 >(
     {
+        disabled,
         error,
         getKey = defaultGetKey,
         keyResolver,
@@ -132,6 +142,7 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
         <Autocomplete
             {...props}
             ref={ref}
+            disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
             loading={loading}
@@ -143,7 +154,6 @@ export const AutocompleteSearch = forwardRef(function AutocompleteSearch<
             showSupportingText={showSupportingText}
             suggestionMatch="disabled"
             supportingText={error ?? supportingText}
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             value={value !== undefined ? `${value}` : undefined}
             values={values}
         />
