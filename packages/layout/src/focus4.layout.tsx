@@ -23,7 +23,7 @@ export {
     useOverlay,
     useStickyClip
 } from "./presentation";
-export {translation} from "./translation";
+export {i18nLayout} from "./translation";
 export {HeaderContext, MessageCenter, OverlayContext, ScrollableContext, ScrollspyContext} from "./utils";
 export {LayoutBase};
 

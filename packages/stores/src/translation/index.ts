@@ -1,3 +1,3 @@
 import {fr} from "./fr";
 
-export const translation = {fr};
+export const i18nStores = {fr};
