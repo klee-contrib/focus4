@@ -24,7 +24,7 @@ technologies (et `React` bien sûr) avant de pouvoir commencer avec.
 Ce framework est la 4ème itération du framework `Focus`, et la seule version maintenue depuis 2017. Il est publié sur [npm](https://www.npmjs.com/package/focus4) sous le nom `focus4` pour le
 méta-package et dans le scope `@focus4/xxx` pour les différents modules.
 
-Le framework lui-même est aujourd'hui dans sa version majeure **11** (`focus4 v11.x`).
+Le framework lui-même est aujourd'hui dans sa version majeure **12** (`focus4 v12.x`).
 
 ---
 
@@ -74,7 +74,7 @@ Ces deux modules proposent des composants graphiques de haut niveau qui permette
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
 En particulier, il inclut [Vite](https://vitejs.dev) et [ESLint](https://eslint.org/) et des configs par défaut à étendre pour ces outils.
 
-De plus, il contient l'outil de génération de types CSS.
+De plus, il contient l'outil de génération de types CSS, ainsi qu'un utilitaire pour faciliter les montées de version Focus.
 
 ## Starter Kit
 
