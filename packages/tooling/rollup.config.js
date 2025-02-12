@@ -15,5 +15,5 @@ export default {
         format: "esm",
         dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {}), "crypto", "dns", "fs", "path"]
+    external: [...Object.keys(pkg.dependencies || {}), "child_process", "crypto", "dns", "fs", "os", "path"]
 };
