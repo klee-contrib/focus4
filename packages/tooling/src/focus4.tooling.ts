@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
+import path from "path";
+
 import {generateCSSTypings} from "./generator";
+import {install} from "./install";
 export {generateCSSTypings};
 
 export {eslintConfig} from "./eslint";
@@ -21,7 +24,17 @@ if (process.argv?.[1]?.includes("focus4.tooling")) {
             await generateCSSTypings(rootDir, regex);
             clearTimeout(timer);
         })();
+    } else if (process.argv[2] === "install") {
+        const appPackageJsonPath = path.resolve(process.cwd(), "package.json");
+        (async () => {
+            // Pour forcer node à ne pas kill le process avant la fin de la promise.
+            const timer = setTimeout(() => {
+                /* */
+            }, 100000);
+            await install(appPackageJsonPath, process.argv[3] ?? "latest");
+            clearTimeout(timer);
+        })();
     } else {
-        throw new Error("Seule la fonctionnalité 'cssgen' est supportée par l'utilitaire 'focus4'.");
+        throw new Error("Seules les fonctionnalités 'cssgen' ou 'install' est supportée par l'utilitaire 'focus4'.");
     }
 }
