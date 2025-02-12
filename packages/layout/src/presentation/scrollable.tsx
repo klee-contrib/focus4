@@ -78,7 +78,7 @@ export function Scrollable({
                         onIntersect(Math.round(e.intersectionRatio * 100) / 100, e.isIntersecting);
                     }
                 }),
-            {root: scrollableNode.current, threshold: range(0, 102.5, 2.5).map(t => t / 100)}
+            {root: scrollableNode.current, threshold: range(0, 1025, 25).map(t => t / 1000)}
         );
     }, []);
 
