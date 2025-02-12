@@ -30,7 +30,7 @@ import {
     SelectProps
 } from "./components";
 
-/** Crée un domaine. */
+/** Crée un domaine avec les composants par défaut du module `form-toolbox`. */
 export function domain<
     const DT extends DomainFieldTypeSingle,
     ICProps extends BaseInputProps<DT> = InputProps<DT>,
