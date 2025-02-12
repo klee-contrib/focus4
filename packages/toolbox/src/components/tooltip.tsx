@@ -42,7 +42,7 @@ export function Tooltip({
     const [left, setLeft] = useState(0);
     const [top, setTop] = useState(0);
 
-    const timeout = useRef<NodeJS.Timeout>();
+    const timeout = useRef<NodeJS.Timeout>(null);
     const tooltipNode = useRef<HTMLSpanElement>(null);
 
     const onTransformEnd = useCallback(function onTransformEnd(e: any) {
@@ -186,7 +186,7 @@ export function Tooltip({
 
     return (
         <>
-            {cloneElement(children, {
+            {cloneElement(children as any, {
                 onPointerDown,
                 onPointerEnter: handlePointerEnter,
                 onPointerLeave: handlePointerLeave,

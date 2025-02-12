@@ -9,7 +9,6 @@
 
         // Options obligatoires
         "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true,
         "strict": true,
         "useDefineForClassFields": true,
 

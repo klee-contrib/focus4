@@ -7,17 +7,24 @@ import {Meta} from "@storybook/blocks";
 Focus utilise [`i18next`](https://www.i18next.com/) pour gérer les libellés et les icônes utilisés à travers ses différents composants. Vous êtes largement encouragés à l'utiliser pour vos
 propres libellés également.
 
-En ce qui concerne Focus, chaque module expose son propre objet de traductions (réexporté dans le méta-package `focus4` en un seul objet), à utiliser dans
-l'initialisation d'`i18next`.
+En ce qui concerne Focus, chaque module expose son propre objet de traduction, et la fonction `initI18n` permet de tout initialiser facilement :
 
-Par exemple :
+Par exemple, en important les traductions de tous les modules :
 
 ```ts
-import {translation as focus} from "focus4";
-import i18next from "i18next";
+import {i18nCollections} from "@focus4/collections";
+import {i18nFormToolbox} from "@focus4/form-toolbox";
+import {i18nStores} from "@focus4/stores";
+import {i18nLayout} from "@focus4/layout";
 
-i18next.init({lng: "fr", resources: {fr: {translation: {focus}}}});
+initI18n("fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
+    fr: {
+        /* Vos traductions personnalisées, qui peuvent surcharger celles de Focus. */
+    }
+});
 ```
+
+Cette fonction doit être appelée à l'initialisation de votre application, avant le chargement des vues.
 
 Focus ne dispose (pour l'instant...) que de traductions en français (n'hésitez pas à faire une PR avec au moins la version anglaise... 😉)
 
@@ -45,7 +52,7 @@ i18next.init({
     }
 });
 
-// Ou bien utiliser `merge` de `lodash` :
+// Ou bien utiliser `merge` de `es-toolkit` :
 custom = merge(focus, {module: {component: {label: "Ma valeur custom"}}});
 ```
 
@@ -58,7 +65,7 @@ de `i18nPrefix`). Par exemple `focus.icons.list.add` correspond à l'icône du b
 `focus.list.show.more`.
 
 Une icône se définit avec un **nom** et une **classe CSS**, qui permet de retrouver la police d'icônes associée, et se pose avec le composant [`FontIcon`](/docs/composants-focus4∕toolbox-fonticon--docs). La classe
-CSS est faculative car il existe une classe par défaut, définie dans `config.defaultIconClassName` (et vaut `"material-icons"`).
+CSS est faculative car il existe une classe par défaut, définie dans `uiConfig.defaultIconClassName` (et vaut `"material-icons"`).
 
 La clé i18n devra donc pointer vers un objet `{name, className?}` (avec `className` facultatif). Tout ce qui a été présenté pour la surcharge de libellé
 s'applique naturellement aussi pour les icônes.

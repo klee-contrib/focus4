@@ -33,17 +33,9 @@ export default (async () => {
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "classnames",
-            "framer-motion",
-            "i18next",
-            "lodash",
-            "luxon",
-            "mobx",
-            "mobx-react",
-            "react",
-            "react/jsx-runtime",
-            "react-dom",
-            "tslib"
+            ...Object.keys(pkg.peerDependencies || {}),
+            "motion/react",
+            "react/jsx-runtime"
         ]
     };
     return config;

@@ -3,8 +3,7 @@ import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
 
-import {themeable} from "@focus4/core";
-import {CSSProp} from "@focus4/styling";
+import {CSSProp, themeable} from "@focus4/styling";
 import {Chip, ChipCss} from "@focus4/toolbox";
 
 /** Type de Chip pour la recherche. */

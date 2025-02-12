@@ -1,7 +1,7 @@
 // @ts-check
-const fs = require("fs");
-const {glob} = require("glob");
-const rimraf = require("rimraf");
+import fs from "fs";
+import {glob} from "glob";
+import rimraf from "rimraf";
 
 glob.sync("packages/*/lib").forEach(f => rimraf.sync(f));
 glob.sync("packages/*/node_modules").forEach(f => rimraf.sync(f));

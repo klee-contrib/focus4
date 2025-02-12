@@ -10,7 +10,7 @@ import {FontIcon} from "@focus4/toolbox";
 import {TableCss} from "../__style__/table.css";
 
 /** Colonne de tableau. */
-export interface TableColumn<T> {
+export interface TableColumn<T extends object> {
     /** Classe CSS pour la colonne (posée sur le <th> et les <td>). */
     className?: string;
     /** Contenu de la colonne. */
@@ -21,7 +21,7 @@ export interface TableColumn<T> {
     sortKey?: string;
 }
 
-export function TableHeader<T>({
+export function TableHeader<T extends object>({
     column: {title, className: cellClassName, sortKey},
     i18nPrefix,
     store,
