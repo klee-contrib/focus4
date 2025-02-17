@@ -150,6 +150,7 @@ export function Scrollable({
             )}
         >
             <div ref={containerNode} className={classNames(theme.container(), className)}>
+                {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
                 <div ref={scrollableNode} className={theme.scrollable()}>
                     {children}
                 </div>
@@ -169,7 +170,6 @@ export function Scrollable({
                         </motion.div>
                     ) : undefined}
                 </AnimatePresence>
-                {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
             </div>
         </ScrollableContext.Provider>
     ));
