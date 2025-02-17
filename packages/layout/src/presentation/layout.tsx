@@ -49,6 +49,7 @@ export function LayoutBase({
                     hideBackToTop={hideBackToTop}
                     resetScrollOnChildrenChange
                     scrollBehaviour={scrollBehaviour}
+                    showOverlay
                 >
                     {children}
                 </Scrollable>

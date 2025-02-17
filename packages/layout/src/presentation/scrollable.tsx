@@ -27,6 +27,8 @@ export interface ScrollableProps {
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
+    /** Si renseigné, affiche également l'overlay des `Popin` et des `Dialog` au dessus du `Scrollable`. */
+    showOverlay?: boolean;
     /** Reset le scroll (à 0) dès que les children du scrollable changent.  */
     resetScrollOnChildrenChange?: boolean;
     /** CSS. */
@@ -52,6 +54,7 @@ export function Scrollable({
     children,
     hideBackToTop = false,
     scrollBehaviour = "smooth",
+    showOverlay = false,
     resetScrollOnChildrenChange,
     theme: pTheme
 }: ScrollableProps) {
@@ -147,7 +150,6 @@ export function Scrollable({
             )}
         >
             <div ref={containerNode} className={classNames(theme.container(), className)}>
-                <Overlay active={overlay.activeLevel >= level} close={overlay.close} />
                 <div ref={scrollableNode} className={theme.scrollable()}>
                     {children}
                 </div>
@@ -167,6 +169,7 @@ export function Scrollable({
                         </motion.div>
                     ) : undefined}
                 </AnimatePresence>
+                {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
             </div>
         </ScrollableContext.Provider>
     ));

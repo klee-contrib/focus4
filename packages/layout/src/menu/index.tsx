@@ -32,7 +32,12 @@ export interface MainMenuProps {
  *
  * Il est possible de gérer des sous menus : pour se faire, il suffit de passer d'autres `MainMenuItem` en enfants d'un `MainMenuItem`. Comme pour le `MainMenu`, il est possible également de passer d'autres éléments en enfant d'un `MainMenuItem`.
  */
-export function MainMenu({activeRoute, children, showOverlay, theme: pTheme}: PropsWithChildren<MainMenuProps>) {
+export function MainMenu({
+    activeRoute,
+    children,
+    showOverlay = false,
+    theme: pTheme
+}: PropsWithChildren<MainMenuProps>) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const overlay = useContext(OverlayContext);
     return useObserver(() => (

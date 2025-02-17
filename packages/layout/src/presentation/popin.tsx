@@ -72,6 +72,7 @@ export function Popin({
                   )}
                   hideBackToTop={hideBackToTop}
                   scrollBehaviour={scrollBehaviour}
+                  showOverlay
               >
                   {children}
               </Scrollable>
