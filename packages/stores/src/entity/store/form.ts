@@ -26,12 +26,16 @@ import {getNodeForList, replaceNode, setNode} from "./store";
  * @param parentNode Le node parent.
  */
 export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, parentNode?: FormListNode | FormNode) {
-    const {$edit, $required} = node;
+    let {$edit, $required} = node;
     if ($edit !== undefined) {
         delete node.$edit;
+    } else {
+        $edit = true;
     }
     if ($required !== undefined) {
         delete node.$required;
+    } else {
+        $required = true;
     }
 
     delete node.$form;
@@ -273,6 +277,10 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
                 };
             }
         });
+    }
+
+    if (!("_isEdit" in field)) {
+        extendObservable(field, {_isEdit: true});
     }
 
     extendObservable(field, {
