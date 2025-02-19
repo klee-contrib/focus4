@@ -22,10 +22,10 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.0.0-beta.1",
-        "@storybook/addon-essentials": "8.5.4",
-        "@storybook/blocks": "8.5.4",
-        "@storybook/react-vite": "8.5.4",
-        "storybook": "8.5.4",
+        "@storybook/addon-essentials": "8.5.8",
+        "@storybook/blocks": "8.5.8",
+        "@storybook/react-vite": "8.5.8",
+        "storybook": "8.5.8",
         "storybook-dark-mode": "4.0.2"
     }
 }
