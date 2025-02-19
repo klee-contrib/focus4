@@ -21,7 +21,7 @@
         "classnames": "~2.5.1",
         "es-toolkit": "~1.32.0",
         "luxon": "~3.5.0",
-        "motion": "~12.4.2",
+        "motion": "~12.4.4",
         "react-transition-state": "~2.3.0",
         "tslib": "~2.8.1"
     },
