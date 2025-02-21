@@ -1,6 +1,7 @@
 import {isArray, isObject, mapValues} from "lodash";
 import {action, extendObservable, isObservableArray, observable, runInAction} from "mobx";
 
+import {FormNodeBuilder} from "../form";
 import {
     EntityToType,
     FieldEntry,
@@ -121,14 +122,13 @@ export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
  * @param item L'item à ajouter (classique ou noeud).
  */
 export function getNodeForList<E>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
-    let node = buildNode<E>(list.$entity);
-    if (list.$nodeBuilder) {
-        node = list.$nodeBuilder(node);
-    }
-    if (isFormListNode(list)) {
-        // @ts-ignore
-        node.sourceNode = isStoreNode<E>(item) ? item : node;
-        nodeToFormNode<E>(node, list);
+    let node: StoreNode<E>;
+    if (isFormListNode<E>(list)) {
+        const sourceNode = isStoreNode(item) ? item : buildNode<E>(list.$entity);
+        node = list.$nodeBuilder ? list.$nodeBuilder(sourceNode) : new FormNodeBuilder(sourceNode).collect();
+        nodeToFormNode(node, list);
+    } else {
+        node = buildNode<E>(list.$entity);
     }
     node.set(item as EntityToType<E>);
     return node;
