@@ -52,6 +52,8 @@ export interface TrailingIcon {
 
 /** Props du champ texte. */
 export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTextAreaElement>, AriaAttributes {
+    /** Valeur de `accept` sur l'input HTML. */
+    accept?: string;
     /** Valeur de `autocomplete` sur l'input HTML. */
     autoComplete?: string;
     /** Classe CSS pour le composant racine. */
@@ -138,6 +140,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
  */
 export const TextField = forwardRef(function TextField(
     {
+        accept,
         autoComplete,
         className,
         disabled = false,
@@ -273,6 +276,7 @@ export const TextField = forwardRef(function TextField(
 
     const inputElementProps = {
         ref: inputNode as any,
+        accept,
         autoComplete,
         "aria-errormessage": error && id ? `${id}-st` : undefined,
         "aria-invalid": error ? true : undefined,
