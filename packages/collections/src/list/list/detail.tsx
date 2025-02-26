@@ -1,4 +1,4 @@
-import {motion} from "framer-motion";
+import {motion} from "motion/react";
 import {ComponentType} from "react";
 
 import {getDefaultTransition, ToBem} from "@focus4/styling";

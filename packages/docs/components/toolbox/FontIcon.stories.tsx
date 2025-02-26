@@ -9,7 +9,7 @@ export default {
     title: "Composants/@focus4∕toolbox/FontIcon",
     tags: ["autodocs"],
     args: {
-        children: "lightbulb"
+        children: "home"
     }
 } as Meta<typeof FontIcon>;
 
@@ -17,10 +17,11 @@ export const Showcase: StoryObj<typeof FontIcon> = {
     render(props) {
         return (
             <div className="stack">
+                <style>{`.material-symbols-sharp { font-variation-settings: 'FILL' 1 }`}</style>
                 <div className="container">
                     <FontIcon {...props} />
-                    <FontIcon iconClassName="material-icons-outlined" {...props} />
-                    <FontIcon iconClassName="material-icons-round" {...props} />
+                    <FontIcon iconClassName="material-symbols-rounded" {...props} />
+                    <FontIcon iconClassName="material-symbols-sharp" {...props} />
                 </div>
                 <br />
                 <div className="container">

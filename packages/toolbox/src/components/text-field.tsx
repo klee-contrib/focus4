@@ -7,13 +7,11 @@ import {
     FocusEvent,
     FocusEventHandler,
     FormEvent,
-    ForwardedRef,
-    forwardRef,
     KeyboardEventHandler,
     MouseEvent,
     MouseEventHandler,
     ReactNode,
-    RefObject,
+    Ref,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -63,7 +61,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** Affiche le champ texte en erreur. */
     error?: boolean;
     /** Ref vers le champ (pour ancrer un Menu dessus par exemple). */
-    fieldRef?: RefObject<HTMLDivElement>;
+    fieldRef?: Ref<HTMLDivElement>;
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Icône à poser devant le texte. */
@@ -100,6 +98,8 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     prefix?: string;
     /** Si renseigné, crée un champ texte en lecture seule sans <input> HTML. */
     readonly?: boolean;
+    /** Ref vers le input HTML. */
+    ref?: Ref<HTMLInputElement | HTMLTextAreaElement | HTMLSpanElement>;
     /** Valeur de `required` sur l'input HTML. */
     required?: boolean;
     /** Valeur de `role` sur l'input HTML. */
@@ -138,51 +138,49 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
  * naturellement dans le type de formulaires que l'on réalise avec Focus. Les dimensions originales sont indiquées en commentaire des variables CSS
  * du composant pour information et comparaison.
  */
-export const TextField = forwardRef(function TextField(
-    {
-        accept,
-        autoComplete,
-        className,
-        disabled = false,
-        error,
-        fieldRef,
-        hint,
-        icon,
-        id,
-        label,
-        loading,
-        maxLength,
-        multiline = false,
-        name,
-        onBlur,
-        onChange,
-        onClick,
-        onContextMenu,
-        onFocus,
-        onKeyDown,
-        onKeyUp,
-        onPaste,
-        onPointerDown,
-        onPointerEnter,
-        onPointerLeave,
-        onPointerUp,
-        prefix,
-        readonly,
-        required = false,
-        role,
-        rows = 1,
-        showSupportingText = "auto",
-        supportingText,
-        suffix,
-        tabIndex,
-        theme: pTheme,
-        trailing,
-        type = "text",
-        value,
-        ...props
-    }: TextFieldProps,
-    ref: ForwardedRef<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>
-) {
+export function TextField({
+    accept,
+    autoComplete,
+    className,
+    disabled = false,
+    error,
+    fieldRef,
+    hint,
+    icon,
+    id,
+    label,
+    loading,
+    maxLength,
+    multiline = false,
+    name,
+    onBlur,
+    onChange,
+    onClick,
+    onContextMenu,
+    onFocus,
+    onKeyDown,
+    onKeyUp,
+    onPaste,
+    onPointerDown,
+    onPointerEnter,
+    onPointerLeave,
+    onPointerUp,
+    prefix,
+    readonly,
+    ref,
+    required = false,
+    role,
+    rows = 1,
+    showSupportingText = "auto",
+    supportingText,
+    suffix,
+    tabIndex,
+    theme: pTheme,
+    trailing,
+    type = "text",
+    value,
+    ...props
+}: TextFieldProps) {
     const theme = useTheme("textField", textFieldCss, pTheme);
 
     const rootNode = useRef<HTMLDivElement>(null);
@@ -408,4 +406,4 @@ export const TextField = forwardRef(function TextField(
             ) : null}
         </div>
     );
-});
+}

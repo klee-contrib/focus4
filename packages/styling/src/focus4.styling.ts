@@ -1,8 +1,9 @@
-import "./variables";
 import "./global.css";
+import "./variables";
 
-export {ThemeContext, ThemeProvider, fromBem, toBem, useTheme} from "./theme";
-export {colorScheme, getDefaultTransition, initColorScheme, getSpringTransition} from "./utils";
+export {getDefaultTransition, getSpringTransition} from "./animation";
+export {uiConfig} from "./config";
+export {fromBem, themeable, ThemeContext, ThemeProvider, toBem, useTheme} from "./theme";
 
 export type {
     CSSContext,
