@@ -21,6 +21,8 @@ export interface PopinProps {
     closePopin: () => void;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
+    /** Appelé une fois que la Popin est effectivement fermée (après l'animtation). */
+    onClosed?: () => void;
     /** Popin ouverte (ou fermée). */
     opened: boolean;
     /** Supprime le clic sur l'overlay pour fermer la popin. */
@@ -46,6 +48,7 @@ export function Popin({
     children,
     closePopin,
     hideBackToTop,
+    onClosed,
     opened,
     preventOverlayClick,
     scrollBehaviour,
@@ -55,7 +58,7 @@ export function Popin({
     const theme = useTheme("popin", popinCss, pTheme);
     const {portal} = useContext(ScrollableContext);
 
-    const [displayed, tClassName] = useActiveTransition(opened, theme);
+    const [displayed, tClassName] = useActiveTransition(opened, theme, onClosed);
 
     useOverlay(
         opened,

@@ -22,6 +22,8 @@ export interface DialogProps {
     children?: ReactNode;
     /** Classe CSS pour le composant racine. */
     className?: string;
+    /** Appelé une fois que le Dialog est effectivement fermé (après l'animtation). */
+    onClosed?: () => void;
     /** Au click sur l'overlay du Dialog, à priori pour le fermer. Si non renseigné, le Dialog ne se fermera pas au clic sur l'overlay. */
     onOverlayClick?: () => void;
     /** Titre du Dialog. */
@@ -41,6 +43,7 @@ export function Dialog({
     active = false,
     className,
     children,
+    onClosed,
     onOverlayClick,
     title,
     theme: pTheme
@@ -48,7 +51,7 @@ export function Dialog({
     const theme = useTheme("dialog", dialogCss, pTheme);
     const {portal} = useContext(ScrollableContext);
 
-    const [displayed, tClassName] = useActiveTransition(active, theme);
+    const [displayed, tClassName] = useActiveTransition(active, theme, onClosed);
 
     useOverlay(active, onOverlayClick, true);
 
