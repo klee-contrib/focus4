@@ -9,7 +9,7 @@ import {PointerEvents} from "../utils/pointer-events";
 /**
  * Définition d'une icône. Peut être :
  *
- * - Le nom d'une icône, utilisera la classe CSS définie dans `uiConfig.defaultIconClassName` (par défaut : `"material-icons"`).
+ * - Le nom d'une icône, utilisera la classe CSS définie dans `uiConfig.defaultIconClassName` (par défaut : `"material-symbols-outlined"`).
  * - Un objet `{name, className?}`, décrivant le nom le icône et sa classe CSS associée (la classe par défaut sera sélectionnée si `className` n'est pas renseigné).
  * - Une clé i18n pointant vers un objet `{name, className?}`.
  *
@@ -54,7 +54,7 @@ export interface FontIconProps extends PointerEvents<HTMLSpanElement> {
 /**
  * Affiche une icône. Une icône est définie par son nom et sa classe CSS, qui servira à retrouver la police d'icône associée.
  *
- * Une icône définie avec seulement un nom utilisera la classe CSS définie dans `uiConfig.defaultIconClassName` (par défaut : `"material-icons"`).
+ * Une icône définie avec seulement un nom utilisera la classe CSS définie dans `uiConfig.defaultIconClassName` (par défaut : `"material-symbols-outlined"`).
  *
  * La classe CSS sera interprétée comme un template du nom si elle contient `{name}` dans sa définition.
  * Dans ce cas, le `name` ne sera pas posé en enfant du `<span>` qui définira l'icône.

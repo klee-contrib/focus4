@@ -4,5 +4,5 @@ export const uiConfig = {
     autocompleteOffValue: /Firefox/.exec(navigator.userAgent) ? "off" : "one-time-code",
 
     /** Classe CSS par défaut des icônes. */
-    defaultIconClassName: "material-icons"
+    defaultIconClassName: "material-symbols-outlined"
 };
