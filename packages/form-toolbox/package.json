@@ -1,6 +1,6 @@
 {
     "name": "@focus4/form-toolbox",
-    "version": "12.0.0-beta.4",
+    "version": "12.0.0-beta.5",
     "description": "Focus v4, form-toolbox module",
     "main": "lib/focus4.form-toolbox.js",
     "type": "module",
@@ -15,10 +15,10 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/forms": "12.0.0-beta.4",
-        "@focus4/stores": "12.0.0-beta.4",
-        "@focus4/styling": "12.0.0-beta.4",
-        "@focus4/toolbox": "12.0.0-beta.4",
+        "@focus4/forms": "12.0.0-beta.5",
+        "@focus4/stores": "12.0.0-beta.5",
+        "@focus4/styling": "12.0.0-beta.5",
+        "@focus4/toolbox": "12.0.0-beta.5",
         "es-toolkit": "~1.32.0",
         "luxon": "~3.5.0",
         "tslib": "~2.8.1"
@@ -30,7 +30,7 @@
         "react": ">= 19.0 < 20"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.0.0-beta.4",
+        "@focus4/tooling": "12.0.0-beta.5",
         "@testing-library/react": "16.2.0",
         "jsdom": "26.0.0"
     }

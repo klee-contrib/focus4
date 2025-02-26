@@ -2,7 +2,7 @@
     "name": "@focus4/docs",
     "description": "Focus v4 docs",
     "type": "module",
-    "version": "12.0.0-beta.4",
+    "version": "12.0.0-beta.5",
     "private": true,
     "repository": {
         "type": "git",
@@ -12,16 +12,16 @@
     "license": "MIT",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/docs",
     "dependencies": {
-        "@focus4/collections": "12.0.0-beta.4",
-        "@focus4/core": "12.0.0-beta.4",
-        "@focus4/forms": "12.0.0-beta.4",
-        "@focus4/layout": "12.0.0-beta.4",
-        "@focus4/stores": "12.0.0-beta.4",
-        "@focus4/styling": "12.0.0-beta.4",
-        "@focus4/toolbox": "12.0.0-beta.4"
+        "@focus4/collections": "12.0.0-beta.5",
+        "@focus4/core": "12.0.0-beta.5",
+        "@focus4/forms": "12.0.0-beta.5",
+        "@focus4/layout": "12.0.0-beta.5",
+        "@focus4/stores": "12.0.0-beta.5",
+        "@focus4/styling": "12.0.0-beta.5",
+        "@focus4/toolbox": "12.0.0-beta.5"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.0.0-beta.4",
+        "@focus4/tooling": "12.0.0-beta.5",
         "@storybook/addon-essentials": "8.5.8",
         "@storybook/blocks": "8.5.8",
         "@storybook/react-vite": "8.5.8",
