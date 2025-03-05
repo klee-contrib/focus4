@@ -1,4 +1,4 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
 
 import {EntityFieldBuilder} from "../field";
@@ -108,7 +108,7 @@ export class FormNodeBuilder<E, E0 = E> {
      */
     edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
     edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
-        const isEdit = isFunction(value) ? () => value(this.node) : value;
+        const isEdit = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         if (!params.length) {
             this.node.$edit = isEdit;
         } else {
@@ -225,7 +225,7 @@ export class FormNodeBuilder<E, E0 = E> {
      */
     required(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
     required(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
-        const isRequired = isFunction(value) ? () => value(this.node) : value;
+        const isRequired = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         if (!params.length) {
             this.node.$required = isRequired;
         } else {

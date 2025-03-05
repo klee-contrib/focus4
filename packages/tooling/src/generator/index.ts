@@ -1,8 +1,8 @@
 import {promises as fs} from "fs";
 import path from "path";
 
+import {camelCase, sortBy, upperFirst} from "es-toolkit";
 import {glob} from "glob";
-import {camelCase, sortBy, upperFirst} from "lodash";
 import postcss from "postcss";
 import extractImports from "postcss-modules-extract-imports";
 import localByDefault from "postcss-modules-local-by-default";
@@ -34,7 +34,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
         .sync(pattern)
         .map(file => {
             if (regex && !regex.test(file)) {
-                return {file: ""};
+                return {file: "", interfaceName: ""};
             }
             const parts = file.replace(/\\/g, "/").split("/");
             const fileName = parts[parts.length - 1];
@@ -57,12 +57,12 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
                     elements.add(Element);
                     if (modifier) {
                         hasModifier = true;
-                        return [token, `CSSMod<"${modifier}", ${Element}>`];
+                        return [token, `CSSMod<"${modifier}", ${Element}>`] as [string, string];
                     } else {
-                        return [token, `CSSElement<${Element}>`];
+                        return [token, `CSSElement<${Element}>`] as [string, string];
                     }
                 }),
-                ([name]) => name
+                [([name]) => name]
             );
 
             if (!tokens.length) {

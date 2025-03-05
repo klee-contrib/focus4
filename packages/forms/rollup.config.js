@@ -17,10 +17,7 @@ export default (async () => {
         plugins: [
             postcss({extract: true, modules: true}),
             typescript(),
-            copy([
-                {files: "src/components/**/*.css.d.ts", dest: "lib/components"},
-                {files: "src/fields/**/*.css.d.ts", dest: "lib/fields"}
-            ])
+            copy([{files: "src/fields/**/*.css.d.ts", dest: "lib/fields"}])
         ],
         treeshake: {
             moduleSideEffects: false
@@ -31,16 +28,8 @@ export default (async () => {
         },
         external: [
             ...Object.keys(pkg.dependencies || {}),
-            "classnames",
-            "i18next",
-            "lodash",
-            "luxon",
-            "mobx",
-            "mobx-react",
-            "react",
-            "react/jsx-runtime",
-            "react-dom",
-            "tslib"
+            ...Object.keys(pkg.peerDependencies || {}),
+            "react/jsx-runtime"
         ]
     };
 

@@ -1,4 +1,4 @@
-export {ActionBar, actionBarCss, actionBarFor} from "./action-bar";
+export {ActionBar, actionBarCss} from "./action-bar";
 export {ContextualActions, contextualActionsCss} from "./contextual-actions";
 export {List, listCss, ListContext, listFor} from "./list";
 export {listBaseCss, useListBase} from "./list-base";

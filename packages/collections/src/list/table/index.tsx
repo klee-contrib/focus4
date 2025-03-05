@@ -19,7 +19,7 @@ export {tableCss};
 export type {TableColumn, TableCss};
 
 /** Props du tableau de base. */
-export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
+export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** La description des colonnes du tableau. */
     columns: TableColumn<NoInfer<T>>[];
     /** Classe CSS pour une ligne. */
@@ -81,7 +81,7 @@ export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
  * mise en forme personnalisée), vous pouvez toujours revenir à un tableau HTML à la main... Vous pouvez cependant réutiliser la logique de pagination avec le
  * hook `useListBase` et le CSS du tableau en utilisant `tableCss`.
  */
-export function Table<T>({
+export function Table<T extends object>({
     columns,
     // @ts-ignore
     hasSelection,
@@ -204,6 +204,6 @@ export function Table<T>({
  * mise en forme personnalisée), vous pouvez toujours revenir à un tableau HTML à la main... Vous pouvez cependant réutiliser la logique de pagination avec le
  * hook `useListBase` et le CSS du tableau en utilisant `tableCss`.
  */
-export function tableFor<T>(props: TableProps<T>) {
+export function tableFor<T extends object>(props: TableProps<T>) {
     return <Table<T> {...props} />;
 }

@@ -61,10 +61,9 @@ useLoad(
 _Remarque : Il n'est pas possible d'enregistrer un service de chargement (avec `useLoad`) sur un `FormNode`. `useFormActions` le pose, quand il est défini,
 bien sur le `sourceNode` du store de formulaire, comme on a reproduit dans l'exemple au-dessus._
 
-_Remarque 2 : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `FormActions` (qui hérite de `LoadRegistration`), qui
+\_Remarque 2 : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `FormActions` (qui hérite de `LoadRegistration`), qui
 s'instancie avec les mêmes paramètres que `useFormActions`. Vous devrez ensuite appeler la fonction `register()` (sur le `sourceNode`) de la même
-façon que pour `LoadRegistration`. De plus, une version pour composant classe est disponible avec `makeFormActions`, qui prend les mêmes paramètres
-mais avec `this` en plus en premier._
+façon que pour `LoadRegistration`.
 
 ## Services de sauvegarde
 

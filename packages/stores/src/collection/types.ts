@@ -74,6 +74,8 @@ export interface CollectionStoreInitProperties<C = any, NC = C> extends SearchPr
     criteriaMode?: "debounced" | "direct" | "manual";
     /** Configurateur pour le formulaire de critères. */
     criteriaBuilder?: (s: FormNodeBuilder<C, C>) => FormNodeBuilder<NC, C>;
+    /** Délai entre la saisie du texte et la recherche dans la barre de recherche. Par défaut : 500ms. */
+    textSearchDelay?: number;
 }
 
 /** Valeur de facette. */

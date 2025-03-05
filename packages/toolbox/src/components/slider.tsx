@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {range} from "lodash";
+import {range} from "es-toolkit";
 import {PointerEvent as RPointerEvent, useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -19,9 +19,9 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
     disabled?: boolean;
     /** Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider. */
     labeled?: boolean;
-    /** Valeur maximale du Slider. Par défaut : 100. */
+    /** Valeur (entière) maximale du Slider. Par défaut : 100. */
     max?: number;
-    /** Valeur minimale du Slider. Par défaut : 0. */
+    /** Valeur (entière) minimale du Slider. Par défaut : 0. */
     min?: number;
     /** Handler appelé au changement de la valeur du Slider. */
     onChange?: (value?: number) => void;
