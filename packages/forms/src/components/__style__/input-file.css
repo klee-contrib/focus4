@@ -36,6 +36,10 @@
     outline-width: var(--text-field-focused-outline-size);
     outline-offset: calc(-1 * var(--text-field-focused-outline-size));
     outline-color: var(--input-on-main-color);
+
+    & * {
+        pointer-events: none;
+    }
 }
 
 .text {
@@ -43,7 +47,6 @@
     align-items: center;
     gap: var(--input-file-icon-gap);
     padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
-    pointer-events: none;
 }
 
 .input {
@@ -60,7 +63,6 @@
         calc(var(--input-file-line-margin) / 2) calc(var(--input-file-line-margin) * 2);
     border-radius: var(--text-field-border-radius);
     border: var(--text-field-outline-size) solid var(--input-state-color);
-    pointer-events: none;
 
     & > span {
         display: inline-flex;
@@ -68,12 +70,12 @@
         gap: var(--input-file-icon-gap);
     }
 
-    &:last-of-type {
-        margin-bottom: var(--input-file-line-margin);
+    & > button {
+        flex-shrink: 0;
     }
 
-    & button {
-        pointer-events: all;
+    &:last-of-type {
+        margin-bottom: var(--input-file-line-margin);
     }
 }
 
