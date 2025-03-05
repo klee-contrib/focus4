@@ -43,6 +43,7 @@
 }
 
 .text {
+    pointer-events: none;
     display: inline-flex;
     align-items: center;
     gap: var(--input-file-icon-gap);
@@ -54,6 +55,7 @@
 }
 
 .file {
+    pointer-events: none;
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
@@ -71,6 +73,7 @@
     }
 
     & > button {
+        pointer-events: all;
         flex-shrink: 0;
     }
 
