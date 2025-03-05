@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "11.24.5",
+    "version": "11.24.6",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "type": "module",

@@ -2,7 +2,7 @@
     "name": "@focus4/docs",
     "description": "Focus v4 docs",
     "type": "module",
-    "version": "11.24.5",
+    "version": "11.24.6",
     "private": true,
     "repository": {
         "type": "git",
@@ -12,9 +12,9 @@
     "license": "MIT",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/docs",
     "dependencies": {
-        "@focus4/collections": "11.24.5",
+        "@focus4/collections": "11.24.6",
         "@focus4/core": "11.24.5",
-        "@focus4/forms": "11.24.5",
+        "@focus4/forms": "11.24.6",
         "@focus4/layout": "11.24.5",
         "@focus4/stores": "11.24.5",
         "@focus4/styling": "11.24.5",
