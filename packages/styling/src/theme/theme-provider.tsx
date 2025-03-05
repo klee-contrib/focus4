@@ -27,6 +27,7 @@ export interface FocusCSSContext extends CSSContext {
     field: {};
     form: {};
     inputDate: {};
+    inputFile: {};
     label: {};
     select: {};
     selectCheckbox: {};

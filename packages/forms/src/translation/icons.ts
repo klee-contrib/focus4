@@ -13,6 +13,17 @@ export const icons = {
             name: "save"
         }
     },
+    file: {
+        delete: {
+            name: "clear"
+        },
+        upload: {
+            name: "file_upload"
+        },
+        line: {
+            name: "description"
+        }
+    },
     label: {
         tooltip: {
             name: "info"

@@ -1,0 +1,103 @@
+:root {
+    --input-file-min-height: 56px;
+    --input-file-icon-gap: 9px;
+    --input-file-line-margin: 6px;
+}
+
+.field {
+    min-width: var(--text-field-min-width);
+    max-width: var(--text-field-max-width);
+}
+
+.container {
+    width: 100%;
+    min-height: var(--input-file-min-height);
+    border-radius: var(--text-field-border-radius);
+    outline: var(--text-field-outline-size) dashed var(--input-state-color);
+    background-color: var(--text-field-background-color);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: outline-color var(--animation-duration-short) var(--animation-curve-default),
+        outline-width 0.1s linear 0s;
+    cursor: pointer;
+
+    &:hover {
+        outline-color: var(--input-outline-color);
+    }
+}
+
+.container--disabled {
+    cursor: default;
+}
+
+.container--dragOver,
+.container:focus-visible {
+    outline-width: var(--text-field-focused-outline-size);
+    outline-offset: calc(-1 * var(--text-field-focused-outline-size));
+    outline-color: var(--input-on-main-color);
+}
+
+.text {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--input-file-icon-gap);
+    padding: var(--text-field-padding-vertical) var(--text-field-padding-horizontal);
+    pointer-events: none;
+}
+
+.input {
+    display: none;
+}
+
+.file {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--input-file-line-margin);
+    margin: var(--input-file-line-margin) var(--input-file-line-margin) 0 var(--input-file-line-margin);
+    padding: calc(var(--input-file-line-margin) / 2) var(--input-file-line-margin)
+        calc(var(--input-file-line-margin) / 2) calc(var(--input-file-line-margin) * 2);
+    border-radius: var(--text-field-border-radius);
+    border: var(--text-field-outline-size) solid var(--input-state-color);
+    pointer-events: none;
+
+    & > span {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--input-file-icon-gap);
+    }
+
+    &:last-of-type {
+        margin-bottom: var(--input-file-line-margin);
+    }
+
+    & button {
+        pointer-events: all;
+    }
+}
+
+.supportingText {
+    padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
+    display: flex;
+    gap: var(--text-field-padding-horizontal);
+    color: var(--input-state-color);
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: var(--text-field-supporting-text-size);
+    line-height: var(--text-field-supporting-text-height);
+    min-height: var(--text-field-supporting-text-height);
+}
+
+.field--error {
+    & .container {
+        outline-color: var(--input-error-color);
+    }
+
+    & .supportingText {
+        color: var(--input-error-color);
+    }
+}
+.field--error .container {
+    outline-color: var(--input-error-color);
+}
