@@ -174,7 +174,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                 return;
                             }
 
-                            const oldPathWithQuery = (oldPath || "/") + buildQueryString(store._activeQuery);
+                            const oldPathWithQuery = oldPath + buildQueryString(store._activeQuery);
 
                             // On refuse la navigation si on tombe sur un query param inconnu.
                             if (
@@ -182,7 +182,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                     .filter(x => x)
                                     .some(qp => !Object.keys(queryConfig).includes(qp))
                             ) {
-                                return {redirect: oldPathWithQuery, replace: true};
+                                return oldPathWithQuery;
                             }
 
                             const prevRoute = store._activeRoute;
@@ -214,7 +214,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                     if (redirect !== window.location.hash?.replace("#", "")) {
                                         store._activeRoute = prevRoute;
                                         store._activeParams = prevParams;
-                                        return {redirect, replace: true};
+                                        return redirect;
                                     }
                                 }
                             }
@@ -258,7 +258,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                                 store._activeRoute = prevRoute;
                                 store._activeParams = prevParams;
                                 store._activeQuery = prevQuery;
-                                return {redirect: oldPathWithQuery, replace: true};
+                                return oldPathWithQuery;
                             }
 
                             return undefined;

@@ -10,13 +10,6 @@ export interface RouteEnterEvent {
     search: {[key: string]: string};
 }
 
-export type RouteBeforeEnterResult =
-    | void
-    | null
-    | undefined
-    | {redirect: string; replace?: boolean}
-    | Promise<{redirect: string; replace?: boolean}>;
-
 export interface RouteConfig {
     /**
      * The pattern to match against
@@ -27,11 +20,13 @@ export interface RouteConfig {
      * Called before entering a route. This is your chance to redirect if you want.
      *
      */
-    enter: (evt: RouteEnterEvent) => RouteBeforeEnterResult;
+    enter: (evt: RouteEnterEvent) => string | undefined;
 }
 
 export async function startHistory(history: HashHistory, routes: RouteConfig[]) {
-    async function trigger({oldPath, newPath, search}: {oldPath: string; newPath: string; search: Search}) {
+    let oldPath = "/";
+
+    async function trigger({newPath, search}: {newPath: string; search: Search}) {
         const parsedSearch = parseSearchString(search);
 
         let beforeMatch: RouteConfig | undefined;
@@ -63,37 +58,23 @@ export async function startHistory(history: HashHistory, routes: RouteConfig[]) 
 
         // Route non matchée => on revient là où on était avant (ou à la racine si premier appel).
         if (!enterMatch || !params) {
-            history.push(oldPath || "/");
+            history.replace(oldPath);
             return;
         }
 
         /** Entering */
-        const result = await enterMatch.enter({oldPath, newPath, params, search: parsedSearch});
-        if (!result) {
-            /** Nothing to do */
-        } else if (result.redirect) {
-            if (result.replace) {
-                history.replace(result.redirect);
-            } else {
-                history.push(result.redirect);
-            }
-            return;
+        const redirect = enterMatch.enter({oldPath, newPath, params, search: parsedSearch});
+        if (!redirect) {
+            oldPath = newPath;
+        } else {
+            history.replace(redirect);
+            oldPath = redirect;
         }
     }
 
-    let oldPath = history.location.pathname;
     history.listen(({location}) => {
-        trigger({
-            oldPath,
-            newPath: location.pathname,
-            search: location.search
-        });
-        oldPath = location.pathname;
+        trigger({newPath: location.pathname, search: location.search});
     });
 
-    await trigger({
-        oldPath: "",
-        newPath: history.location.pathname,
-        search: history.location.search
-    });
+    await trigger({newPath: history.location.pathname, search: history.location.search});
 }
