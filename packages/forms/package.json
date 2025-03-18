@@ -20,7 +20,7 @@
         "@focus4/styling": "11.24.5",
         "@focus4/toolbox": "11.24.5",
         "@types/numeral": "2.0.5",
-        "file-type": "20.4.0",
+        "file-type": "20.4.1",
         "numeral": "2.0.6"
     },
     "devDependencies": {

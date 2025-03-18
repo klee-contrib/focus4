@@ -79,12 +79,12 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
                     };
                     if (err) {
                         // Cas de l'erreur : on redirige vers la page d'erreur avec le code.
-                        return {redirect: `/${errorPageName}/${err}`, replace: true};
+                        return `/${errorPageName}/${err}`;
                     } else if (redirect) {
                         // Cas de la redirection : on récupère la nouvelle URL et on redirige dessus, si on n'y est pas déjà.
                         const url = store.getUrl({...params, ...redirect});
                         if (url !== getUrl()) {
-                            return {redirect: url, replace: true};
+                            return url;
                         }
                     }
                 }
@@ -104,6 +104,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
             enter: action("enter", ({params}) => {
                 errorCode.set(params.code);
                 updateActivity(stores.length);
+                return undefined;
             })
         },
 
@@ -113,22 +114,22 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
             enter: ({newPath, oldPath}) => {
                 if (newPath === "/") {
                     // Si on a pas de route initiale, on redirige vers le store principal.
-                    return {redirect: `/${stores[0].prefix as string}`, replace: true};
+                    return `${stores[0].prefix as string}`;
                 } else {
                     // On traite le handler personnalisé.
                     if (config.notfoundHandler) {
                         const result = config.notfoundHandler(newPath);
                         if (result) {
                             if (result === true) {
-                                return {redirect: oldPath || getUrl(), replace: true}; // On reste où on est.
+                                return oldPath || getUrl(); // On reste où on est.
                             } else {
-                                return {redirect: result, replace: true}; // On redirige ailleurs.
+                                return result; // On redirige ailleurs.
                             }
                         }
                     }
 
                     // Sinon on redirige vers la page d'erreur.
-                    return {redirect: `/${errorPageName}/${notfoundCode}`, replace: true};
+                    return `/${errorPageName}/${notfoundCode}`;
                 }
             }
         }
