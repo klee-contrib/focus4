@@ -1,10 +1,9 @@
-import {debounce, flatten, isFunction, isString, orderBy, toPairs} from "lodash";
+import {debounce, flatten, isFunction, isString, orderBy} from "es-toolkit";
 import {
     action,
     computed,
     IObservableArray,
     isObservableArray,
-    makeObservable,
     observable,
     reaction,
     remove,
@@ -12,9 +11,6 @@ import {
     set,
     toJS
 } from "mobx";
-import {v4} from "uuid";
-
-import {config} from "@focus4/core";
 
 import {
     buildNode,
@@ -44,7 +40,7 @@ import {
 export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class CollectionStore<T = any, C = any, NC = C> {
+export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Type de store. */
     readonly type: "local" | "server";
 
@@ -54,7 +50,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
     private readonly service?: SearchService<T>;
 
     /** Liste des champs disponibles pour la recherche texte. */
-    @observable.ref availableSearchFields: string[] = [];
+    @observable.ref accessor availableSearchFields: string[] = [];
 
     /** Facettes en entrée de la recherche. */
     private readonly innerInputFacets = observable.map<string, FacetInput>();
@@ -66,20 +62,20 @@ export class CollectionStore<T = any, C = any, NC = C> {
     private readonly innerList: IObservableArray<T> = observable([]);
 
     /** `isLoading` setté manuellement, pour le mode `local`. */
-    @observable private localIsLoading = false;
+    @observable private accessor localIsLoading = false;
 
     /** Identifiant de la requête en cours. */
-    @observable private pendingQuery?: string;
+    @observable private accessor pendingQuery: string | undefined;
 
     /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
-    @observable private serverCount = 0;
+    @observable private accessor serverCount = 0;
 
     /** Champ sur lequel grouper. */
-    @observable groupingKey: string | undefined;
+    @observable accessor groupingKey: string | undefined;
     /** Filtre texte. */
-    @observable query = "";
+    @observable accessor query = "";
     /** Liste des champs sur lesquels le champ texte filtre (si non renseigné : tous les champs disponibles). */
-    @observable.ref searchFields: string[] | undefined;
+    @observable.ref accessor searchFields: string[] | undefined;
 
     /** Facettes sélectionnées. */
     @computed.struct
@@ -91,16 +87,16 @@ export class CollectionStore<T = any, C = any, NC = C> {
     }
 
     /** Tri par ordre croissant. */
-    @observable sortAsc = true;
+    @observable accessor sortAsc = true;
     /** Nom du champ sur lequel trier. */
-    @observable sortBy: string | undefined;
+    @observable accessor sortBy: string | undefined;
     /** Nombre maximum de résultat par requête serveur. */
-    @observable top = 50;
+    @observable accessor top = 50;
     /** Token à utiliser pour la pagination. */
     skipToken?: string;
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
-    @observable isItemSelectionnable: (data: T) => boolean = () => true;
+    @observable accessor isItemSelectionnable: (data: T) => boolean = () => true;
 
     /** StoreNode contenant les critères personnalisés de recherche. */
     readonly criteria!: FormNode<NC, C>;
@@ -135,10 +131,9 @@ export class CollectionStore<T = any, C = any, NC = C> {
         secondParam?: C | CollectionStoreInitProperties<C, NC>,
         thirdParam?: C | CollectionStoreInitProperties<C, NC>
     ) {
-        makeObservable(this);
         if (isFunction(firstParam)) {
             this.type = "server";
-            this.service = firstParam;
+            this.service = firstParam as SearchService<T>;
 
             // On gère les paramètres du constructeur dans les deux ordres.
             let initialQuery: CollectionStoreInitProperties<C, NC>;
@@ -185,12 +180,12 @@ export class CollectionStore<T = any, C = any, NC = C> {
                     this.criteriaMode === "debounced" ? this.flatCriteria : undefined, // Par exemple, si les critères sont entrés comme du texte ça peut être utile.
                     this.query
                 ],
-                debounce(() => this.search(), config.textSearchDelay)
+                debounce(() => this.search(), initialQuery?.textSearchDelay ?? 500)
             );
         } else {
             this.type = "local";
-            this.localStoreConfig = firstParam;
-            this.availableSearchFields = firstParam?.searchFields ?? [];
+            this.localStoreConfig = firstParam as LocalStoreConfig<T>;
+            this.availableSearchFields = this.localStoreConfig?.searchFields ?? [];
         }
     }
 
@@ -231,15 +226,15 @@ export class CollectionStore<T = any, C = any, NC = C> {
                     isMultiValued: false,
                     canExclude,
                     values: orderBy(
-                        toPairs(groupByFacet(list, fieldName))
+                        Object.entries(groupByFacet(list, fieldName))
                             .map(([value, items]) => ({
                                 code: value,
                                 label: value === "<null>" ? "focus.search.results.missing" : displayFormatter(value),
                                 count: items.length
                             }))
                             .filter(f => f.count !== 0),
-                        f => (ordering.includes("count") ? f.count : f.code),
-                        ordering.includes("desc") ? "desc" : "asc"
+                        [f => (ordering.includes("count") ? f.count : f.code)],
+                        [ordering.includes("desc") ? "desc" : "asc"]
                     )
                 };
             }
@@ -256,7 +251,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
             return [];
         }
 
-        return toPairs(
+        return Object.entries(
             groupByFacet(
                 this.list,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -285,7 +280,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
 
         // Tri.
         if (this.sortBy) {
-            list = orderBy(this.innerList, item => (item as any)[this.sortBy!], this.sortAsc ? "asc" : "desc");
+            list = orderBy(this.innerList, [item => item[this.sortBy as keyof T]], [this.sortAsc ? "asc" : "desc"]);
         }
 
         // Filtrage simple, sur les champs choisis.
@@ -474,7 +469,7 @@ export class CollectionStore<T = any, C = any, NC = C> {
             top
         };
 
-        const pendingQuery = v4();
+        const pendingQuery = Math.random().toString();
         this.pendingQuery = pendingQuery;
 
         try {
@@ -739,7 +734,6 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
         }
 
         function add(key?: any) {
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
         }
 

@@ -1,12 +1,11 @@
+import {sortBy} from "es-toolkit";
 import i18next from "i18next";
-import {sortBy} from "lodash";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {
     ComponentType,
-    ForwardedRef,
-    forwardRef,
     ReactNode,
+    Ref,
     RefObject,
     useCallback,
     useContext,
@@ -38,6 +37,8 @@ export interface ScrollspyContainerProps {
      * Par défaut calculé avec la hauteur du header.
      */
     offsetTopOverride?: number;
+    /** Ref pour accéder à `scrollToPanel`. */
+    ref?: Ref<ScrollspyContainerRef>;
     /** Menu rétractable. */
     retractable?: boolean;
     /** CSS. */
@@ -56,17 +57,15 @@ export interface ScrollspyContainerRef {
 /**
  * Le `ScrollspyContainer` est un composant du mise en page qui permet d'affiche un menu sur la gauche qui recapitule les titres de tous les [`Panel`](/docs/mise-en-page-panel--docs) posés à l'intérieur, avec la possibilité de naviguer vers eux en cliquant dessus.
  */
-export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
-    {
-        children,
-        contentRef,
-        MenuComponent = ScrollspyMenu,
-        offsetTopOverride,
-        retractable = true,
-        theme: pTheme
-    }: ScrollspyContainerProps,
-    ref: ForwardedRef<ScrollspyContainerRef>
-) {
+export function ScrollspyContainer({
+    children,
+    contentRef,
+    MenuComponent = ScrollspyMenu,
+    offsetTopOverride,
+    ref,
+    retractable = true,
+    theme: pTheme
+}: ScrollspyContainerProps) {
     const theme = useTheme("scrollspy", scrollspyCss, pTheme);
     const {headerHeight, registerIntersect, scrollTo} = useContext(ScrollableContext);
     const innerRef = useRef<HTMLDivElement>(null);
@@ -78,19 +77,21 @@ export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
         headerHeight: offsetTopOverride ?? headerHeight,
         panels: observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>(),
         get sortedPanels() {
-            return sortBy(Array.from(state.panels.entries()), ([_, {node}]) => getOffsetTop(node));
+            return sortBy(Array.from(state.panels.entries()), [([_, {node}]) => getOffsetTop(node)]);
         },
         get activeItem() {
-            const panels = sortBy(state.sortedPanels, ([_, {ratio, node}]) => {
-                const rect = node.getBoundingClientRect();
-                const headerRatio =
-                    rect.height === 0
-                        ? 1
-                        : !state.headerHeight
-                        ? 0
-                        : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
-                return headerRatio - (ratio >= 0.95 ? 1 : ratio);
-            });
+            const panels = sortBy(state.sortedPanels, [
+                ([_, {ratio, node}]) => {
+                    const rect = node.getBoundingClientRect();
+                    const headerRatio =
+                        rect.height === 0
+                            ? 1
+                            : !state.headerHeight
+                            ? 0
+                            : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
+                    return headerRatio - (ratio >= 0.95 ? 1 : ratio);
+                }
+            ]);
             return panels[0]?.[0];
         }
     }));
@@ -151,7 +152,7 @@ export const ScrollspyContainer = forwardRef(function ScrollspyContainer(
             </ScrollspyContext.Provider>
         </div>
     ));
-});
+}
 
 /**
  * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.

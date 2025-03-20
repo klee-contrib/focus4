@@ -16,13 +16,5 @@ export default {
         format: "esm",
         dir: "lib"
     },
-    external: [
-        ...Object.keys(pkg.dependencies || {}),
-        "i18next",
-        "lodash",
-        "mobx",
-        "react",
-        "react/jsx-runtime",
-        "tslib"
-    ]
+    external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {}), "react/jsx-runtime"]
 };

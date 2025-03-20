@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
-import {isObject, merge, toPairs} from "lodash";
+import {merge} from "es-toolkit";
 
-import {config} from "../utils";
+import {coreConfig} from "../config";
 
 import {createProblemDetails, handleProblemDetails} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
@@ -22,18 +22,20 @@ export async function coreFetch(
     const queryString = buildQueryString(query);
     url += queryString ? `${url.includes("?") ? "&" : "?"}${queryString}` : "";
     options = merge(
-        {method, credentials: "include"},
-        body instanceof FormData
-            ? {body}
-            : body
-            ? {
-                  headers: {
-                      "Content-Type": isObject(body) ? "application/json" : "text/plain"
-                  },
-                  body: JSON.stringify(body)
-              }
-            : {},
-        options
+        {method, credentials: "include" as const},
+        merge(
+            body instanceof FormData
+                ? {body}
+                : body
+                ? {
+                      headers: {
+                          "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
+                      },
+                      body: JSON.stringify(body)
+                  }
+                : {},
+            options
+        )
     );
 
     // On crée la requête dans le store.
@@ -44,7 +46,7 @@ export async function coreFetch(
     let tryCount = 0;
 
     // On lance la requête.
-    while (tryCount <= config.retryCountOnFailedFetch) {
+    while (tryCount <= coreConfig.retryCountOnFailedFetch) {
         tryCount++;
         try {
             const response = await window.fetch(url, options);
@@ -68,6 +70,7 @@ export async function coreFetch(
                 }
             } else {
                 // Retour en erreur
+                // eslint-disable-next-line no-useless-assignment
                 errorHandled = true;
 
                 // On détermine le type de retour en fonction du Content-Type dans le header.
@@ -90,9 +93,9 @@ export async function coreFetch(
             // Requête en erreur (= pas de retour serveur).
             if (!errorHandled) {
                 // On réessaie si on est en dessous du seuil de réessai.
-                if (tryCount <= config.retryCountOnFailedFetch) {
+                if (tryCount <= coreConfig.retryCountOnFailedFetch) {
                     await new Promise(r => {
-                        setTimeout(r, config.retryDelayOnFailedFetch);
+                        setTimeout(r, coreConfig.retryDelayOnFailedFetch);
                     });
                 } else {
                     // Sinon, on retourne une erreur technique.
@@ -145,8 +148,8 @@ export async function getFileObjectUrl(response: Response) {
 /** Construit le query string associé à l'objet donné. */
 function buildQueryString(obj: any, prefix = ""): string {
     let queryString = "";
-    if (isObject(obj)) {
-        queryString = toPairs(obj).reduce(
+    if (typeof obj === "object") {
+        queryString = Object.entries(obj).reduce(
             (acc, [key, value]) =>
                 acc +
                 (acc && acc !== "" && !acc.endsWith("&") && value !== undefined ? "&" : "") +

@@ -1,8 +1,6 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 import {computed, extendObservable, observable, remove} from "mobx";
 import {ComponentType, ReactNode} from "react";
-
-import {themeable} from "@focus4/core";
 
 import {
     BaseAutocompleteProps,
@@ -21,6 +19,7 @@ import {
     WithThemeProps
 } from "../types";
 
+import {themeable} from "./themeable";
 import {UndefinedComponent} from "./utils";
 
 type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps : never;
@@ -290,13 +289,13 @@ export class EntityFieldBuilder<F extends FieldEntry> {
 }
 
 export function mergeMetadatas(domain: Domain, $metadatas: (Metadata | ((metadata?: Metadata) => Metadata))[]) {
-    let $metadata = isFunction($metadatas[0]) ? $metadatas[0]() : $metadatas[0];
+    let $metadata = (isFunction($metadatas[0]) ? $metadatas[0]() : $metadatas[0]) as Metadata;
     for (let i = 1; i <= $metadatas.length - 1; i++) {
         const $newMetadata = $metadatas[i];
         [$metadata, domain] = mergeMetadata(
             domain,
             $metadata,
-            isFunction($newMetadata) ? $newMetadata($metadata) : $newMetadata
+            (isFunction($newMetadata) ? $newMetadata($metadata) : $newMetadata) as Metadata
         );
     }
     return {...$metadata, domain};

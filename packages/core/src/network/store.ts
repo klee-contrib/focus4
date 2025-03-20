@@ -1,7 +1,6 @@
-import {uniq} from "lodash";
-import {action, computed, makeObservable, observable} from "mobx";
+import {uniq} from "es-toolkit";
+import {action, computed, observable} from "mobx";
 import {computedFn} from "mobx-utils";
-import {v4} from "uuid";
 
 export type HttpMethod = "CONNECT" | "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT" | "TRACE";
 
@@ -23,10 +22,6 @@ export class RequestStore {
     /** @internal */
     /** Requêtes suivies en cours. */
     private readonly trackedRequests = observable.map<string, string[]>({}, {deep: false});
-
-    constructor() {
-        makeObservable(this);
-    }
 
     /** Indique s'il y a au moins une requête en cours. */
     @computed
@@ -68,7 +63,7 @@ export class RequestStore {
      * @returns La Promise de `fetch`.
      */
     async track<T>(trackingId: string[] | string, fetch: () => Promise<T>) {
-        const id = v4();
+        const id = Math.random().toString();
         await setTimeout0(() =>
             this.trackedRequests.set(id, uniq(Array.isArray(trackingId) ? trackingId : [trackingId]))
         );
@@ -85,7 +80,7 @@ export class RequestStore {
      * @returns Id de la requête.
      */
     async startRequest(method: HttpMethod, url: string) {
-        const id = v4();
+        const id = Math.random().toString();
         await setTimeout0(() => this.pendingRequests.set(id, {method, url}));
         return id;
     }

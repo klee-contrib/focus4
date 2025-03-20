@@ -1,6 +1,6 @@
-import {AnimatePresence} from "framer-motion";
 import {autorun, comparer, observable, reaction} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
+import {AnimatePresence} from "motion/react";
 import {ComponentType, Fragment, useContext, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
@@ -27,7 +27,7 @@ export {ListContext, listCss};
 export type {DetailProps, LineProps, ListCss};
 
 /** Props du composant de liste standard. */
-export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
+export type ListProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
     AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -95,7 +95,7 @@ export type ListProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
  * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
  * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
  */
-export function List<T>({
+export function List<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     canOpenDetail = () => true,
@@ -323,6 +323,6 @@ export function List<T>({
  * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
  * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
  */
-export function listFor<T>(props: ListProps<T>) {
+export function listFor<T extends object>(props: ListProps<T>) {
     return <List<T> {...props} />;
 }

@@ -11,7 +11,7 @@ const config = {
         format: "esm",
         dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {})]
+    external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})]
 };
 
 export default config;

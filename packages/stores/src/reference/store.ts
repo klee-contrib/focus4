@@ -1,14 +1,13 @@
-import {upperFirst} from "lodash";
+import {upperFirst} from "es-toolkit";
 import {action, extendObservable, observable, when} from "mobx";
-import {v4} from "uuid";
 
-import {config, requestStore} from "@focus4/core";
+import {coreConfig, requestStore} from "@focus4/core";
 
 import {ReferenceDefinition, ReferenceStore} from "./types";
 import {filter, getLabel} from "./util";
 
 /** Id du suivi de requêtes du ReferenceStore. */
-export const referenceTrackingId = v4();
+export const referenceTrackingId = Math.random().toString();
 
 /**
  * Construit un store de référence à partir d'un service de chargement et de définitions de listes de référence à charger.
@@ -44,7 +43,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     !referenceStore[`_${ref}_loading`] &&
                     !(
                         referenceStore[`_${ref}_cache`] &&
-                        new Date().getTime() - referenceStore[`_${ref}_cache`] < config.referenceCacheDuration
+                        new Date().getTime() - referenceStore[`_${ref}_cache`] < coreConfig.referenceCacheDuration
                     )
                 ) {
                     referenceStore[`_${ref}_loading`] = true;
@@ -101,7 +100,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         if (!Array.isArray(trackingIds)) {
             trackingIds = [trackingIds];
         }
-        const id = v4();
+        const id = Math.random().toString();
         for (const refName of refNames) {
             referenceStore[`_${refName}_trackingIds`].set(id, trackingIds);
         }

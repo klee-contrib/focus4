@@ -3,6 +3,7 @@
   "version": "11.0.0",
   "description": "Focus v4 (Typescript + MobX)",
   "main": "",
+  "type": "module",
   "workspaces": [
     "packages/tooling",
     "packages/core",
@@ -10,10 +11,10 @@
     "packages/toolbox",
     "packages/stores",
     "packages/forms",
+    "packages/form-toolbox",
     "packages/layout",
     "packages/collections",
     "packages/focus4",
-    "packages/legacy",
     "packages/docs"
   ],
   "repository": {
@@ -29,7 +30,7 @@
     "docgen": "node scripts/docgen.mjs",
     "docs": "storybook dev --docs -p 6006 -c packages/docs/.storybook",
     "docs-build": "storybook build --docs -c packages/docs/.storybook -o docs",
-    "eslint": "eslint --ext .ts,.tsx packages",
+    "eslint": "eslint packages",
     "publish": "lerna publish --exact",
     "stylelint": "stylelint packages/**/*.css",
     "test": "vitest run",
@@ -41,9 +42,7 @@
     "css-tree": "3.1.0",
     "lerna": "8.2.1",
     "postcss": "8.5.3",
-    "react": "18.3.1",
     "react-docgen-typescript": "2.2.2",
-    "react-dom": "18.3.1",
     "rollup": "4.36.0",
     "rollup-plugin-copy-glob": "0.4.1",
     "rollup-plugin-postcss": "4.0.2",

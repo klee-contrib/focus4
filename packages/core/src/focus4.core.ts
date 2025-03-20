@@ -8,10 +8,12 @@ declare module "i18next" {
     }
 }
 
+export {colorScheme, initColorScheme} from "./color-scheme";
+export {coreConfig} from "./config";
+export {initI18n} from "./i18n";
 export {coreFetch, downloadFile, getFileObjectUrl, isHandledError, requestStore} from "./network";
 export {makeRouter, param, startHistory} from "./router";
 export {MessageStore, messageStore, UserStore} from "./stores";
-export {config, themeable} from "./utils";
 
 export type {HandledProblemDetails, HttpMethod, ProblemDetails, Request} from "./network";
 export type {

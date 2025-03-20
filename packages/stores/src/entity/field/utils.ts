@@ -1,4 +1,4 @@
-import {isFunction} from "lodash";
+import {isFunction} from "es-toolkit";
 import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 
@@ -142,7 +142,7 @@ export function makeField<F extends FieldEntry>(
 ): EntityField<F>;
 export function makeField(param1: any, param2: any = {}) {
     if (isFunction(param2)) {
-        return withIsEdit(param2(new EntityFieldBuilder(param1)).collect());
+        return withIsEdit((param2(new EntityFieldBuilder(param1)) as EntityFieldBuilder<any>).collect());
     } else {
         const {
             className,

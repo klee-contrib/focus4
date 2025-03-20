@@ -1,8 +1,7 @@
 import {useContext} from "react";
 
-import {themeable} from "@focus4/core";
-
 import {CSSToStrings, ThemeContext} from "./common";
+import {themeable} from "./themeable";
 import {fromBem, toBem, ToBem} from "./to-bem";
 
 /**

@@ -24,7 +24,7 @@ technologies (et `React` bien sûr) avant de pouvoir commencer avec.
 Ce framework est la 4ème itération du framework `Focus`, et la seule version maintenue depuis 2017. Il est publié sur [npm](https://www.npmjs.com/package/focus4) sous le nom `focus4` pour le
 méta-package et dans le scope `@focus4/xxx` pour les différents modules.
 
-Le framework lui-même est aujourd'hui dans sa version majeure **11** (`focus4 v11.x`).
+Le framework lui-même est aujourd'hui dans sa version majeure **12** (`focus4 v12.x`).
 
 ---
 
@@ -59,7 +59,8 @@ Ces modules contiennent les éléments de base d'une application Focus, et serve
 Ces deux modules permettent de construire des formulaires, et représentent donc le coeur d'une application Focus. C'est avec ces deux modules-là que vous passerez le plus de temps.
 
 -   **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
--   **`@focus4/forms`** : composants de formulaires.
+-   **`@focus4/forms`** : champs de formulaires.
+-   **`@focus4/form-toolbox`** : composants de formulaires par défaut, basés sur le module `toolbox`.
 
 ### Modules de présentation
 
@@ -68,20 +69,17 @@ Ces deux modules proposent des composants graphiques de haut niveau qui permette
 -   **`@focus4/layout`**: composants de mise en page.
 -   **`@focus4/collections`** : composants de listes et de recherche avancée.
 
-### Autres modules
-
--   **`@focus4/legacy`** : repackage des fonctionnalités d'anciennes versions Focus qui n'ont pas d'équivalent direct dans la version actuelle.
--   **`focus4`** : méta-package contenant tous les autres (sauf `legacy`).
-
 ### `@focus4/tooling`
 
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
 En particulier, il inclut [Vite](https://vitejs.dev) et [ESLint](https://eslint.org/) et des configs par défaut à étendre pour ces outils.
 
-De plus, il contient l'outil de génération de types CSS.
+De plus, il contient l'outil de génération de types CSS ainsi qu'un utilitaire pour faciliter l'installation et les montées de versions des modules de Focus.
+Cet outil s'utilise via la commande `npx focus4 install` ou `npx focus4 update` (les deux commandes sont identiques), et parcourera votre
+`package.json` pour récupérer la version la plus récente de chaque module Focus et de ses peer dependancies (React et MobX).
 
 ## Starter Kit
 
 Vous pouvez commencer un projet en utilisant le [starter kit](http://www.github.com/klee-contrib/focus4-starter-kit), qui sert également de démo et présente les usages les plus courants de Focus.
 
-La version packagée est également disponible [ici](https://focus4-starter-kit.fly.dev).
+La version packagée de ce starter-kit est également disponible [ici](https://focus4-starter-kit.fly.dev) pour démonstration.

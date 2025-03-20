@@ -7,7 +7,7 @@ import {Button, FontIcon} from "@focus4/toolbox";
 import listBaseCss from "./__style__/list-base.css";
 
 /** Props de base d'un composant d'ajout d'item. */
-export interface AddItemProps<T> {
+export interface AddItemProps<T extends object> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler: () => void;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -19,7 +19,7 @@ export interface AddItemProps<T> {
 }
 
 /** Props de base d'un composant d'empty state. */
-export interface EmptyProps<T> {
+export interface EmptyProps<T extends object> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -29,7 +29,7 @@ export interface EmptyProps<T> {
 }
 
 /** Props de base d'un composant de chargement. */
-export interface LoadingProps<T> {
+export interface LoadingProps<T extends object> {
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Store de la liste. */

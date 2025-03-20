@@ -21,7 +21,7 @@ export interface GroupHeaderProps<T> {
 }
 
 /** Props du composant de groupe. */
-export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
+export interface GroupProps<T extends object, P extends ListBaseProps<T> = ListProps<T>> {
     /** Constituion du groupe à afficher. */
     group: GroupResult<T>;
     /** Header de groupe personnalisé. */
@@ -50,7 +50,7 @@ export interface GroupProps<T, P extends ListBaseProps<T> = ListProps<T>> {
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
-export function Group<T, P extends ListBaseProps<T> = ListProps<T>>({
+export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
     group,
     GroupHeader = DefaultGroupHeader,
     groupOperationList,
