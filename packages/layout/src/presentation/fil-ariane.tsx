@@ -54,9 +54,17 @@ export interface FilArianeProps {
  * _Remarque : (Les noms `router` et `root` sont paramétrables)._
  *
  * Pour les libellés correspondant à des paramètres (comme `utiId` dans l'exemple précédent), vous pouvez utiliser la variable `{{param}}`
- * qui référence soit la valeur du paramètre, soit une valeur calculée par une fonction dédiée `paramResolver` à partir de son nom et de sa valeur.
+ * qui référence soit la valeur du paramètre, soit une valeur calculée par une fonction dédiée `paramResolver`, qui sera appelée avec le nom
+ * du paramètre et sa valeur. Dans l'exemple ci-dessus, pour `utiId`, `paramResolver` sera appelé avec `"utiId"` et `1` pour l'utilisateur d'ID 1.
+ * Vous pouvez donc aller chercher dans un état préalablement chercher un libellé correspondant, par exemple :
  *
- * Si vous voulez qu'une section ne soit pas affichée dans le fil d'ariane, il suffit que son libellé soit vide.
+ * ```tsx
+ * paramResolver={(paramName, paramValue) => paramName === "utiId" ? `${utilisateurStore.detail.prenom.value} ${utilisateurStore.detail.nom.value}` : undefined}
+ * ```
+ *
+ * Si la fonction ne renvoie rien (ou `undefined`), la valeur du paramètre sera utilisée.
+ *
+ * Si vous voulez qu'une section ne soit pas affichée dans le fil d'Ariane, il suffit que son libellé soit vide.
  */
 export function FilAriane({
     i18nPrefix = "focus",
