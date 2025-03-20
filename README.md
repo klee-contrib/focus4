@@ -74,10 +74,12 @@ Ces deux modules proposent des composants graphiques de haut niveau qui permette
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
 En particulier, il inclut [Vite](https://vitejs.dev) et [ESLint](https://eslint.org/) et des configs par défaut à étendre pour ces outils.
 
-De plus, il contient l'outil de génération de types CSS, ainsi qu'un utilitaire pour faciliter les montées de version Focus.
+De plus, il contient l'outil de génération de types CSS ainsi qu'un utilitaire pour faciliter l'installation et les montées de versions des modules de Focus.
+Cet outil s'utilise via la commande `npx focus4 install` ou `npx focus4 update` (les deux commandes sont identiques), et parcourera votre
+`package.json` pour récupérer la version la plus récente de chaque module Focus et de ses peer dependancies (React et MobX).
 
 ## Starter Kit
 
 Vous pouvez commencer un projet en utilisant le [starter kit](http://www.github.com/klee-contrib/focus4-starter-kit), qui sert également de démo et présente les usages les plus courants de Focus.
 
-La version packagée est également disponible [ici](https://focus4-starter-kit.fly.dev).
+La version packagée de ce starter-kit est également disponible [ici](https://focus4-starter-kit.fly.dev) pour démonstration.

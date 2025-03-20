@@ -24,7 +24,7 @@ if (process.argv?.[1]?.includes("focus4.tooling")) {
             await generateCSSTypings(rootDir, regex);
             clearTimeout(timer);
         })();
-    } else if (process.argv[2] === "install") {
+    } else if (process.argv[2] === "install" || process.argv[2] === "update") {
         const appPackageJsonPath = path.resolve(process.cwd(), "package.json");
         (async () => {
             // Pour forcer node à ne pas kill le process avant la fin de la promise.
@@ -35,6 +35,8 @@ if (process.argv?.[1]?.includes("focus4.tooling")) {
             clearTimeout(timer);
         })();
     } else {
-        throw new Error("Seules les fonctionnalités 'cssgen' ou 'install' est supportée par l'utilitaire 'focus4'.");
+        throw new Error(
+            "Seules les fonctionnalités 'cssgen' ou 'install'/'update' est supportée par l'utilitaire 'focus4'."
+        );
     }
 }

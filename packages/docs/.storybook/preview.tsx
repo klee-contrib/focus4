@@ -84,8 +84,7 @@ export default {
                         "Dialog",
                         "LateralMenu"
                     ],
-                    "CSS",
-                    "Autres modules"
+                    "CSS"
                 ]
             }
         }
