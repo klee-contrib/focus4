@@ -9,8 +9,7 @@ import {
     DomainFieldType,
     DomainFieldTypeMultiple,
     DomainFieldTypeSingle,
-    ReferenceList,
-    UndefinedComponent
+    ReferenceList
 } from "@focus4/stores";
 
 import {
@@ -29,16 +28,39 @@ import {
     SelectChipsProps,
     SelectProps
 } from "./components";
+import {domainFunctionBuilder} from "@focus4/forms/lib/utils";
+
+/** Pour créer une nouvelle fonction de domaine, recopier la signature suivante. Remplacez les composants par défaut ainsi que leurs types de props */
+
+export type DefaultInputProps<DT extends DomainFieldTypeSingle> /*                     */ = InputProps<DT>;
+export type DefaultSelectProps<DT extends DomainFieldTypeSingle> /*                    */ = SelectProps<DT>;
+export type DefaultSelectMultipleProps<DT extends DomainFieldTypeMultiple> /*          */ = SelectChipsProps<DT>;
+export type DefaultAutocompleteProps<DT extends DomainFieldTypeSingle> /*              */ = AutocompleteSearchProps<DT>;
+export type DefaultAutocompleteMultipleProps<DT extends DomainFieldTypeMultiple> /*    */ = AutocompleteChipsProps<DT>;
+export type DefaultDisplayProps<DT extends DomainFieldType> /*                         */ = DisplayProps<DT>;
+export type DefaultLabelProps /*                                                       */ = LabelProps;
 
 /** Crée un domaine avec les composants par défaut du module `form-toolbox`. */
 export function domain<
-    const DT extends DomainFieldTypeSingle,
-    ICProps extends BaseInputProps<DT> = InputProps<DT>,
-    SCProps extends BaseSelectProps<DT> = SelectProps<DT>,
+    const DT extends DomainFieldType,
+    ICProps extends BaseInputProps<DT> = DT extends DomainFieldTypeSingle ? DefaultInputProps<DT> : {},
+    SCProps extends BaseSelectProps<DT> = DT extends DomainFieldTypeSingle
+        ? DefaultSelectProps<DT>
+        : DT extends DomainFieldTypeMultiple
+        ? DefaultSelectMultipleProps<DT>
+        : DT extends "object"
+        ? {values: ReferenceList}
+        : never,
     // @ts-ignore
-    ACProps extends BaseAutocompleteProps<DT> = AutocompleteSearchProps<DT>,
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-    LCProps extends BaseLabelProps = LabelProps
+    ACProps extends BaseAutocompleteProps<DT> = DT extends DomainFieldTypeSingle
+        ? DefaultAutocompleteProps<DT>
+        : DT extends DomainFieldTypeMultiple
+        ? DefaultAutocompleteMultipleProps<DT>
+        : DT extends "object"
+        ? {}
+        : never,
+    DCProps extends BaseDisplayProps<DT> = DefaultDisplayProps<DT>,
+    LCProps extends BaseLabelProps = DefaultLabelProps
 >(
     d: Partial<
         Domain<
@@ -51,74 +73,14 @@ export function domain<
             Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
         >
     > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
-export function domain<
-    const DT extends DomainFieldTypeMultiple,
-    ICProps extends BaseInputProps<DT> = {},
-    SCProps extends BaseSelectProps<DT> = SelectChipsProps<DT>,
-    ACProps extends BaseAutocompleteProps<DT> = AutocompleteChipsProps<DT>,
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-    LCProps extends BaseLabelProps = LabelProps
->(
-    d: Partial<
-        Domain<
-            DT,
-            ICProps,
-            SCProps,
-            ACProps,
-            DCProps,
-            LCProps,
-            Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
-        >
-    > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
-export function domain<
-    const DT extends "object",
-    ICProps extends BaseInputProps<DT> = {},
-    SCProps extends BaseSelectProps<DT> = {values: ReferenceList},
-    ACProps extends BaseAutocompleteProps<DT> = {},
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
-    LCProps extends BaseLabelProps = LabelProps
->(
-    d: Partial<
-        Domain<
-            DT,
-            ICProps,
-            SCProps,
-            ACProps,
-            DCProps,
-            LCProps,
-            Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
-        >
-    > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
-export function domain(d: Partial<Domain> & {type: DomainFieldType}): Domain {
-    if (d.type === "boolean" || d.type === "number" || d.type === "string") {
-        return {
-            AutocompleteComponent: AutocompleteSearch,
-            DisplayComponent: Display,
-            LabelComponent: Label,
-            InputComponent: Input,
-            SelectComponent: Select,
-            ...d
-        };
-    } else if (d.type === "boolean-array" || d.type === "number-array" || d.type === "string-array") {
-        return {
-            AutocompleteComponent: AutocompleteChips,
-            DisplayComponent: Display,
-            LabelComponent: Label,
-            InputComponent: UndefinedComponent,
-            SelectComponent: SelectChips,
-            ...d
-        };
-    } else {
-        return {
-            AutocompleteComponent: UndefinedComponent,
-            DisplayComponent: Display,
-            LabelComponent: Label,
-            InputComponent: UndefinedComponent,
-            SelectComponent: UndefinedComponent,
-            ...d
-        };
-    }
+): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">> {
+    return domainFunctionBuilder({
+        AutocompleteSimple: AutocompleteSearch,
+        AutocompleteMultiple: AutocompleteChips,
+        Display,
+        Label,
+        Input,
+        SelectSimple: Select,
+        SelectMultiple: SelectChips
+    })(d);
 }
