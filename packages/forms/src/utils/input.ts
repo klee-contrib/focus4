@@ -143,30 +143,33 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     }
                 }
 
-                const end = getInputSelection(e.currentTarget).end - (isNegative ? 1 : 0);
-                const ajustedEnd =
-                    Math.max(
-                        0,
-                        v.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "").length +
-                            newNumberStringValue!.split("").filter(c => c === "0").length -
-                            v.split("").filter(c => c === "0").length
-                    ) + (isNegative ? 1 : 0);
+                if (newNumberStringValue !== v) {
+                    const end = getInputSelection(e.currentTarget).end - (isNegative ? 1 : 0);
+                    const ajustedEnd =
+                        Math.max(
+                            0,
+                            v.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "")
+                                .length +
+                                newNumberStringValue!.split("").filter(c => c === "0").length -
+                                v.split("").filter(c => c === "0").length
+                        ) + (isNegative ? 1 : 0);
 
-                let charCount = 0;
-                const newEnd = newNumberStringValue!.split("").reduce((count, char) => {
-                    if (charCount === ajustedEnd) {
-                        return count;
-                    }
-                    if (digitDecimalRegex.exec(char)) {
-                        charCount++;
-                    }
-                    return count + 1;
-                }, 0);
+                    let charCount = 0;
+                    const newEnd = newNumberStringValue!.split("").reduce((count, char) => {
+                        if (charCount === ajustedEnd) {
+                            return count;
+                        }
+                        if (digitDecimalRegex.exec(char)) {
+                            charCount++;
+                        }
+                        return count + 1;
+                    }, 0);
 
-                setInputSelection(e.currentTarget, {
-                    start: newEnd,
-                    end: newEnd
-                });
+                    setInputSelection(e.currentTarget, {
+                        start: newEnd,
+                        end: newEnd
+                    });
+                }
             }
         },
         [noNegativeNumbers, numberFormat, numberStringValue, onChange, type]
