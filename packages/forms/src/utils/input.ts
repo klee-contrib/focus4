@@ -119,6 +119,9 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
                 const [left, right, nope] = v.split(decimal);
 
+                let {start, end} = getInputSelection(e.currentTarget);
+                end -= isNegative ? 1 : 0;
+
                 if (
                     ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
                     nope === undefined &&
@@ -145,7 +148,6 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     }
                 }
 
-                const end = getInputSelection(e.currentTarget).end - (isNegative ? 1 : 0);
                 const ajustedEnd =
                     Math.max(
                         0,
@@ -165,10 +167,12 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     return count + 1;
                 }, 0);
 
-                setInputSelection(e.currentTarget, {
-                    start: newEnd,
-                    end: newEnd
-                });
+                if (start !== newEnd && end !== newEnd) {
+                    setInputSelection(e.currentTarget, {
+                        start: newEnd,
+                        end: newEnd
+                    });
+                }
             }
         },
         [maxDecimals, noNegativeNumbers, numberFormat, numberStringValue, onChange, type]
