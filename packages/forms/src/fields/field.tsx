@@ -12,7 +12,7 @@ import {
     FormEntityField,
     UndefinedComponent
 } from "@focus4/stores";
-import {CSSProp, useTheme, themeable} from "@focus4/styling";
+import {CSSProp, themeable, useTheme} from "@focus4/styling";
 
 import {FormContext} from "./form";
 

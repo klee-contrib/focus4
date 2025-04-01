@@ -53,8 +53,7 @@ function _compilePattern(pattern: string) {
 const CompiledPatternsCache = Object.create(null);
 
 function compilePattern(pattern: string) {
-    if (!CompiledPatternsCache[pattern]) CompiledPatternsCache[pattern] = _compilePattern(pattern);
-
+    CompiledPatternsCache[pattern] ??= _compilePattern(pattern);
     return CompiledPatternsCache[pattern];
 }
 
