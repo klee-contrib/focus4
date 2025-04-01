@@ -16,8 +16,8 @@ export const en = {
     select: {
         noLabel: "",
         none: "None",
-        selectAll: "Select All",
+        selectAll: "Select all",
         unselected: "",
-        unselectAll: "Unselect All"
+        unselectAll: "Unselect all"
     }
 };

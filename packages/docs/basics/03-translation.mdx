@@ -19,14 +19,17 @@ import {i18nLayout} from "@focus4/layout";
 
 initI18n("fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
     fr: {
-        /* Vos traductions personnalisées, qui peuvent surcharger celles de Focus. */
+        /* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */
+    },
+    en: {
+        /* Vos traductions personnalisées en anglais, qui peuvent surcharger celles de Focus. */
     }
 });
 ```
 
 Cette fonction doit être appelée à l'initialisation de votre application, avant le chargement des vues.
 
-Focus ne dispose (pour l'instant...) que de traductions en français (n'hésitez pas à faire une PR avec au moins la version anglaise... 😉)
+Focus dispose de traductions par défaut en français et en anglais, et vous pouvez en ajouter d'autres sur votre projet si besoin.
 
 ## Surcharge de libellés
 
