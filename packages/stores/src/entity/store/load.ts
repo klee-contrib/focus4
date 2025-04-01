@@ -29,9 +29,9 @@ export class LoadRegistration<A extends readonly any[] = never> {
      */
     readonly trackingId: string;
 
-    @observable protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
+    @observable.ref protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
 
-    @observable private accessor node: StoreNode | StoreListNode;
+    @observable.ref private accessor node: StoreNode | StoreListNode;
 
     /**
      * Enregistre un service de chargement sur un noeud.
