@@ -19,7 +19,7 @@ export type NodeToType<SN> = SN extends FormListNode<infer LEF, infer _>
 export type SourceNodeType<FN extends FormNode | FormListNode> = NodeToType<FN["sourceNode"]>;
 
 export function isEntityField(data: any): data is EntityField {
-    return typeof data === "object" && "$field" in data;
+    return data && typeof data === "object" && "$field" in data;
 }
 
 export function isAnyStoreNode<E = any>(data: any): data is StoreListNode<E> | StoreNode<E> {
