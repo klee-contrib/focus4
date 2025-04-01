@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
@@ -45,6 +45,7 @@ export function BooleanRadio({
     theme: pTheme,
     value
 }: BooleanRadioProps) {
+    const {t} = useTranslation();
     const theme = useTheme<BooleanRadioCss & RadioCss>("booleanRadio", booleanRadioCss, pTheme);
     return (
         <>
@@ -55,8 +56,8 @@ export function BooleanRadio({
                 onChange={x => onChange(x === "true" ? true : x === "false" ? false : undefined)}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
-                <RadioButton label={i18next.t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />
-                <RadioButton label={i18next.t(labelNo)} name={`${name}-no`} theme={theme} value="false" />
+                <RadioButton label={t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />
+                <RadioButton label={t(labelNo)} name={`${name}-no`} theme={theme} value="false" />
             </RadioGroup>
             {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
                 <div className={theme.supportingText({error: !!error})}>

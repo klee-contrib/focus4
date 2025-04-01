@@ -1,6 +1,6 @@
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
+import {useTranslation} from "react-i18next";
 
 import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
@@ -93,6 +93,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     value = [] as DomainType<T>,
     values
 }: SelectChipsProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
     const handleRemoveValue = useCallback(
@@ -138,7 +139,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         const clear = {
             icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
             onClick: handleRemoveAll,
-            tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
+            tooltip: t(`${i18nPrefix}.select.unselectAll`),
             noFocusOnClick: true
         };
 
@@ -147,7 +148,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                 {
                     icon: {i18nKey: `${i18nPrefix}.icons.select.selectAll`},
                     onClick: handleAddAll,
-                    tooltip: i18next.t(`${i18nPrefix}.select.selectAll`),
+                    tooltip: t(`${i18nPrefix}.select.selectAll`),
                     noFocusOnClick: true
                 },
                 clear

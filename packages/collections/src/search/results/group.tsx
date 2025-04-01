@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {ObservableMap} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, useContext} from "react";
+import {useTranslation} from "react-i18next";
 
 import {ScrollableContext} from "@focus4/layout";
 import {CollectionStore, GroupResult} from "@focus4/stores";
@@ -119,6 +119,8 @@ export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T
 }
 
 export function DefaultGroupHeader<T>({group, i18nPrefix = "focus", openedMap}: GroupHeaderProps<T>) {
+    const {t} = useTranslation();
+
     return useObserver(() => {
         const opened = openedMap.get(group.code);
         return (
@@ -127,7 +129,7 @@ export function DefaultGroupHeader<T>({group, i18nPrefix = "focus", openedMap}: 
                     icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}}
                     onClick={() => openedMap.set(group.code, !opened)}
                 />
-                <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong>
+                <strong>{`${t(group.label)} (${group.totalCount})`}</strong>
             </>
         );
     });

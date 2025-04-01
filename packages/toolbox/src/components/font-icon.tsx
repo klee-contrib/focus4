@@ -1,6 +1,6 @@
 import classnames from "classnames";
-import i18next from "i18next";
 import {CSSProperties} from "react";
+import {useTranslation} from "react-i18next";
 
 import {uiConfig} from "@focus4/styling";
 
@@ -74,14 +74,16 @@ export function FontIcon({
     onPointerUp,
     style
 }: FontIconProps) {
+    const {t} = useTranslation();
+
     if (iconI18nKey) {
         const nameKey = `${iconI18nKey}.name`;
-        const i18nName = i18next.t(nameKey);
+        const i18nName = t(nameKey);
         if (i18nName !== nameKey) {
             children = i18nName;
         }
         const classNameKey = `${iconI18nKey}.className`;
-        const i18nClassName = i18next.t(classNameKey);
+        const i18nClassName = t(classNameKey);
         if (i18nClassName !== classNameKey) {
             iconClassName = i18nClassName;
         }

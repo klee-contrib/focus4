@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {action} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useCallback, useEffect} from "react";
+import {useTranslation} from "react-i18next";
 
 import {Message, messageStore} from "@focus4/core";
 import {Snackbar} from "@focus4/toolbox";
@@ -21,6 +21,8 @@ interface Notification {
 export function MessageCenter({
     messageTypes = {success: 3000, error: 8000, info: 3000, warning: 3000}
 }: MessageCenterProps) {
+    const {t} = useTranslation();
+
     const state = useLocalObservable(() => ({
         active: false,
         notifications: [] as Notification[],
@@ -70,7 +72,7 @@ export function MessageCenter({
                     ? state.notifications[0]?.type
                     : undefined
             }
-            message={i18next.t(state.notifications[0]?.message.label ?? "")}
+            message={t(state.notifications[0]?.message.label ?? "")}
             onClose={onClose}
         />
     ));

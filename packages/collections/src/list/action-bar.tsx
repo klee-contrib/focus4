@@ -1,8 +1,8 @@
-import i18next from "i18next";
 import {action, reaction} from "mobx";
 import {useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
@@ -91,6 +91,7 @@ export function ActionBar<T extends object>({
     /** Affiche la FacetBox. */
     const [displayFacetBox, setDisplayFacetBox] = useState(false);
 
+    const {t} = useTranslation();
     const theme = useTheme("actionBar", actionBarCss, pTheme);
     const groupMenu = useMenu();
     const sortMenu = useMenu();
@@ -116,7 +117,7 @@ export function ActionBar<T extends object>({
             const menuItems = Object.entries(groupableColumnList).reduce(
                 (oL, [key, label]) => [
                     ...oL,
-                    <MenuItem key={key} caption={i18next.t(label)} onClick={() => (store.groupingKey = key)} />
+                    <MenuItem key={key} caption={t(label)} onClick={() => (store.groupingKey = key)} />
                 ],
                 [] as ReactElement[]
             );
@@ -131,7 +132,7 @@ export function ActionBar<T extends object>({
                                     : {i18nKey: `${i18nPrefix}.icons.actionBar.dropdown`}
                             }
                             iconPosition="right"
-                            label={i18next.t(`${i18nPrefix}.search.action.group`)}
+                            label={t(`${i18nPrefix}.search.action.group`)}
                             onClick={() => {
                                 groupMenu.toggle();
                                 setDisplayFacetBox(false);
@@ -186,9 +187,9 @@ export function ActionBar<T extends object>({
                     ) : null}
 
                     {/** Eléments sélectionnés */}
-                    {group ? <strong>{`${i18next.t(group.label)} (${group.totalCount})`}</strong> : null}
+                    {group ? <strong>{`${t(group.label)} (${group.totalCount})`}</strong> : null}
                     {store.selectedItems.size ? (
-                        <strong>{`${store.selectedItems.size} ${i18next.t(`${i18nPrefix}.search.action.selectedItem`, {
+                        <strong>{`${store.selectedItems.size} ${t(`${i18nPrefix}.search.action.selectedItem`, {
                             count: store.selectedItems.size
                         })}`}</strong>
                     ) : null}
@@ -204,7 +205,7 @@ export function ActionBar<T extends object>({
                                     i18nKey: `${i18nPrefix}.icons.actionBar.drop${displayFacetBox ? "up" : "down"}`
                                 }}
                                 iconPosition="right"
-                                label={i18next.t(`${i18nPrefix}.search.action.filter`)}
+                                label={t(`${i18nPrefix}.search.action.filter`)}
                                 onClick={() => setDisplayFacetBox(!displayFacetBox)}
                             />
                             {displayFacetBox ? <div className={theme.triangle()} /> : null}
@@ -221,7 +222,7 @@ export function ActionBar<T extends object>({
                                         : {i18nKey: `${i18nPrefix}.icons.actionBar.dropdown`}
                                 }
                                 iconPosition="right"
-                                label={i18next.t(`${i18nPrefix}.search.action.sort`)}
+                                label={t(`${i18nPrefix}.search.action.sort`)}
                                 onClick={() => {
                                     sortMenu.toggle();
                                     setDisplayFacetBox(false);
@@ -231,7 +232,7 @@ export function ActionBar<T extends object>({
                                 {orderableColumnList.map((description, idx) => (
                                     <MenuItem
                                         key={idx}
-                                        caption={i18next.t(description.label)}
+                                        caption={t(description.label)}
                                         onClick={action("sort", () => {
                                             store.sortBy = description.key;
                                             store.sortAsc = description.order;

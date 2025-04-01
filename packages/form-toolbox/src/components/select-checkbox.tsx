@@ -1,6 +1,6 @@
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {SyntheticEvent} from "react";
+import {useTranslation} from "react-i18next";
 
 import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -79,11 +79,12 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
     value,
     values
 }: SelectCheckboxProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme<CheckboxCss & SelectCheckboxCss>("selectCheckbox", selectCheckboxCss, pTheme);
 
     return useObserver(() => (
         <div className={theme.select({error: !!error})}>
-            {label ? <h5>{i18next.t(label)}</h5> : null}
+            {label ? <h5>{t(label)}</h5> : null}
             <ul>
                 {values.map(option => {
                     const optVal = option[values.$valueKey];
@@ -101,7 +102,7 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                             <Checkbox
                                 disabled={isDisabled}
                                 id={`${id!}-${optVal as string}`}
-                                label={i18next.t(optLabel)}
+                                label={t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
                                 theme={theme}
                                 value={isSelected}

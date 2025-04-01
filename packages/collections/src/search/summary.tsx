@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CollectionStore, FormEntityField} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -88,6 +88,7 @@ export function Summary<T extends object>({
     store,
     theme: pTheme
 }: SummaryProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme("summary", summaryCss, pTheme);
 
     const props = useLocalObservable(() => ({hideCriteria, orderableColumnList, store}), {
@@ -184,19 +185,19 @@ export function Summary<T extends object>({
                 {!hideResults ? (
                     <span>
                         <strong>{totalCount}&nbsp;</strong>
-                        {i18next.t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
+                        {t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
                     </span>
                 ) : null}
 
                 {/* Texte de recherche. */}
                 {!hideQuery && query && query.trim().length > 0 ? (
-                    <span>{`${i18next.t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
+                    <span>{`${t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
                 ) : null}
 
                 {/* Liste des filtres (facettes + critères) */}
                 {state.includeList.length ? (
                     <>
-                        <span>{i18next.t(`${i18nPrefix}.search.summary.by`)}</span>
+                        <span>{t(`${i18nPrefix}.search.summary.by`)}</span>
                         {state.includeList.map(({key, ...chip}) => (
                             <SearchChip
                                 {...chip}
@@ -213,7 +214,7 @@ export function Summary<T extends object>({
                 {/* Groupe. */}
                 {groupingKey && !hideGroup ? (
                     <>
-                        <span>{i18next.t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}</span>
+                        <span>{t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}</span>
                         <SearchChip
                             className={theme.chip()}
                             code={groupingKey}
@@ -229,7 +230,7 @@ export function Summary<T extends object>({
                 {/* Tri. */}
                 {state.currentSort && !hideSort && !groupingKey && totalCount > 1 ? (
                     <>
-                        <span>{i18next.t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                        <span>{t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <SearchChip
                             className={theme.chip()}
                             code={state.currentSort.key}
@@ -247,7 +248,7 @@ export function Summary<T extends object>({
                     <div className={theme.print()}>
                         <Button
                             icon={{i18nKey: `${i18nPrefix}.icons.summary.export`}}
-                            label={i18next.t(`${i18nPrefix}.search.summary.export`)}
+                            label={t(`${i18nPrefix}.search.summary.export`)}
                             onClick={exportAction}
                             type="button"
                         />

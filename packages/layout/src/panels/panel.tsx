@@ -1,6 +1,6 @@
 import {snakeCase} from "es-toolkit";
-import i18next from "i18next";
 import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, Icon, LinearProgressIndicator} from "@focus4/toolbox";
@@ -57,8 +57,10 @@ export function Panel({
     title,
     theme: pTheme
 }: PropsWithChildren<PanelProps>) {
+    const {t} = useTranslation();
+
     if (!name && title) {
-        name = snakeCase(i18next.t(title)).split("_")[0];
+        name = snakeCase(t(title)).split("_")[0];
     }
 
     const ref = useRef<HTMLDivElement>(null);
@@ -97,7 +99,7 @@ export function Panel({
                     {title ? (
                         <h3>
                             {icon ? <FontIcon className={theme.icon()} icon={icon} /> : null}
-                            {i18next.t(title)}
+                            {t(title)}
                         </h3>
                     ) : null}
                     {areButtonsTop ? buttons : null}

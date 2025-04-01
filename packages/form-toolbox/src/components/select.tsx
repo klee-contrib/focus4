@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
+import {useTranslation} from "react-i18next";
 
 import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
@@ -42,6 +42,7 @@ export function Select<const T extends DomainFieldTypeSingle>({
     undefinedLabel = `${i18nPrefix}.select.unselected`,
     ...props
 }: SelectProps<T>) {
+    const {t} = useTranslation();
     const {$labelKey, $valueKey} = values;
     return useObserver(() => (
         <Dropdown
@@ -49,11 +50,11 @@ export function Select<const T extends DomainFieldTypeSingle>({
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={v => `${v[$valueKey]}`}
-            getLabel={v => (v[$labelKey] as string) ?? i18next.t(`${i18nPrefix}.select.noLabel`)}
+            getLabel={v => (v[$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`)}
             onChange={val => onChange(stringToDomainType(val, type))}
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
-            undefinedLabel={typeof undefinedLabel === "string" ? i18next.t(undefinedLabel) : undefinedLabel}
+            undefinedLabel={typeof undefinedLabel === "string" ? t(undefinedLabel) : undefinedLabel}
             value={value !== undefined ? `${value}` : undefined}
             values={values.slice()}
         />

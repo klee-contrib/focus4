@@ -1,6 +1,6 @@
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback} from "react";
+import {useTranslation} from "react-i18next";
 
 import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
@@ -63,6 +63,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
     value,
     values
 }: SelectRadioProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme<RadioCss & SelectRadioCss>("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
@@ -84,7 +85,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
 
         return (
             <div className={theme.select({error: !!error})}>
-                {label ? <h5 className={theme.title()}>{i18next.t(label)}</h5> : null}
+                {label ? <h5 className={theme.title()}>{t(label)}</h5> : null}
                 <RadioGroup
                     allowUndefined={hasUndefined === "no-option"}
                     disabled={disabled === true}
@@ -99,7 +100,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
                             <RadioButton
                                 key={optVal ?? "undefined"}
                                 disabled={Array.isArray(disabled) && disabled.includes(optVal)}
-                                label={i18next.t(optLabel)}
+                                label={t(optLabel)}
                                 name={`${name!}-${optVal}`}
                                 theme={theme}
                                 value={optVal?.toString() ?? ""}

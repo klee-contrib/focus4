@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {ComponentType, ElementType, useContext, useEffect} from "react";
+import {useTranslation} from "react-i18next";
 
 import {LateralMenu, ScrollableContext} from "@focus4/layout";
 import {CollectionStore, GroupResult} from "@focus4/stores";
@@ -215,6 +215,7 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
     theme: pTheme,
     useGroupActionBars
 }: AdvancedSearchProps<T, P>) {
+    const {t} = useTranslation();
     const theme = useTheme("advancedSearch", advancedSearchCss, pTheme);
     const {headerHeight} = useContext(ScrollableContext);
     const listContext = useLocalObservable(() => ({addItemHandler, mode}), {addItemHandler: observable.ref});
@@ -286,14 +287,14 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                         <div className={theme.actions()}>
                             {LineComponent && MosaicComponent ? (
                                 <>
-                                    <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.list`)}>
+                                    <Tooltip tooltip={t(`${i18nPrefix}.list.mode.list`)}>
                                         <IconButton
                                             color={listContext.mode === "list" ? "accent" : undefined}
                                             icon={{i18nKey: `${i18nPrefix}.icons.list.list`}}
                                             onClick={() => (listContext.mode = "list")}
                                         />
                                     </Tooltip>
-                                    <Tooltip tooltip={i18next.t(`${i18nPrefix}.list.mode.mosaic`)}>
+                                    <Tooltip tooltip={t(`${i18nPrefix}.list.mode.mosaic`)}>
                                         <IconButton
                                             color={listContext.mode === "mosaic" ? "accent" : undefined}
                                             icon={{i18nKey: `${i18nPrefix}.icons.list.mosaic`}}

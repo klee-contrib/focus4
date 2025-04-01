@@ -2,11 +2,12 @@
 import {render} from "@testing-library/react";
 import i18next from "i18next";
 import React from "react";
-import {describe, test, expect} from "vitest";
+import {describe, expect, test} from "vitest";
 
+import {initReactI18next} from "react-i18next";
 import {Panel} from "../panel";
 
-i18next.init();
+i18next.use(initReactI18next).init();
 
 const panelTheme = {
     actions: "Actions",

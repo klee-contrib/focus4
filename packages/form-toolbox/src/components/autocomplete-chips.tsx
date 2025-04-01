@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useCallback, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus4/stores";
@@ -93,6 +93,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     undeletable,
     value = [] as DomainType<T>
 }: AutocompleteChipsProps<T, TSource>) {
+    const {t} = useTranslation();
     const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
 
     const [labels] = useState(() => observable.map<boolean | number | string, string>());
@@ -163,7 +164,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                 trailing={{
                     icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
                     onClick: handleRemoveAll,
-                    tooltip: i18next.t(`${i18nPrefix}.select.unselectAll`),
+                    tooltip: t(`${i18nPrefix}.select.unselectAll`),
                     noFocusOnClick: true
                 }}
                 type={toSimpleType(type)}

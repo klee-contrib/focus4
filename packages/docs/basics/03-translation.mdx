@@ -7,17 +7,25 @@ import {Meta} from "@storybook/blocks";
 Focus utilise [`i18next`](https://www.i18next.com/) pour gérer les libellés et les icônes utilisés à travers ses différents composants. Vous êtes largement encouragés à l'utiliser pour vos
 propres libellés également.
 
-En ce qui concerne Focus, chaque module expose son propre objet de traduction, et la fonction `initI18n` permet de tout initialiser facilement :
+Focus utilise [`react-i18next`](https://react.i18next.com/) dans ses composants pour s'interfacer avec `i18next`, ce qui leur permet en particulier de se re-rendre automatiquement
+après un appel à `i18next.changeLanguage()`. Vous pouvez librement utiliser directement la fonction `useTranslation` de `react-i18next`, un import
+direct depuis `i18next`, ou simplement rien du tout pour gérer les libellés dans vos applications.
+
+En ce qui concerne les traductions de Focus, chaque module expose son propre objet de traduction, et la fonction `initI18n` permet de tout initialiser
+facilement :
 
 Par exemple, en important les traductions de tous les modules :
 
 ```ts
+import {initReactI18next} from "react-i18next";
+
 import {i18nCollections} from "@focus4/collections";
+import {initReactI18next} from "@focus4/core";
 import {i18nFormToolbox} from "@focus4/form-toolbox";
 import {i18nStores} from "@focus4/stores";
 import {i18nLayout} from "@focus4/layout";
 
-initI18n("fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
+initI18n([initReactI18next], "fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
     fr: {
         /* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */
     },

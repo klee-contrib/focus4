@@ -1,5 +1,4 @@
 import {sortBy} from "es-toolkit";
-import i18next from "i18next";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {
@@ -14,6 +13,7 @@ import {
     useMemo,
     useRef
 } from "react";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
 
@@ -66,6 +66,8 @@ export function ScrollspyContainer({
     retractable = true,
     theme: pTheme
 }: ScrollspyContainerProps) {
+    const {t} = useTranslation();
+
     const theme = useTheme("scrollspy", scrollspyCss, pTheme);
     const {headerHeight, registerIntersect, scrollTo} = useContext(ScrollableContext);
     const innerRef = useRef<HTMLDivElement>(null);
@@ -140,7 +142,7 @@ export function ScrollspyContainer({
                     headerHeight={state.headerHeight}
                     panels={state.sortedPanels.map(([id, {title}]) => ({
                         id,
-                        title: (title && i18next.t(title)) ?? ""
+                        title: (title && t(title)) ?? ""
                     }))}
                     retractable={retractable}
                     scrollToPanel={scrollToPanel}

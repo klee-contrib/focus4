@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, themeable} from "@focus4/styling";
 import {Chip, ChipCss} from "@focus4/toolbox";
@@ -51,6 +51,8 @@ export interface SearchChipProps {
 
 /** Chip avec un keyResolver. */
 export function SearchChip(props: SearchChipProps) {
+    const {t} = useTranslation();
+
     const {
         className,
         code,
@@ -81,15 +83,15 @@ export function SearchChip(props: SearchChipProps) {
     }, [values]);
 
     return useObserver(() => {
-        const tCodeLabel = i18next.t(codeLabel);
+        const tCodeLabel = t(codeLabel);
         const tValueLabel = values
             ?.map(
                 value =>
-                    `${value.invert ? `${i18next.t(`${i18nPrefix}.search.summary.not`)} ` : ""}"${i18next.t(
+                    `${value.invert ? `${t(`${i18nPrefix}.search.summary.not`)} ` : ""}"${t(
                         valueLabels.get(value.code)!
                     )}"`
             )
-            .join(` ${i18next.t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
+            .join(` ${t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
         return (
             <Chip
                 className={className}

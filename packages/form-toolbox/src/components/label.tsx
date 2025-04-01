@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import {CSSProperties, ReactNode} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, IconButton, Tooltip, TooltipCss} from "@focus4/toolbox";
@@ -49,15 +49,17 @@ export function Label({
     tooltipTheme,
     theme: pTheme
 }: LabelProps) {
+    const {t} = useTranslation();
     const theme = useTheme("label", labelCss, pTheme);
+
     return (
         <div className={theme.label()} style={style}>
-            <label htmlFor={id}>{(label && i18next.t(label)) ?? ""}</label>
+            <label htmlFor={id}>{(label && t(label)) ?? ""}</label>
             {comment && showTooltip ? (
                 <Tooltip
                     clickBehavior={onTooltipClick ? "hide" : "none"}
                     theme={tooltipTheme}
-                    tooltip={typeof comment === "string" ? i18next.t(comment) : comment}
+                    tooltip={typeof comment === "string" ? t(comment) : comment}
                 >
                     {onTooltipClick ? (
                         <IconButton

@@ -1,8 +1,8 @@
 /* eslint-disable no-unmodified-loop-condition */
 /* eslint-disable @typescript-eslint/no-loop-func */
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {Fragment} from "react/jsx-runtime";
+import {useTranslation} from "react-i18next";
 
 import {Router, UrlRouteDescriptor} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -75,7 +75,9 @@ export function FilAriane({
     routerI18nPrefix = "router",
     theme: pTheme
 }: FilArianeProps) {
+    const {t} = useTranslation();
     const theme = useTheme("filAriane", filArianeCss, pTheme);
+
     return useObserver(() => {
         let currentRouter = router;
         let currentRoute = currentRouter.get(x => x);
@@ -91,7 +93,7 @@ export function FilAriane({
             ) {
                 routesList.push({
                     route: currentRoute,
-                    dictionaryKey: i18next.t(`${routerI18nPrefix}.${key}.${rootName}`, {
+                    dictionaryKey: t(`${routerI18nPrefix}.${key}.${rootName}`, {
                         param:
                             typeof currentState !== "object"
                                 ? paramResolver(currentRoute, currentState) ?? currentState
@@ -110,7 +112,7 @@ export function FilAriane({
         }
 
         if (!routesList.length && (maxDepth ?? Infinity) > 0) {
-            routesList.push({route: "/", dictionaryKey: i18next.t(`${routerI18nPrefix}.${rootName}`), url: "#/"});
+            routesList.push({route: "/", dictionaryKey: t(`${routerI18nPrefix}.${rootName}`), url: "#/"});
         }
 
         const finalRoutes = routesList.filter(x => x.dictionaryKey);

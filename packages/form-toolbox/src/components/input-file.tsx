@@ -1,7 +1,7 @@
 import {take} from "es-toolkit";
 import {fileTypeFromBlob} from "file-type";
-import i18next from "i18next";
 import {useCallback, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {messageStore} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -54,6 +54,7 @@ export function InputFile<T extends number = number>({
     value,
     theme: pTheme
 }: InputFileProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme("inputFile", inputFileCss, pTheme);
     const [files, setFiles] = useState(getFiles(value));
     const [dragOver, setDragOver] = useState(false);
@@ -65,7 +66,7 @@ export function InputFile<T extends number = number>({
             let newFiles = [...files];
             for (const file of Array.from(fileList)) {
                 if (files.some(f => f.name === file.name)) {
-                    messageStore.addErrorMessage(i18next.t(`${i18nPrefix}.file.existing`, {file: file.name}));
+                    messageStore.addErrorMessage(t(`${i18nPrefix}.file.existing`, {file: file.name}));
                 } else {
                     if (accept) {
                         const acceptedTypes = accept.split(",");
@@ -79,7 +80,7 @@ export function InputFile<T extends number = number>({
                                     : `.${type?.ext}` === at
                             )
                         ) {
-                            messageStore.addErrorMessage(i18next.t(`${i18nPrefix}.file.invalid`, {file: file.name}));
+                            messageStore.addErrorMessage(t(`${i18nPrefix}.file.invalid`, {file: file.name}));
                             continue;
                         }
                     }
@@ -123,7 +124,7 @@ export function InputFile<T extends number = number>({
                 {files.length < maxFiles ? (
                     <span className={theme.text()}>
                         <FontIcon icon={{i18nKey: `${i18nPrefix}.icons.file.upload`}} />
-                        <span>{i18next.t(`${i18nPrefix}.file.upload`)}</span>
+                        <span>{t(`${i18nPrefix}.file.upload`)}</span>
                     </span>
                 ) : null}
                 {getFiles(files).map(f => (

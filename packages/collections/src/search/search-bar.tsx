@@ -1,8 +1,8 @@
 import {difference} from "es-toolkit";
-import i18next from "i18next";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
@@ -47,6 +47,8 @@ export function SearchBar<T extends object, C>({
     store,
     theme: pTheme
 }: SearchBarProps<T, C>) {
+    const {t} = useTranslation();
+
     /** L'input HTML. */
     const input = useRef<HTMLInputElement>(null);
 
@@ -105,7 +107,7 @@ export function SearchBar<T extends object, C>({
                 .map(([crit]) => crit)
                 .join(", ");
             if (error) {
-                return `${i18next.t(`${i18nPrefix}.search.bar.error`)} : ${error}`;
+                return `${t(`${i18nPrefix}.search.bar.error`)} : ${error}`;
             } else {
                 return undefined;
             }
@@ -116,7 +118,7 @@ export function SearchBar<T extends object, C>({
             return (
                 placeholder ??
                 (searchFields.length
-                    ? `${i18next.t(`${i18nPrefix}.search.bar.searchBy`)} ${searchFields
+                    ? `${t(`${i18nPrefix}.search.bar.searchBy`)} ${searchFields
                           .map(x => (searchFieldNames[x] ?? x).toLowerCase())
                           .join(", ")}`
                     : "")
@@ -206,7 +208,7 @@ export function SearchBar<T extends object, C>({
                         autoComplete={uiConfig.autocompleteOffValue}
                         name="search-bar-input"
                         onChange={state.onInputChange}
-                        placeholder={i18next.t(state.placeholder || "")}
+                        placeholder={t(state.placeholder || "")}
                         value={state.text}
                     />
                 </div>
@@ -251,9 +253,9 @@ export function SearchBar<T extends object, C>({
                             : null}
                         {store.availableSearchFields.length > 0 ? (
                             <div className={theme.searchFields()}>
-                                <h6>{i18next.t(`${i18nPrefix}.search.bar.searchFields`)}</h6>
+                                <h6>{t(`${i18nPrefix}.search.bar.searchFields`)}</h6>
                                 <Checkbox
-                                    label={i18next.t(`${i18nPrefix}.search.bar.selectAll`)}
+                                    label={t(`${i18nPrefix}.search.bar.selectAll`)}
                                     onChange={() => {
                                         if (
                                             !store.searchFields ||
@@ -286,7 +288,7 @@ export function SearchBar<T extends object, C>({
                         {criteriaComponent}
                         {criteriaComponent ? (
                             <div className={theme.buttons()}>
-                                <Button label={i18next.t(`${i18nPrefix}.search.bar.reset`)} onClick={state.clear} />
+                                <Button label={t(`${i18nPrefix}.search.bar.reset`)} onClick={state.clear} />
                             </div>
                         ) : null}
                     </motion.div>

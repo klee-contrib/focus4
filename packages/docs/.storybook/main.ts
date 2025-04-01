@@ -3,7 +3,7 @@ import {mergeConfig} from "vite";
 
 export default {
     stories: ["../**/*.@(stories.tsx|mdx)"],
-    addons: ["@storybook/addon-essentials", "storybook-dark-mode"],
+    addons: ["@storybook/addon-essentials", "storybook-dark-mode", "storybook-react-i18next"],
     staticDirs: ["./public"],
     framework: {
         name: "@storybook/react-vite",

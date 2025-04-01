@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {action, ObservableMap} from "mobx";
 import {useObserver} from "mobx-react";
 import {useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -37,7 +37,10 @@ export function Facet({
     theme: pTheme
 }: FacetProps) {
     const [isShowAll, setIsShowAll] = useState(false);
+
+    const {t} = useTranslation();
     const theme = useTheme("facet", facetCss, pTheme);
+
     return useObserver(() => {
         const inputFacet = store.inputFacets[facet.code];
         const count = (inputFacet?.selected?.length ?? 0) + (inputFacet?.excluded?.length ?? 0);
@@ -61,7 +64,7 @@ export function Facet({
             <div className={theme.facet()} data-facet={facet.code}>
                 <h4 onClick={() => openedMap.set(facet.code, !opened)}>
                     <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
-                    {i18next.t(facet.label)}
+                    {t(facet.label)}
                 </h4>
                 {opened ? (
                     <>
@@ -69,7 +72,7 @@ export function Facet({
                             <Button
                                 color="primary"
                                 icon={{i18nKey: `${i18nPrefix}.icons.facets.${inputFacet?.operator ?? "or"}`}}
-                                label={i18next.t(`${i18nPrefix}.search.facets.${inputFacet?.operator ?? "or"}`)}
+                                label={t(`${i18nPrefix}.search.facets.${inputFacet?.operator ?? "or"}`)}
                                 onClick={() => store.toggleFacetOperator(facet.code)}
                             />
                         ) : null}
@@ -99,7 +102,7 @@ export function Facet({
                                             value={selected || excluded}
                                         />
                                         <div className={theme.label({excluded})} onClick={clickHandler}>
-                                            {i18next.t(item.label)}
+                                            {t(item.label)}
                                         </div>
                                         {!(count === 1 && (!facet.isMultiSelectable || facet.values.length === 1)) ? (
                                             <div className={theme.count()}>{item.count}</div>
@@ -127,12 +130,12 @@ export function Facet({
                         </ul>
                         {(facet.isMultiSelectable || count === 0) && facet.values.length > nbDefaultDataList ? (
                             <div className={theme.show()} onClick={() => setIsShowAll(!isShowAll)}>
-                                {i18next.t(isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
+                                {t(isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
                             </div>
                         ) : null}
                     </>
                 ) : count > 0 ? (
-                    <span onClick={() => openedMap.set(facet.code, !opened)}>{`(${i18next.t(
+                    <span onClick={() => openedMap.set(facet.code, !opened)}>{`(${t(
                         `${i18nPrefix}.search.facets.filter`,
                         {count}
                     )})`}</span>

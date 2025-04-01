@@ -1,6 +1,6 @@
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
+import {useTranslation} from "react-i18next";
 
 import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
@@ -54,17 +54,19 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
     values,
     ...props
 }: SelectAutocompleteProps<T>) {
+    const {t} = useTranslation();
+
     const finalValues = useMemo(
         () =>
             hasUndefined
-                ? [{[values.$valueKey]: undefinedKey, [values.$labelKey]: i18next.t(undefinedLabel)}, ...values]
+                ? [{[values.$valueKey]: undefinedKey, [values.$labelKey]: t(undefinedLabel)}, ...values]
                 : values.slice(),
         [hasUndefined, undefinedLabel, values, values.length]
     );
 
     const getKey = useCallback((v: any) => `${v[values.$valueKey]}`, [values.$valueKey]);
     const getLabel = useCallback(
-        (v: any) => (v[values.$labelKey] as string) ?? i18next.t(`${i18nPrefix}.select.noLabel`),
+        (v: any) => (v[values.$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`),
         [i18nPrefix, values.$labelKey]
     );
 

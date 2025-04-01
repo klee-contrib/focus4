@@ -1,7 +1,7 @@
-import i18next from "i18next";
 import {action, comparer, observable, reaction} from "mobx";
 import {useObserver} from "mobx-react";
 import {ElementType, MouseEvent, ReactElement, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
@@ -13,7 +13,7 @@ import {shouldDisplayFacet} from "./utils";
 import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
 
 export {facetBoxCss, facetCss, shouldDisplayFacet};
-export type {FacetProps, FacetBoxCss, FacetCss};
+export type {FacetBoxCss, FacetCss, FacetProps};
 
 /** "Facette" additionnelle. */
 export interface AdditionalFacet {
@@ -74,6 +74,7 @@ export function FacetBox<T extends object>({
     store,
     theme: pTheme
 }: FacetBoxProps<T>) {
+    const {t} = useTranslation();
     const theme = useTheme("facetBox", facetBoxCss, pTheme);
     const facetTheme = useTheme("facet", facetCss);
 
@@ -212,7 +213,7 @@ export function FacetBox<T extends object>({
             <div className={theme.facetBox()}>
                 <h3 onClick={() => toggleAll(!opened, false)}>
                     <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
-                    <span>{i18next.t(`${i18nPrefix}.search.facets.title`)}</span>
+                    <span>{t(`${i18nPrefix}.search.facets.title`)}</span>
                     {shouldDisplayClear ? (
                         <IconButton icon={{i18nKey: `${i18nPrefix}.icons.searchBar.clear`}} onClick={clearFacets} />
                     ) : null}

@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {Button} from "@focus4/toolbox";
 
@@ -34,6 +34,8 @@ export function PanelButtons({
     onClickEdit,
     save
 }: PanelButtonsProps) {
+    const {t} = useTranslation();
+
     const [isInForm, setIsInForm] = useState(false);
     const [ref, setRef] = useState<HTMLSpanElement | null>(null);
 
@@ -54,14 +56,14 @@ export function PanelButtons({
                         color="primary"
                         disabled={loading}
                         icon={{i18nKey: `${i18nPrefix}.icons.button.save`}}
-                        label={i18next.t(`${i18nPrefix}.button.save`)}
+                        label={t(`${i18nPrefix}.button.save`)}
                         onClick={!isInForm ? save : undefined}
                         type="submit"
                     />
                     <Button
                         disabled={loading}
                         icon={{i18nKey: `${i18nPrefix}.icons.button.cancel`}}
-                        label={i18next.t(`${i18nPrefix}.button.cancel`)}
+                        label={t(`${i18nPrefix}.button.cancel`)}
                         onClick={onClickCancel}
                     />
                 </span>
@@ -71,7 +73,7 @@ export function PanelButtons({
                 <Button
                     disabled={loading}
                     icon={{i18nKey: `${i18nPrefix}.icons.button.edit`}}
-                    label={i18next.t(`${i18nPrefix}.button.edit`)}
+                    label={t(`${i18nPrefix}.button.edit`)}
                     onClick={onClickEdit}
                 />
             );

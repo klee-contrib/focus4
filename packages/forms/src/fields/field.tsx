@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import i18next from "i18next";
 import {useObserver} from "mobx-react";
-import {Ref, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {
     BaseInputProps,
@@ -78,6 +78,20 @@ export function Field<F extends FieldEntry>(
             selectProps = {},
             valueWidth = fieldProps?.valueWidth
         } = props;
+
+        const {t} = useTranslation();
+
+        /** Formatter par défaut en consulation. */
+        const defaultFormatter = useCallback(
+            function defaultFormatter(input: any) {
+                if (typeof input === "string") {
+                    return t(input);
+                } else {
+                    return input;
+                }
+            },
+            [t]
+        );
 
         const fieldId = useId();
 
@@ -283,13 +297,4 @@ export function Field<F extends FieldEntry>(
             </div>
         );
     });
-}
-
-/** Formatter par défaut en consulation. */
-function defaultFormatter(input: any) {
-    if (typeof input === "string") {
-        return i18next.t(input);
-    } else {
-        return input;
-    }
 }

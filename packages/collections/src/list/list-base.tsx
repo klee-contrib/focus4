@@ -1,8 +1,8 @@
 import {isEqual} from "es-toolkit";
-import i18next from "i18next";
 import {extendObservable, observable, observe} from "mobx";
 import {useLocalObservable} from "mobx-react";
 import {useContext, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {ScrollableContext} from "@focus4/layout";
 import {CollectionStore} from "@focus4/stores";
@@ -46,7 +46,10 @@ export function useListBase<T extends object>({
     store
 }: ListBaseProps<T> & {data?: T[]; store?: CollectionStore<T>}) {
     const {registerIntersect} = useContext(ScrollableContext);
+
+    const {t} = useTranslation();
     const theme = useTheme("listBase", listBaseCss, baseTheme);
+
     const state = useLocalObservable(
         () => ({
             /** Nombre d'éléments affichés. */
@@ -89,11 +92,11 @@ export function useListBase<T extends object>({
             /** Label du bouton "Voir plus". */
             get showMoreLabel() {
                 if (store?.type === "server") {
-                    return i18next.t(`${i18nPrefix}.list.show.more`);
+                    return t(`${i18nPrefix}.list.show.more`);
                 } else {
-                    return `${i18next.t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
+                    return `${t(`${i18nPrefix}.list.show.more`)} (${this.displayedData.length} / ${
                         this.data.length
-                    } ${i18next.t(`${i18nPrefix}.list.show.displayed`)})`;
+                    } ${t(`${i18nPrefix}.list.show.displayed`)})`;
                 }
             },
 
@@ -185,7 +188,7 @@ export function useListBase<T extends object>({
                                 {showAllHandler ? (
                                     <Button
                                         icon={{i18nKey: `${i18nPrefix}.icons.list.showAll`}}
-                                        label={i18next.t(`${i18nPrefix}.list.show.all`)}
+                                        label={t(`${i18nPrefix}.list.show.all`)}
                                         onClick={showAllHandler}
                                     />
                                 ) : null}

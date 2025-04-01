@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import i18next from "i18next";
 import {action} from "mobx";
 import {ReactNode} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CollectionStore} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
@@ -32,6 +32,8 @@ export function TableHeader<T extends object>({
     store?: CollectionStore<T>;
     theme: ToBem<TableCss>;
 }) {
+    const {t} = useTranslation();
+
     return (
         <th
             className={classNames(
@@ -57,7 +59,7 @@ export function TableHeader<T extends object>({
                     }}
                 />
             ) : null}
-            <span className={theme.label()}>{i18next.t(title)}</span>
+            <span className={theme.label()}>{t(title)}</span>
         </th>
     );
 }
