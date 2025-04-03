@@ -11,7 +11,7 @@ import {i18nFormToolbox} from "@focus4/form-toolbox";
 import {i18nLayout} from "@focus4/layout";
 import {i18nStores} from "@focus4/stores";
 
-import {colorScheme, initColorScheme, initI18n} from "@focus4/core";
+import {baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
 
 import {Controls, Description, Primary, Subtitle, Title} from "@storybook/blocks";
 import {addons} from "@storybook/preview-api";
@@ -28,21 +28,23 @@ const channel = addons.getChannel();
 channel.on(DARK_MODE_EVENT_NAME, v => (colorScheme.dark = v));
 initColorScheme(true);
 
-initI18n([initReactI18next], "fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
-    fr: {
-        router: {
-            root: "Accueil",
-            utilisateurs: {
-                root: "Utilisateurs",
-                utiId: {
-                    root: "Détail de l'utilisateur : {{param}}"
+i18next.use(initReactI18next).init({
+    ...baseI18nextConfig([i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
+        fr: {
+            router: {
+                root: "Accueil",
+                utilisateurs: {
+                    root: "Utilisateurs",
+                    utiId: {
+                        root: "Détail de l'utilisateur : {{param}}"
+                    }
                 }
             }
         }
-    }
+    }),
+    lng: "fr",
+    fallbackLng: "fr"
 });
-
-console.log(i18next);
 
 export default {
     initialGlobals: {

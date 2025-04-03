@@ -11,33 +11,41 @@ Focus utilise [`react-i18next`](https://react.i18next.com/) dans ses composants 
 après un appel à `i18next.changeLanguage()`. Vous pouvez librement utiliser directement la fonction `useTranslation` de `react-i18next`, un import
 direct depuis `i18next`, ou simplement rien du tout pour gérer les libellés dans vos applications.
 
-En ce qui concerne les traductions de Focus, chaque module expose son propre objet de traduction, et la fonction `initI18n` permet de tout initialiser
-facilement :
+En ce qui concerne les traductions de Focus, chaque module expose son propre objet de traduction, et la fonction `basei18nConfig` permet de simplifier leur initialisation.
 
 Par exemple, en important les traductions de tous les modules :
 
 ```ts
+import i18next from "i18next";
 import {initReactI18next} from "react-i18next";
 
 import {i18nCollections} from "@focus4/collections";
-import {initReactI18next} from "@focus4/core";
+import {basei18nConfig} from "@focus4/core";
 import {i18nFormToolbox} from "@focus4/form-toolbox";
 import {i18nStores} from "@focus4/stores";
 import {i18nLayout} from "@focus4/layout";
 
-initI18n([initReactI18next], "fr", [i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
-    fr: {
-        /* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */
-    },
-    en: {
-        /* Vos traductions personnalisées en anglais, qui peuvent surcharger celles de Focus. */
-    }
+i18next.use(initReactI18next).init({
+    ...basei18nConfig([i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
+        fr: {
+            /* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */
+        },
+        en: {
+            /* Vos traductions personnalisées en anglais, qui peuvent surcharger celles de Focus. */
+        }
+    }),
+    lng: "fr"
 });
 ```
 
 Cette fonction doit être appelée à l'initialisation de votre application, avant le chargement des vues.
 
 Focus dispose de traductions par défaut en français et en anglais, et vous pouvez en ajouter d'autres sur votre projet si besoin.
+
+De plus, si vous voulez que la langue choisie dans `i18next` soit automatiquement envoyée au serveur dans toutes les requêtes via le header
+`Accept-Language`, vous pouvez renseigner l'option de configuration `coreConfig.useI18nextAcceptHeader` à `true`. Par défaut, ce header est
+automatiquement renseigné par le navigateur, et il existe des modules de `i18next` pour détecter automatiquement la langue de l'utilisateur, donc vous
+pouvez aussi également gérer le tout de manière automatique 😉.
 
 ## Surcharge de libellés
 

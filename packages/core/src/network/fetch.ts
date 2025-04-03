@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import {merge} from "es-toolkit";
+import i18next from "i18next";
 
 import {coreConfig} from "../config";
 
@@ -24,16 +25,19 @@ export async function coreFetch(
     options = merge(
         {method, credentials: "include" as const},
         merge(
-            body instanceof FormData
-                ? {body}
-                : body
-                ? {
-                      headers: {
-                          "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
-                      },
-                      body: JSON.stringify(body)
-                  }
-                : {},
+            merge(
+                coreConfig.useI18nextAcceptHeader ? {headers: {"Accept-Language": i18next.language}} : {},
+                body instanceof FormData
+                    ? {body}
+                    : body
+                    ? {
+                          headers: {
+                              "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
+                          },
+                          body: JSON.stringify(body)
+                      }
+                    : {}
+            ),
             options
         )
     );

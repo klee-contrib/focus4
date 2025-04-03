@@ -7,5 +7,12 @@ export const coreConfig = {
     retryCountOnFailedFetch: 2,
 
     /** Délai avant la tentative suivante de fetch après un "Failed to fetch" */
-    retryDelayOnFailedFetch: 300
+    retryDelayOnFailedFetch: 300,
+
+    /**
+     * Renseigne le header `Accept-Language` par défaut de `coreFetch` pour utiliser la langue choisie dans `i18next`.
+     *
+     * (Sans ce header, le navigateur en posera un automatiquement, selon la langue de l'utilisateur).
+     */
+    useI18nextAcceptHeader: false
 };
