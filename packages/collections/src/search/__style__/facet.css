@@ -102,4 +102,5 @@
 
 .icon > span {
     transition: color var(--animation-duration) var(--animation-curve-default);
+    font-variation-settings: "FILL" 0;
 }

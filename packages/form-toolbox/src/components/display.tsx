@@ -97,13 +97,15 @@ export function Display<T extends DomainFieldType>({
             {Array.isArray(label) ? (
                 multiValueDisplay === "lists" || (multiValueDisplay === "lists-if-multiple" && label.length > 1) ? (
                     <div className={theme.lists()}>
-                        {chunk(label, listChunkSize ?? label.length).map((group, k) => (
-                            <ul key={k}>
-                                {group.map((v, i) => (
-                                    <li key={i}>{v}</li>
-                                ))}
-                            </ul>
-                        ))}
+                        {label.length > 0
+                            ? chunk(label, listChunkSize ?? label.length).map((group, k) => (
+                                  <ul key={k}>
+                                      {group.map((v, i) => (
+                                          <li key={i}>{v}</li>
+                                      ))}
+                                  </ul>
+                              ))
+                            : null}
                     </div>
                 ) : (
                     label.join(", ")

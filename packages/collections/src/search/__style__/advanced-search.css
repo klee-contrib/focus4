@@ -13,6 +13,7 @@
     width: var(--advanced-search-facets-width);
     padding: var(--advanced-search-facets-padding);
     box-sizing: content-box;
+    flex-shrink: 0;
 }
 
 .resultContainer {
