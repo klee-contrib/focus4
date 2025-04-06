@@ -29,7 +29,7 @@ export interface ScrollspyContainerProps {
     /** Children */
     children?: ReactNode;
     /** Ref vers le div de contenu. */
-    contentRef?: RefObject<HTMLDivElement>;
+    contentRef?: RefObject<HTMLDivElement | null>;
     /** Menu personnalisé pour le scrollspy. */
     MenuComponent?: ComponentType<ScrollspyMenuProps>;
     /**
