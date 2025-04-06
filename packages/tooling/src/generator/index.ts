@@ -53,7 +53,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             const tokens = sortBy(
                 exportTokens.map(token => {
                     const [element, modifier] = token.split("--");
-                    const Element = upperFirst(element);
+                    const Element = upperFirst(camelCase(element));
                     elements.add(Element);
                     if (modifier) {
                         hasModifier = true;
