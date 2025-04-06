@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@focus4/styling": "12.0.0-rc.1",
-        "@types/luxon": "~3.6.0",
+        "@types/luxon": "~3.6.2",
         "classnames": "~2.5.1",
         "es-toolkit": "~1.34.1",
         "luxon": "~3.6.1",

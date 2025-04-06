@@ -40,31 +40,53 @@ export async function install(appPackageJsonPath: string, version: string) {
     let hasUpdate = false;
 
     for (const focusPackage of focusPackages) {
+        const targetDependencies =
+            focusPackage in (appPackageJson.dependencies ?? {})
+                ? dependencies
+                : focusPackage in (appPackageJson.devDependencies ?? {})
+                ? devDependencies
+                : focusPackage === "@focus4/tooling"
+                ? devDependencies
+                : dependencies;
+
+        const targetDependenciesKey = targetDependencies === devDependencies ? "devDependencies" : "dependencies";
+
         const focusPackageJson = await packageJson(focusPackage, {version});
-        if (focusPackage === "@focus4/tooling" && !(focusPackage in (appPackageJson.dependencies ?? {}))) {
-            devDependencies[focusPackage] = focusPackageJson.version;
+        targetDependencies[focusPackage] = focusPackageJson.version;
 
-            if (devDependencies[focusPackage] !== appPackageJson?.devDependencies?.[focusPackage]) {
-                console.info(`Ajout de ${focusPackage}@${devDependencies[focusPackage]}`);
-                hasUpdate = true;
-            }
-        } else {
-            dependencies[focusPackage] = focusPackageJson.version;
-
-            if (dependencies[focusPackage] !== appPackageJson?.dependencies?.[focusPackage]) {
-                console.info(`Ajout de ${focusPackage}@${dependencies[focusPackage]}`);
-                hasUpdate = true;
-            }
+        if (targetDependencies[focusPackage] !== appPackageJson?.[targetDependenciesKey]?.[focusPackage]) {
+            console.info(`Ajout de ${focusPackage}@${targetDependencies[focusPackage]}`);
+            hasUpdate = true;
         }
 
+        // Installation / mise à jour des peerDependencies des modules Focus.
         for (const peerDep in focusPackageJson.peerDependencies) {
-            if (!(peerDep in dependencies)) {
-                dependencies[peerDep] = (
+            if (!(peerDep in dependencies) && !(peerDep in devDependencies)) {
+                targetDependencies[peerDep] = (
                     await packageJson(peerDep, {version: focusPackageJson.peerDependencies[peerDep]})
                 ).version;
 
-                if (dependencies[peerDep] !== appPackageJson?.dependencies?.[peerDep]) {
-                    console.info(`Ajout de ${peerDep}@${dependencies[peerDep]}`);
+                if (targetDependencies[peerDep] !== appPackageJson?.[targetDependenciesKey]?.[peerDep]) {
+                    console.info(`Ajout de ${peerDep}@${targetDependencies[peerDep]}`);
+                    hasUpdate = true;
+                }
+            }
+        }
+
+        // Mise à jour des dépendences du projet communes avec Focus (si installées manuellement).
+        for (const dep in focusPackageJson.dependencies) {
+            if (
+                !dep.startsWith("@focus4/") &&
+                dep in (appPackageJson?.[targetDependenciesKey] ?? {}) &&
+                !(dep in dependencies) &&
+                !(dep in devDependencies)
+            ) {
+                targetDependencies[dep] = (
+                    await packageJson(dep, {version: focusPackageJson.dependencies[dep]})
+                ).version;
+
+                if (targetDependencies[dep] !== appPackageJson?.[targetDependenciesKey]?.[dep]) {
+                    console.info(`Ajout de ${dep}@${targetDependencies[dep]}`);
                     hasUpdate = true;
                 }
             }
