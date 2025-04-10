@@ -6,8 +6,7 @@ import {Meta} from "@storybook/blocks";
 
 Les messages dans une application Focus sont gérés par le **`messageStore`**.
 
-Par défaut, tout message envoyé dans ce store sera transféré au **`MessageCenter`** (posé par le [`Layout`](/docs/mise-en-page-layout--docs) du module `@focus4/layout`, qui les affichera dans
-une [`Snackbar`](/docs/composants-focus4∕toolbox-snackbar--docs), en bas de l'application, en les dépilant un par un.
+Par défaut, tout message envoyé dans ce store sera transféré au **`MessageCenter`** (posé par le [`Layout`](/docs/mise-en-page-layout--docs) du module `@focus4/layout`, qui les affichera dans une [`Snackbar`](/docs/composants-focus4∕toolbox-snackbar--docs), en bas de l'application, en les dépilant un par un.
 
 4 types de messages sont préconfigurés :
 
@@ -20,13 +19,8 @@ D'autres types de messages arbitraires peuvent être enregistrés, mais ils ne s
 
 ## Enregistrer un message
 
-Le `messageStore` expose une méthode `messageStore.addMessage(type, message)` pour ajouter un message, et une surcharge par type de message
-préconfiguré (`addSuccessMessage`, `addErrorMessage`...)
+Le `messageStore` expose une méthode `messageStore.addMessage(type, message)` pour ajouter un message, et une surcharge par type de message préconfiguré (`addSuccessMessage`, `addErrorMessage`...)
 
-De plus, la méthode `messageStore.addMessages(messages)` est disponible, ou `messages` est un objet JS dont les clés sont les types de messages et les
-valeurs les messages (unitaire ou en liste). Les types de messages récoltés dans cet objet peuvent être configurés via `messageStore.messageTypes`, par
-défaut limité aux 4 types préconfigurés `error`, `warning`, `info` et `success`. 4 variantes sur le nom de la clé sont supportées : par exemple pour un type
-`error`, on cherchera dans les propriétés `error`, `errors`, `globalError` et `globalErrors`.
+De plus, la méthode `messageStore.addMessages(messages)` est disponible, ou `messages` est un objet JS dont les clés sont les types de messages et les valeurs les messages (unitaire ou en liste). Les types de messages récoltés dans cet objet peuvent être configurés via `messageStore.messageTypes`, par défaut limité aux 4 types préconfigurés `error`, `warning`, `info` et `success`. 4 variantes sur le nom de la clé sont supportées : par exemple pour un type `error`, on cherchera dans les propriétés `error`, `errors`, `globalError` et `globalErrors`.
 
-Par défaut, tous les formulaires (du module `@focus4/stores`) envoient des messages de succès lorsqu'une sauvegarde est réalisée avec succès, et toute
-[requête](/docs/les-bases-gestion-des-requêtes--docs) en erreur envoie des messages d'erreurs contenant leurs détails.
+Par défaut, tous les formulaires (du module `@focus4/stores`) envoient des messages de succès lorsqu'une sauvegarde est réalisée avec succès, et toute [requête](/docs/les-bases-gestion-des-requêtes--docs) en erreur envoie des messages d'erreurs contenant leurs détails.

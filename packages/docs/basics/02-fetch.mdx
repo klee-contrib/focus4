@@ -14,15 +14,12 @@ Son API est la suivante :
 
 -   **`method`** permet de renseigner le verbe HTTP (GET, POST, PUT, DELETE...) de la requête.
 -   **`url`** permet de renseigner l'URL que l'on veut appeler.
--   **`{body?, query?}`** permettent de renseigner le contenu du _body_ de la requête (pour un POST ou un PUT), ainsi que les _query params_ qui devront être
-    ajoutés à l'URL. La méthode s'occupera d'inclure les _query params_ à l'URL et gère donc leur caractère optionnel.
--   **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la
-    méthode et le body en particulier), mais il est surchargeable via ce paramètre.
+-   **`{body?, query?}`** permettent de renseigner le contenu du _body_ de la requête (pour un POST ou un PUT), ainsi que les _query params_ qui devront être ajoutés à l'URL. La méthode s'occupera d'inclure les _query params_ à l'URL et gère donc leur caractère optionnel.
+-   **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la méthode et le body en particulier), mais il est surchargeable via ce paramètre.
 
 ### Gestion des erreurs
 
-Si `coreFetch` reçoit une **réponse avec un code de statut en erreur** (4xx-5xx), et si le serveur renvoie une réponse structurée en JSON, alors elle sera
-interprétée afin de pouvoir **enregistrer automatiquement des messages d'erreur** (à priori) dans le [`messageStore`](/docs/les-bases-gestion-des-messages--docs).
+Si `coreFetch` reçoit une **réponse avec un code de statut en erreur** (4xx-5xx), et si le serveur renvoie une réponse structurée en JSON, alors elle sera interprétée afin de pouvoir **enregistrer automatiquement des messages d'erreur** (à priori) dans le [`messageStore`](/docs/les-bases-gestion-des-messages--docs).
 
 Focus supporte nativement les erreurs qui utilisent la spécification [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807), mais acceptera aussi des réponses dans un format JSON arbitaire.
 
@@ -38,10 +35,7 @@ Les messages suivants seront générés :
     -   `Record<string, string[]>` : combinaison des deux cas précédents.
 -   Si aucun message n'a été enregistré et que `title` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
 
-Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que
-`error`, `info` ou `warning`. Ce mécanisme permet en revanche de pouvoir gérer des types de messages personnalisés à partir de erreurs serveur
-personnalisées. Cela peut par la suite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au delà du `MessageCenter` par
-défaut) par exemple.
+Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que `error`, `info` ou `warning`. Ce mécanisme permet en revanche de pouvoir gérer des types de messages personnalisés à partir de erreurs serveur personnalisées. Cela peut par la suite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au delà du `MessageCenter` par défaut) par exemple.
 
 Après traitement des erreurs, `coreFetch` renverra une Promise rejetée avec la réponse du serveur, complétée :
 
@@ -56,14 +50,11 @@ Le `RequestStore` est un store dédié au suivi des requêtes en cours dans l'ap
 
 ### Suivi automatique des requêtes
 
-Par défaut, toute requête faite avec `coreFetch` est automatiquement suivie dans ce store. Les requêtes en cours peuvent se récupérer dans
-`requestStore.pending` et la propriété `requestStore.loading` permet de savoir s'il y au moins une requête encore en cours. Cette propriété peut être
-utilisée directement pour poser un "spinner" global sur votre application à moindre frais.
+Par défaut, toute requête faite avec `coreFetch` est automatiquement suivie dans ce store. Les requêtes en cours peuvent se récupérer dans `requestStore.pending` et la propriété `requestStore.loading` permet de savoir s'il y au moins une requête encore en cours. Cette propriété peut être utilisée directement pour poser un "spinner" global sur votre application à moindre frais.
 
 ### Suivi personnalisé de services
 
-Le `requestStore` dispose également d'une API pour suivre le statut de vos propres services (n'importe quelle fonction retournant une `Promise`) via
-`requestStore.track` :
+Le `requestStore` dispose également d'une API pour suivre le statut de vos propres services (n'importe quelle fonction retournant une `Promise`) via `requestStore.track` :
 
 ```ts
 const id = useId(); // ou Math.random().toString() si vous n'est pas dans un composant
@@ -77,7 +68,6 @@ const user = await requestStore.track(id, () => getUser(id)); // Enregistre le s
 requestStore.isLoading(id); // La requête est-elle en cours ?
 ```
 
-**Plusieurs services peuvent être enregistré sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la
-fois.
+**Plusieurs services peuvent être enregistré sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la fois.
 
 Ce suivi est automatiquement intégré à [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload) et `useFormActions`, qui génèrent un ID de suivi pour leurs services et peuvent y associer d'autres IDs.

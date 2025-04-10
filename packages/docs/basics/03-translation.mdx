@@ -4,12 +4,9 @@ import {Meta} from "@storybook/blocks";
 
 # Libellés et icônes
 
-Focus utilise [`i18next`](https://www.i18next.com/) pour gérer les libellés et les icônes utilisés à travers ses différents composants. Vous êtes largement encouragés à l'utiliser pour vos
-propres libellés également.
+Focus utilise [`i18next`](https://www.i18next.com/) pour gérer les libellés et les icônes utilisés à travers ses différents composants. Vous êtes largement encouragés à l'utiliser pour vos propres libellés également.
 
-Focus utilise [`react-i18next`](https://react.i18next.com/) dans ses composants pour s'interfacer avec `i18next`, ce qui leur permet en particulier de se re-rendre automatiquement
-après un appel à `i18next.changeLanguage()`. Vous pouvez librement utiliser directement la fonction `useTranslation` de `react-i18next`, un import
-direct depuis `i18next`, ou simplement rien du tout pour gérer les libellés dans vos applications.
+Focus utilise [`react-i18next`](https://react.i18next.com/) dans ses composants pour s'interfacer avec `i18next`, ce qui leur permet en particulier de se re-rendre automatiquement après un appel à `i18next.changeLanguage()`. Vous pouvez librement utiliser directement la fonction `useTranslation` de `react-i18next`, un import direct depuis `i18next`, ou simplement rien du tout pour gérer les libellés dans vos applications.
 
 En ce qui concerne les traductions de Focus, chaque module expose son propre objet de traduction, et la fonction `basei18nConfig` permet de simplifier leur initialisation.
 
@@ -42,16 +39,11 @@ Cette fonction doit être appelée à l'initialisation de votre application, ava
 
 Focus dispose de traductions par défaut en français et en anglais, et vous pouvez en ajouter d'autres sur votre projet si besoin.
 
-De plus, si vous voulez que la langue choisie dans `i18next` soit automatiquement envoyée au serveur dans toutes les requêtes via le header
-`Accept-Language`, vous pouvez renseigner l'option de configuration `coreConfig.useI18nextAcceptHeader` à `true`. Par défaut, ce header est
-automatiquement renseigné par le navigateur, et il existe des modules de `i18next` pour détecter automatiquement la langue de l'utilisateur, donc vous
-pouvez aussi également gérer le tout de manière automatique 😉.
+De plus, si vous voulez que la langue choisie dans `i18next` soit automatiquement envoyée au serveur dans toutes les requêtes via le header `Accept-Language`, vous pouvez renseigner l'option de configuration `coreConfig.useI18nextAcceptHeader` à `true`. Par défaut, ce header est automatiquement renseigné par le navigateur, et il existe des modules de `i18next` pour détecter automatiquement la langue de l'utilisateur, donc vous pouvez aussi également gérer le tout de manière automatique 😉.
 
 ## Surcharge de libellés
 
-Chaque traduction utilisée dans un composant est récupérée sous la forme `${i18nPrefix}.module.component.label`, ou `i18nPrefix` est une prop du
-composant qui vaut `"focus"` par défaut. Le fichier de traduction de Focus contient donc `focus.module.component.label`, et vous pouvez redéfinir cette
-traduction en renseignant `custom.module.component.label` dans l'initialisation d'i18n et `custom` comme valeur d'`i18nPrefix`.
+Chaque traduction utilisée dans un composant est récupérée sous la forme `${i18nPrefix}.module.component.label`, ou `i18nPrefix` est une prop du composant qui vaut `"focus"` par défaut. Le fichier de traduction de Focus contient donc `focus.module.component.label`, et vous pouvez redéfinir cette traduction en renseignant `custom.module.component.label` dans l'initialisation d'i18n et `custom` comme valeur d'`i18nPrefix`.
 
 Pour s'assurer de garder toutes les autres traductions par défaut, vous pouvez la définir de cette façon :
 
@@ -79,15 +71,10 @@ Vous pouvez bien sûr utiliser cette stratégie pour surcharger un libellé de `
 
 ## Icônes
 
-Les icônes sont également définies dans les traductions de Focus. Elle sont toutes dans l'objet `icons` qui est à la racine de l'objet `focus` (ou la valeur
-de `i18nPrefix`). Par exemple `focus.icons.list.add` correspond à l'icône du bouton "Voir plus" des listes, tandis que le libellé est dans
-`focus.list.show.more`.
+Les icônes sont également définies dans les traductions de Focus. Elle sont toutes dans l'objet `icons` qui est à la racine de l'objet `focus` (ou la valeur de `i18nPrefix`). Par exemple `focus.icons.list.add` correspond à l'icône du bouton "Voir plus" des listes, tandis que le libellé est dans `focus.list.show.more`.
 
-Une icône se définit avec un **nom** et une **classe CSS**, qui permet de retrouver la police d'icônes associée, et se pose avec le composant [`FontIcon`](/docs/composants-focus4∕toolbox-fonticon--docs). La classe
-CSS est faculative car il existe une classe par défaut, définie dans `uiConfig.defaultIconClassName` (et vaut `"material-symbols-outlined"`).
+Une icône se définit avec un **nom** et une **classe CSS**, qui permet de retrouver la police d'icônes associée, et se pose avec le composant [`FontIcon`](/docs/composants-focus4∕toolbox-fonticon--docs). La classe CSS est faculative car il existe une classe par défaut, définie dans `uiConfig.defaultIconClassName` (et vaut `"material-symbols-outlined"`).
 
-La clé i18n devra donc pointer vers un objet `{name, className?}` (avec `className` facultatif). Tout ce qui a été présenté pour la surcharge de libellé
-s'applique naturellement aussi pour les icônes.
+La clé i18n devra donc pointer vers un objet `{name, className?}` (avec `className` facultatif). Tout ce qui a été présenté pour la surcharge de libellé s'applique naturellement aussi pour les icônes.
 
-_Remarque : la classe CSS de l'icône peut également être un template du nom de l'icône, par exemple `icon-{name}` pour avoir une classe `"icon-home"`
-pour `"home"`, ce qui est utile si la police d'icône ne fonctionne pas directement avec le nom de l'icône et qu'il faut une classe CSS dédiée par icône._
+_Remarque : la classe CSS de l'icône peut également être un template du nom de l'icône, par exemple `icon-{name}` pour avoir une classe `"icon-home"` pour `"home"`, ce qui est utile si la police d'icône ne fonctionne pas directement avec le nom de l'icône et qu'il faut une classe CSS dédiée par icône._

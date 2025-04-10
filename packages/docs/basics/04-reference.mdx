@@ -8,8 +8,7 @@ Focus permet de définir un **store de référence** pour contenir des listes de
 
 ## Listes de référence
 
-Une **liste de référence** correspond (en général) à une table en base de données qui contient un ensemble de lignes fixes (ou qui changent rarement), que l'on
-voudra utiliser régulièrement pour résoudre des libellés à partir d'un clé primaire (utilisée comme clé étrangère).
+Une **liste de référence** correspond (en général) à une table en base de données qui contient un ensemble de lignes fixes (ou qui changent rarement), que l'on voudra utiliser régulièrement pour résoudre des libellés à partir d'un clé primaire (utilisée comme clé étrangère).
 
 Une liste de référence est généralement décrite de cette manière pour Focus :
 
@@ -31,8 +30,7 @@ const typeDroit = {type: {} as TypeDroit, valueKey: "code", labelKey: "libelle"}
 
 ## `makeReferenceStore`
 
-La fonction `makeReferenceStore(referenceLoader, refConfig, referenceClearer?)` permet de créer un **store de listes de référence**, pour contenir
-des listes à charger depuis le serveur. Elle prend comme paramètres :
+La fonction `makeReferenceStore(referenceLoader, refConfig, referenceClearer?)` permet de créer un **store de listes de référence**, pour contenir des listes à charger depuis le serveur. Elle prend comme paramètres :
 
 -   `referenceLoader`, une fonction qui prend en paramètre un nom de référence et renvoie la liste de référence (dans une Promise).
 -   `refConfig`, un objet dont les propriétés sont des définitions de listes de référence, dont le format est vu au dessus (`{type, valueKey, labelKey}`).
@@ -50,8 +48,7 @@ const referenceStore = makeReferenceStore(name => coreFetch("GET", `api/referenc
 
 Les listes de référence peuvent ensuite être lues via `referenceStore.droit` / `referenceStore.typeDroit` / `referenceStore.typeUtilisateur`.
 
-**Les listes de référence sont chargées automatiquement lors de leur première lecture** et sont gardées en cache pour la suite. Ce sont des arrays observables
-initialement vides qui notifieront la dérivation/réaction qui les utilise une fois que la liste sera chargée.
+**Les listes de référence sont chargées automatiquement lors de leur première lecture** et sont gardées en cache pour la suite. Ce sont des arrays observables initialement vides qui notifieront la dérivation/réaction qui les utilise une fois que la liste sera chargée.
 
 Cela s'intègre en particulier nativement dans le rendu d'un composant React :
 
@@ -79,17 +76,11 @@ Ce composant sera initialement rendu 3 fois :
 ### Autres APIs de `ReferenceStore`
 
 -   `referenceStore.isLoading` permet de savoir s'il y a au moins une liste de référence en cours de chargement.
--   `referenceStore.get(ref)` permet de récupérer une liste de référence, en appelant le service de chargement si la liste n'est pas chargée. Cette fonction
-    est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction ou du rendu
-    d'un composant. Vous pouvez l'utiliser dans des handlers d'évènements ou dans des fonctions d'initialisation ([`on("load")`](/docs/modèle-métier-chargement-des-données--docs#onload-callback) ou un `useEffect`) par exemple.
--   `referenceStore.reload(ref?)` permet de **vider le store** (pour toutes les listes, ou seulement celles passées en paramètre), afin de forcer le
-    rechargement d'une liste de référence au **prochain appel**. Cela appellera également le `referenceClearer` s'il a été défini. Cette fonction est à utiliser
-    lorsque vous modifiez le contenu d'une liste de référence et qu'il y a besoin de la recharger.
--   `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) sur des listes de référence demandées (ou toutes si `refNames`
-    est vide). Cela permet d'ajouter l'état de chargement de listes de référence à un autre état préexistant.
+-   `referenceStore.get(ref)` permet de récupérer une liste de référence, en appelant le service de chargement si la liste n'est pas chargée. Cette fonction est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction ou du rendu d'un composant. Vous pouvez l'utiliser dans des handlers d'évènements ou dans des fonctions d'initialisation ([`on("load")`](/docs/modèle-métier-chargement-des-données--docs#onload-callback) ou un `useEffect`) par exemple.
+-   `referenceStore.reload(ref?)` permet de **vider le store** (pour toutes les listes, ou seulement celles passées en paramètre), afin de forcer le rechargement d'une liste de référence au **prochain appel**. Cela appellera également le `referenceClearer` s'il a été défini. Cette fonction est à utiliser lorsque vous modifiez le contenu d'une liste de référence et qu'il y a besoin de la recharger.
+-   `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) sur des listes de référence demandées (ou toutes si `refNames` est vide). Cela permet d'ajouter l'état de chargement de listes de référence à un autre état préexistant.
 
-    `referenceStore.track` renvoie une fonction pour retirer l'ID de suivi des listes de référence. Pour une intégration simplifiée dans un composant React,
-    utiliser le hook `useReferenceTracking` :
+    `referenceStore.track` renvoie une fonction pour retirer l'ID de suivi des listes de référence. Pour une intégration simplifiée dans un composant React, utiliser le hook `useReferenceTracking` :
 
     ```ts
     const id = useId();
@@ -104,17 +95,12 @@ Une `ReferenceList` est une liste contenue dans un `ReferenceStore`. En plus d'�
 -   Une propriété `$valueKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme valeur.
 -   Une propriété `$labelKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme libellé.
 -   Une fonction `getLabel(value)` qui permet de résoudre une valeur.
--   Une fonction `filter()` modifiée qui permet de retourner une nouvelle `ReferenceList` avec les mêmes propriétés (au lieu d'un array classique qui
-    n'aurait plus `$valueKey`/`$labelKey`/`getLabel()`);
+-   Une fonction `filter()` modifiée qui permet de retourner une nouvelle `ReferenceList` avec les mêmes propriétés (au lieu d'un array classique qui n'aurait plus `$valueKey`/`$labelKey`/`getLabel()`);
 
 ### `makeReferenceList(list, {valueKey, labelKey})`
 
-Cette fonction permet de transformer une liste classique en une liste de référence. Elle contrôlera que `valueKey` et `labelKey` existent, et dans le cas
-contraire demandera de les renseigner. Un grand nombre d'APIs et composants Focus demandent des listes de référence en entrée, donc cette fonction pourra
-être utilisée pour les utiliser avec des listes classiques (en particulier des listes à ne pas mettre en cache qui seront chargées "normalement").
+Cette fonction permet de transformer une liste classique en une liste de référence. Elle contrôlera que `valueKey` et `labelKey` existent, et dans le cas contraire demandera de les renseigner. Un grand nombre d'APIs et composants Focus demandent des listes de référence en entrée, donc cette fonction pourra être utilisée pour les utiliser avec des listes classiques (en particulier des listes à ne pas mettre en cache qui seront chargées "normalement").
 
 ### `emptyReferenceList<T>()`
 
-Cette fonction permet de créer une liste de référence vide, utile à passer en tant que valeur initiale d'un `useState()` dans un composant avant d'avoir chargé
-la liste depuis le serveur (et d'avoir appelé `makeReferenceList` dessus). Cela permet de ne pas à avoir à gérer différemment le cas où la liste n'est pas
-encore disponible, de la même façon qu'une liste de référence classique du store.
+Cette fonction permet de créer une liste de référence vide, utile à passer en tant que valeur initiale d'un `useState()` dans un composant avant d'avoir chargé la liste depuis le serveur (et d'avoir appelé `makeReferenceList` dessus). Cela permet de ne pas à avoir à gérer différemment le cas où la liste n'est pas encore disponible, de la même façon qu'une liste de référence classique du store.
