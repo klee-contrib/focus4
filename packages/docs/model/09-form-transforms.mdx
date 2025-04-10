@@ -4,8 +4,7 @@ import {Meta} from "@storybook/blocks";
 
 # Personnalisation de formulaire
 
-Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très
-souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
+Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
 
 -   Définir un état d'édition initial
 -   Désactiver l'édition sur un ou plusieurs champs
@@ -30,14 +29,11 @@ Permet de contrôler l'état d'édition du noeud. Elle fonctionne comme [`edit()
 `value` peut donc valoir :
 
 -   `true` ou `false`, selon l'état souhaité.
--   Une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du noeud** à la valeur retournée par la fonction, au
-    lieu de la rendre librement modifiable.
+-   Une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du noeud** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
 
 ### `edit(value, ...props)`
 
-`edit()` dispose d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la valeur initiale/fonction sera appliquée
-aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser `edit` plusieurs fois, tant que ça s'applique à
-des propriétés différentes.
+`edit()` dispose d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la valeur initiale/fonction sera appliquée aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser `edit` plusieurs fois, tant que ça s'applique à des propriétés différentes.
 
 Exemple :
 
@@ -47,9 +43,7 @@ s.edit(!router.state.proId) // objet en entier
     .edit(() => !router.state.proId, "typeProfilCode"); // édition forcée sur un champ
 ```
 
-La façon standard de modifier l'état d'édition d'un membre d'objet est de passer par `patch` (ou `add`), décrits plus bas, mais cette version de `edit()`
-permet de spécifier le même état d'édition à plusieurs champs à la fois. C'est aussi une version plus courte pour une seule propriété si l'édition est la seule
-chose à modifier dessus.
+La façon standard de modifier l'état d'édition d'un membre d'objet est de passer par `patch` (ou `add`), décrits plus bas, mais cette version de `edit()` permet de spécifier le même état d'édition à plusieurs champs à la fois. C'est aussi une version plus courte pour une seule propriété si l'édition est la seule chose à modifier dessus.
 
 ### `required(value)`
 
@@ -60,9 +54,7 @@ Permet de surcharger le caractère obligatoire d'un noeud. Comme pour `edit()`, 
 
 ### `required(value, ...props)`
 
-Comme `edit()`, `required()` dispose également d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la
-valeur ou la fonction sera appliquée aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser
-`required` plusieurs fois, tant que ça s'applique à des propriétés différentes.
+Comme `edit()`, `required()` dispose également d'une surcharge permettant de passer des propriétés du `StoreNode` en paramètres. Dans ce cas, **la valeur ou la fonction sera appliquée aux champs/listes/objets demandés au lieu de l'objet en lui-même**. Il est donc parfaitement possible d'utiliser `required` plusieurs fois, tant que ça s'applique à des propriétés différentes.
 
 Exemple :
 
@@ -71,8 +63,7 @@ s.required(false) // noeud en entier
     .required(() => !router.state.proId, "nom", "prenom"); // surcharge identique sur deux champs du noeud.
 ```
 
-Pour des sous-noeuds, `required()` appellera le `required()` du builder du sous-noeud, tandis que pour un champ, il posera un
-[`metadata({isRequired})`](/docs/modèle-métier-makefield--docs#metadatametadata) ou un [`metadata(() => ({isRequired}))`](/docs/modèle-métier-makefield--docs#metadatametadata), selon le type de `value`.
+Pour des sous-noeuds, `required()` appellera le `required()` du builder du sous-noeud, tandis que pour un champ, il posera un [`metadata({isRequired})`](/docs/modèle-métier-makefield--docs#metadatametadata) ou un [`metadata(() => ({isRequired}))`](/docs/modèle-métier-makefield--docs#metadatametadata), selon le type de `value`.
 
 ### `add(name, fieldBuilder)`
 
@@ -81,13 +72,9 @@ La fonction `add` permet d'ajouter un nouveau champ au `FormNode`. Son API est i
 -   Le premier paramètre est le nom du champ.
 -   Le deuxième paramètre est un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder).
 
-Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de
-ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les
-modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
+Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
 
-De plus, un champ ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il
-est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le
-second paramètre (optionnel) de `toFlatValues` à `true`.
+De plus, un champ ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `toFlatValues` à `true`.
 
 Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud parent, et la valeur de son `hasChanged` sera toujours `false`.
 
@@ -96,15 +83,13 @@ Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud 
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
 
 -   `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
--   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le
-    builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
+-   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
 
 ### `remove(...fields)`
 
 La fonction `remove` permet de supprimer les champs passés en paramètres du `FormNode`. Les champs supprimés existeront toujours sur le noeud source.
 
-La suppression de champs permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au
-service de sauvegarde**. Vous pouvez toujours retrouver les champs origniaux supprimés du formulaire dans le `sourceNode`.
+La suppression de champs permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au service de sauvegarde**. Vous pouvez toujours retrouver les champs origniaux supprimés du formulaire dans le `sourceNode`.
 
 Par exemple :
 
@@ -124,8 +109,7 @@ De cette façon, n'aurez même pas besoin de définir les champs supprimés comm
 
 ### `removeAllBut(...fields)`
 
-La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les champs du `FormNode`, à l'exception de ceux
-passés en paramètres.
+La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les champs du `FormNode`, à l'exception de ceux passés en paramètres.
 
 ## `FormListNodeBuilder`
 
@@ -143,8 +127,7 @@ Idem `FormNodeBuilder`
 
 ### `items(objectBuilder)`
 
-La fonction `items` permet de modifier les items de la liste (qui sont, pour rappel, des `FormNode`). Elle prend comme unique paramètre `objectBuilder`,
-pour préciser la configuration. Comme toujours, cette fonction est donc appelée avec un `FormNodeBuilder` ainsi que le `FormListNode` courant.
+La fonction `items` permet de modifier les items de la liste (qui sont, pour rappel, des `FormNode`). Elle prend comme unique paramètre `objectBuilder`, pour préciser la configuration. Comme toujours, cette fonction est donc appelée avec un `FormNodeBuilder` ainsi que le `FormListNode` courant.
 
 ## Exemple de personnalisation fixe
 
@@ -152,7 +135,9 @@ pour préciser la configuration. Comme toujours, cette fonction est donc appelé
 const entity = useFormNode(utilisateurStore.utilisateur, e =>
     e
         .remove("id", "dateCreation", "dateModification")
-        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio}))
+        // Les composants de saisie qui fonctionnent avec plusieurs types (par exemple "string" ou "number")
+        // doivent être renseignés avec le type générique correspondant.
+        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<"string">}))
         .add(
             // Ce champ ajouté ne sera pas transmis au serveur lors de la sauvegarde
             "nombreUtilisateursMax",
@@ -241,8 +226,7 @@ type UtilisateurWithoutNameEntity = Patch<UtilisateurEntity, {}, "nom" | "prenom
 
 Dans l'exemple précédent, on voit qu'on utilise aussi bien `FieldEntry` que `FieldEntry2`, qui sont [décrits en intégralité ici](/docs/modèle-métier-champs-et-entités--docs#type-typescript-fieldentryfieldentry2).
 
-Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin.
-Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
+Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin. Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
 
 Les différentes possibilités (par ordre de précision croissante) sont :
 
@@ -253,20 +237,15 @@ Les différentes possibilités (par ordre de précision croissante) sont :
 -   `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
 -   `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
 
-Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que
-vous n'avez pas besoin du détail dans son utilisation.
+Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
 
-Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<"string", TypeUtilisateurCode>` dans le `Patch` afin
-qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que
-**avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à
-`selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
+Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<"string", TypeUtilisateurCode>` dans le `Patch` afin qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que **avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à `selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
 
-Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`,
-`PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
+Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`, `PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
 
 ```ts
 // Par conséquent, la manière la plus précise de définir le type du champ `typeUtilisateurCode` patché serait ce type-là :
-type PatchedTypeUtilisateurCode = PatchSelect<UtilisateurEntityType["typeUtilisateurCode"], SelectRadioProps>;
+type PatchedTypeUtilisateurCode = PatchSelect<UtilisateurEntityType["typeUtilisateurCode"], SelectRadioProps<"string">>;
 
 // Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
 type NouveauChamp = PatchAutocomplete<FieldEntry2<typeof DO_CODE>, MyCustomAutocompleteProps>;
@@ -274,15 +253,11 @@ type NouveauChamp = PatchAutocomplete<FieldEntry2<typeof DO_CODE>, MyCustomAutoc
 
 ## Personnalisation dynamique
 
-L'ensemble de ces personnalisation peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autre état observable externe (et **observable
-uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en
-particulier).
+L'ensemble de ces personnalisation peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autre état observable externe (et **observable uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en particulier).
 
-_Remarque : La limitation sur les dépendances à des états observables dans la personnalisation vous forcera donc à utiliser `useLocalObservable()` plutôt
-que `useState()` dans vos composants, si vous avez besoin d'y référencer un état local._
+_Remarque : La limitation sur les dépendances à des états observables dans la personnalisation vous forcera donc à utiliser `useLocalObservable()` plutôt que `useState()` dans vos composants, si vous avez besoin d'y référencer un état local._
 
-Le noeud courant pourra être récupéré dans un paramètre supplémentaire à l'appel de `edit()`, `add()`, `patch()` et `items()`, afin de pouvoir définir
-simplement des personnalisations qui dépendent de l'état d'un champ du formulaire.
+Le noeud courant pourra être récupéré dans un paramètre supplémentaire à l'appel de `edit()`, `add()`, `patch()` et `items()`, afin de pouvoir définir simplement des personnalisations qui dépendent de l'état d'un champ du formulaire.
 
 Par exemple :
 
@@ -310,15 +285,11 @@ useFormNode(utilisateurStore.utilisateur, f =>
 
 ## Valeurs initiales
 
-A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé. Il est cependant
-possible de renseigner des valeurs initiales :
+A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé. Il est cependant possible de renseigner des valeurs initiales :
 
 -   En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
--   En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles
-    définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
+-   En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
 
 L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelques soient les modifications effectuées sur le store.
 
-En général, si vous avez besoin d'initialiser le store avec les données issues du serveur, le chargement se fera dans le même composant qui définit le formulaire
-(et donc **après** qu'il soit construit). Par conséquent, le chargement qui mettra à jour le `StoreNode` ou `StoreListNode` mettra aussi à jour le `FormNode` ou
-`FormListNode` associé via la synchronisation assurée par `useFormNode`.
+En général, si vous avez besoin d'initialiser le store avec les données issues du serveur, le chargement se fera dans le même composant qui définit le formulaire (et donc **après** qu'il soit construit). Par conséquent, le chargement qui mettra à jour le `StoreNode` ou `StoreListNode` mettra aussi à jour le `FormNode` ou `FormListNode` associé via la synchronisation assurée par `useFormNode`.

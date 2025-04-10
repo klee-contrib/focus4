@@ -6,20 +6,20 @@ import {Meta} from "@storybook/blocks";
 
 Focus met à disposition une série de composants de base qui implémentent [Material Design 3](https://m3.material.io/components) (avec quelques adaptations).
 
-Ces composants cherchent à couvrir les besoins les plus standards d'une application, tout en offrant un niveau de personnalisation élevé pour couvrir un
-maximum de cas.
+Ces composants cherchent à couvrir les besoins les plus standards d'une application, tout en offrant un niveau de personnalisation élevé pour couvrir un maximum de cas.
 
 -   Le module `@focus4/toolbox` contient les versions de base de ces composants, qui sont directement repris de la spécification Material Design.
 -   Le module `@focus4/form-toolbox` contient :
-    -   Quelques "surcharges" de ces composants pour pouvoir s'interfacer directement avec un formulaire ([`Input`](/docs/composants-focus4∕form-toolbox-input--docs) pour [`TextField`](/docs/composants-focus4∕toolbox-textfield--docs) et [`Select`](/docs/composants-focus4∕form-toolbox-select--docs) pour
-        [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) par exemple)
-    -   Des composants un peu plus avancés qui combinent des composants de base pour réaliser des saisies plus complexes (comme [`InputDate`](/docs/composants-focus4∕form-toolbox-inputdate--docs) ou
-        [`SelectChips`](/docs/composants-focus4∕form-toolbox-selectchips--docs)), ou simplifier des cas d'usage courants (comme [`BooleanRadio`](/docs/composants-focus4∕form-toolbox-booleanradio--docs) ou [`SelectCheckbox`](/docs/composants-focus4∕form-toolbox-selectcheckbox--docs)). Ces composants n'existent pas en tant que
-        tels dans la spécification Material Design.
+    -   Quelques "surcharges" de ces composants pour pouvoir s'interfacer directement avec un formulaire ([`Input`](/docs/composants-focus4∕form-toolbox-input--docs) pour [`TextField`](/docs/composants-focus4∕toolbox-textfield--docs) et [`Select`](/docs/composants-focus4∕form-toolbox-select--docs) pour [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) par exemple)
+    -   Des composants un peu plus avancés qui combinent des composants de base pour réaliser des saisies plus complexes (comme [`InputDate`](/docs/composants-focus4∕form-toolbox-inputdate--docs) ou [`SelectChips`](/docs/composants-focus4∕form-toolbox-selectchips--docs)), ou simplifier des cas d'usage courants (comme [`BooleanRadio`](/docs/composants-focus4∕form-toolbox-booleanradio--docs) ou [`SelectCheckbox`](/docs/composants-focus4∕form-toolbox-selectcheckbox--docs)). Ces composants n'existent pas en tant que tels dans la spécification Material Design.
     -   Les composants d'affichage pour les formulaires ([`Display`](/docs/composants-focus4∕form-toolbox-display--docs), [`Label`](/docs/composants-focus4∕form-toolbox-label--docs) et [`Panel`](/docs/mise-en-page-panel--docs))
 
-**Un composant de saisie d'un domaine pour un champ doit venir du module `@focus4/form-toolbox`**, car il doit respecter le contrat d'interface
-correspondant du domaine (`BaseInputProps` / `BaseSelectProps` / `BaseAutocompleteProps`). Si vous voulez construire votre propre composant de
-saisie, vous pouvez reproduire ce que font les composants de `@focus4/form-toolbox`, en particulier la gestion du `type`, du `onChange`, de l'`error` et
-du `supportingText`. Ils utilisent pour cela quelques utilitaires exportés par le module `@focus4/forms`. Ce mécanisme a vocation à être amélioré dans le
-futur, et est suivi par l'[issue #192](https://github.com/klee-contrib/focus4/issues/192) sur Github.
+**Un composant de saisie d'un domaine pour un champ doit venir du module `@focus4/form-toolbox`**, car il doit respecter le contrat d'interface correspondant du domaine (`BaseInputProps` / `BaseSelectProps` / `BaseAutocompleteProps`). Si vous voulez construire votre propre composant de saisie, vous pouvez reproduire ce que font les composants de `@focus4/form-toolbox`, en particulier la gestion du `type`, du `onChange`, de l'`error` et du `supportingText`. Ils utilisent pour cela quelques utilitaires exportés par le module `@focus4/forms`. Ce mécanisme a vocation à être amélioré dans le futur, et est suivi par l'[issue #192](https://github.com/klee-contrib/focus4/issues/192) sur Github.
+
+La plupart des composants de saisies du module `@focus4/form-toolbox` sont utilisables avec plusieurs types de domaines (souvent `"string"` et `"number"` par exemple). Lorsque vous les utiliser pour patcher un composant de champ dans un formulaire, il est nécessaire de respécifier ce type en tant que type générique. Dans le cas contraire, vous aurez une erreur pas forcément compréhensible...
+
+Par exemple, pour un `SelectRadio` sur un champ de domaine type `"string"`, il faut écrire :
+
+```tsx
+.patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<"string">}))
+```
