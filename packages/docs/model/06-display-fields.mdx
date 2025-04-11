@@ -4,12 +4,9 @@ import {Meta} from "@storybook/blocks";
 
 # Afficher des champs
 
-Un champ n'est qu'un objet de la forme `{$field, value}`, donc de manière générale il suffira d'utiliser `field.value` pour récupérer la valeur pour en faire
-ce dont on en a besoin.
+Un champ n'est qu'un objet de la forme `{$field, value}`, donc de manière générale il suffira d'utiliser `field.value` pour récupérer la valeur pour en faire ce dont on en a besoin.
 
-Grâce aux métadonnées et au domaine portés par les champs dans un store d'entité, on va pouvoir cependant aller beaucoup plus loin que récupérer
-simplement la valeur. Avec `stringFor`, on pourra afficher une valeur formattée, et avec le composant `Field`, on va pouvoir afficher la valeur avec ses
-composants configurés dans le domaine.
+Grâce aux métadonnées et au domaine portés par les champs dans un store d'entité, on va pouvoir cependant aller beaucoup plus loin que récupérer simplement la valeur. Avec `stringFor`, on pourra afficher une valeur formattée, et avec le composant `Field`, on va pouvoir afficher la valeur avec ses composants configurés dans le domaine.
 
 ## `stringFor(field, values?)`
 
@@ -29,22 +26,18 @@ Ce composant permet utilise les [composants](/docs/modèle-métier-domaines--doc
 
 ## Méthodes de champs
 
-Appelées sur un `EntityField` d'un `StoreNode`, ces méthodes **afficheront toujours le champ en consultation** (donc avec `LabelComponent` et
-`DisplayComponent`). Il faudra utiliser un [`FormNode`](/docs/modèle-métier-stores-de-formulaire--docs) ou un [`makeField` en édition](/docs/modèle-métier-makefield--docs#makefieldname-builder) pour les afficher en édition.
+Appelées sur un `EntityField` d'un `StoreNode`, ces méthodes **afficheront toujours le champ en consultation** (donc avec `LabelComponent` et `DisplayComponent`). Il faudra utiliser un [`FormNode`](/docs/modèle-métier-stores-de-formulaire--docs) ou un [`makeField` en édition](/docs/modèle-métier-makefield--docs#makefieldname-builder) pour les afficher en édition.
 
 ### `fieldFor(field, options?)`
 
-C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). En édition, elle utilisera le
-**`InputComponent`** définit sur le domaine. Elle prend comme paramètres :
+C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). En édition, elle utilisera le **`InputComponent`** définit sur le domaine. Elle prend comme paramètres :
 
 -   `field`, un `EntityField`
--   `options`, les différentes options à passer au champ. Il ne s'agit uniquement que de props pour `Field`, et _il n'y est pas possible de surcharger les
-    métadonnées du champ_.
+-   `options`, les différentes options à passer au champ. Il ne s'agit uniquement que de props pour `Field`, et _il n'y est pas possible de surcharger les métadonnées du champ_.
 
 ### `selectFor(field, values, options?)`
 
-La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist). En édition, elle utilisera le
-**`SelectComponent`** définit sur le domaine. Elle prend comme paramètres :
+La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist). En édition, elle utilisera le **`SelectComponent`** définit sur le domaine. Elle prend comme paramètres :
 
 -   `field`, le champ contenant le code
 -   `values`, la [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist) à utiliser pour résoudre le code.
@@ -52,16 +45,12 @@ La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affic
 
 ### `autocompleteFor(field, options)`
 
-La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. En édition, elle utilisera le
-**`AutocompleteComponent`** définit sur le domaine. Elle prend comme paramètres :
+La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. En édition, elle utilisera le **`AutocompleteComponent`** définit sur le domaine. Elle prend comme paramètres :
 
 -   `field`, le champ contenant le code
 -   `options`, comme `fieldFor`, où on pourra également préciser :
-    -   Le `keyResolver`, qui permet de récupérer le libellé correspondant à la valeur du champ. Il est nécessaire dès lors que le champ sera utilisé avec des
-        données préchargées. Sa signature est `(value: string) => Promise<string | undefined>`.
-    -   Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit
-        renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est
-        `(query: string) => Promise<{key: string, label: string}[]>`.
+    -   Le `keyResolver`, qui permet de récupérer le libellé correspondant à la valeur du champ. Il est nécessaire dès lors que le champ sera utilisé avec des données préchargées. Sa signature est `(value: string) => Promise<string | undefined>`.
+    -   Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est `(query: string) => Promise<{key: string, label: string}[]>`.
 
 ## `FieldOptions`
 
@@ -100,16 +89,13 @@ De plus, la largeur de la valeur sera initialisée à `--field-label-width` + `-
 
 ### `onChange`
 
-Permet de surcharger le handler appelé lors de la modification du champ par le composant de saisie. Si non renseigné, la valeur du champ sera directement
-mise à jour avec la nouvelle valeur issue du composant. Vous pouvez utiliser cette option afin de personnaliser ce comportement.
+Permet de surcharger le handler appelé lors de la modification du champ par le composant de saisie. Si non renseigné, la valeur du champ sera directement mise à jour avec la nouvelle valeur issue du composant. Vous pouvez utiliser cette option afin de personnaliser ce comportement.
 
-_Remarque : Si vous souhaitez conserver le comportement par défaut de `onChange` qui met à jour le champ, **vous devez réimplémenter l'affectation dans
-votre `onChange` personnalisé**. N'oubliez donc pas de faire `field.value = value` à l'intérieur._
+_Remarque : Si vous souhaitez conserver le comportement par défaut de `onChange` qui met à jour le champ, **vous devez réimplémenter l'affectation dans votre `onChange` personnalisé**. N'oubliez donc pas de faire `field.value = value` à l'intérieur._
 
 ### `autocompleteProps` / `displayProps` / `labelProps` / `inputProps` / `selectProps`
 
-Vous pouvez surcharger les props des composants de domaine ici. Elles s'ajouteront aux props déjà définies dans le domaine et aux surcharges existantes dans
-la définition du formulaire.
+Vous pouvez surcharger les props des composants de domaine ici. Elles s'ajouteront aux props déjà définies dans le domaine et aux surcharges existantes dans la définition du formulaire.
 
 ### `theme`
 

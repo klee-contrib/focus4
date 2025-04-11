@@ -4,8 +4,7 @@ import {Meta} from "@storybook/blocks";
 
 # Actions de formulaire
 
-Les actions du formulaire se définissent avec **`useFormActions`**, qui est un **superset de [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload)** qui s'utilise sur un [`FormNode`](/docs/modèle-métier-stores-de-formulaire--docs) pour y ajouter des services
-pour la sauvegarde.
+Les actions du formulaire se définissent avec **`useFormActions`**, qui est un **superset de [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload)** qui s'utilise sur un [`FormNode`](/docs/modèle-métier-stores-de-formulaire--docs) pour y ajouter des services pour la sauvegarde.
 
 Par exemple :
 
@@ -35,11 +34,7 @@ const actions = useFormActions(
 -   `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
 -   `save()` : Sauvegarde les données du formulaire. Voir plus bas pour le détail.
 
-Comme pour `useLoad`, `useFormActions` peut prendre un array de dépendances en troisième paramètre, qui servira à réenregistrer les services du
-formulaire. Attention néanmoins ici car, comme pour `useLoad`, le service de chargement sera rappelé à tout changement de dépendances, ce qui n'est pas
-forcément souhaitable si vos dépendances sont utilisées dans le service de sauvegarde ou dans un handler. Si vous ne pouvez pas utiliser d'état observable à la
-place (ce qui résout le problème car la référence de l'objet qui le contient peut être stable, avec `useLocalObservable` par exemple), vous pouvez toujours
-séparer le service de chargement dans un `useLoad` à part avec ses propres dépendances, par exemple :
+Comme pour `useLoad`, `useFormActions` peut prendre un array de dépendances en troisième paramètre, qui servira à réenregistrer les services du formulaire. Attention néanmoins ici car, comme pour `useLoad`, le service de chargement sera rappelé à tout changement de dépendances, ce qui n'est pas forcément souhaitable si vos dépendances sont utilisées dans le service de sauvegarde ou dans un handler. Si vous ne pouvez pas utiliser d'état observable à la place (ce qui résout le problème car la référence de l'objet qui le contient peut être stable, avec `useLocalObservable` par exemple), vous pouvez toujours séparer le service de chargement dans un `useLoad` à part avec ses propres dépendances, par exemple :
 
 ```ts
 const [message, setMessage] = useState("");
@@ -58,20 +53,16 @@ useLoad(
 );
 ```
 
-_Remarque : Il n'est pas possible d'enregistrer un service de chargement (avec `useLoad`) sur un `FormNode`. `useFormActions` le pose, quand il est défini,
-bien sur le `sourceNode` du store de formulaire, comme on a reproduit dans l'exemple au-dessus._
+_Remarque : Il n'est pas possible d'enregistrer un service de chargement (avec `useLoad`) sur un `FormNode`. `useFormActions` le pose, quand il est défini, bien sur le `sourceNode` du store de formulaire, comme on a reproduit dans l'exemple au-dessus._
 
-\_Remarque 2 : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `FormActions` (qui hérite de `LoadRegistration`), qui
-s'instancie avec les mêmes paramètres que `useFormActions`. Vous devrez ensuite appeler la fonction `register()` (sur le `sourceNode`) de la même
-façon que pour `LoadRegistration`.
+_Remarque 2 : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `FormActions` (qui hérite de `LoadRegistration`), qui s'instancie avec les mêmes paramètres que `useFormActions`. Vous devrez ensuite appeler la fonction `register()` (sur le `sourceNode`) de la même façon que pour `LoadRegistration`._
 
 ## Services de sauvegarde
 
 Pour définir la sauvegarde d'un formulaire, il existe deux possibiités :
 
 -   Vous pouvez définir un **service de sauvegarde unique**, via `builder.save()`, qui sera appelé avec le contenu du noeud de formulaire à la sauvegarde.
--   Vous pouvez définir un **service de création** (`builder.create()`) et/ou un **service de mise à jour** (`builder.update()`). `create` sera appelé à la
-    sauvegarde **si les `params` ne sont pas définis**, et `update` s'ils le sont. `update` sera appelé avec les params, puis le contenu du noeud de formulaire.
+-   Vous pouvez définir un **service de création** (`builder.create()`) et/ou un **service de mise à jour** (`builder.update()`). `create` sera appelé à la sauvegarde **si les `params` ne sont pas définis**, et `update` s'ils le sont. `update` sera appelé avec les params, puis le contenu du noeud de formulaire.
 
 Les deux possibiités sont mutuellement exclusives, vous ne pouvez pas définir `save` en même temps que `create` ou `update`.
 
@@ -104,18 +95,13 @@ La signature du service d'`update` doit inclure les `params` en premiers paramè
 
 Permet de définir l'initialisation du formulaire, avec un service optionnel pouvant récupérer des données supplémentaires.
 
-Renseigner `init` permettra d'activer la méthode `actions.init()`, qui sera appelée à la place de `load` au premier rendu s'il n'y pas de `load` à appeler
-(non défini, ou avec `params` à `undefined`).
+Renseigner `init` permettra d'activer la méthode `actions.init()`, qui sera appelée à la place de `load` au premier rendu s'il n'y pas de `load` à appeler (non défini, ou avec `params` à `undefined`).
 
-La méthode effectuera un `set` des données retournées par le service en paramètre sur le `formNode` si défini (et non un `replace` sur le `storeNode`
-comme `load`), puis écrasera les données du noeud source par les données du formulaire (avec un `replace` cette fois-ci). Ainsi, cela n'écrasera pas les
-données initiales du formulaire qui ont pu préalablement être définies dans `useFormNode`, mais les complètera avec des données qui auront besoin d'être
-récupérées depuis le serveur par exemple.
+La méthode effectuera un `set` des données retournées par le service en paramètre sur le `formNode` si défini (et non un `replace` sur le `storeNode` comme `load`), puis écrasera les données du noeud source par les données du formulaire (avec un `replace` cette fois-ci). Ainsi, cela n'écrasera pas les données initiales du formulaire qui ont pu préalablement être définies dans `useFormNode`, mais les complètera avec des données qui auront besoin d'être récupérées depuis le serveur par exemple.
 
 La mise à jour du noeud source permettra à `form.hasChanged` d'être calculé à partir de toutes les données initiales du formulaire.
 
-Idéalement, tout formulaire utilisé sans `load` devrait appeler `init`. Il est cependant nécessaire de l'appeler explicitement, puisque le `load` n'est pas
-nécessairement défini dans le `useFormActions` en cours.
+Idéalement, tout formulaire utilisé sans `load` devrait appeler `init`. Il est cependant nécessaire de l'appeler explicitement, puisque le `load` n'est pas nécessairement défini dans le `useFormActions` en cours.
 
 ### `on(events, handler)`
 
@@ -132,9 +118,7 @@ La fonction `on` est étendue pour les actions de formulaires et propose de déf
 On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec les trois paramètres suivants :
 
 -   Le nom de l'évènement qui l'a déclenché.
--   La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"`, `"save"`),
-    ou le nom du service en erreur pour `"error"`.
-    En particulier, si votre service de création retourne un `id` par exemple, vous pourrez le récupérer ici.
+-   La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"`, `"save"`), ou le nom du service en erreur pour `"error"`. En particulier, si votre service de création retourne un `id` par exemple, vous pourrez le récupérer ici.
 
 -   Pour `"error"`, la réponse du serveur retournée par le service en erreur.
 
@@ -142,10 +126,7 @@ On peut en spécifier un seul ou bien un array d'évènements. Le handler passé
 
 Permet de configurer le mode d'affichage des erreurs sur les champs du formulaire. Correspond à [`errorDisplay`](/docs/modèle-métier-afficher-des-champs--docs#errordisplay) dans les options de champ.
 
-Dans un formulaire, **le mode `"after-focus"` forcera également l'affichage des erreurs à la soumission du formulaire** (via un appel à `save()`). Vous
-pouvez suivre la valeur effective du mode dans `actions.errorDisplay` (qui passera donc à `"always"` à l'appel de `save()` et reviendra à
-`"after-focus"` une fois la sauvegarde en succès ou après une annulation). `actions.errorDisplay` peut également être modifié manuellement si vous
-avez besoin de changer le mode sans passer par les actions classiques du formulaire.
+Dans un formulaire, **le mode `"after-focus"` forcera également l'affichage des erreurs à la soumission du formulaire** (via un appel à `save()`). Vous pouvez suivre la valeur effective du mode dans `actions.errorDisplay` (qui passera donc à `"always"` à l'appel de `save()` et reviendra à `"after-focus"` une fois la sauvegarde en succès ou après une annulation). `actions.errorDisplay` peut également être modifié manuellement si vous avez besoin de changer le mode sans passer par les actions classiques du formulaire.
 
 La valeur par défaut dépend du type de formulaire :
 
@@ -158,10 +139,8 @@ Permet de surcharger le message de succès à la sauvegarde du formulaire.
 
 Si le message est vide, aucun message ne sera affiché.
 
-Si vous avez plusieurs services de sauvegarde, vous pouvez utiliser `{name}` dans le message, qui sera remplacé par le nom du service de sauvegarde (pour
-résoudre une clé i18n différente).
+Si vous avez plusieurs services de sauvegarde, vous pouvez utiliser `{name}` dans le message, qui sera remplacé par le nom du service de sauvegarde (pour résoudre une clé i18n différente).
 
 ### `withConfirmation(router)`
 
-Permet de brancher l'état d'édition et le service de sauvegarde au [mode confirmation du routeur](/docs/routage-confirmation--docs). Le mode confirmation ne sera **activé que si le noeud a été
-modifié** (`hasChanged == true`)
+Permet de brancher l'état d'édition et le service de sauvegarde au [mode confirmation du routeur](/docs/routage-confirmation--docs). Le mode confirmation ne sera **activé que si le noeud a été modifié** (`hasChanged == true`)

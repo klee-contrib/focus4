@@ -14,8 +14,7 @@ Un domaine se définit au minimum avec un **type de champ**, qui peut être :
 -   Soit un type array : `"string-array"` / `"number-array"` / `"boolean-array"`
 -   Soit un type objet autre : `"object"`
 
-Le type de champ (sauf `"object"`) contraindra le type Typescript "réel" d'un champ de ce domaine (`string`/`number`/`boolean`, `string[]`/`number[]`
-/`boolean[]`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultant"` pour un domaine `"string"` )
+Le type de champ (sauf `"object"`) contraindra le type Typescript "réel" d'un champ de ce domaine (`string`/`number`/`boolean`, `string[]`/`number[]`/`boolean[]`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultant"` pour un domaine `"string"` )
 
 Le type de champ sera nécessaire pour d'autres fonctionnalités (puisqu'on ne peut pas se baser sur le type Typescript 😉)
 
@@ -43,8 +42,7 @@ Il existe quelques validateurs par défaut :
 
 Tous ces validateurs prennent également une propriété `errorMessage`, pour surcharger le message d'erreur par défaut en cas d'erreur de validation.
 
-Si ces validateurs ne vous conviennent par, vous pouvez toujours définir un validateur comme une **fonction qui retourne un message d'erreur** (ou `undefined`
-si le champ est valide).
+Si ces validateurs ne vous conviennent par, vous pouvez toujours définir un validateur comme une **fonction qui retourne un message d'erreur** (ou `undefined` si le champ est valide).
 
 Par exemple :
 
@@ -74,12 +72,9 @@ Il existe des composants par défaut pour les 5. Dans la grande majorité des ca
 -   Le `DisplayComponent` et le `LabelComponent` par défaut répondent au besoin.
 -   Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé.
 
-Les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` permettent de passer des props par défaut aux
-composants. La propriété `fieldProps` permettra en plus de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres
-composants.
+Les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` permettent de passer des props par défaut aux composants. La propriété `fieldProps` permettra en plus de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres composants.
 
-La propriété `displayFormatter` est une fonction qui permet de contrôler comme un champ soit être affiché (en texte) et est en général la seule
-personnalisation à faire pour l'affichage.
+La propriété `displayFormatter` est une fonction qui permet de contrôler comme un champ soit être affiché (en texte) et est en général la seule personnalisation à faire pour l'affichage.
 
 Par exemple :
 

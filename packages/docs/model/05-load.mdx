@@ -6,19 +6,15 @@ import {Meta} from "@storybook/blocks";
 
 Une fois un `StoreNode` créé, on va rapidement vouloir insérer des données dedans en provenance du serveur.
 
-A première vue, rien de plus simple : on appelle un service quelconque, on récupère son résultat et on appelle `node.replace(data)` pour y enregistrer des
-données. Il n'y a rien de mal à procéder de cette manière.
+A première vue, rien de plus simple : on appelle un service quelconque, on récupère son résultat et on appelle `node.replace(data)` pour y enregistrer des données. Il n'y a rien de mal à procéder de cette manière.
 
-En revanche, le besoin lié au chargement des données n'est en général pas simplement l'affaire d'appeler un service une fois pour toute. Bien souvent, il va
-falloir :
+En revanche, le besoin lié au chargement des données n'est en général pas simplement l'affaire d'appeler un service une fois pour toute. Bien souvent, il va falloir :
 
 -   Gérer un état de chargement pour donner un retour à l'utilisateur que les données sont en train de charger.
 -   Recharger les données quand les paramètres changent (par exemple : un id différent)
 -   Recharger les données quand elles ont été rendues obsolètes par une action utilisateur, par exemple une sauvegarde.
 
-Les deux premiers points peuvent être facilement résolus via une combinaison de `useEffect` et/ou `autorun`, qui permettra de relancer un
-`node.replace(await loadService(id))` à chaque fois que `id` change. Pour le deuxième, il faudra de toute façon recharger manuellement les données
-aux bons endroits, ce que l'on peut faire en rappelant `node.replace(await loadService(id))` la ou il faut (en s'assurant que l'id est le même).
+Les deux premiers points peuvent être facilement résolus via une combinaison de `useEffect` et/ou `autorun`, qui permettra de relancer un `node.replace(await loadService(id))` à chaque fois que `id` change. Pour le deuxième, il faudra de toute façon recharger manuellement les données aux bons endroits, ce que l'on peut faire en rappelant `node.replace(await loadService(id))` la ou il faut (en s'assurant que l'id est le même).
 
 Cela ressemblerait à ça :
 
@@ -48,32 +44,23 @@ Focus met à disposition le hook **`useLoad`**, à utiliser dans un composant Re
 const [isLoading] = useLoad(storeNode, a => a.params(() => state.id).load(loadService));
 ```
 
-Il prend le `StoreNode` en premier paramètre et la description du service de chargement (le service et ses paramètres) en deuxième paramètre, via un
-`NodeLoadBuilder`, décrit en dessous. Il retourne un état de chargement qui indique si la requête est en cours.
+Il prend le `StoreNode` en premier paramètre et la description du service de chargement (le service et ses paramètres) en deuxième paramètre, via un `NodeLoadBuilder`, décrit en dessous. Il retourne un état de chargement qui indique si la requête est en cours.
 
-_Remarque : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `LoadRegistration`, qui s'instancie avec les
-mêmes paramètres que `useLoad`. Vous devrez ensuite appeler la fonction `register()` pour enregistrer le service sur le `StoreNode` et lancer la réaction de
-chargement. Cette appel vous renverra une autre fonction à appeler pour désactiver la réaction._
+_Remarque : En dehors d'un composant fonction React, il est possible d'utiliser directement la classe `LoadRegistration`, qui s'instancie avec les mêmes paramètres que `useLoad`. Vous devrez ensuite appeler la fonction `register()` pour enregistrer le service sur le `StoreNode` et lancer la réaction de chargement. Cette appel vous renverra une autre fonction à appeler pour désactiver la réaction._
 
 `useLoad` répond aux deux problématiques précédentes :
 
 -   Il gère son état de chargement (en utilisant [le suivi personnalisé de services](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services)).
--   Il définit la fonction `load()` sur le `StoreNode` en premier paramètre, qui pourra être appelée n'importe où, et qui va appeler le service de chargement
-    avec les paramètres qui ont été définis.
+-   Il définit la fonction `load()` sur le `StoreNode` en premier paramètre, qui pourra être appelée n'importe où, et qui va appeler le service de chargement avec les paramètres qui ont été définis.
 -   Une réaction est posée, qui va appeler `node.load()` à chaque fois que les paramètres changent (ainsi qu'au premier rendu).
 
 `node.load()` est donc défini dès lors qu'un composant avec `useLoad` est affiché à l'écran. Dans le cas inverse, `node.load()` videra simplement le store.
 
-_Remarque : Si jamais plusieurs `useLoad` sont actifs en même temps (ce qui n'a pas spécialement de sens mais qui pourrait arriver dans un état transitoire, par exemple
-d'une popin de création vers une page de détail), c'est le dernier `useLoad` appelé qui sera effectif._
+_Remarque : Si jamais plusieurs `useLoad` sont actifs en même temps (ce qui n'a pas spécialement de sens mais qui pourrait arriver dans un état transitoire, par exemple d'une popin de création vers une page de détail), c'est le dernier `useLoad` appelé qui sera effectif._
 
-`useLoad()` renvoie, en plus de l'état de chargement, un [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) dans son array de retour (`[isLoading, trackingId]`). Il pourra être utilisé pour ajouter
-d'autres requêtes (ou autres `useLoad`) à son état de chargement, pour avoir un `isLoading` combiné entre tous les services.
+`useLoad()` renvoie, en plus de l'état de chargement, un [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) dans son array de retour (`[isLoading, trackingId]`). Il pourra être utilisé pour ajouter d'autres requêtes (ou autres `useLoad`) à son état de chargement, pour avoir un `isLoading` combiné entre tous les services.
 
-Comme la plupart des hooks React, `useLoad` peut prendre en troisième paramètre un array de dépendances, dans le cas où `params` ne peut pas être défini
-comme une dérivation MobX. Toute modification de dépendances dans cet array réenregistrera un nouveau service de chargement (qui prendra donc en compte
-les nouvelles valeurs de dépendances), et qui sera immédiatement relancé, comme pour le premier rendu. Un changement de noeud sera également bien pris
-en compte comme un changement de dépendances.
+Comme la plupart des hooks React, `useLoad` peut prendre en troisième paramètre un array de dépendances, dans le cas où `params` ne peut pas être défini comme une dérivation MobX. Toute modification de dépendances dans cet array réenregistrera un nouveau service de chargement (qui prendra donc en compte les nouvelles valeurs de dépendances), et qui sera immédiatement relancé, comme pour le premier rendu. Un changement de noeud sera également bien pris en compte comme un changement de dépendances.
 
 ## API de `NodeLoadBuilder`
 
@@ -109,8 +96,7 @@ _Remarque : Si `params` est appelé avec `undefined` ou si la fonction passée r
 params(() => router.state.profils.id);
 ```
 
-Ce qui permet de lier facilement les données chargées dans un store avec l'id de l'objet correspondant qui serait dans l'URL de la page. Cela fonctionnerait
-également pour une page de création, puisqu'`id` serait `undefined`, ce qui désactiverait l'appel à la fonction de chargement.
+Ce qui permet de lier facilement les données chargées dans un store avec l'id de l'objet correspondant qui serait dans l'URL de la page. Cela fonctionnerait également pour une page de création, puisqu'`id` serait `undefined`, ce qui désactiverait l'appel à la fonction de chargement.
 
 ### `load(service)`
 
@@ -118,8 +104,7 @@ Permet de préciser le service de chargement. **params() doit être appelé avan
 
 ### `trackingId(id)`
 
-Permet d'associer un id de suivi existant au service de chargement du `useLoad`. Cet id ne remplacera pas l'id préexistant, ce qui n'impactera pas la valeur du
-`isLoading` retourné par `useLoad`.
+Permet d'associer un id de suivi existant au service de chargement du `useLoad`. Cet id ne remplacera pas l'id préexistant, ce qui n'impactera pas la valeur du `isLoading` retourné par `useLoad`.
 
 Exemple :
 
