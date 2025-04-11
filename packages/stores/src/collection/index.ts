@@ -12,6 +12,8 @@ import {
     toJS
 } from "mobx";
 
+import {requestStore} from "@focus4/core";
+
 import {
     buildNode,
     EntityToType,
@@ -64,9 +66,6 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** `isLoading` setté manuellement, pour le mode `local`. */
     @observable private accessor localIsLoading = false;
 
-    /** Identifiant de la requête en cours. */
-    @observable private accessor pendingQuery: string | undefined;
-
     /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
     @observable private accessor serverCount = 0;
 
@@ -106,6 +105,9 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
 
     /** Set contenant les éléments sélectionnés. */
     readonly selectedItems = observable.set<T>();
+
+    private abortController?: AbortController;
+    private trackingId = Math.random().toString();
 
     /**
      * Crée un nouveau store de liste.
@@ -312,7 +314,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Store en chargement. */
     @computed
     get isLoading() {
-        return this.type === "local" ? this.localIsLoading : !!this.pendingQuery;
+        return this.type === "local" ? this.localIsLoading : requestStore.isLoading(this.trackingId);
     }
 
     set isLoading(loading) {
@@ -443,6 +445,9 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             return;
         }
 
+        this.abortController?.abort();
+        this.abortController = new AbortController();
+
         // On vide les éléments sélectionnés et le skiptoken avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
             this.selectedItems.clear();
@@ -469,17 +474,12 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             top
         };
 
-        const pendingQuery = Math.random().toString();
-        this.pendingQuery = pendingQuery;
-
         try {
-            const response = await this.service(data);
+            const response = await requestStore.track(this.trackingId, () =>
+                this.service!(data, {signal: this.abortController?.signal})
+            );
 
             runInAction(() => {
-                if (pendingQuery !== this.pendingQuery) {
-                    return;
-                }
-
                 // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
                 if (isScroll) {
                     this.innerList.push(...(response.list ?? []));
@@ -498,11 +498,14 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
                 this.skipToken = response.skipToken;
             });
 
+            this.abortController = undefined;
             return response;
-        } finally {
-            if (pendingQuery === this.pendingQuery) {
-                this.pendingQuery = undefined;
+        } catch (error: unknown) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                return;
             }
+
+            throw error;
         }
     }
 

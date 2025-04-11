@@ -93,6 +93,10 @@ export async function coreFetch(
                 }
             }
         } catch (error: unknown) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                return Promise.reject(error);
+            }
+
             // Requête en erreur (= pas de retour serveur).
             if (!errorHandled) {
                 // On réessaie si on est en dessous du seuil de réessai.

@@ -1,7 +1,7 @@
 import {EntityToType, FormNodeBuilder} from "../entity";
 
 /** Définition d'un service de recherche. */
-export type SearchService<T = any, C = {}> = (query: QueryInput<C>) => Promise<QueryOutput<T>>;
+export type SearchService<T = any, C = {}> = (query: QueryInput<C>, options?: RequestInit) => Promise<QueryOutput<T>>;
 
 /** Définition d'une facette côté client. */
 export interface LocalFacetDefinition<T> {

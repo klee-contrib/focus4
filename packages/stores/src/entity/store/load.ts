@@ -33,6 +33,8 @@ export class LoadRegistration<A extends readonly any[] = never> {
 
     @observable.ref private accessor node: StoreNode | StoreListNode;
 
+    protected abortController?: AbortController;
+
     /**
      * Enregistre un service de chargement sur un noeud.
      * @param node Le noeud.
@@ -85,8 +87,11 @@ export class LoadRegistration<A extends readonly any[] = never> {
     async load() {
         if (this.params !== undefined && this.builder.loadService) {
             try {
+                this.abortController?.abort();
+                this.abortController = new AbortController();
+
                 const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                    this.builder.loadService!(...this.params!)
+                    this.builder.loadService!(...this.params!, {signal: this.abortController?.signal})
                 );
                 runInAction(() => {
                     if (data) {
@@ -98,8 +103,14 @@ export class LoadRegistration<A extends readonly any[] = never> {
                     }
 
                     (this.builder.handlers.load ?? []).forEach(handler => handler("load", data));
+
+                    this.abortController = undefined;
                 });
             } catch (e: unknown) {
+                if (e instanceof DOMException && e.name === "AbortError") {
+                    return;
+                }
+
                 this.clear();
                 (this.builder.handlers.error ?? []).forEach(handler => handler("error", "load", e));
                 throw e;
@@ -139,13 +150,14 @@ export class LoadRegistration<A extends readonly any[] = never> {
             const disposer = reaction(() => this.params, this.load, {fireImmediately: true});
             return () => {
                 disposer?.();
+                this.abortController?.abort();
                 if (this.node.load === this.load) {
                     this.node.load = defaultLoad;
                 }
             };
         } else {
             return () => {
-                /* */
+                this.abortController?.abort();
             };
         }
     }
@@ -159,7 +171,7 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends rea
     /** @internal */
     getLoadParams?: () => any | undefined;
     /** @internal */
-    loadService?: (...args: P) => Promise<NodeToType<SN>>;
+    loadService?: (...args: [...P, RequestInit?]) => Promise<NodeToType<SN>>;
     /** @internal */
     trackingIds: string[] = [];
 
@@ -174,8 +186,9 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends rea
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    params<const NP extends any[]>(params?: NP): NodeLoadBuilder<SN, NP>;
-    params<NP>(params?: NP): NodeLoadBuilder<SN, [NonNullable<NP>]>;
+    params<const NP extends any[]>(params: NP): NodeLoadBuilder<SN, NP>;
+    params<NP>(params: NP): NodeLoadBuilder<SN, [NonNullable<NP>]>;
+    params(): NodeLoadBuilder<SN, []>;
     params<const NP extends any[]>(params?: NP | (() => NP | undefined)): any {
         if (params === undefined) {
             // @ts-ignore
@@ -196,7 +209,9 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends rea
      * Enregistre le service de chargement.
      * @param service Service de chargement.
      */
-    load(service: P extends never ? never : (...params: P) => Promise<NodeToType<SN>>): NodeLoadBuilder<SN, P> {
+    load(
+        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<NodeToType<SN>>
+    ): NodeLoadBuilder<SN, P> {
         this.loadService = service;
         return this;
     }

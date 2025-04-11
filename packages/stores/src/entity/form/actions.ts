@@ -241,6 +241,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
             });
             return () => {
                 loadDisposer();
+                this.abortController?.abort();
                 confirmationDisposer();
                 this.builder.confirmation!.toggle(confirmationId, false);
             };
@@ -318,8 +319,10 @@ export class FormActionsBuilder<
      * Précise des paramètres fixes (à l'initialisation) pour l'action de chargement.
      * @param params Paramètres.
      */
-    override params<const NP extends any[]>(params?: NP): FormActionsBuilder<FN, NonNullable<NP>, C, U, S>;
-    override params<NP>(params?: NP): FormActionsBuilder<FN, [NonNullable<NP>], C, U, S>;
+
+    override params(): FormActionsBuilder<FN, [], C, U, S>;
+    override params<const NP extends any[]>(params: NP): FormActionsBuilder<FN, NonNullable<NP>, C, U, S>;
+    override params<NP>(params: NP): FormActionsBuilder<FN, [NonNullable<NP>], C, U, S>;
     override params<const NP extends any[]>(params?: NP | (() => NP | undefined)): any {
         return super.params(params);
     }
@@ -345,7 +348,7 @@ export class FormActionsBuilder<
      * @param service Service de chargement.
      */
     override load(
-        service: P extends never ? never : (...params: P) => Promise<SourceNodeType<FN>>
+        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<SourceNodeType<FN>>
     ): FormActionsBuilder<FN, P, C, U, S> {
         return super.load(service) as any;
     }
