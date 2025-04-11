@@ -89,9 +89,10 @@ export class LoadRegistration<A extends readonly any[] = never> {
             try {
                 this.abortController?.abort();
                 this.abortController = new AbortController();
+                const {signal} = this.abortController;
 
                 const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                    this.builder.loadService!(...this.params!, {signal: this.abortController?.signal})
+                    this.builder.loadService!(...this.params!, {signal})
                 );
                 runInAction(() => {
                     if (data) {

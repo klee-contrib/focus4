@@ -447,6 +447,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
 
         this.abortController?.abort();
         this.abortController = new AbortController();
+        const {signal} = this.abortController;
 
         // On vide les éléments sélectionnés et le skiptoken avant de rechercher à nouveau, pour ne pas avoir d'état de sélection incohérent.
         if (!isScroll) {
@@ -475,9 +476,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         };
 
         try {
-            const response = await requestStore.track(this.trackingId, () =>
-                this.service!(data, {signal: this.abortController?.signal})
-            );
+            const response = await requestStore.track(this.trackingId, () => this.service!(data, {signal}));
 
             runInAction(() => {
                 // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
