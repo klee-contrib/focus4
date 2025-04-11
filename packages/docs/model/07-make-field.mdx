@@ -4,9 +4,7 @@ import {Meta} from "@storybook/blocks";
 
 # Champs autonomes avec `makeField`
 
-Jusqu'ici, les champs que l'on manipule font partis d'un `StoreNode`, et ces champs ont été initialisés et figés par la définition initiale des entités générées
-depuis le modèle. Or, bien souvent, on peut avoir besoin de modifier une métadonnée en particulier, ou bien d'avoir à remplacer un composant dans un écran
-précis pour un champ donné. Et même, on peut vouloir créer un champ à la volée sans avoir besoin de créer un `StoreNode` tout entier.
+Jusqu'ici, les champs que l'on manipule font partis d'un `StoreNode`, et ces champs ont été initialisés et figés par la définition initiale des entités générées depuis le modèle. Or, bien souvent, on peut avoir besoin de modifier une métadonnée en particulier, ou bien d'avoir à remplacer un composant dans un écran précis pour un champ donné. Et même, on peut vouloir créer un champ à la volée sans avoir besoin de créer un `StoreNode` tout entier.
 
 ## Champs en consultation
 
@@ -30,19 +28,15 @@ Exemple :
 stringFor(makeField(date, {domain: DO_DATE}));
 ```
 
-_Remarque : si vous voulez afficher le champ ainsi créé avec `fieldFor` et consorts, n'oubliez pas de spécifier les composants d'affichages soit en
-passant un domaine, soit en renseignant `LabelComponent` et/ou `DisplayComponent`._
+_Remarque : si vous voulez afficher le champ ainsi créé avec `fieldFor` et consorts, n'oubliez pas de spécifier les composants d'affichages soit en passant un domaine, soit en renseignant `LabelComponent` et/ou `DisplayComponent`._
 
 ### `fromField(field, options)`
 
-Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `options`. **Cette fonction ne sert qu'à de
-l'affichage**. C'est un raccourci pour le `makeField` du dessus en l'initialisant avec la valeur, le domaine et les métadonnées d'un champ existant.
+Cette fonction permet de dupliquer un champ en remplaçant certaines métadonnées par celles précisées dans `options`. **Cette fonction ne sert qu'à de l'affichage**. C'est un raccourci pour le `makeField` du dessus en l'initialisant avec la valeur, le domaine et les métadonnées d'un champ existant.
 
 ## Champs en édition
 
-Si le [store de formulaire](/docs/modèle-métier-stores-de-formulaire--docs) est la façon classique de créer des champs qu'il est possible de passer en édition, il est également possible de créer des champs
-autonomes en édition. Ils pourront être utilisés dans le cas où on veut simplement un champ unique en édition et qu'il n'y a pas besoin de validation (par
-exemple pour un champ de recherche ou de filtrage).
+Si le [store de formulaire](/docs/modèle-métier-stores-de-formulaire--docs) est la façon classique de créer des champs qu'il est possible de passer en édition, il est également possible de créer des champs autonomes en édition. Ils pourront être utilisés dans le cas où on veut simplement un champ unique en édition et qu'il n'y a pas besoin de validation (par exemple pour un champ de recherche ou de filtrage).
 
 ### `makeField(name, builder)`
 
@@ -54,13 +48,11 @@ Un champ créé par `makeField` sera en édition par défaut, sauf indication co
 
 ### `cloneField(field, isEdit?)`
 
-Cette méthode est un raccourci pour le `makeField` du dessus pour créer un champ (à priori en édition) à partir d'un champ existant, en réutilisant son getter,
-son setter et ses métadonnées et son domaine.
+Cette méthode est un raccourci pour le `makeField` du dessus pour créer un champ (à priori en édition) à partir d'un champ existant, en réutilisant son getter, son setter et ses métadonnées et son domaine.
 
 ## `EntityFieldBuilder`
 
-Le `EntityFieldBuilder` est l'objet de configuration d'un champ. Il sera le paramètre de `add` et `patch` sur le [`FormNodeBuilder`](/docs/modèle-métier-personnalisation--docs#formnodebuilder), ainsi que celui de
-`makeField` pour un champ éditable.
+Le `EntityFieldBuilder` est l'objet de configuration d'un champ. Il sera le paramètre de `add` et `patch` sur le [`FormNodeBuilder`](/docs/modèle-métier-personnalisation--docs#formnodebuilder), ainsi que celui de `makeField` pour un champ éditable.
 
 Il dispose des méthodes suivantes :
 
@@ -71,8 +63,7 @@ Permet de contrôler l'état d'édition du champ.
 `value` peut valoir :
 
 -   `true` ou `false`, selon l'état souhaité.
--   **Dans un formulaire uniquement**, une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du champ** à la
-    valeur retournée par la fonction, au lieu de la rendre librement modifiable.
+-   **Dans un formulaire uniquement**, une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du champ** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
 
 ### `domain(domain)`
 
@@ -93,18 +84,15 @@ La fonction `value` peut être utilisée pour:
 
 `value()` peut être utilisé aussi bien sur des nouveaux champs (`makeField` / `add`) que des champs préexistants (`patch`).
 
-Le type de `value()` est contraint par le [type de champ du domaine](/docs/modèle-métier-domaines--docs#type-de-champ), mais peut être rendu plus précis en passant le type souhaité en générique, par exemple
-avec `value<TypeDroitCode>()`. La fonction peut d'ailleurs être appelée sans paramètres juste pour cet usage.
+Le type de `value()` est contraint par le [type de champ du domaine](/docs/modèle-métier-domaines--docs#type-de-champ), mais peut être rendu plus précis en passant le type souhaité en générique, par exemple avec `value<TypeDroitCode>()`. La fonction peut d'ailleurs être appelée sans paramètres juste pour cet usage.
 
 ### `metadata($metadata)`
 
-La fonction `metadata` permet de re(définir) les métadonnées d'un champ. Elle prend un seul paramètre, `$metadata`, qui contient toutes les métadonnées à
-remplacer. Cela peut être :
+La fonction `metadata` permet de re(définir) les métadonnées d'un champ. Elle prend un seul paramètre, `$metadata`, qui contient toutes les métadonnées à remplacer. Cela peut être :
 
 -   Tout ce qui est définit dans le [domaine](/docs/modèle-métier-domaines--docs) (formatteur, validateurs, composants... mais pas le type de champ).
 -   Tout ce qui est définit sur le [champ](/docs/modèle-métier-champs-et-entités--docs#définition-dun-champ) (libellé, commentaire, caractère obligatoire).
 
-**Dans un formulaire uniquement**, `$metadata` peut être une fonction qui renvoie ces mêmes métadonnées, afin de pouvoir les rendre dynamiques (pour
-dépendre d'un **état observable** et construire une dérivation, par exemple d'autres champs du même formulaire).
+**Dans un formulaire uniquement**, `$metadata` peut être une fonction qui renvoie ces mêmes métadonnées, afin de pouvoir les rendre dynamiques (pour dépendre d'un **état observable** et construire une dérivation, par exemple d'autres champs du même formulaire).
 
 Les validateurs définis dans `metadata()` vont **s'ajouter** à ceux déjà définis dans les domaines. Il n'est **pas possible** de retirer un validateur sur un champ.

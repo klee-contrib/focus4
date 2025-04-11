@@ -103,8 +103,7 @@ router.to(a => a("operation")(1)("tam")("COURANT")(4));
 router.to(a => a("operation")(1)("echeance")(4)("reglement")(3));
 ```
 
-C'est tout à fait équivalent à faire une navigation vers `#/operation/1/tam/COURANT/4` ou
-`#/operation/1/echeance/4/reglement/3`, par exemple via une balise `<a>` ou en écrivant l'URL dans la barre d'adresse du navigateur.
+C'est tout à fait équivalent à faire une navigation vers `#/operation/1/tam/COURANT/4` ou `#/operation/1/echeance/4/reglement/3`, par exemple via une balise `<a>` ou en écrivant l'URL dans la barre d'adresse du navigateur.
 
 Le deuxième paramètre `replace`, si renseigné à `true`, remplacera l'ancienne URL dans l'historique par la nouvelle, au lieu de l'ajouter à suivre. Cela implique que si on a remplacé, on ne pourra pas revenir à l'ancienne URL en faisant "précédent" : on ira directement à la valeur d'avant.
 

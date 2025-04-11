@@ -26,21 +26,15 @@ export function Component() {
 }
 ```
 
-Le vrai nom de la classe `element` sera généré au build, avec une convention de nommage qui garantira l'unicité du nom (en général sous la forme
-`{nom du fichier}__{nom de la classe}__{hash du fichier}`), afin d'obtenir des classes CSS qui ne pourront jamais se confondre entre plusieurs
-fichiers (et donc plusieurs composants).
+Le vrai nom de la classe `element` sera généré au build, avec une convention de nommage qui garantira l'unicité du nom (en général sous la forme `{nom du fichier}__{nom de la classe}__{hash du fichier}`), afin d'obtenir des classes CSS qui ne pourront jamais se confondre entre plusieurs fichiers (et donc plusieurs composants).
 
-Le CSS de Focus est directement packagé avec cette convention de nommage, et vous pouvez la reproduire dans votre projet pour vos fichiers CSS avec le
-plugin Vite de `@focus4/tooling` `cssAutoModules(regex)`
+Le CSS de Focus est directement packagé avec cette convention de nommage, et vous pouvez la reproduire dans votre projet pour vos fichiers CSS avec le plugin Vite de `@focus4/tooling` `cssAutoModules(regex)`
 
-_Remarque : Vite par défaut ne traite que les fichiers en `.module.css` comme des modules CSS, le plugin de Focus permet de le faire pour tous les fichiers
-`.css` qui matchent la regex passée en paramètre._
+_Remarque : Vite par défaut ne traite que les fichiers en `.module.css` comme des modules CSS, le plugin de Focus permet de le faire pour tous les fichiers `.css` qui matchent la regex passée en paramètre._
 
 ## Typage des modules CSS
 
-Pour garantir l'existence des classes CSS référencées dans le vode, Focus expose un outil pour générer les types Typescript correspondant aux classes CSS
-d'un fichier CSS. Il génèrera un fichier `*.css.d.ts` à côté de vos fichiers CSS qui permettra aux imports dans vos composants d'être typés correctement
-comme n'importe quel autre import Typescript.
+Pour garantir l'existence des classes CSS référencées dans le vode, Focus expose un outil pour générer les types Typescript correspondant aux classes CSS d'un fichier CSS. Il génèrera un fichier `*.css.d.ts` à côté de vos fichiers CSS qui permettra aux imports dans vos composants d'être typés correctement comme n'importe quel autre import Typescript.
 
 Il se lance via la commande `npx focus4 cssgen`, souvent redéfinie en `npm run cssgen` dans votre `package.json` avec ces deux paramètres :
 
@@ -49,8 +43,7 @@ Il se lance via la commande `npx focus4 cssgen`, souvent redéfinie en `npm run 
 
 Vous devriez donc en général avoir un script `cssgen` dans votre `package.json` qui devrait ressembler à `focus4 cssgen . __style__`.
 
-Focus génère ses types CSS avec également, et vous pouvez référencer le CSS de Focus dans vos components en l'important si vous en avez besoin (ex
-: `import {popinCss} from "@focus4/layout`).
+Focus génère ses types CSS avec également, et vous pouvez référencer le CSS de Focus dans vos components en l'important si vous en avez besoin (ex : `import {popinCss} from "@focus4/layout`).
 
 Les fichiers `.css.d.ts` générés peuvent paraîtrent un peu étranges au premier abord...
 

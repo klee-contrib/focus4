@@ -4,19 +4,15 @@ import {Meta} from "@storybook/blocks";
 
 # Le CSS de Focus
 
-Le CSS de Focus est construit sur du CSS standard, sans framework externe (qu'il soit CSS pur ou CSS-in-JS). Il utilise néanmoins extensivement des modules
-CSS pour organiser le CSS par composant et quelques utilitaires pour en faciliter l'usage et permettre de la surcharge.
+Le CSS de Focus est construit sur du CSS standard, sans framework externe (qu'il soit CSS pur ou CSS-in-JS). Il utilise néanmoins extensivement des modules CSS pour organiser le CSS par composant et quelques utilitaires pour en faciliter l'usage et permettre de la surcharge.
 
-Focus utilise également beaucoup de [variables CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) dans ses composants, en particulier pour tout ce qui est **couleurs** et **dimensions**. Avant de ce précipiter à
-surcharger le CSS, il faut regarder en priorité si une surcharge de variable (même locale dans une classe) ne serait pas suffisante.
+Focus utilise également beaucoup de [variables CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) dans ses composants, en particulier pour tout ce qui est **couleurs** et **dimensions**. Avant de ce précipiter à surcharger le CSS, il faut regarder en priorité si une surcharge de variable (même locale dans une classe) ne serait pas suffisante.
 
 ## Surcharge du CSS Focus
 
-Puisque Focus utilise des modules CSS avec des noms de classes CSS sont autogénérés au build, **il est impossible de surcharger le CSS en redéfinissant des
-classes CSS globales** (ce qui est entièrement voulu).
+Puisque Focus utilise des modules CSS avec des noms de classes CSS sont autogénérés au build, **il est impossible de surcharger le CSS en redéfinissant des classes CSS globales** (ce qui est entièrement voulu).
 
-Focus expose donc sur **chaque composant** une proprieté **`theme`**, un objet JS dans lequel on peut renseigner l'ensemble des classes CSS utilisée par le
-composant, qui correspond au module CSS correspondant.
+Focus expose donc sur **chaque composant** une proprieté **`theme`**, un objet JS dans lequel on peut renseigner l'ensemble des classes CSS utilisée par le composant, qui correspond au module CSS correspondant.
 
 ### Surcharge locale
 
@@ -28,17 +24,13 @@ import css from "./__style__/button.css";
 <Button label="Bouton" theme={{button: css.button}} />;
 ```
 
-La classe importée `css.button` sera **ajoutée en plus de la classe existante**. Les règles de priorité CSS classiques s'appliquent (spécificité du sélecteur, puis
-ordre de déclaration). Focus essaie le plus possible d'avoir des sélecteurs les moins précis possibles, et puisque son CSS devrait être importé en premier, la
-surcharge devrait pouvoir se faire simplement.
+La classe importée `css.button` sera **ajoutée en plus de la classe existante**. Les règles de priorité CSS classiques s'appliquent (spécificité du sélecteur, puis ordre de déclaration). Focus essaie le plus possible d'avoir des sélecteurs les moins précis possibles, et puisque son CSS devrait être importé en premier, la surcharge devrait pouvoir se faire simplement.
 
-_Remarque : l'exemple utilise un module CSS, mais `button` prend simplement un `string`, donc n'importe quelle chaîne de caractères fonctionne ici. Ce
-système ne vous oblige pas à faire des modules CSS, même si c'est fortement recommandé 😉._
+_Remarque : l'exemple utilise un module CSS, mais `button` prend simplement un `string`, donc n'importe quelle chaîne de caractères fonctionne ici. Ce système ne vous oblige pas à faire des modules CSS, même si c'est fortement recommandé 😉._
 
 ### Surcharge globale
 
-Via le composant `ThemeProvider`, posé par le [`Layout`](/docs/mise-en-page-layout--docs) à la racine de toute application Focus, il est possible d'ajouter des classes CSS à **tous les
-composants posés à l'intérieur** (pour le [`Layout`](/docs/mise-en-page-layout--docs), il s'agira donc d'une surcharge globale).
+Via le composant `ThemeProvider`, posé par le [`Layout`](/docs/mise-en-page-layout--docs) à la racine de toute application Focus, il est possible d'ajouter des classes CSS à **tous les composants posés à l'intérieur** (pour le [`Layout`](/docs/mise-en-page-layout--docs), il s'agira donc d'une surcharge globale).
 
 Les classes CSS se posent via la propriété `appTheme` :
 
@@ -48,10 +40,7 @@ Les classes CSS se posent via la propriété `appTheme` :
 
 Ici, on donne le même objet contenant notre classe CSS `button` à la clé `button` de `appTheme`, pour qu'elle s'applique à **tous les boutons** de l'application.
 
-Chaque composant dispose de sa propre clé, et ira chercher le CSS correspondant via le hook `useTheme` dans le contexte du `ThemeProvider`. Ce système
-est extensible et peut être utilisé par vos propres composants avec des clés différentes, ou pour récupérer vos surcharges de CSS Focus dans des composants
-personnalisés. Notez bien tout de même les CSS de base de Focus **ne sont pas ajoutés dans le `ThemeProvider`** et qu'il faudra les importer et les ajouter
-manuellement, par exemple :
+Chaque composant dispose de sa propre clé, et ira chercher le CSS correspondant via le hook `useTheme` dans le contexte du `ThemeProvider`. Ce système est extensible et peut être utilisé par vos propres composants avec des clés différentes, ou pour récupérer vos surcharges de CSS Focus dans des composants personnalisés. Notez bien tout de même les CSS de base de Focus **ne sont pas ajoutés dans le `ThemeProvider`** et qu'il faudra les importer et les ajouter manuellement, par exemple :
 
 ```tsx
 import {buttonCss, ButtonCss} from "@focus4/toolbox";
@@ -62,17 +51,13 @@ function MyButton(props: {theme?: ButtonCss}) {
 }
 ```
 
-Vous pouvez également poser d'autres `ThemeProvider` pour ajouter d'autres classes CSS, en plus de celles du [`Layout`](/docs/mise-en-page-layout--docs), dans certaines parties de votre
-application. Toutes les classes CSS seront mises bout à bout sur le composant final.
+Vous pouvez également poser d'autres `ThemeProvider` pour ajouter d'autres classes CSS, en plus de celles du [`Layout`](/docs/mise-en-page-layout--docs), dans certaines parties de votre application. Toutes les classes CSS seront mises bout à bout sur le composant final.
 
 ### Surcharge dans le domaine
 
-Les classes CSS passées dans les props `theme` des composants de domaines dans les domaines (`inputProps`/`selectProps`/`autocompleteProps`/
-`displayProps`/`labelProps`/`fieldProps`) **ne seront pas surchargées** par celles passées dans un [`patch()`](/docs/modèle-métier-personnalisation--docs#patchname-builder) de [`metadata()`](/docs/modèle-métier-makefield--docs#metadatametadata), et le tout **ne le sera pas
-non plus** par les classes passées dans les `inputProps`/`selectProps`... de [`fieldFor`/`selectFor`/`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#méthodes-de-champs).
+Les classes CSS passées dans les props `theme` des composants de domaines dans les domaines (`inputProps`/`selectProps`/`autocompleteProps`/`displayProps`/`labelProps`/`fieldProps`) **ne seront pas surchargées** par celles passées dans un [`patch()`](/docs/modèle-métier-personnalisation--docs#patchname-builder) de [`metadata()`](/docs/modèle-métier-makefield--docs#metadatametadata), et le tout **ne le sera pas non plus** par les classes passées dans les `inputProps`/`selectProps`... de [`fieldFor`/`selectFor`/`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#méthodes-de-champs).
 
-Vous pouvez donc, en plus des surcharges locales et globales, définir du CSS personnalisé qui ne s'appliquera qu'aux composants d'un domaine, sans
-compromettre une éventuelle surcharge locale future.
+Vous pouvez donc, en plus des surcharges locales et globales, définir du CSS personnalisé qui ne s'appliquera qu'aux composants d'un domaine, sans compromettre une éventuelle surcharge locale future.
 
 ## Variables CSS
 
@@ -80,15 +65,11 @@ Focus définit des variables CSS à plusieurs niveaux :
 
 -   Des variables "générales", utilisées par la plupart des composants.
 -   Des variables par composant, préfixées par le nom du composant (ex : pour [`Chip`](/docs/composants-focus4∕toolbox-chip--docs), il s'agit de toutes les variables en `--chip-XXX`).
--   Des variables "communes", typiquement les variables en `--button-XXX` et `--input-XXX`, qui sont partagées par un ensemble de composants.
-    (`--button-XXX` par tous les boutons et `--input-XXX` par tous les composants de saisies).
+-   Des variables "communes", typiquement les variables en `--button-XXX` et `--input-XXX`, qui sont partagées par un ensemble de composants. (`--button-XXX` par tous les boutons et `--input-XXX` par tous les composants de saisies).
 
-Toutes ces variables sont définies sur `:root` et sont donc des **variables globales**. Les variables peuvent néanmoins être surchargées localement dans une
-classe CSS pour s'appliquer à tous les éléments à l'intérieur. Focus utilise cette mécanique dans certains de ces composants complexes pour modifier certains
-aspects des composants de base.
+Toutes ces variables sont définies sur `:root` et sont donc des **variables globales**. Les variables peuvent néanmoins être surchargées localement dans une classe CSS pour s'appliquer à tous les éléments à l'intérieur. Focus utilise cette mécanique dans certains de ces composants complexes pour modifier certains aspects des composants de base.
 
-**La plupart des personnalisations simples peuvent se faire en modifiant simplement quelques variables CSS**, que ça soit globalement ou dans une surcharge
-de CSS locale. **Priorisez le plus possible de modifier des variables plutôt que de réécrire le CSS de Focus**.
+**La plupart des personnalisations simples peuvent se faire en modifiant simplement quelques variables CSS**, que ça soit globalement ou dans une surcharge de CSS locale. **Priorisez le plus possible de modifier des variables plutôt que de réécrire le CSS de Focus**.
 
 Par exemple, si je veux que les champs textes ([`TextField`](/docs/composants-focus4∕toolbox-textfield--docs)) aient un fond blanc au lieu d'être transparents :
 
@@ -104,25 +85,20 @@ Par exemple, si je veux que les champs textes ([`TextField`](/docs/composants-fo
 }
 ```
 
-La première solution nécessiterait de créer un fichier de module CSS dédié et de l'importer dans le [`Layout`](/docs/mise-en-page-layout--docs), alors que la seconde est déjà globale et peut être
-intégrée dans n'importe quel fichier CSS. De plus, on réutilise la variable `--color-white` au lieu de mettre `white` en dur afin de directement gérer le cas où
-on voudra redéfinir ce qui est blanc dans l'application (par exemple avec un [thème sombre](/docs/css-mode-sombre--docs)... 😉).
+La première solution nécessiterait de créer un fichier de module CSS dédié et de l'importer dans le [`Layout`](/docs/mise-en-page-layout--docs), alors que la seconde est déjà globale et peut être intégrée dans n'importe quel fichier CSS. De plus, on réutilise la variable `--color-white` au lieu de mettre `white` en dur afin de directement gérer le cas où on voudra redéfinir ce qui est blanc dans l'application (par exemple avec un [thème sombre](/docs/css-mode-sombre--docs)... 😉).
 
 De plus, vous devriez également utiliser des variables pour votre CSS personnalisé autant que possible et pertinent, pour les mêmes raisons.
 
 ### Variables de couleurs
 
-Focus définit des palettes de couleurs standard (issues de la première spécification Material Design). Elles prennent la forme
-`--palette-{color}-{intensity}`, où :
+Focus définit des palettes de couleurs standard (issues de la première spécification Material Design). Elles prennent la forme `--palette-{color}-{intensity}`, où :
 
 -   `intensity` est un chiffre valant `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `a100`, `a200`, `a400` ou `a700`
--   `color` une couleur au choix entre `red`, `pink`, `purple`, `deep-purple`, `indigo`, `blue`, `light-blue`, `cyan`, `teal`, `green`,
-    `light-green`, `lime`, `yellow`, `amber`, `orange`, `deep-orange`, `brown`, `grey`, `blue-grey`.
+-   `color` une couleur au choix entre `red`, `pink`, `purple`, `deep-purple`, `indigo`, `blue`, `light-blue`, `cyan`, `teal`, `green`, `light-green`, `lime`, `yellow`, `amber`, `orange`, `deep-orange`, `brown`, `grey`, `blue-grey`.
 
 Les deux couleurs `--color-white` et `--color-black` sont aussi définies.
 
-**Toutes ces variables ne sont définies qu'en terme de valeurs RGB**, par exemple `--palette-purple-200` vaut `206, 147, 216`. Pour utiliser la couleur,
-il faudra donc utiliser la fonction `rgb()` ou `rgba()`, par exemple :
+**Toutes ces variables ne sont définies qu'en terme de valeurs RGB**, par exemple `--palette-purple-200` vaut `206, 147, 216`. Pour utiliser la couleur, il faudra donc utiliser la fonction `rgb()` ou `rgba()`, par exemple :
 
 ```css
 .button {
@@ -142,8 +118,7 @@ Il existe également 3 couleurs principales, utilisées **très** largement dans
 
 Elles sont initialisées avec 3 couleurs parmi le choix de palettes, et il s'agira probablement des premières variables à personnaliser dans votre application.
 
-`--color-primary` est utilisé en particulier dans tous les composants qui ont besoin d'une couleur pour afficher quelque chose d'actif, et les boutons
-proposent nativement ces trois couleurs comme choix.
+`--color-primary` est utilisé en particulier dans tous les composants qui ont besoin d'une couleur pour afficher quelque chose d'actif, et les boutons proposent nativement ces trois couleurs comme choix.
 
 ### Autres variables générales
 
@@ -163,7 +138,6 @@ Un certain nombre de variables, en particulier pour définir des couleurs, sont 
 
 ### Variables locales
 
-Chaque composant peut également définir des variables locales, dédiées à un composant en particulier. Elles sont en général identifiables par leur nom en
-`--{composant}-XXX`.
+Chaque composant peut également définir des variables locales, dédiées à un composant en particulier. Elles sont en général identifiables par leur nom en `--{composant}-XXX`.
 
 Toutes les variables locales sont listées sur la page de documentation de chaque composant, ainsi que les variables globales et partagées utilisées dedans.
