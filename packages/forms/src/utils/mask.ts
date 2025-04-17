@@ -128,9 +128,7 @@ export function useMask({
                 }
                 char = sourceChars[++i];
             } else if (char in formatCharacters) {
-                if (fei === undefined) {
-                    fei = patternIndex;
-                }
+                fei ??= patternIndex;
                 lei = patternIndex;
                 ei[patternIndex] = true;
             }

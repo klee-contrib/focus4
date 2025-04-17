@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@focus4/core": "11.24.7",
-        "@types/luxon": "3.4.2",
-        "luxon": "3.5.0"
+        "@types/luxon": "3.6.2",
+        "luxon": "3.6.1"
     }
 }
