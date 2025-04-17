@@ -91,7 +91,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     theme: pTheme,
     type,
     undeletable,
-    value = [] as DomainType<T>
+    value
 }: AutocompleteChipsProps<T, TSource>) {
     const {t} = useTranslation();
     const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
@@ -100,7 +100,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     useEffect(() => {
         if (keyResolver) {
-            for (const item of value.filter(i => !labels.has(i))) {
+            for (const item of (value ?? []).filter(i => !labels.has(i))) {
                 keyResolver(item as DomainType<SingleDomainFieldType<T>>).then(label => labels.set(item, label ?? ""));
             }
         }
@@ -108,8 +108,8 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
-            if (v && (!maxSelectable || value.length < maxSelectable)) {
-                onChange([...value, v] as DomainType<T>);
+            if (v && (!maxSelectable || (value?.length ?? 0) < maxSelectable)) {
+                onChange([...(value ?? []), v] as DomainType<T>);
             }
         },
         [onChange, maxSelectable, value]
@@ -117,7 +117,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange(value.filter(i => i !== v) as DomainType<T>);
+            onChange((value ?? []).filter(i => i !== v) as DomainType<T>);
         },
         [onChange, value]
     );
@@ -133,7 +133,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
         async function fixedQuerySearcher(query: string) {
             if (querySearcher) {
                 const results = await querySearcher(query);
-                return results.filter(r => !(value as (boolean | number | string)[]).includes(getKey(r)));
+                return results.filter(r => !(value ?? []).includes(getKey(r) as never));
             } else {
                 return [];
             }
@@ -169,7 +169,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                 }}
                 type={toSimpleType(type)}
             />
-            {value.length > 0 ? (
+            {value?.length ? (
                 <div className={theme.chips()}>
                     {value.map(item => (
                         <Chip

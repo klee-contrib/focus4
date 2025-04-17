@@ -90,7 +90,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     type,
     undeletable,
     unselectable,
-    value = [] as DomainType<T>,
+    value,
     values
 }: SelectChipsProps<T>) {
     const {t} = useTranslation();
@@ -98,22 +98,22 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: DomainType<SingleDomainFieldType<T>>) {
-            onChange(value.filter(i => i !== v) as DomainType<T>);
+            onChange((value?.filter(i => i !== v) as DomainType<T>) ?? []);
         },
         [onChange, value]
     );
 
     const handleAddValue = useCallback(
         function handleAddValue(v?: DomainType<SingleDomainFieldType<T>>) {
-            const hasValue = v !== undefined && (value as DomainType<SingleDomainFieldType<T>>[]).includes(v);
+            const hasValue = v !== undefined && (value ?? []).includes(v as never);
 
             if (
                 v !== undefined &&
                 !hasValue &&
-                (!maxSelectable || value.length < maxSelectable) &&
+                (!maxSelectable || (value?.length ?? 0) < maxSelectable) &&
                 values.some(i => i[values.$valueKey] === v)
             ) {
-                onChange([...value, v] as DomainType<T>);
+                onChange([...(value ?? []), v] as DomainType<T>);
             } else if (hasValue) {
                 handleRemoveValue(v);
             }
@@ -164,7 +164,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         }
 
         return function SelectChipsLineComponent({item}: any) {
-            const selected = (value as any).includes(item[values.$valueKey]);
+            const selected = (value ?? []).includes(item[values.$valueKey] as never);
             return (
                 <span className={theme.line({selected})}>
                     {item[values.$labelKey]}
@@ -178,8 +178,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         () =>
             values.filter(
                 v =>
-                    (keepSelectedValuesInSelect ||
-                        !(value as (boolean | number | string)[]).includes(v[values.$valueKey])) &&
+                    (keepSelectedValuesInSelect || !(value ?? []).includes(v[values.$valueKey] as never)) &&
                     !unselectable?.(v)
             ),
         [keepSelectedValuesInSelect, unselectable, value, values, values.length]
@@ -228,7 +227,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     values={finalValues}
                 />
             )}
-            {value.length > 0 ? (
+            {value?.length ? (
                 <div className={theme.chips()}>
                     {value.map(item => (
                         <Chip
