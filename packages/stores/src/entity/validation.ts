@@ -19,13 +19,14 @@ const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-export function validateField({
-    $field: {
-        domain: {type, validator},
-        isRequired
-    },
-    value
-}: EntityField<FieldEntry<DomainFieldType>>): string | undefined {
+export function validateField(entityField: EntityField<FieldEntry<DomainFieldType>>): string | undefined {
+    const {
+        $field: {
+            domain: {type, validator},
+            isRequired
+        },
+        value
+    } = entityField;
     // On vérifie que le champ n'est pas vide et obligatoire.
     if (
         isRequired &&
@@ -34,17 +35,18 @@ export function validateField({
             (typeof value === "string" && value.trim() === "") ||
             (type.endsWith("array") && Array.isArray(value) && value.length === 0))
     ) {
-        return i18next.t("focus.validation.required");
+        return i18next.t("focus.validation.required", {...entityField.$field, interpolation: {skipOnVariables: false}});
     }
 
     // On applique le validateur du domaine.
     if (!!validator && value !== undefined && value !== null) {
         const errors = validate(value, Array.isArray(validator) ? validator : [validator]);
         if (errors.length) {
-            return errors.map(e => i18next.t(e)).join(", ");
+            return errors
+                .map(e => i18next.t(e, {...entityField.$field, interpolation: {skipOnVariables: false}}))
+                .join(", ");
         }
     }
-
     // Pas d'erreur.
     return undefined;
 }
