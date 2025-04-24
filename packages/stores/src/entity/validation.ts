@@ -35,14 +35,16 @@ export function validateField(entityField: EntityField<FieldEntry<DomainFieldTyp
             (typeof value === "string" && value.trim() === "") ||
             (type.endsWith("array") && Array.isArray(value) && value.length === 0))
     ) {
-        return i18next.t("focus.validation.required", entityField.$field);
+        return i18next.t("focus.validation.required", {...entityField.$field, interpolation: {skipOnVariables: false}});
     }
 
     // On applique le validateur du domaine.
     if (!!validator && value !== undefined && value !== null) {
         const errors = validate(value, Array.isArray(validator) ? validator : [validator]);
         if (errors.length) {
-            return errors.map(e => i18next.t(e, entityField.$field)).join(", ");
+            return errors
+                .map(e => i18next.t(e, {...entityField.$field, interpolation: {skipOnVariables: false}}))
+                .join(", ");
         }
     }
     // Pas d'erreur.
