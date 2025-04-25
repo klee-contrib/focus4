@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 
 import {messageStore} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {FontIcon, IconButton} from "@focus4/toolbox";
+import {FontIcon, Icon, IconButton} from "@focus4/toolbox";
 
 import inputFileCss, {InputFileCss} from "./__style__/input-file.css";
 export {inputFileCss, InputFileCss};
@@ -20,6 +20,12 @@ export interface InputFileProps<T extends number = number> {
     error?: string;
     /** Préfixe i18n pour le texte et les icônes. Par défaut : "focus". */
     i18nPrefix?: string;
+    /**
+     * Sélecteur d'icône personnalisé pour l'affichage des fichiers chargés
+     * @param type Type MIME du fichier.
+     * @returns Une icône, ou undefined pour garder l'icône par défaut.
+     */
+    iconSelector?: (type: string) => Icon | undefined;
     /** Id de l'input HTML. */
     id?: string;
     /** Nombre maximum de fichiers acceptés en upload. S'il vaut 1, alors cet input sera en pour un champ simple, sinon pour un champ multiple. */
@@ -45,10 +51,11 @@ export function InputFile<T extends number = number>({
     accept,
     error,
     i18nPrefix = "focus",
-    onChange,
+    iconSelector,
     id = "input-file",
     maxFiles = Infinity as T,
     name = "input-file",
+    onChange,
     showSupportingText = "always",
     tabIndex = 0,
     value,
@@ -130,7 +137,7 @@ export function InputFile<T extends number = number>({
                 {getFiles(files).map(f => (
                     <span key={f.name} className={theme.file()}>
                         <span>
-                            <FontIcon icon={{i18nKey: `${i18nPrefix}.icons.file.line`}} />
+                            <FontIcon icon={iconSelector?.(f.type) ?? {i18nKey: `${i18nPrefix}.icons.file.line`}} />
                             <span>{f.name}</span>
                         </span>
                         <IconButton
