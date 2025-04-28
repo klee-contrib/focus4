@@ -78,3 +78,7 @@ Une icône se définit avec un **nom** et une **classe CSS**, qui permet de retr
 La clé i18n devra donc pointer vers un objet `{name, className?}` (avec `className` facultatif). Tout ce qui a été présenté pour la surcharge de libellé s'applique naturellement aussi pour les icônes.
 
 _Remarque : la classe CSS de l'icône peut également être un template du nom de l'icône, par exemple `icon-{name}` pour avoir une classe `"icon-home"` pour `"home"`, ce qui est utile si la police d'icône ne fonctionne pas directement avec le nom de l'icône et qu'il faut une classe CSS dédiée par icône._
+
+## Interpolations
+
+Dans le cadre de la traduction des messages d'erreur, il est possible d'utiliser l'interpolation avec i18next, pour insérer des valeurs dynamiques dans les messages. Pour cela, il suffit d'utiliser la syntaxe `{{variable}}` dans le message, où la variable est une clé de l'objet `$field` du champ concerné. Par exemple, pour afficher le nom du champ dans le message d'erreur, on peut utiliser le message suivant : `Le champ {{label}} est obligatoire`. Si le label est une clé de traduction, pour le traduire à l'intérieur du message d'erreur il faut utiliser la syntaxe `$t(variable)` dans le message, par exemple : `Le champ {{$t(label)}} est obligatoire`.
