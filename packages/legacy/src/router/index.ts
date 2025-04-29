@@ -114,7 +114,7 @@ export function makeRouter<Store extends ViewStore<any, any>, E extends string =
             enter: ({newPath, oldPath}) => {
                 if (newPath === "/") {
                     // Si on a pas de route initiale, on redirige vers le store principal.
-                    return `${stores[0].prefix}`;
+                    return `/${stores[0].prefix}`;
                 } else {
                     // On traite le handler personnalisé.
                     if (config.notfoundHandler) {
