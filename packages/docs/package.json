@@ -27,6 +27,6 @@
         "@storybook/react-vite": "8.6.12",
         "storybook": "8.6.12",
         "storybook-dark-mode": "4.0.2",
-        "storybook-react-i18next": "3.2.1"
+        "storybook-react-i18next": "3.3.1"
     }
 }
