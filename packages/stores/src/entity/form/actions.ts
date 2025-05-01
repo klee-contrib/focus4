@@ -4,8 +4,14 @@ import {action, autorun, computed, observable, runInAction} from "mobx";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
+import {CollectionStore} from "../../collection";
 import {LoadRegistration, NodeLoadBuilder, toFlatValues} from "../store";
 import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodeType} from "../types";
+
+type LoadData<FN extends FormNode | FormListNode | CollectionStore> = FN extends CollectionStore
+    ? FN["list"]
+    : // @ts-ignore
+      SourceNodeType<FN>;
 
 interface FormActionHandlers<
     FN extends FormNode | FormListNode,
@@ -14,7 +20,7 @@ interface FormActionHandlers<
     S extends SourceNodeType<FN> | void | string | number
 > {
     init?: ((event: "init", data: SourceNodeType<FN>) => void)[];
-    load?: ((event: "load", data: SourceNodeType<FN>) => void)[];
+    load?: ((event: "load", data: LoadData<FN>) => void)[];
     cancel?: ((event: "cancel") => void)[];
     edit?: ((event: "edit") => void)[];
     create?: ((event: "create", data: C) => void)[];
@@ -348,7 +354,7 @@ export class FormActionsBuilder<
      * @param service Service de chargement.
      */
     override load(
-        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<SourceNodeType<FN>>
+        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<LoadData<FN>>
     ): FormActionsBuilder<FN, P, C, U, S> {
         return super.load(service) as any;
     }

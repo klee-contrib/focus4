@@ -3,9 +3,11 @@ import {action, computed, observable, reaction, runInAction} from "mobx";
 
 import {requestStore} from "@focus4/core";
 
+import {CollectionStore} from "../../collection";
 import {
     EntityToType,
     isAnyFormNode,
+    isAnyStoreNode,
     isStoreListNode,
     isStoreNode,
     NodeToType,
@@ -15,8 +17,12 @@ import {
 
 import {defaultLoad} from "./store";
 
-interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode> {
-    load?: ((event: "load", data: NodeToType<SN>) => void)[];
+type LoadData<SN extends StoreNode | StoreListNode | CollectionStore> = SN extends CollectionStore
+    ? SN["list"]
+    : NodeToType<SN>;
+
+interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode | CollectionStore> {
+    load?: ((event: "load", data: LoadData<SN>) => void)[];
     error?: ((event: "error", data: "load", error: unknown) => void)[];
 }
 
@@ -27,32 +33,37 @@ export class LoadRegistration<A extends readonly any[] = never> {
      *
      * Il pourra être utilisé pour enregistrer d'autres services sur cet id pour combiner leur état de chargement.
      */
-    readonly trackingId: string;
+    trackingId: string;
 
-    @observable.ref protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode, A>;
+    @observable.ref protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>;
 
-    @observable.ref private accessor node: StoreNode | StoreListNode;
+    @observable.ref private accessor store: StoreNode | StoreListNode | CollectionStore;
 
     protected abortController?: AbortController;
 
     /**
-     * Enregistre un service de chargement sur un noeud.
-     * @param node Le noeud.
+     * Enregistre un service de chargement sur un store.
+     * @param store Le store.
      * @param builder Builder pour le service de chargement.
      * @param trackingId Id de suivi de requête pour ce load.
      */
     constructor(
-        node: StoreNode | StoreListNode,
-        builder: NodeLoadBuilder<StoreNode | StoreListNode, A>,
-        trackingId: string = Math.random().toString()
+        store: StoreNode | StoreListNode | CollectionStore,
+        builder: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>,
+        trackingId?: string
     ) {
-        if (isAnyFormNode(node) && !!builder.loadService) {
+        if (isAnyFormNode(store) && !!builder.loadService) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
         }
 
-        this.node = node;
+        if (store instanceof CollectionStore && store.type !== "local") {
+            throw new Error("Impossible d'enregistrer un `load` sur un `CollectionStore` défini avec un service.");
+        }
+
+        this.store = store;
         this.builder = builder;
-        this.trackingId = trackingId;
+        this.trackingId =
+            trackingId ?? (store instanceof CollectionStore ? store.trackingId : Math.random().toString());
     }
 
     /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
@@ -81,7 +92,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
     /**
      * Appelle le service de chargement avec la valeur courante des paramètres, et insère le résultat dans le store associé.
      *
-     * Cette méthode est également accessible depuis le store (via `node.load()`).
+     * Cette méthode est également accessible depuis le store (via `storeNode.load()` ou `collectionStore.search()`).
      */
     @action.bound
     async load() {
@@ -96,10 +107,13 @@ export class LoadRegistration<A extends readonly any[] = never> {
                 );
                 runInAction(() => {
                     if (data) {
-                        if (isStoreNode(this.node)) {
-                            this.node.replace(data as EntityToType<any>);
-                        } else if (isStoreListNode(this.node)) {
-                            this.node.replaceNodes(data as EntityToType<any>[]);
+                        if (isStoreNode(this.store)) {
+                            this.store.replace(data as EntityToType<any>);
+                        } else if (isStoreListNode(this.store)) {
+                            this.store.replaceNodes(data as EntityToType<any>[]);
+                        } else {
+                            this.store.selectedItems.clear();
+                            this.store.list = data as EntityToType<any>[];
                         }
                     }
 
@@ -122,7 +136,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
     /** Vide le noeud de store associé au service de chargement. */
     @action.bound
     clear() {
-        this.node.clear();
+        this.store.clear();
     }
 
     /**
@@ -130,30 +144,47 @@ export class LoadRegistration<A extends readonly any[] = never> {
      *
      * _Remarque : L'usage de cette méthode est déjà géré par `useLoad`/`useFormActions`._
      *
-     * @param node Éventuel nouveau noeud de store, pour remplacer l'ancien.
+     * @param store Éventuel nouveau store, pour remplacer l'ancien.
      * @param builder Éventuel nouveau builder, pour remplace l'ancien.
      */
     @action.bound
-    register(node?: StoreNode | StoreListNode, builder?: NodeLoadBuilder<StoreNode | StoreListNode, A>) {
-        if (node) {
-            if (isAnyFormNode(node) && !!builder?.loadService) {
+    register(
+        store?: StoreNode | StoreListNode | CollectionStore,
+        builder?: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>
+    ) {
+        if (store) {
+            if (isAnyFormNode(store) && !!builder?.loadService) {
                 throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
             }
 
-            this.node = node;
+            if (store instanceof CollectionStore && store.type !== "local") {
+                throw new Error("Impossible d'enregistrer un `load` sur un `CollectionStore` défini avec un service.");
+            }
+
+            this.store = store;
+
+            if (store instanceof CollectionStore) {
+                this.trackingId = store.trackingId;
+            }
         }
         if (builder) {
             this.builder = builder;
         }
 
         if (this.builder.getLoadParams && this.builder.loadService) {
-            this.node.load = this.load;
+            if (isAnyStoreNode(this.store)) {
+                this.store.load = this.load;
+            } else {
+                this.store.localLoadService = this.load;
+            }
             const disposer = reaction(() => this.params, this.load, {fireImmediately: true});
             return () => {
                 disposer?.();
                 this.abortController?.abort();
-                if (this.node.load === this.load) {
-                    this.node.load = defaultLoad;
+                if (isAnyStoreNode(this.store) && this.store.load === this.load) {
+                    this.store.load = defaultLoad;
+                } else if (!isAnyStoreNode(this.store) && this.store.localLoadService === this.load) {
+                    this.store.localLoadService = undefined;
                 }
             };
         } else {
@@ -165,14 +196,14 @@ export class LoadRegistration<A extends readonly any[] = never> {
 }
 
 /** Objet de configuration pour un enregistrement de chargement. */
-export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends readonly any[] = never> {
+export class NodeLoadBuilder<SN extends StoreListNode | StoreNode | CollectionStore, P extends readonly any[] = never> {
     /** @internal */
     readonly handlers: LoadRegistrationHandlers<SN> = {};
 
     /** @internal */
     getLoadParams?: () => any | undefined;
     /** @internal */
-    loadService?: (...args: [...P, RequestInit?]) => Promise<NodeToType<SN>>;
+    loadService?: (...args: [...P, RequestInit?]) => Promise<LoadData<SN>>;
     /** @internal */
     trackingIds: string[] = [];
 
@@ -211,7 +242,7 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode, P extends rea
      * @param service Service de chargement.
      */
     load(
-        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<NodeToType<SN>>
+        service: P extends never ? never : (...params: [...P, RequestInit?]) => Promise<LoadData<SN>>
     ): NodeLoadBuilder<SN, P> {
         this.loadService = service;
         return this;

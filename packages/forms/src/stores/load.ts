@@ -2,6 +2,7 @@ import {autorun} from "mobx";
 import {useEffect, useId, useRef, useState} from "react";
 
 import {
+    CollectionStore,
     LoadRegistration,
     NodeLoadBuilder,
     ReferenceDefinition,
@@ -11,16 +12,16 @@ import {
 } from "@focus4/stores";
 
 /**
- * Enregistre un service de chargement sur un noeud de store (`node.load()`).
+ * Enregistre un service de chargement sur un store (`storeNode.load()` ou `collectionStore.search()`).
  *
  * Ce service sera rappelé automatiquement à chaque fois que les paramètres définis changent.
  *
- * @param node StoreNode ou StoreListNode.
+ * @param node StoreNode, StoreListNode ou CollectionStore (local uniquement).
  * @param builder Builder pour le service de chargement (permet de définir les paramètres et le service).
  * @param deps Liste de dépendances (React) pour le service. Le builder sera redéfini à tout changement d'une valeur de cette liste, et le service de chargement sera rappelé.
  * @returns Etat de chargement et ID de suivi.
  */
-export function useLoad<SN extends StoreListNode | StoreNode>(
+export function useLoad<SN extends StoreListNode | StoreNode | CollectionStore>(
     node: SN,
     builder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN>,
     deps: any[] = []

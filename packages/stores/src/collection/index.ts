@@ -51,6 +51,10 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Service de recherche serveur. */
     private readonly service?: SearchService<T>;
 
+    /** @internal */
+    /** Service de chargement posé par un `useLoad()`, en mode local. */
+    localLoadService?: () => Promise<void>;
+
     /** Liste des champs disponibles pour la recherche texte. */
     @observable.ref accessor availableSearchFields: string[] = [];
 
@@ -62,9 +66,6 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     private readonly innerGroups: IObservableArray<GroupResult<T>> = observable([]);
     /** Liste brute (non triée, non filtrée) des données, fournie en local ou récupérée du serveur si recherche non groupée. */
     private readonly innerList: IObservableArray<T> = observable([]);
-
-    /** `isLoading` setté manuellement, pour le mode `local`. */
-    @observable private accessor localIsLoading = false;
 
     /** Nombre d'éléments dans le résultat, d'après la requête serveur. */
     @observable private accessor serverCount = 0;
@@ -107,7 +108,9 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     readonly selectedItems = observable.set<T>();
 
     private abortController?: AbortController;
-    private trackingId = Math.random().toString();
+
+    /** Id de suivi, pour les requêtes de chargement. */
+    trackingId = Math.random().toString();
 
     /**
      * Crée un nouveau store de liste.
@@ -314,11 +317,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Store en chargement. */
     @computed
     get isLoading() {
-        return this.type === "local" ? this.localIsLoading : requestStore.isLoading(this.trackingId);
-    }
-
-    set isLoading(loading) {
-        this.localIsLoading = loading;
+        return requestStore.isLoading(this.trackingId);
     }
 
     /** Nombre d'éléments récupérés depuis le serveur. */
@@ -436,11 +435,16 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     }
 
     /**
-     * Effectue la recherche.
+     * Appelle le service de recherche (en mode serveur), ou le service enregistré dans un `useLoad` (en mode local).
      * @param isScroll Récupère la suite des résultats.
      */
     @action.bound
     async search(isScroll = false) {
+        if (this.localLoadService) {
+            await this.localLoadService();
+            return;
+        }
+
         if (!this.service) {
             return;
         }

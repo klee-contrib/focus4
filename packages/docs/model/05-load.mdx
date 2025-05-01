@@ -62,6 +62,8 @@ _Remarque : Si jamais plusieurs `useLoad` sont actifs en même temps (ce qui n'a
 
 Comme la plupart des hooks React, `useLoad` peut prendre en troisième paramètre un array de dépendances, dans le cas où `params` ne peut pas être défini comme une dérivation MobX. Toute modification de dépendances dans cet array réenregistrera un nouveau service de chargement (qui prendra donc en compte les nouvelles valeurs de dépendances), et qui sera immédiatement relancé, comme pour le premier rendu. Un changement de noeud sera également bien pris en compte comme un changement de dépendances.
 
+_Remarque : `useLoad` peut également être utilisé avec un [store de collection](/docs/listes-store-de-collection--docs) local, de la même façon qu'avec un store d'entité. Le service de chargement sera enregistré sur `store.search()`, pour correspondre à ce que propose déjà le mode serveur du store._
+
 ## API de `NodeLoadBuilder`
 
 Il dispose des deux méthodes suivantes :

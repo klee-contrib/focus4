@@ -22,24 +22,20 @@ Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
 
 Le store peut être utilisé dans **2 modes** :
 
--   le mode **`local`** : il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Dans ce mode-là, tout est géré côté client
-    (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des
-    volumes de données faibles et des recherches simples.
--   le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là,
-    tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données
-    sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
+-   le mode **`local`** : il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Dans ce mode-là, tout est géré côté client (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des volumes de données faibles et des recherches simples.
+-   le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là,tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
 
 ## Usage
 
 Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche.
 
-En mode `local`, il suffit de renseigner la propriété `list` (et `isLoading` si vous voulez suivre son état de chargement dans le store) avec la liste en
-question pour le remplir.
+En mode `local`, il vous suffira de renseigner la propriété `store.list` du store avec la liste en question pour remplir le store.
 
-_Remarque : En mode `server`, `list` sera renseigné par le serveur et `isLoading` sera géré automatiquement par le store._
+Vous êtes encouragés, comme pour les stores d'entité, à utiliser le hook [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload) pour gérer le chargement des données. Il permettra de gérer automatiquement l'état de chargement (qui sera aussi accessible via `store.isLoading`), et de permettre l'utilisation de `store.search()` pour recharger les données. Son usage est strictement identique à celui d'un store d'entité, et n'est bien **utilisable qu'en local**.
 
-Il est évidemment toujours possible de renseigner les différents critères du store manuellement ou via des composants personnalisés. Ils sont exposés dans les
-propriétés :
+En mode `server`, le service de chargement étant fourni au store, `store.isLoading` et `store.search()` sont directement implémentés avec et vous n'avez rien de plus à configurer. La propriété `store.list` n'est pas renseignable manuellement dans ce cas.
+
+Le store expose les différents critères suivants, qui seront utilisés pour filtrer les résultats du store :
 
 -   `query` : le champ texte
 -   `sortBy`: le champ sur lequel trier.
@@ -48,16 +44,14 @@ propriétés :
 -   `groupingKey` : le champ sur lequel grouper.
 -   `top` : le nombre de résultats à retourner par requête (utilisé en mode `server` uniquement)
 
-A ces critères-là, **avec un store en mode `server`** on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la
-recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à
-partir d'une définition d'entité.
+A ces critères-là, **avec un store en mode `server` uniquement**, on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à partir d'une définition d'entité.
 
 **Toute modification d'une de ces propriétés va immédiatement déclencher la mise à jour des données du store** :
 
--   En mode `local`, la liste est immédiatement recalculée.
--   En mode `server`, le service est appelé, et la liste sera mise à jour avec la réponse du serveur.
+-   En mode `local`, les filtres seront appliqués localement sur la liste préalablement chargée, de manière synchrone.
+-   En mode `server`, le service de recherche sera appelé avec tous les critères, et la liste sera mise à jour avec la réponse du serveur.
 
-Pour `query`, "immédiatement" est en réalité après un petit délai, une fois que l'utilisateur a fini de faire sa saisie.
+_Remarque : Pour `query`, "immédiatement" est en réalité après un petit délai, une fois que l'utilisateur a fini de faire sa saisie._
 
 Pour `criteria`, il y a aussi 3 modes de prise en compte :
 
@@ -67,22 +61,15 @@ Pour `criteria`, il y a aussi 3 modes de prise en compte :
 
 ## Sélection
 
-Les éléments sélectionnés sont enregistrés dans la propriété **`selectedItems`**, qui est un set. Ils sont aussi disponibles dans `selectedList` qui est la même
-chose mais dans un array.
+Les éléments sélectionnés sont enregistrés dans la propriété **`selectedItems`**, qui est un set. Ils sont aussi disponibles dans `selectedList` qui est la même chose mais dans un array.
 
 La méthode **`toggle(item)`** permet d'ajouter ou supprimer un élément sélectionné, tandis que **`toggleAll()`** permet de tout sélectionner ou déselectionner.
 
 Le status de sélection est disponible dans **`selectionStatus`** (`none`, `partial` ou `selected`, selon le nombre d'éléments sélectionnés).
 
-Il est également possible de contrôler les éléments sélectionnables en renseignant la propriété **`isItemSelectable`**, qui est une fonction d'un item et qui
-renvoie un booléen. Le status de sélection sera `selected` si tous les éléments sélectionnables ont été sélectionnés (par défaut, tous les éléments sont
-sélectionnables).
+Il est également possible de contrôler les éléments sélectionnables en renseignant la propriété **`isItemSelectable`**, qui est une fonction d'un item et qui renvoie un booléen. Le status de sélection sera `selected` si tous les éléments sélectionnables ont été sélectionnés (par défaut, tous les éléments sont sélectionnables).
 
-_Remarque : **Seuls les éléments chargés dans le store peuvent être sélectionnés**. C'est important en mode `server`, où il peut rester des éléments encore à
-charger depuis le serveur. Dans ce cas, le status de sélection sera bien `selected` dès que tous les éléments chargés sont sélectionnés, et `toggleAll()` ne
-sélectionnera que les éléments chargés. Si vous avez besoin d'agir sur plus d'éléments que ceux déjà chargés, vous pouvez soit charger les éléments
-manquants, soit faire complètement autrement. De manière générale, c'est une bonne pratique de mettre une limite sur le nombre d'éléments sélectionnés en même
-temps, afin de pouvoir contrôler le temps de traitement de l'action en masse réalisée sur ces éléments._
+_Remarque : **Seuls les éléments chargés dans le store peuvent être sélectionnés**. C'est important en mode `server`, où il peut rester des éléments encore à charger depuis le serveur. Dans ce cas, le status de sélection sera bien `selected` dès que tous les éléments chargés sont sélectionnés, et `toggleAll()` ne sélectionnera que les éléments chargés. Si vous avez besoin d'agir sur plus d'éléments que ceux déjà chargés, vous pouvez soit charger les éléments manquants, soit faire complètement autrement. De manière générale, c'est une bonne pratique de mettre une limite sur le nombre d'éléments sélectionnés en même temps, afin de pouvoir contrôler le temps de traitement de l'action en masse réalisée sur ces éléments._
 
 ## Initialisation
 
@@ -126,9 +113,7 @@ _(Note : l'ordre des deux derniers paramètres sont interchangeables)_
 
 Elle est gérée automatiquement par toutes les listes, en plus de la pagination locale éventuellement décrite dans le composant.
 
-Si les deux paginations sont définies, alors l'appel à la page suivante regardera d'abord s'il y a d'autres éléments chargés à afficher (et les affichera), puis
-n'appellera le serveur que s'il n'y a plus d'éléments disponibles au moment de l'appel. La pagination locale n'a donc de sens que si les pages sont plus petites
-que celles du serveur, et il est conseillé d'utiliser un multiple de la pagination locale pour la pagination serveur afin d'avoir une pagination constante.
+Si les deux paginations sont définies, alors l'appel à la page suivante regardera d'abord s'il y a d'autres éléments chargés à afficher (et les affichera), puis n'appellera le serveur que s'il n'y a plus d'éléments disponibles au moment de l'appel. La pagination locale n'a donc de sens que si les pages sont plus petites que celles du serveur, et il est conseillé d'utiliser un multiple de la pagination locale pour la pagination serveur afin d'avoir une pagination constante.
 
 _**Remarque : la pagination serveur ne sera appelée que si le serveur à retourné un `totalCount` plus grand que le nombre d'éléments déjà chargé.**_
 
@@ -155,18 +140,15 @@ De plus, via la prop `orderableColumnList`, on peut renseigner une liste de tri 
 
 ### Facettes
 
-Le composant [`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) permet d'afficher et sélectionner les facettes, tandis que le composant [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des facettes sélectionnées, avec
-la possibilité de les retirer. Le composant [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affiche les deux composants.
+Le composant [`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) permet d'afficher et sélectionner les facettes, tandis que le composant [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des facettes sélectionnées, avec la possibilité de les retirer. Le composant [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affiche les deux composants.
 
 ### Filtrage par critère
 
-Vous pouvez utiliser tous les composants de formulaires avec les champs de critères, afin de pouvoir les renseigner. Vous pouvez les inclure dans une
-[`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) si vous voulez les ajouter à vos facettes. Le [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des critères non vides, avec la possibilité de les retirer.
+Vous pouvez utiliser tous les composants de formulaires avec les champs de critères, afin de pouvoir les renseigner. Vous pouvez les inclure dans une [`FacetBox`](/docs/listes-composants-de-recherche-facetbox--docs) si vous voulez les ajouter à vos facettes. Le [`Summary`](/docs/listes-composants-de-recherche-summary--docs) affichera la liste des critères non vides, avec la possibilité de les retirer.
 
 ### Répartition en groupes
 
-Le composant [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) permet de choisir une facette sur laquelle grouper, et le composant [`Results`](/docs/listes-composants-de-recherche-results--docs) affichera les groupes. Le composant
-[`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affichera les deux composants.
+Le composant [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs) permet de choisir une facette sur laquelle grouper, et le composant [`Results`](/docs/listes-composants-de-recherche-results--docs) affichera les groupes. Le composant [`AdvancedSearch`](/docs/listes-composants-de-recherche-advancedsearch--docs) affichera les deux composants.
 
 ## Lien avec les stores d'entité
 
