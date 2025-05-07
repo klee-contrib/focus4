@@ -4,7 +4,7 @@ import {ComponentType, ElementType, useContext, useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
 import {LateralMenu, ScrollableContext} from "@focus4/layout";
-import {CollectionStore, GroupResult} from "@focus4/stores";
+import {CollectionStore, GroupResult, SortInput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {ChipCss, IconButton, MenuProps, Tooltip} from "@focus4/toolbox";
 
@@ -55,7 +55,7 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
-     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : ``store.sort.map(({fieldName}) => fieldName).join("|")`, group : `store.groupingKey`)
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
@@ -136,7 +136,7 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     /** La liste des actions globales.  */
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string; label: string; order: boolean}[];
+    orderableColumnList?: {label: string; sort: SortInput[]}[];
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */

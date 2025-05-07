@@ -60,7 +60,7 @@ Cet exemple est assez minimaliste, mais montre quand même l'usage de \`onLineCl
 
 const collectionStore = new CollectionStore<{id: number; label: string; count: number}>();
 collectionStore.list = list;
-collectionStore.sortBy = "id";
+collectionStore.sort = [{fieldName: "id"}];
 
 export const Store: StoryObj<typeof Table<{id: number; label: string; count: number}>> = {
     name: "tableFor avec un store",

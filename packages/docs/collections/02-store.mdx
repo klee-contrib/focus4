@@ -38,8 +38,7 @@ En mode `server`, le service de chargement étant fourni au store, `store.isLoad
 Le store expose les différents critères suivants, qui seront utilisés pour filtrer les résultats du store :
 
 -   `query` : le champ texte
--   `sortBy`: le champ sur lequel trier.
--   `sortAsc` : le sens du tri.
+-   `sort`: les champs sur lesquels trier (dans l'ordre)
 -   `inputFacets` : les facettes sélectionnées.
 -   `groupingKey` : le champ sur lequel grouper.
 -   `top` : le nombre de résultats à retourner par requête (utilisé en mode `server` uniquement)
@@ -129,8 +128,7 @@ La sélection peut être activée via la prop `hasSelection` sur :
 
 ### Tri
 
-Les définitions de colonnes dans [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) peuvent inclure `sortKey`, qui rendra le titre de la colonne cliquable pour trier par cette colonne là. Recliquer sur
-la colonne permettra de changer le sens.
+Les définitions de colonnes dans [`tableFor`](/docs/listes-composants-de-listes-tablefor--table) peuvent inclure `sortKey`, qui rendra le titre de la colonne cliquable pour trier par cette colonne là (le tableau ne gère pas le tri par plusieurs colonnes). Recliquer sur la colonne permettra de changer le sens.
 
 De plus, via la prop `orderableColumnList`, on peut renseigner une liste de tri possibles dans les composants :
 

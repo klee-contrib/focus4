@@ -38,13 +38,24 @@ export function TableHeader<T extends object>({
         <th
             className={classNames(
                 cellClassName,
-                theme.heading({sortable: !!(store && sortKey), sorted: store && !!sortKey && store?.sortBy === sortKey})
+                theme.heading({
+                    sortable: !!(store && sortKey),
+                    sorted: store && !!sortKey && store?.sort[0]?.fieldName === sortKey
+                })
             )}
             onClick={
                 store && sortKey
                     ? action(() => {
-                          store.sortAsc = store.sortBy !== sortKey ? true : !store.sortAsc;
-                          store.sortBy = sortKey;
+                          store.sort = [
+                              {
+                                  fieldName: sortKey,
+                                  sortDesc: !(
+                                      store.sort.length === 0 ||
+                                      store.sort[0].fieldName !== sortKey ||
+                                      store.sort[0].sortDesc
+                                  )
+                              }
+                          ];
                       })
                     : undefined
             }
@@ -54,7 +65,9 @@ export function TableHeader<T extends object>({
                     className={theme.sortIcon()}
                     icon={{
                         i18nKey: `${i18nPrefix}.icons.table.sort${
-                            store.sortBy !== sortKey || store.sortAsc ? "Asc" : "Desc"
+                            store.sort.length === 0 || store.sort[0].fieldName !== sortKey || !store.sort[0].sortDesc
+                                ? "Asc"
+                                : "Desc"
                         }`
                     }}
                 />

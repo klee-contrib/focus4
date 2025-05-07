@@ -65,7 +65,7 @@ Il faudra construire un \`LineComponent\` adapté au contenu que vous voulez aff
 
 const collectionStore = new CollectionStore<{id: number; label: string; count: number}>();
 collectionStore.list = list;
-collectionStore.sortBy = "id";
+collectionStore.sort = [{fieldName: "id"}];
 
 export const Store: StoryObj<typeof List<{id: number; label: string; count: number}>> = {
     name: "listFor avec un store",

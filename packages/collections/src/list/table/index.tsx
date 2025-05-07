@@ -72,7 +72,7 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
  * via `operationList`.
  *
  * Lorsqu'il est interfacé avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), le tableau peut aussi :
- * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne.
+ * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne (le tri ne peut pas être configuré sur plusieurs colonnes en même temps).
  * - Gérer de la sélection d'éléments, en renseignant `hasSelection`.
  * - Gérer la sélection en masse avec `hasSelectAll`, qui ajoute une `Checkbox` dans le header pour tout sélectionner. Son comportement est similaire à
  *   celui de l'`ActionBar`. Si renseigné, les actions globales définies dans `operationList` s'appliqueront sur les éléments sélectionnés.

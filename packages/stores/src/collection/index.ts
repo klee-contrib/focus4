@@ -37,9 +37,10 @@ import {
     QueryOutput,
     SearchProperties,
     SearchService,
-    SelectionStatus
+    SelectionStatus,
+    SortInput
 } from "./types";
-export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput};
+export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput, SortInput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
 export class CollectionStore<T extends object = any, C = any, NC = C> {
@@ -86,10 +87,9 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         );
     }
 
-    /** Tri par ordre croissant. */
-    @observable accessor sortAsc = true;
-    /** Nom du champ sur lequel trier. */
-    @observable accessor sortBy: string | undefined;
+    /** Définitions de tri, dans l'ordre d'application. */
+    @observable accessor sort: SortInput[] = [];
+
     /** Nombre maximum de résultat par requête serveur. */
     @observable accessor top = 50;
     /** Token à utiliser pour la pagination. */
@@ -173,8 +173,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
                     this.inputFacets,
                     this.searchFields,
                     this.criteriaMode === "direct" ? this.flatCriteria : undefined, // On peut choisir de debouncer ou non les critères personnalisés, par défaut ils ne le sont pas.
-                    this.sortAsc,
-                    this.sortBy
+                    this.sort.map(({fieldName, sortDesc}) => ({fieldName, sortDesc}))
                 ],
                 () => this.search()
             );
@@ -284,8 +283,16 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         let list: T[] = this.innerList;
 
         // Tri.
-        if (this.sortBy) {
-            list = orderBy(this.innerList, [item => item[this.sortBy as keyof T]], [this.sortAsc ? "asc" : "desc"]);
+        if (this.sort.length > 0) {
+            list = orderBy(
+                this.innerList,
+                this.sort.map(
+                    ({fieldName}) =>
+                        item =>
+                            item[fieldName as keyof T]
+                ),
+                this.sort.map(({sortDesc}) => (sortDesc ? "desc" : "asc"))
+            );
         }
 
         // Filtrage simple, sur les champs choisis.
@@ -459,7 +466,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             this.skipToken = undefined;
         }
 
-        const {query, inputFacets, groupingKey, sortBy, sortAsc, list, top, skipToken} = this;
+        const {query, inputFacets, groupingKey, sort, list, top, skipToken} = this;
 
         if (this.criteriaMode === "manual" && !isScroll) {
             this.criteria.sourceNode.replace(toFlatValues(this.criteria) as EntityToType<C>);
@@ -474,8 +481,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             skip: !skipToken ? (isScroll && list.length) || 0 : undefined,
             skipToken,
 
-            sortDesc: sortAsc === undefined ? false : !sortAsc,
-            sortFieldName: sortBy,
+            sort,
             top
         };
 
@@ -523,8 +529,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         if (props.inputFacets) {
             this.innerInputFacets.replace(props.inputFacets);
         }
-        this.sortAsc = props.sortAsc ?? this.sortAsc;
-        this.sortBy = props.hasOwnProperty("sortBy") ? props.sortBy : this.sortBy;
+        this.sort = props.sort ?? this.sort;
         this.query = props.query ?? this.query;
         this.top = props.top ?? this.top;
 

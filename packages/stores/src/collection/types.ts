@@ -42,6 +42,14 @@ export interface FacetInput {
     excluded?: string[];
 }
 
+/** Définition de tri. */
+export interface SortInput {
+    /** Champ sur lequel trier. */
+    fieldName: string;
+    /** Tri descendant. */
+    sortDesc?: boolean;
+}
+
 /** Critères génériques de recherche. */
 export interface SearchProperties<NC = any> {
     /** Critère personnalisé. */
@@ -54,10 +62,8 @@ export interface SearchProperties<NC = any> {
     searchFields?: string[];
     /** Facettes sélectionnées. */
     inputFacets?: {[facet: string]: FacetInput};
-    /** Tri croissant. */
-    sortAsc?: boolean;
-    /** Champ sur lequel trier. */
-    sortBy?: string;
+    /** Définitions de tri, par ordre d'application. */
+    sort?: SortInput[];
     /** Nombre de résultats à retourner par requête. */
     top?: number;
 }
@@ -136,10 +142,8 @@ export interface QueryInput<C = {}> {
     criteria?: C & {query: string; searchFields?: string[]};
     /** Champ sur lequel grouper. */
     group: string;
-    /** Champ sur lequel trier. */
-    sortFieldName?: string;
-    /** Sens du tri. */
-    sortDesc: boolean;
+    /** Définitions de tri, par ordre d'application. */
+    sort?: SortInput[];
     /** Nombre de résultats à sauter. */
     skip?: number;
     /** Token pour la pagination, à utiliser à la place de `skip` */

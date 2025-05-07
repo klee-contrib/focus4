@@ -4,7 +4,7 @@ import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {CollectionStore} from "@focus4/stores";
+import {CollectionStore, SortInput} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton, Menu, MenuItem, MenuProps, TextField, useMenu} from "@focus4/toolbox";
 
@@ -43,7 +43,7 @@ export interface ActionBarProps<T extends object> {
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataListFacet?: number;
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string; label: string; order: boolean}[];
+    orderableColumnList?: {label: string; sort: SortInput[]}[];
     /** Actions sur les éléments sélectionnés. */
     operationList?: OperationListItem<T[]>[];
     /** Placeholder pour la barre de recherche. */
@@ -234,8 +234,7 @@ export function ActionBar<T extends object>({
                                         key={idx}
                                         caption={t(description.label)}
                                         onClick={action("sort", () => {
-                                            store.sortBy = description.key;
-                                            store.sortAsc = description.order;
+                                            store.sort = description.sort;
                                         })}
                                     />
                                 ))}

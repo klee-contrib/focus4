@@ -12,8 +12,36 @@ export default {
     args: {
         hasSearchBar: true,
         orderableColumnList: [
-            {key: "id", label: "Id croissant", order: true},
-            {key: "id", label: "Id décroissant", order: false}
+            {label: "Id croissant", sort: [{fieldName: "id", sortDesc: false}]},
+            {label: "Id décroissant", sort: [{fieldName: "id", sortDesc: true}]},
+            {
+                label: "Type 1 croissant, Type 2 croissant",
+                sort: [
+                    {fieldName: "type1", sortDesc: false},
+                    {fieldName: "type2", sortDesc: false}
+                ]
+            },
+            {
+                label: "Type 1 croissant, Type 2 décroissant",
+                sort: [
+                    {fieldName: "type1", sortDesc: false},
+                    {fieldName: "type2", sortDesc: true}
+                ]
+            },
+            {
+                label: "Type 1 décroissant, Type 2 croissant",
+                sort: [
+                    {fieldName: "type1", sortDesc: true},
+                    {fieldName: "type2", sortDesc: false}
+                ]
+            },
+            {
+                label: "Type 1 décroissant, Type 2 décroissant",
+                sort: [
+                    {fieldName: "type1", sortDesc: true},
+                    {fieldName: "type2", sortDesc: true}
+                ]
+            }
         ],
         hasSelection: true,
         operationList: [

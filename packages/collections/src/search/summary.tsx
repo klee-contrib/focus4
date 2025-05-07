@@ -3,12 +3,13 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
-import {CollectionStore, FormEntityField} from "@focus4/stores";
+import {CollectionStore, FormEntityField, SortInput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ChipCss} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 
+import {isEqual} from "es-toolkit";
 import summaryCss, {SummaryCss} from "./__style__/summary.css";
 export {summaryCss};
 export type {SummaryCss};
@@ -28,7 +29,7 @@ export interface SummaryProps<T extends object> {
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
-     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : ``store.sort.map(({fieldName}) => fieldName).join("|")`, group : `store.groupingKey`)
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
@@ -50,7 +51,7 @@ export interface SummaryProps<T extends object> {
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Liste des colonnes sur lesquels on peut trier. */
-    orderableColumnList?: {key: string; label: string; order: boolean}[];
+    orderableColumnList?: {label: string; sort: SortInput[]}[];
     /** Store associé. */
     store: CollectionStore<T>;
     /** CSS. */
@@ -169,8 +170,8 @@ export function Summary<T extends object>({
 
         /** Récupère le tri courant pour afficher le chip correspondant. */
         get currentSort() {
-            if (props.orderableColumnList && props.store.sortBy) {
-                return props.orderableColumnList.find(o => o.key === store.sortBy && o.order === store.sortAsc) ?? null;
+            if (props.orderableColumnList && props.store.sort.length > 0) {
+                return props.orderableColumnList.find(o => isEqual(o.sort, props.store.sort)) ?? null;
             } else {
                 return null;
             }
@@ -233,10 +234,10 @@ export function Summary<T extends object>({
                         <span>{t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <SearchChip
                             className={theme.chip()}
-                            code={state.currentSort.key}
+                            code={state.currentSort.sort.map(({fieldName}) => fieldName).join("|")}
                             codeLabel={state.currentSort.label}
                             deletable={canRemoveSort}
-                            onDeleteClick={canRemoveSort ? () => (store.sortBy = undefined) : undefined}
+                            onDeleteClick={canRemoveSort ? () => (store.sort = []) : undefined}
                             themer={chipThemer}
                             type="sort"
                         />

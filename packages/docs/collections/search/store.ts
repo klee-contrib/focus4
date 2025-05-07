@@ -16,6 +16,5 @@ collectionStore.list = [
     {id: 7, label: "Item 7", type1: "C", type2: "T2"},
     {id: 8, label: "Item 8", type1: "C", type2: "T1"}
 ];
-collectionStore.sortBy = "id";
-collectionStore.sortAsc = true;
+collectionStore.sort = [{fieldName: "id"}];
 collectionStore.query = "clic";

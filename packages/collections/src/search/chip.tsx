@@ -13,7 +13,7 @@ export type ChipType = "facet" | "filter" | "group" | "sort";
 export interface SearchChipProps {
     /** Classe CSS à passer au Chip. */
     className?: string;
-    /** Code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`). */
+    /** Code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sort.map(({fieldName}) => fieldName).join("|")`, group : `store.groupingKey`). */
     code: string;
     /** Libellé associé au code. */
     codeLabel: string;
@@ -36,7 +36,7 @@ export interface SearchChipProps {
     /**
      * Passe le style retourné par cette fonction aux chips.
      * @param type Le type du chip affiché (`filter`, `facet`, `sort` ou `group`)
-     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sortBy`, group : `store.groupingKey`)
+     * @param code Le code du champ affiché (filtre : `field.$field.label`, facet : `facetOutput.code`, sort : `store.sort.map(({fieldName}) => fieldName).join("|")`, group : `store.groupingKey`)
      * @param values Les valeurs du champ affiché (filtre: `field.value`, facet : `facetItem.code`, inexistant pour sort en group)
      * @returns L'objet de theme, qui sera fusionné avec le theme existant.
      */
