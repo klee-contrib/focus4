@@ -15,12 +15,12 @@ export default {
 } as Meta<typeof Table>;
 
 const list = [
-    {id: 1, label: "Gestionnaire", count: 35},
-    {id: 2, label: "Administrateur", count: 3},
-    {id: 3, label: "Superviseur", count: 13},
+    {id: 1, label: "Gestionnaire", count: 55},
+    {id: 2, label: "Administrateur", count: 34},
+    {id: 3, label: "Superviseur", count: 55},
     {id: 4, label: "Auditeur", count: 4},
-    {id: 5, label: "Consultant", count: 65},
-    {id: 6, label: "Externe", count: 143}
+    {id: 5, label: "Consultant", count: 55},
+    {id: 6, label: "Externe", count: 34}
 ];
 
 export const Data: StoryObj<typeof Table<{id: number; label: string; count: number}>> = {
@@ -129,6 +129,7 @@ Cet exemple utilise les fonctionnalités suivantes :
         ],
         itemKey: item => item.id,
         perPage: 4,
-        isManualFetch: true
+        isManualFetch: true,
+        maxSort: 2
     }
 };

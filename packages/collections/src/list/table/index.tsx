@@ -28,6 +28,8 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
     lineOperationList?: (data: NoInfer<T>) => OperationListItem<NoInfer<T>>[];
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
+    /** Nombre de colonnes maximum sur lequelles il est possible de trier en même temps. Par défaut : 1. */
+    maxSort?: number;
     /**
      * Surcharge du 'top' pour le 'position: sticky' du <thead>.
      * Par défaut calculé avec la hauteur du header.
@@ -72,7 +74,7 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
  * via `operationList`.
  *
  * Lorsqu'il est interfacé avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), le tableau peut aussi :
- * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne (le tri ne peut pas être configuré sur plusieurs colonnes en même temps).
+ * - Gérer du tri par colonne, en renseignant `sortKey` dans une définition de colonne (le tri peut être configuré sur plusieurs colonnes en même temps avec la prop `maxSort`).
  * - Gérer de la sélection d'éléments, en renseignant `hasSelection`.
  * - Gérer la sélection en masse avec `hasSelectAll`, qui ajoute une `Checkbox` dans le header pour tout sélectionner. Son comportement est similaire à
  *   celui de l'`ActionBar`. Si renseigné, les actions globales définies dans `operationList` s'appliqueront sur les éléments sélectionnés.
@@ -90,6 +92,7 @@ export function Table<T extends object>({
     lineClassName,
     lineOperationList,
     LoadingComponent = DefaultLoadingComponent,
+    maxSort = 1,
     offsetTopOverride,
     onLineClick,
     operationList,
@@ -137,6 +140,7 @@ export function Table<T extends object>({
                                 <TableHeader
                                     key={column.title}
                                     column={column}
+                                    maxSort={maxSort}
                                     i18nPrefix={i18nPrefix}
                                     store={store}
                                     theme={theme}

@@ -9,7 +9,8 @@
 
     --table-divider: 1px solid rgb(var(--color-divider));
 
-    --table-header-sort-icon-size: 24px;
+    --table-header-sort-icon-size: 20px;
+    --table-header-multiple-sort-count-size: 10px;
     --table-header-sort-label-border: 1px dashed;
 
     --table-header-color: rgb(var(--palette-grey-500));
@@ -121,6 +122,7 @@
 }
 
 .sortIcon,
+.sortCount,
 .label {
     transition: color var(--animation-duration-short) var(--animation-curve-default),
         border-color var(--animation-duration-short) var(--animation-curve-default);
@@ -130,8 +132,25 @@
 .sortIcon {
     opacity: 0;
     font-size: var(--table-header-sort-icon-size);
+    color: var(--table-header-color);
     margin-left: calc(-1.1 * var(--table-header-sort-icon-size));
     margin-right: calc(0.1 * var(--table-header-sort-icon-size));
+}
+
+.heading--multipleSort .sortIcon {
+    margin-left: 0;
+    margin-right: calc(0.1 * (var(--table-header-multiple-sort-count-size) + var(--table-header-sort-icon-size)));
+}
+
+.sortCount {
+    opacity: 0;
+    display: inline-block;
+    color: var(--table-header-sorted-color);
+    font-size: var(--table-header-multiple-sort-count-size);
+    width: var(--table-header-multiple-sort-count-size);
+    line-height: var(--table-header-multiple-sort-count-size);
+    text-align: right;
+    margin-left: calc(-1.1 * (var(--table-header-multiple-sort-count-size) + var(--table-header-sort-icon-size)));
 }
 
 .label {
@@ -185,6 +204,7 @@
 
 .heading--sortable {
     cursor: pointer;
+    user-select: none;
 
     & .label {
         border-bottom-color: var(--table-header-color);
@@ -201,6 +221,15 @@
 
     & .sortIcon {
         opacity: 1;
+    }
+}
+
+.heading--sorted {
+    & .sortIcon {
         color: var(--table-header-sorted-color);
+    }
+
+    & .sortCount {
+        opacity: 1;
     }
 }

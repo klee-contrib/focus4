@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {action} from "mobx";
-import {ReactNode} from "react";
+import {ReactNode, useCallback} from "react";
 import {useTranslation} from "react-i18next";
 
 import {CollectionStore} from "@focus4/stores";
@@ -15,24 +15,47 @@ export interface TableColumn<T extends object> {
     className?: string;
     /** Contenu de la colonne. */
     content: (data: T) => ReactNode;
-    /** Libellé du titre de la colonne. */
-    title: string;
     /** Si la colonne est triable, le nom du champ sur lequel on doit trier. */
     sortKey?: string;
+    /** Libellé du titre de la colonne. */
+    title: string;
 }
 
 export function TableHeader<T extends object>({
     column: {title, className: cellClassName, sortKey},
     i18nPrefix,
+    maxSort,
     store,
     theme
 }: {
     column: TableColumn<T>;
     i18nPrefix: string;
+    maxSort: number;
     store?: CollectionStore<T>;
     theme: ToBem<TableCss>;
 }) {
     const {t} = useTranslation();
+
+    const onSort = useCallback(
+        action(() => {
+            if (store && sortKey) {
+                if (!store.sort.some(({fieldName}) => fieldName === sortKey)) {
+                    while (store.sort.length >= maxSort) {
+                        store.sort.pop();
+                    }
+                    store.sort.push({fieldName: sortKey});
+                } else {
+                    const sort = store.sort.find(({fieldName}) => fieldName === sortKey)!;
+                    if (!sort.sortDesc) {
+                        sort.sortDesc = true;
+                    } else {
+                        store.sort = store.sort.filter(({fieldName}) => fieldName !== sortKey);
+                    }
+                }
+            }
+        }),
+        [maxSort, sortKey, store]
+    );
 
     return (
         <th
@@ -40,32 +63,23 @@ export function TableHeader<T extends object>({
                 cellClassName,
                 theme.heading({
                     sortable: !!(store && sortKey),
-                    sorted: store && !!sortKey && store?.sort[0]?.fieldName === sortKey
+                    sorted: store && !!sortKey && store.sort.some(({fieldName}) => fieldName === sortKey),
+                    multipleSort: maxSort > 1
                 })
             )}
-            onClick={
-                store && sortKey
-                    ? action(() => {
-                          store.sort = [
-                              {
-                                  fieldName: sortKey,
-                                  sortDesc: !(
-                                      store.sort.length === 0 ||
-                                      store.sort[0].fieldName !== sortKey ||
-                                      store.sort[0].sortDesc
-                                  )
-                              }
-                          ];
-                      })
-                    : undefined
-            }
+            onClick={store && sortKey ? onSort : undefined}
         >
+            {store && maxSort > 1 && sortKey ? (
+                <span className={theme.sortCount()}>{store.sort.findIndex(s => s.fieldName === sortKey) + 1}</span>
+            ) : null}
             {store && sortKey ? (
                 <FontIcon
                     className={theme.sortIcon()}
                     icon={{
                         i18nKey: `${i18nPrefix}.icons.table.sort${
-                            store.sort.length === 0 || store.sort[0].fieldName !== sortKey || !store.sort[0].sortDesc
+                            store.sort.length === 0 ||
+                            !store.sort.some(({fieldName}) => fieldName === sortKey) ||
+                            !store.sort.find(({fieldName}) => fieldName === sortKey)!.sortDesc
                                 ? "Asc"
                                 : "Desc"
                         }`
