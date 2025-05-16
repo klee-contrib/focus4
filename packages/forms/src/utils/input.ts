@@ -111,12 +111,15 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 }
 
                 const sample = numberFormat.formatToParts(1000.1);
-                const decimal = sample.find(s => s.type === "decimal")!.value;
-                const thousands = hasThousandsSeparator ? sample.find(s => s.type === "group")!.value : "";
+                const decimal = sample.find(s => s.type === "decimal")?.value ?? "";
+                const thousands = sample.find(s => s.type === "group")?.value ?? "";
 
-                const invalidCharRegex = new RegExp(`[^\\d\\${thousands}\\${decimal}]`, "g");
+                const invalidCharRegex = new RegExp(
+                    `[^\\d${thousands ? `\\${thousands}` : ""}${decimal ? `\\${decimal}` : ""}]`,
+                    "g"
+                );
                 const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
-                const [left, right, nope] = v.split(decimal);
+                const [left, right, nope] = decimal ? v.split(decimal) : [v, undefined, undefined];
 
                 if (
                     ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&

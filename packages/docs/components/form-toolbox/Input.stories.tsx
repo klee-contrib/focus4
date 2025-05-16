@@ -9,7 +9,12 @@ import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...InputMeta,
     title: "Composants/@focus4∕form-toolbox/Input",
-    tags: ["autodocs"]
+    tags: ["autodocs"],
+    args: {
+        hasThousandsSeparator: true,
+        maxDecimals: 2,
+        noNegativeNumbers: true
+    }
 } as Meta<typeof Input>;
 
 export const Showcase: StoryObj<Partial<typeof Input>> = {
@@ -26,16 +31,7 @@ export const Showcase: StoryObj<Partial<typeof Input>> = {
                     type="string"
                     value={v1}
                 />
-                <Input
-                    {...props}
-                    hasThousandsSeparator
-                    maxDecimals={2}
-                    noNegativeNumbers
-                    onChange={setV2}
-                    type="number"
-                    value={v2}
-                    supportingText={v2?.toString()}
-                />
+                <Input {...props} onChange={setV2} type="number" value={v2} supportingText={v2?.toString()} />
             </div>
         );
     }
