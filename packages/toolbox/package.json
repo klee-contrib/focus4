@@ -18,9 +18,9 @@
         "@focus4/styling": "12.1.0",
         "@types/luxon": "~3.6.2",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.36.0",
+        "es-toolkit": "~1.37.2",
         "luxon": "~3.6.1",
-        "motion": "~12.9.4",
+        "motion": "~12.12.1",
         "tslib": "~2.8.1"
     },
     "peerDependencies": {

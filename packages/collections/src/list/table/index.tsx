@@ -140,8 +140,8 @@ export function Table<T extends object>({
                                 <TableHeader
                                     key={column.title}
                                     column={column}
-                                    maxSort={maxSort}
                                     i18nPrefix={i18nPrefix}
+                                    maxSort={maxSort}
                                     store={store}
                                     theme={theme}
                                 />

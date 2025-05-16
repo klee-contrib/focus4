@@ -122,7 +122,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 const [left, right, nope] = decimal ? v.split(decimal) : [v, undefined, undefined];
 
                 if (
-                    ((maxDecimals && (right || "").length <= maxDecimals) || right === undefined) &&
+                    ((maxDecimals && (right ?? "").length <= maxDecimals) || right === undefined) &&
                     nope === undefined &&
                     !invalidCharRegex.exec(v)
                 ) {

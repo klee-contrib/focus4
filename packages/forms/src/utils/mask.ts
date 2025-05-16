@@ -146,6 +146,7 @@ export function useMask({
 
     const isEditableIndex = useCallback(
         function isEditableIndex(index: number) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion
             return !!editableIndices[index];
         },
         [editableIndices]

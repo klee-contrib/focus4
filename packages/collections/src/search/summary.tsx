@@ -1,3 +1,4 @@
+import {isEqual} from "es-toolkit";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
@@ -9,7 +10,6 @@ import {Button, ChipCss} from "@focus4/toolbox";
 
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 
-import {isEqual} from "es-toolkit";
 import summaryCss, {SummaryCss} from "./__style__/summary.css";
 export {summaryCss};
 export type {SummaryCss};
