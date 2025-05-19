@@ -72,6 +72,12 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     noSuggestionsOnEmptyQuery?: boolean;
     /** Permet de surcharger la query (= contenu du champ texte). A utiliser avec `onQueryChange`.  */
     query?: string;
+    /**
+     * Contrôle la mise en forme des suggestions :
+     * - `fit-to-field-single-line` force la largeur du menu à celle du champ (par défaut).
+     * - `no-fit-single-line` laisse la largeur du menu se calculer en fonction de la taille de ses éléments.
+     */
+    sizing?: "fit-to-field-single-line" | "no-fit-single-line";
     /** Précise le mode de correspondance utilisé entre la query et le libellé. Par défaut : "start". */
     suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
     /** CSS. */
@@ -130,6 +136,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
     query: pQuery,
     rows,
     showSupportingText = "auto",
+    sizing = "fit-to-field-single-line",
     supportingText,
     suffix,
     suggestionMatch = "start",
@@ -296,7 +303,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
     );
 
     return (
-        <div className={classNames(theme.autocomplete(), className)}>
+        <div className={classNames(theme.autocomplete({singleLine: sizing === "no-fit-single-line"}), className)}>
             <TextField
                 ref={ref}
                 aria-activedescendant={id ? `${id}-${selected}` : undefined}
@@ -352,7 +359,17 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 noRing
                 onItemClick={key => onValueChange(key)}
                 onSelectedChange={setSelected}
-                position={direction === "auto" ? "auto-fill" : direction === "up" ? "top" : "bottom"}
+                position={
+                    direction === "auto"
+                        ? `auto-${sizing === "no-fit-single-line" ? "left" : "fill"}`
+                        : direction === "up"
+                        ? sizing === "no-fit-single-line"
+                            ? "top-left"
+                            : "top"
+                        : sizing === "no-fit-single-line"
+                        ? "bottom-left"
+                        : "bottom"
+                }
                 selected={selected}
             >
                 {(maxDisplayed ? take(suggestions, maxDisplayed) : suggestions).map(s => (

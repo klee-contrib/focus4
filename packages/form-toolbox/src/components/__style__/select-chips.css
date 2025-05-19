@@ -14,13 +14,22 @@
     transition: color var(--animation-duration) var(--animation-curve-default);
 
     & > span {
-        margin-right: calc(-2 * var(--text-field-icon-size) - 2 * var(--text-field-icon-padding));
+        visibility: hidden;
+        margin-left: var(--text-field-icon-padding);
         font-size: var(--text-field-icon-size);
     }
 }
 
 .line--selected {
     color: var(--select-chips-line-selected-color);
+
+    & > span {
+        visibility: visible;
+    }
+}
+
+.line--fittedSelect > span {
+    margin-right: calc(-2 * var(--text-field-icon-size) - 2 * var(--text-field-icon-padding));
 }
 
 .chips {

@@ -166,13 +166,15 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
         return function SelectChipsLineComponent({item}: any) {
             const selected = (value ?? []).includes(item[values.$valueKey] as never);
             return (
-                <span className={theme.line({selected})}>
+                <span
+                    className={theme.line({fittedSelect: !autocomplete && sizing !== "no-fit-single-line", selected})}
+                >
                     {item[values.$labelKey]}
-                    {selected ? <FontIcon iconI18nKey={`${i18nPrefix}.icons.select.selected`} /> : null}
+                    <FontIcon iconI18nKey={`${i18nPrefix}.icons.select.selected`} />
                 </span>
             );
         };
-    }, [i18nPrefix, keepSelectedValuesInSelect, value, values]);
+    }, [autocomplete, i18nPrefix, keepSelectedValuesInSelect, sizing, value, values]);
 
     const finalValues = useMemo(
         () =>
@@ -201,6 +203,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     noCloseOnChange={keepSelectedValuesInSelect}
                     onChange={handleAddValue}
                     showSupportingText="never"
+                    sizing={sizing === "no-fit-single-line" ? sizing : "fit-to-field-single-line"}
                     theme={theme}
                     trailing={trailing}
                     type={toSimpleType(type)}
