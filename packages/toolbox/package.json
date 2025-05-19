@@ -18,7 +18,7 @@
         "@focus4/core": "11.24.10",
         "@focus4/styling": "11.24.10",
         "@types/luxon": "3.6.2",
-        "framer-motion": "12.7.4",
+        "framer-motion": "12.12.1",
         "luxon": "3.6.1"
     },
     "devDependencies": {
