@@ -17,6 +17,10 @@
     vertical-align: middle;
 }
 
+.autocomplete--singleLine .suggestion {
+    white-space: nowrap;
+}
+
 .suggestion--active {
     background: var(--input-on-light-color);
 }

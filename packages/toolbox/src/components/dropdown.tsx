@@ -222,6 +222,8 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
             if (ul) {
                 setWidth(ul.clientWidth);
             }
+        } else {
+            setWidth(undefined);
         }
     }, [values]);
 
@@ -231,10 +233,12 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                 icon ? " + var(--text-field-icon-padding) + var(--text-field-icon-size)" : ""
             })`,
             paddingRight: `calc(var(--text-field-padding-horizontal) + ${
-                1 + (!trailing ? 0 : Array.isArray(trailing) ? trailing.length : 1)
+                sizing === "no-fit-single-line"
+                    ? 0
+                    : 1 + (!trailing ? 0 : Array.isArray(trailing) ? trailing.length : 1)
             } * (var(--text-field-icon-padding) + var(--text-field-icon-size)))`
         }),
-        [icon, trailing]
+        [icon, sizing, trailing]
     );
 
     const selectedValue = values.find(v => getKey(v) === value);
