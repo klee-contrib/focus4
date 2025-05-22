@@ -94,6 +94,7 @@ export async function coreFetch(
             }
         } catch (error: unknown) {
             if (error instanceof DOMException && error.name === "AbortError") {
+                requestStore.endRequest(id);
                 return Promise.reject(error);
             }
 

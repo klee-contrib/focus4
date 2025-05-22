@@ -19,7 +19,7 @@
         "@focus4/styling": "12.2.0",
         "@focus4/toolbox": "12.2.0",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.37.2",
+        "es-toolkit": "~1.38.0",
         "luxon": "~3.6.1",
         "motion": "~12.12.1",
         "react-transition-state": "~2.3.1",
