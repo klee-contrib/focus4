@@ -415,7 +415,7 @@ export function Menu({
                     const keys = items?.map(c => c?.key).filter(x => x) ?? [];
                     let index =
                         (!selected ? (position.startsWith("top") ? -1 : keys.length) : keys.indexOf(selected)) +
-                        (event.key === "ArrowDown" ? +1 : -1);
+                        (event.key === "ArrowDown" ? 1 : -1);
                     if (index < 0) {
                         index = keys.length - 1;
                     }

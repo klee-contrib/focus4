@@ -175,7 +175,7 @@ export const Dropdown = forwardRef(function Dropdown<TSource = {key: string; lab
                     keys = [undefinedKey, ...keys];
                 }
                 const key = value ?? undefinedKey;
-                let index = keys.indexOf(key) + (e.key === "ArrowDown" ? +1 : -1);
+                let index = keys.indexOf(key) + (e.key === "ArrowDown" ? 1 : -1);
                 if (index < 0) {
                     index = keys.length - 1;
                 }
