@@ -61,6 +61,14 @@ export function HeaderActions({
         return null;
     }
 
+    const secondaryFAB = (
+        <FloatingActionButton
+            {...secondaryButton}
+            icon={secondaryButton.icon ?? {i18nKey: `${i18nPrefix}.icons.headerActions.secondary`}}
+            onClick={menu.toggle}
+        />
+    );
+
     return (
         <div
             className={theme.actions()}
@@ -68,11 +76,11 @@ export function HeaderActions({
         >
             {secondary.length > 0 ? (
                 <div ref={menu.anchor} style={{position: "relative"}}>
-                    <FloatingActionButton
-                        {...secondaryButton}
-                        icon={secondaryButton.icon ?? {i18nKey: `${i18nPrefix}.icons.headerActions.secondary`}}
-                        onClick={menu.toggle}
-                    />
+                    {secondaryButton.tooltip ? (
+                        <Tooltip {...secondaryButton.tooltip}>{secondaryFAB}</Tooltip>
+                    ) : (
+                        secondaryFAB
+                    )}
                     <Menu {...menu}>
                         {secondary.map((action, i) => (
                             <MenuItem key={`${i}`} {...action} />
