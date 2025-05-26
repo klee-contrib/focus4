@@ -1,7 +1,7 @@
 import {isFunction} from "es-toolkit";
 import {action, computed, observable, reaction, runInAction} from "mobx";
 
-import {requestStore} from "@focus4/core";
+import {isAbortError, requestStore} from "@focus4/core";
 
 import {CollectionStore} from "../../collection";
 import {
@@ -122,7 +122,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
                     this.abortController = undefined;
                 });
             } catch (e: unknown) {
-                if (e instanceof DOMException && e.name === "AbortError") {
+                if (isAbortError(e)) {
                     return;
                 }
 

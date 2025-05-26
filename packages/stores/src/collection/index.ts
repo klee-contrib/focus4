@@ -12,7 +12,7 @@ import {
     toJS
 } from "mobx";
 
-import {requestStore} from "@focus4/core";
+import {isAbortError, requestStore} from "@focus4/core";
 
 import {
     buildNode,
@@ -510,7 +510,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             this.abortController = undefined;
             return response;
         } catch (error: unknown) {
-            if (error instanceof DOMException && error.name === "AbortError") {
+            if (isAbortError(error)) {
                 return;
             }
 

@@ -37,7 +37,7 @@ export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponent
         /** Service de résolution de code. */
         keyResolver?: (key: DomainType<SingleDomainFieldType<F["domain"]["type"]>>) => Promise<string | undefined>;
         /** Service de recherche. */
-        querySearcher?: (text: string) => Promise<{key: string; label: string}[]>;
+        querySearcher?: (text: string, options?: RequestInit) => Promise<{key: string; label: string}[]>;
     };
 
 /** Options pour `fieldFor` */

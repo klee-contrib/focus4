@@ -1,4 +1,4 @@
-export {isHandledError} from "./error-parsing";
+export {isAbortError, isHandledError} from "./error-parsing";
 export {coreFetch, downloadFile, getFileObjectUrl} from "./fetch";
 export {RequestStore, requestStore} from "./store";
 

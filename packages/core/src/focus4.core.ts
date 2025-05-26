@@ -11,7 +11,7 @@ declare module "i18next" {
 export {colorScheme, initColorScheme} from "./color-scheme";
 export {coreConfig} from "./config";
 export {baseI18nextConfig} from "./i18n";
-export {coreFetch, downloadFile, getFileObjectUrl, isHandledError, requestStore} from "./network";
+export {coreFetch, downloadFile, getFileObjectUrl, isAbortError, isHandledError, requestStore} from "./network";
 export {makeRouter, param, startHistory} from "./router";
 export {MessageStore, messageStore, UserStore} from "./stores";
 

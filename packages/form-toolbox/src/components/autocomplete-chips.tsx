@@ -48,7 +48,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     /** Est appelé à chaque changement de valeur. */
     onChange: (value?: DomainType<T>) => void;
     /** Service de recherche. */
-    querySearcher?: (text: string) => Promise<TSource[]>;
+    querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
@@ -130,9 +130,9 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     );
 
     const fixedQuerySearcher = useCallback(
-        async function fixedQuerySearcher(query: string) {
+        async function fixedQuerySearcher(query: string, options?: RequestInit) {
             if (querySearcher) {
-                const results = await querySearcher(query);
+                const results = await querySearcher(query, options);
                 return results.filter(r => !(value ?? []).includes(getKey(r) as never));
             } else {
                 return [];

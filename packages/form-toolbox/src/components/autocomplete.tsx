@@ -1,6 +1,8 @@
 import {debounce} from "es-toolkit";
-import {useCallback, useEffect, useState} from "react";
+import {useObserver} from "mobx-react";
+import {useCallback, useEffect, useId, useRef, useState} from "react";
 
+import {isAbortError, requestStore} from "@focus4/core";
 import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
@@ -31,7 +33,7 @@ export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSourc
      */
     onChange: (key: DomainType<T> | undefined, value?: TSource) => void;
     /** Service de recherche. */
-    querySearcher?: (text: string) => Promise<TSource[]>;
+    querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Rappelle la recherche quand le `querySearcher` change (nécessite un `querySearcher` stable). */
@@ -70,33 +72,44 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
     const [query, setQuery] = useState(pQuery);
     useEffect(() => setQuery(pQuery), [pQuery]);
 
-    const [loading, setLoading] = useState(false);
+    const trackingId = useId();
     const [values, setValues] = useState<TSource[]>([]);
 
     useEffect(() => {
         if ((!!value || value === 0) && (!!keyResolver || !!pQuery)) {
-            setLoading(true);
-            (keyResolver
-                ? keyResolver(value)
-                : new Promise<string>(r => {
-                      r(pQuery);
-                  })
-            ).then(async label => {
-                setQuery(label ?? `${value}`);
-                if (!values.find(v => getKey(v) === value) && label && querySearcher) {
-                    setValues(await querySearcher(label));
-                }
-                setLoading(false);
-            });
+            requestStore.track(trackingId, () =>
+                (keyResolver
+                    ? keyResolver(value)
+                    : new Promise<string>(r => {
+                          r(pQuery);
+                      })
+                ).then(async label => {
+                    setQuery(label ?? `${value}`);
+                    if (!values.find(v => getKey(v) === value) && label && querySearcher) {
+                        setValues(await querySearcher(label));
+                    }
+                })
+            );
         }
     }, [value]);
 
+    const abortController = useRef<AbortController>(undefined);
     const search = useCallback(
         debounce(async function search(newQuery: string) {
             if (querySearcher && (searchOnEmptyQuery || newQuery.trim().length)) {
-                setLoading(true);
-                setValues(await querySearcher(newQuery.trim()));
-                setLoading(false);
+                try {
+                    abortController.current?.abort();
+                    abortController.current = new AbortController();
+                    const {signal} = abortController.current;
+
+                    setValues(await requestStore.track(trackingId, () => querySearcher(newQuery.trim(), {signal})));
+
+                    abortController.current = undefined;
+                } catch (e: unknown) {
+                    if (isAbortError(e)) {
+                        return;
+                    }
+                }
             }
         }, 200),
         [querySearcher, searchOnEmptyQuery]
@@ -130,13 +143,13 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
         }
     }
 
-    return (
+    return useObserver(() => (
         <Autocomplete
             {...props}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
-            loading={loading}
+            loading={requestStore.isLoading(trackingId)}
             noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}
             onChange={handleChange}
             onFocus={handleFocus}
@@ -148,5 +161,5 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
             value={value !== undefined ? `${value}` : undefined}
             values={values}
         />
-    );
+    ));
 }

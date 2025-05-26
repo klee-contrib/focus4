@@ -4,7 +4,7 @@ import i18next from "i18next";
 
 import {coreConfig} from "../config";
 
-import {createProblemDetails, handleProblemDetails} from "./error-parsing";
+import {createProblemDetails, handleProblemDetails, isAbortError} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
 
 /**
@@ -93,7 +93,7 @@ export async function coreFetch(
                 }
             }
         } catch (error: unknown) {
-            if (error instanceof DOMException && error.name === "AbortError") {
+            if (isAbortError(error)) {
                 requestStore.endRequest(id);
                 return Promise.reject(error);
             }

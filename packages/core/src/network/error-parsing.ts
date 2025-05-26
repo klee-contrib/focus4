@@ -142,3 +142,11 @@ export function handleProblemDetails(problemDetails: ProblemDetails): HandledPro
 export function isHandledError(error: unknown): error is HandledProblemDetails {
     return typeof error === "object" && !!error && "$messages" in error;
 }
+
+/**
+ * Vérifie si l'erreur retournée par un appel est une annulation de requête.
+ * @param error L'erreur.
+ */
+export function isAbortError(error: unknown) {
+    return error instanceof DOMException && error.name === "AbortError";
+}
