@@ -10,6 +10,7 @@
 .menu {
     position: sticky;
     align-self: flex-start;
+    flex-shrink: 0;
     background: rgb(var(--color-white));
     box-shadow: var(--lateral-menu-box-shadow);
     border-radius: var(--lateral-menu-border-radius);
