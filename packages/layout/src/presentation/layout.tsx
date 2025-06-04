@@ -5,7 +5,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {MessageCenter, MessageCenterProps} from "../utils";
 
 import {OverlayProvider} from "./overlay";
-import {Scrollable} from "./scrollable";
+import {Scrollable, ScrollableCss} from "./scrollable";
 
 import layoutCss, {LayoutCss} from "./__style__/layout.css";
 export {layoutCss};
@@ -23,6 +23,8 @@ export interface LayoutProps extends MessageCenterProps {
     menu?: ReactNode;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
+    /** CSS du Scrollable. */
+    scrollableTheme?: CSSProp<ScrollableCss>;
     /** CSS. */
     theme?: CSSProp<LayoutCss>;
 }
@@ -35,6 +37,7 @@ export function LayoutBase({
     hideBackToTop,
     menu,
     scrollBehaviour,
+    scrollableTheme,
     ...messageCenterProps
 }: LayoutProps) {
     const theme = useTheme("layout", layoutCss, pTheme);
@@ -50,6 +53,7 @@ export function LayoutBase({
                     resetScrollOnChildrenChange
                     scrollBehaviour={scrollBehaviour}
                     showOverlay
+                    theme={scrollableTheme}
                 >
                     {children}
                 </Scrollable>
