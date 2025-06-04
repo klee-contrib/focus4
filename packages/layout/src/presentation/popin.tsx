@@ -7,7 +7,7 @@ import {ScrollableContext} from "../utils";
 
 import {useActiveTransition} from "./active-transition";
 import {useOverlay} from "./overlay";
-import {Scrollable} from "./scrollable";
+import {Scrollable, ScrollableCss} from "./scrollable";
 
 import popinCss, {PopinCss} from "./__style__/popin.css";
 export {popinCss};
@@ -29,6 +29,8 @@ export interface PopinProps {
     preventOverlayClick?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
+    /** CSS du Scrollable. */
+    scrollableTheme?: CSSProp<ScrollableCss>;
     /** CSS. */
     theme?: CSSProp<PopinCss>;
     /** Type de popin. Par défaut : "from-right" */
@@ -52,6 +54,7 @@ export function Popin({
     opened,
     preventOverlayClick,
     scrollBehaviour,
+    scrollableTheme,
     theme: pTheme,
     type = "from-right"
 }: PropsWithChildren<PopinProps>) {
@@ -76,6 +79,7 @@ export function Popin({
                   hideBackToTop={hideBackToTop}
                   scrollBehaviour={scrollBehaviour}
                   showOverlay
+                  theme={scrollableTheme}
               >
                   {children}
               </Scrollable>
