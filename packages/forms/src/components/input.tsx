@@ -44,6 +44,8 @@ export const Input = forwardRef(function Input<const T extends DomainFieldTypeSi
         maxDecimals,
         noNegativeNumbers,
         onChange,
+        onKeyDown,
+        onPaste,
         type,
         value
     });
