@@ -34,6 +34,8 @@ export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSourc
     onChange: (key: DomainType<T> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
+    /** Délai (en ms) entre la fin de la saisie de l'utilisateur et le lancement de la recherche. Par défaut : 500.  */
+    searchDelay?: number;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Rappelle la recherche quand le `querySearcher` change (nécessite un `querySearcher` stable). */
@@ -61,6 +63,7 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
     onQueryChange,
     query: pQuery = "",
     querySearcher,
+    searchDelay = 500,
     searchOnEmptyQuery = false,
     searchOnQuerySearcherChange = false,
     supportingText,
@@ -111,8 +114,8 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
                     }
                 }
             }
-        }, 200),
-        [querySearcher, searchOnEmptyQuery]
+        }, searchDelay),
+        [querySearcher, searchDelay, searchOnEmptyQuery]
     );
 
     useEffect(() => {
