@@ -38,6 +38,8 @@ export function Input<const T extends DomainFieldTypeSingle>({
         maxDecimals,
         noNegativeNumbers,
         onChange,
+        onKeyDown,
+        onPaste,
         type,
         value
     });
