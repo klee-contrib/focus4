@@ -50,6 +50,8 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     onChange: (value?: DomainType<T>) => void;
     /** Service de recherche. */
     querySearcher?: (text: string) => Promise<TSource[]>;
+    /** Délai (en ms) entre la fin de la saisie de l'utilisateur et le lancement de la recherche. Par défaut : 500.  */
+    searchDelay?: number;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
@@ -87,6 +89,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     name,
     onChange,
     querySearcher,
+    searchDelay = 500,
     searchOnEmptyQuery = false,
     showSupportingText = "always",
     theme: pTheme,
@@ -158,6 +161,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                 name={name}
                 onChange={handleAddValue}
                 querySearcher={fixedQuerySearcher}
+                searchDelay={searchDelay}
                 searchOnEmptyQuery={searchOnEmptyQuery}
                 showSupportingText="never"
                 theme={theme}
