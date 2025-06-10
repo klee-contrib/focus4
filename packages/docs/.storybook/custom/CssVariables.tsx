@@ -1,5 +1,4 @@
-import {useOf} from "@storybook/blocks";
-import {PureArgsTable} from "@storybook/blocks";
+import {PureArgsTable, useOf} from "@storybook/addon-docs";
 
 import {toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";

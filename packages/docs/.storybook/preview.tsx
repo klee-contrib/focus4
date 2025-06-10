@@ -13,13 +13,13 @@ import {i18nStores} from "@focus4/stores";
 
 import {baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
 
-import {Controls, Description, Primary, Subtitle, Title} from "@storybook/blocks";
-import {addons} from "@storybook/preview-api";
+import {Controls, Description, Primary, Subtitle, Title} from "@storybook/addon-docs";
+import {addons} from "storybook/preview-api";
 import type {Preview} from "@storybook/react";
 import i18next from "i18next";
 import React from "react";
 import {initReactI18next} from "react-i18next";
-import {DARK_MODE_EVENT_NAME} from "storybook-dark-mode";
+import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";
 
 import {CssVariables} from "./custom/CssVariables";
 import {DocsContainer} from "./custom/DocsContainer";

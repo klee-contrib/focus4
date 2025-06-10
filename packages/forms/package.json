@@ -18,7 +18,7 @@
         "@focus4/stores": "12.2.1",
         "@focus4/styling": "12.2.1",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.38.0",
+        "es-toolkit": "~1.39.3",
         "intl-number-parser": "~1.0.5",
         "tslib": "~2.8.1"
     },
