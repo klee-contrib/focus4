@@ -4,7 +4,7 @@ function get() {
     const delay = toMs(animationDelay);
     const duration = toMs(animationDuration);
     const ease = animationTimingFunction.startsWith("cubic-bezier")
-        ? animationTimingFunction.substring(13).split(",").map(parseFloat)
+        ? (animationTimingFunction.substring(13).split(",").map(parseFloat) as [number, number, number, number])
         : undefined;
 
     return {delay, duration, ease};
