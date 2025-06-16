@@ -42,26 +42,28 @@ export interface Router<C = any, Q extends QueryParamConfig = {}> {
      * Si la route demandée est active, retourne le morceau de route suivant.
      * @param predicate Callback décrivant la route.
      */
-    get<C2>(predicate: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>): (keyof C2 & string) | undefined;
+    get<C2 = C>(
+        predicate?: (x: UrlRouteDescriptor<C>) => UrlRouteDescriptor<C2>
+    ): (C2 extends ParamDef<infer P, infer _1, infer _2> ? P : keyof C2 & string) | undefined;
 
     /**
      * Récupère l'URL correspondante à la route demandée.
      * @param predicate Callback décrivant la route.
      * @param query Query params à ajouter.
      */
-    href(predicate: (x: UrlPathDescriptor<C>) => void, query?: QueryParams<Q>): string;
+    href(predicate?: (x: UrlPathDescriptor<C>) => void, query?: QueryParams<Q>): string;
     /**
      * Vérifie si la section de route demandée est active dans le routeur.
      * @param predicate Callback décrivant la route.
      */
-    is(predicate: (x: UrlRouteDescriptor<C>) => void): boolean;
+    is(predicate?: (x: UrlRouteDescriptor<C>) => void): boolean;
     /**
      * Navigue vers l'URL demandée.
      * @param predicate Callback décrivant l'URL.
      * @param replace Remplace la route précédente dans l'historique.
      * @param query Remplace les query params courants avec ceux donnés.
      */
-    to(predicate: (x: UrlPathDescriptor<C>) => void, replace?: boolean, query?: QueryParams<Q>): void;
+    to(predicate?: (x: UrlPathDescriptor<C>) => void, replace?: boolean, query?: QueryParams<Q>): void;
     /**
      * Construit une vue du routeur à partir d'une route donnée, permettant de manipuler une
      * sous section du routeur.

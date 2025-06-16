@@ -58,7 +58,7 @@ La propriété `query` est l'**objet qui contient les valeurs courantes de tous 
 
 Naturellement, les valeurs des query params sont observables.
 
-## `is(url)`
+## `is(url?)`
 
 La méthode `is` permet de vérifier si **la section d'URL demandée est active** (= l'URL courante contient cette section). Pour décrire une section d'URL, au lieu d'écrire simplement l'URL, on utilise un construction de lambdas qui permet de décrire l'URL morceau par morceau de façon **typée** (et avec de la complétion), en fonction de la définition du routeur.
 
@@ -73,7 +73,7 @@ router.is(a => a("operation")("ofaId")("echeance")("echId")("reglement")("regId"
 
 `is` est une fonction "computed", ce qui veut dire qu'elle a vocation a être utilisée dans des réactions (y compris dans le rendu d'un composant) et donc que tout changement de résultat (true > false ou false > true) relancera la réaction.
 
-## `get(url)`
+## `get(url?)`
 
 La fonction `get` prend **une section d'URL** comme `is`, et renvoie **la section de route suivante** dans l'URL active. Si la section d'URL demandée n'est pas active, où bien si l'URL active est exactement égale à la section, alors `get` renvoie naturellement `undefined`.
 
@@ -92,7 +92,7 @@ Comme `is`, `get` est une fonction "computed".
 _Remarque : `router.get(x => x("operation"))` renvoie le **nom** de la section de route suivante, donc ici `"ofaId"` et non la valeur du paramètre. La
 valeur du paramètre `ofaId` se récupère dans le state, via `router.state.operation.ofaId`._
 
-## `to(url, replace?, query?)`
+## `to(url?, replace?, query?)`
 
 La fonction `to` permet de **changer la route active** par une navigation vers l'URL demandée. L'URL se définit également d'une façon similaire à `is` et `get`, sauf que cette fois-ci on doit renseigner les valeurs des paramètres.
 
@@ -109,7 +109,7 @@ Le deuxième paramètre `replace`, si renseigné à `true`, remplacera l'ancienn
 
 Le troisième paramètre `query`, si renseigné, modifiera également les query params du routeur par les valeurs dans l'objet donné. Sinon, les query params sont **inchangés** lors d'une navigation avec `to`.
 
-## `href(url, query?)`
+## `href(url?, query?)`
 
 La fonction `href` prend en paramètre une description d'URL avec paramètres, la même que `to`, et renvoie l'URL correspondante (au lieu de naviguer). Cela permet de construire des liens "classiques" via une balise `<a>`. Utiliser des liens "classiques" est une bonne pratique puisqu'ils permettent au navigateur de pouvoir proposer des interactions à l'utilisateur avec (par exemple : ouvrir dans un autre onglet).
 
