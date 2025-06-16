@@ -431,21 +431,21 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         return {
             state,
             query: store.query,
-            get: (p: any) => get(route, p),
+            get: (p: any) => get(route, p ?? (x => x)),
             href: (p: any, q: any) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
-                return href(baseRoute, p, q);
+                return href(baseRoute, p ?? (x => x), q);
             },
-            is: (p: any) => is(route, p),
+            is: (p: any) => is(route, p ?? (x => x)),
             to: (p: any, r = false, q: any = undefined) => {
                 let baseRoute = route;
                 for (const param in store._activeParams) {
                     baseRoute = baseRoute.replace(`:${param}`, store._activeParams[param]);
                 }
-                to(baseRoute, p, r, q);
+                to(baseRoute, p ?? (x => x), r, q);
             },
             sub: (p: any) => sub(route, state, p),
             start: () => {
@@ -455,10 +455,10 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         };
     }
 
-    store.get = p => get("", p);
-    store.href = (p, q) => href("", p, q);
-    store.is = p => is("", p);
-    store.to = (p, r = false, q = undefined) => to("", p, r, q);
+    store.get = p => get("", p ?? (x => x));
+    store.href = (p, q) => href("", p ?? (x => x), q);
+    store.is = p => is("", p ?? (x => x));
+    store.to = (p, r = false, q = undefined) => to("", p ?? (x => x), r, q);
     store.sub = p => sub("", store.state, p);
     store.start = start;
     store.confirmation = confirmation;
