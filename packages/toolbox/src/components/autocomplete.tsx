@@ -70,7 +70,7 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
      * (au blur du champ ou en appuyant sur Entrée).
      */
     onChange?: (key?: string, value?: TSource) => void;
-    /** Handler appelé lorsque la query (= contenu du champ texte) change. */
+    /** Handler appelé lorsque la query (= contenu du champ texte) change. A utiliser avec `query`. */
     onQueryChange?: (query: string) => void;
     /** N'affiche pas les suggestions si le champ est vide. */
     noSuggestionsOnEmptyQuery?: boolean;
@@ -166,7 +166,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     const [selected, setSelected] = useState<string>();
 
     // Gestion de la `query`.
-    const getQuery = useCallback(
+    const getQueryFromValue = useCallback(
         (v?: string) => {
             if (v) {
                 const match = values.find(i => getKey(i) === v);
@@ -179,13 +179,24 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         },
         [getKey, getLabel, values]
     );
-    const [query, setQuery] = useState(pQuery ?? getQuery(value));
-    const updateQuery = useCallback(
-        (newQuery: string, notify: boolean) => {
-            if (notify && onQueryChange) {
+
+    const [sQuery, setSQuery] = useState(() => getQueryFromValue(value));
+    useEffect(() => {
+        const newQuery = getQueryFromValue(value);
+        setSQuery(newQuery);
+        if (!newQuery) {
+            setSelected(undefined);
+        }
+    }, [getQueryFromValue, value]);
+
+    const query = pQuery ?? sQuery;
+    const setQuery = useCallback(
+        (newQuery: string) => {
+            if (pQuery !== undefined && onQueryChange) {
                 onQueryChange(newQuery);
+            } else {
+                setSQuery(newQuery);
             }
-            setQuery(newQuery);
 
             if (!newQuery) {
                 setSelected(undefined);
@@ -193,8 +204,6 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
         },
         [onQueryChange]
     );
-
-    useEffect(() => updateQuery(pQuery ?? getQuery(value), false), [getQuery, pQuery, updateQuery, value]);
 
     // Suggestions.
     const suggestions = useMemo(() => {
@@ -254,23 +263,23 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 return;
             }
 
-            updateQuery(!clearQueryOnChange ? getQuery(key) : "", pQuery !== undefined);
+            setQuery(!clearQueryOnChange ? getQueryFromValue(key) : "");
             onChange?.(
                 key,
                 values.find(v => getKey(v) === key)
             );
             valueRef.current = key;
         },
-        [allowUnmatched, clearQueryOnChange, getQuery, onChange, pQuery, query, suggestions, updateQuery, values]
+        [allowUnmatched, clearQueryOnChange, getQueryFromValue, onChange, query, suggestions, setQuery, values]
     );
 
     // Handlers sur l'input.
     const handleQueryChange = useCallback(
         (newQuery: string) => {
-            updateQuery(newQuery, true);
+            setQuery(newQuery);
             valueRef.current = undefined;
         },
-        [updateQuery]
+        [setQuery]
     );
 
     const handleQueryFocus: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = useCallback(
@@ -303,12 +312,12 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
     const handleBlur = useCallback(
         (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             if ((!valueRef.current || !selected) && !allowUnmatched && !menu.active) {
-                updateQuery("", true);
+                setQuery("");
                 onValueChange(undefined);
             }
             onBlur?.(event);
         },
-        [allowUnmatched, menu.active, onBlur, selected]
+        [allowUnmatched, menu.active, onBlur, selected, setQuery]
     );
 
     return (
@@ -363,6 +372,7 @@ export const Autocomplete = forwardRef(function Autocomplete<TSource = {key: str
                 role="listbox"
                 {...menu}
                 keepSelectionOnPointerLeave
+                keepSelectionOnToggle
                 noBlurOnArrowPress
                 noCloseOnClick={noCloseOnChange}
                 noRing

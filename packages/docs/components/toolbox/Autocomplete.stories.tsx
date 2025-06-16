@@ -22,22 +22,25 @@ export const Showcase: StoryObj<typeof Autocomplete> = {
     render(props) {
         const [selected, setSelected] = useState<string>();
         const [selected2, setSelected2] = useState<string>();
+        const [query, setQuery] = useState("");
         return (
             <div className="stack">
                 <Autocomplete
                     icon="search"
                     trailing={{icon: "clear", tooltip: "Vider le champ", onClick: () => setSelected(undefined)}}
-                    value={selected}
                     {...props}
                     onChange={setSelected}
+                    value={selected}
                 />
 
                 <Autocomplete
                     allowUnmatched
-                    supportingText="Cet autocomplete autorise la sélection de valeurs supplémentaires"
-                    value={selected2}
+                    supportingText="Cet autocomplete est utilisé pour fournir des suggestions."
                     {...props}
                     onChange={setSelected2}
+                    onQueryChange={setQuery}
+                    query={query}
+                    value={selected2}
                 />
             </div>
         );
