@@ -76,7 +76,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     loading?: boolean;
     /** Taille maximum du champ. Sera affiché en dessous du champ à côté de `supportingText`. */
     maxLength?: number;
-    /** Si renseigné, affiche un <textarea> à la place de l'<input>.  */
+    /** Si renseigné, affiche un `<textarea>` à la place de l'`<input>`.  */
     multiline?: boolean;
     /** `name` pour l'input HTML. */
     name?: string;
@@ -98,13 +98,13 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Préfixe à poser devant le texte. */
     prefix?: string;
-    /** Si renseigné, crée un champ texte en lecture seule sans <input> HTML. */
+    /** Si renseigné, crée un champ texte en lecture seule sans `<input>` HTML. */
     readonly?: boolean;
     /** Valeur de `required` sur l'input HTML. */
     required?: boolean;
     /** Valeur de `role` sur l'input HTML. */
     role?: AriaRole;
-    /** Nombre de lignes pour le <textarea> (si `multiline`). */
+    /** Nombre de lignes pour le `<textarea>` (si `multiline`). */
     rows?: number;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "auto". */
     showSupportingText?: "always" | "auto" | "never";

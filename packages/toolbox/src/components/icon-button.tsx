@@ -21,7 +21,7 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     color?: "accent" | "light" | "primary";
     /** Désactive le bouton. */
     disabled?: boolean;
-    /** Si renseigné, pose une balise <a> à la place du <button>. */
+    /** Si renseigné, pose une balise `<a>` à la place du `<button>`. */
     href?: string;
     /** Icône a afficher dans le bouton. */
     icon: Icon;
@@ -39,7 +39,7 @@ export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLL
     style?: CSSProperties;
     /** "tabindex" pour l'élément HTML. */
     tabIndex?: number;
-    /** "target" pour le <a>, si `href` est rensigné. */
+    /** "target" pour le `<a>`, si `href` est rensigné. */
     target?: string;
     /** CSS. */
     theme?: CSSProp<IconButtonCss>;

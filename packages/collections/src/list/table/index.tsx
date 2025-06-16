@@ -29,7 +29,7 @@ export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     /** Composant à afficher pendant le chargement. */
     LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /**
-     * Surcharge du 'top' pour le 'position: sticky' du <thead>.
+     * Surcharge du 'top' pour le 'position: sticky' du `<thead>`.
      * Par défaut calculé avec la hauteur du header.
      */
     offsetTopOverride?: number;
@@ -37,7 +37,7 @@ export type TableProps<T> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
     onLineClick?: (data: NoInfer<T>, event: MouseEvent<HTMLTableCellElement>) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
     operationList?: OperationListItem<NoInfer<T>[]>[];
-    /** Rend le <thead> sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
+    /** Rend le `<thead>` sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
     stickyHeader?: boolean;
     /** CSS. */
     theme?: CSSProp<TableCss>;
