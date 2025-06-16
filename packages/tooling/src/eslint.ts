@@ -1,5 +1,5 @@
 import eslint from "@eslint/js";
-// @ts-ignore
+import {FlatConfig} from "@typescript-eslint/utils/ts-eslint";
 import prettier from "eslint-config-prettier";
 // @ts-ignore
 import importPlugin from "eslint-plugin-import";
@@ -25,7 +25,7 @@ export const eslintConfig = tseslint.config(
     },
     eslint.configs.all,
     tseslint.configs.all,
-    react.configs.flat.all,
+    react.configs.flat.all as FlatConfig.Config,
     prettier,
     {
         plugins: {

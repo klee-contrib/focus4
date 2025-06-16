@@ -16,7 +16,7 @@
         "postinstall": "node postinstall.js"
     },
     "dependencies": {
-        "@types/react": "~19.1.7",
+        "@types/react": "~19.1.8",
         "@types/react-dom": "~19.1.6",
         "classnames": "~2.5.1",
         "es-toolkit": "~1.39.3",

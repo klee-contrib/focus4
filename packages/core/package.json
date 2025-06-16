@@ -17,7 +17,7 @@
     "dependencies": {
         "es-toolkit": "~1.39.3",
         "history": "~5.3.0",
-        "mobx-utils": "~6.1.0",
+        "mobx-utils": "~6.1.1",
         "tslib": "~2.8.1"
     },
     "peerDependencies": {
