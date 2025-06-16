@@ -23,7 +23,7 @@ export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkEle
     disabled?: boolean;
     /** Si renseigné, le Chip est affiché avec une élévation. */
     elevated?: boolean;
-    /** Si renseigné, pose une balise <a> à la place du <button> ou <span>. */
+    /** Si renseigné, pose une balise `<a>` à la place du `<button>` ou `<span>`. */
     href?: string;
     /** Icône a afficher dans le Chip (à gauche). */
     icon?: Icon;
@@ -37,7 +37,7 @@ export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkEle
     onDeleteClick?: MouseEventHandler<HTMLSpanElement>;
     /** Au focus du Chip (si actionnable). */
     onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
-    /** "target" pour le <a>, si `href` est rensigné. */
+    /** "target" pour le `<a>`, si `href` est rensigné. */
     target?: string;
     /** CSS. */
     theme?: CSSProp<ChipCss>;

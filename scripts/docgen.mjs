@@ -243,10 +243,5 @@ generateDocFile("layout", "./packages/layout/src/**/*.tsx", [
 ]);
 
 function escape(text) {
-    return text
-        .replaceAll("\\", "\\\\")
-        .replaceAll("`", "\\`")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("$", "\\$");
+    return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("$", "\\$");
 }

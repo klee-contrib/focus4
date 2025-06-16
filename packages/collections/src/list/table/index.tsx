@@ -31,7 +31,7 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
     /** Nombre de colonnes maximum sur lequelles il est possible de trier en même temps. Par défaut : 1. */
     maxSort?: number;
     /**
-     * Surcharge du 'top' pour le 'position: sticky' du <thead>.
+     * Surcharge du 'top' pour le 'position: sticky' du `<thead>`.
      * Par défaut calculé avec la hauteur du header.
      */
     offsetTopOverride?: number;
@@ -39,7 +39,7 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
     onLineClick?: (data: NoInfer<T>, event: MouseEvent<HTMLTableCellElement>) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
     operationList?: OperationListItem<NoInfer<T>[]>[];
-    /** Rend le <thead> sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
+    /** Rend le `<thead>` sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
     stickyHeader?: boolean;
     /** CSS. */
     theme?: CSSProp<TableCss>;

@@ -21,7 +21,7 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     color?: "accent" | "light" | "primary";
     /** Désactive le bouton. */
     disabled?: boolean;
-    /** Si renseigné, pose une balise <a> à la place du <button>. */
+    /** Si renseigné, pose une balise `<a>` à la place du `<button>`. */
     href?: string;
     /** Icône a afficher dans le bouton. */
     icon?: Icon;
@@ -39,7 +39,7 @@ export interface ButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkE
     onFocus?: FocusEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** CSS inline pour l'élément racine. */
     style?: CSSProperties;
-    /** "target" pour le <a>, si `href` est rensigné. */
+    /** "target" pour le `<a>`, si `href` est rensigné. */
     target?: string;
     /** "tabindex" pour l'élément HTML. */
     tabIndex?: number;

@@ -96,6 +96,8 @@ const defaultGetLabel = (x: any) => x.label;
  * - Toutes les options du champ texte sont disponibles.
  * - Peut être utilisé comme un champ de recherche rapide.
  * - Peut afficher des suggestions complémentaires.
+ *
+ * L'`Autocomplete` peut également être utilisé dans un mode alternatif pour **fournir des suggestions sur un champ de saisie libre**. Pour cet usage, il faut utiliser `allowUnmatched`, avec `query` et `onQueryChange` à la place de `value` et de `onChange` (`onChange` peut néanmoints toujours être utilisé lorsqu'on sélectionne une valeur existante).
  */
 export function Autocomplete<TSource = {key: string; label: string}>({
     additionalSuggestions,

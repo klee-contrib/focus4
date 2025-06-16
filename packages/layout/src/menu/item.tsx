@@ -24,7 +24,7 @@ import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
 export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement> {
     /** Pour passer un sous-menu. */
     children?: ReactNode;
-    /** Si renseigné, pose une balise <a> à la place du <button>. */
+    /** Si renseigné, pose une balise `<a>` à la place du `<button>`. */
     href?: string;
     /** Icône a afficher dans l'item de menu. */
     icon?: Icon;

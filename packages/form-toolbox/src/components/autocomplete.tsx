@@ -53,6 +53,22 @@ const defaultGetKey = (x: any) => x.key;
  * Aucun filtre supplémentaire ne sera réalisé dans le composant.
  *
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
+ *
+ * L'`AutocompleteSearch` peut également être utilisé dans un mode alternatif pour **fournir des suggestions sur un champ de saisie libre**. Pour cet usage, il faut utiliser `allowUnmatched`, avec `query` et `onQueryChange` à la place de `value` et de `onChange` (`onChange` peut néanmoints toujours être utilisé lorsqu'on sélectionne une valeur existante). **Il doit être utilisé comme un `InputComponent` pour cet usage.**
+ *
+ * Exemple :
+ * ```tsx
+ * .patch("champ", f => f.metadata({
+ *     InputComponent: ({value, onChange, ...props}) =>
+ *         <AutocompleteSearch
+ *             {...props}
+ *             allowUnmatched
+ *             querySearcher={querySearcher}
+ *             query={value}
+ *             onQueryChange={onChange}
+ *         />
+ *     }))
+ * ```
  */
 export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>({
     disabled,
