@@ -61,9 +61,7 @@ export function Dialog({
               <div className={classNames(tClassName, theme.wrapper())}>
                   <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
                       {title ? <h5 className={theme.title()}>{title}</h5> : null}
-                      <section className={theme.body()} role="body">
-                          {children}
-                      </section>
+                      <section className={theme.body()}>{children}</section>
                       {actions.length ? (
                           <nav className={theme.navigation()}>
                               {actions.map((action, idx) => (

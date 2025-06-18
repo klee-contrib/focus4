@@ -385,6 +385,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                     <Ripple key={getKey(s)} disabled={Array.isArray(disabled) && disabled.includes(getKey(s))}>
                         <span
                             aria-label={getLabel(s)}
+                            aria-selected={getKey(s) === selected}
                             className={theme.suggestion({
                                 active: getKey(s) === selected,
                                 disabled: Array.isArray(disabled) && disabled.includes(getKey(s))
@@ -399,6 +400,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 {additionalSuggestions?.map(({key, content}) => (
                     <Ripple key={key} disabled={Array.isArray(disabled) && disabled.includes(key)}>
                         <span
+                            aria-selected={key === selected}
                             className={theme.suggestion({
                                 active: key === selected,
                                 disabled: Array.isArray(disabled) && disabled.includes(key)

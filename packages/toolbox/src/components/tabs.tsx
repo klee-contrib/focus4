@@ -94,6 +94,7 @@ export function Tab({
             onPointerUp={onPointerUp}
         >
             <div
+                aria-selected={active}
                 className={classNames(theme.tab({active, disabled}), className)}
                 onClick={handleClick}
                 onKeyDown={e => e.key === "Enter" && handleClick()}
