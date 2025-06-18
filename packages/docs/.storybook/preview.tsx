@@ -6,11 +6,10 @@ import "@focus4/styling/lib/focus4.styling.css";
 import "@focus4/toolbox/lib/focus4.toolbox.css";
 import "./preview.css";
 
-import {Controls, Description, Primary, Subtitle, Title} from "@storybook/addon-docs";
+import {Controls, Description, Primary, Subtitle, Title} from "@storybook/addon-docs/blocks";
 import type {Preview} from "@storybook/react";
 import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";
 import i18next from "i18next";
-import React from "react";
 import {initReactI18next} from "react-i18next";
 import {addons} from "storybook/preview-api";
 
@@ -20,8 +19,8 @@ import {i18nFormToolbox} from "@focus4/form-toolbox";
 import {i18nLayout} from "@focus4/layout";
 import {i18nStores} from "@focus4/stores";
 
-import {CssVariables} from "./custom/CssVariables";
-import {DocsContainer} from "./custom/DocsContainer";
+import {CssVariables} from "./custom/css-variables";
+import {DocsContainer} from "./custom/docs-container";
 
 const channel = addons.getChannel();
 channel.on(DARK_MODE_EVENT_NAME, v => (colorScheme.dark = v));

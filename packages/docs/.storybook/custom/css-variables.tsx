@@ -1,9 +1,9 @@
-import {PureArgsTable, useOf} from "@storybook/addon-docs";
+import {PureArgsTable, useOf} from "@storybook/addon-docs/blocks";
 import {toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import React from "react";
 
-import {useDarkMode} from "./DocsContainer";
+import {useDarkMode} from "./docs-container";
 
 type VariableDefinitions = Record<string, {main: string; dark?: string}>;
 
@@ -41,7 +41,11 @@ export function CssVariables({cssVariables}: {cssVariables?: Record<string, Vari
                 ...obj,
                 [name]: {
                     name,
-                    type: {required: computedDefaultValue.replace(/0\./g, ".") !== value.replace(/0\./g, ".")},
+                    type: {
+                        required:
+                            computedDefaultValue.replaceAll(String.raw`0\.`, ".") !==
+                            value.replaceAll(String.raw`0\.`, ".")
+                    },
                     table: {type: {summary: value}},
                     defaultValue: {summary: defaultValue},
                     control: {type: "text"}

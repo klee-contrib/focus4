@@ -1,4 +1,4 @@
-import {DocsContainer as BaseContainer} from "@storybook/addon-docs";
+import {DocsContainer as BaseContainer} from "@storybook/addon-docs/blocks";
 import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";
 import {useEffect, useState} from "react";
 import {addons} from "storybook/preview-api";
