@@ -16,9 +16,9 @@ Le mode sombre va ajouter l'attribut `dark=true` à la balise `<html>`, ce qui v
 
 En plus de redéfinir quelques couleurs explicitement dans quelques composants, le thème sombre :
 
--   Pose un `color-scheme: dark` pour demander au navigateur d'afficher des éléments d'UI en thème sombre (par exemple les scrollbars).
--   Inverse la valeur de `--color-black` et `--color-white` (enfin pas tout à fait, `--color-white` est en fait `11, 11, 11`...)
--   Redéfinit les valeurs des différentes `--palette-grey-XXX` pour être du plus foncé au plus clair (la correspondance n'est pas exacte à cause du noir qui n'est pas 100% noir).
--   Rédéfinit `--color-primary`, `--color-primary-light` et `--color-accent` dans des couleurs qui passent mieux sur du noir. En général, si vos couleurs sont vives, il faut des couleurs moins vives, et inversement. Evidemment, si vous surchargez ces couleurs dans votre application (ce qui devrait toujours être le cas), alors ces surcharges ne vous conviendront pas et il vous faudra les remplacer aussi.
+- Pose un `color-scheme: dark` pour demander au navigateur d'afficher des éléments d'UI en thème sombre (par exemple les scrollbars).
+- Inverse la valeur de `--color-black` et `--color-white` (enfin pas tout à fait, `--color-white` est en fait `11, 11, 11`...)
+- Redéfinit les valeurs des différentes `--palette-grey-XXX` pour être du plus foncé au plus clair (la correspondance n'est pas exacte à cause du noir qui n'est pas 100% noir).
+- Rédéfinit `--color-primary`, `--color-primary-light` et `--color-accent` dans des couleurs qui passent mieux sur du noir. En général, si vos couleurs sont vives, il faut des couleurs moins vives, et inversement. Evidemment, si vous surchargez ces couleurs dans votre application (ce qui devrait toujours être le cas), alors ces surcharges ne vous conviendront pas et il vous faudra les remplacer aussi.
 
 Ces variables sont bien évidemment redéfinies avec le sélecteur `:root[dark]`.

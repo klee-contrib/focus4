@@ -117,18 +117,24 @@ export class LoadRegistration<A extends readonly any[] = never> {
                         }
                     }
 
-                    (this.builder.handlers.load ?? []).forEach(handler => handler("load", data));
+                    for (const handler of this.builder.handlers.load ?? []) {
+                        handler("load", data);
+                    }
 
                     this.abortController = undefined;
                 });
-            } catch (e: unknown) {
-                if (isAbortError(e)) {
+            } catch (error) {
+                if (isAbortError(error)) {
                     return;
                 }
 
                 this.clear();
-                (this.builder.handlers.error ?? []).forEach(handler => handler("error", "load", e));
-                throw e;
+
+                for (const handler of this.builder.handlers.error ?? []) {
+                    handler("error", "load", error);
+                }
+
+                throw error;
             }
         }
     }
@@ -265,13 +271,13 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode | CollectionSt
             event = [event];
         }
 
-        event.forEach(e => {
+        for (const e of event) {
             if (!this.handlers[e]) {
                 this.handlers[e] = [handler as any];
             } else {
                 this.handlers[e].push(handler as any);
             }
-        });
+        }
 
         return this;
     }

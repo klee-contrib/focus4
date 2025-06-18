@@ -30,7 +30,8 @@
     color: var(--button-secondary-color);
     border-radius: var(--floating-action-button-border-radius);
     box-shadow: var(--shadow-4p);
-    transition: box-shadow var(--animation-duration) var(--animation-curve-default),
+    transition:
+        box-shadow var(--animation-duration) var(--animation-curve-default),
         color var(--animation-duration-short) var(--animation-curve-default),
         background-color var(--animation-duration-short) var(--animation-curve-default),
         width var(--animation-duration) var(--animation-curve-default),
@@ -100,7 +101,8 @@
     height: var(--floating-action-button-size);
     font-size: var(--floating-action-button-icon-size);
     line-height: var(--floating-action-button-size);
-    transition: width var(--animation-duration) var(--animation-curve-default),
+    transition:
+        width var(--animation-duration) var(--animation-curve-default),
         height var(--animation-duration) var(--animation-curve-default),
         line-height var(--animation-duration) var(--animation-curve-default);
 }
@@ -113,7 +115,8 @@
     line-height: calc(var(--floating-action-button-size) + var(--button-line-height-delta));
     white-space: nowrap;
     opacity: 0;
-    transition: line-height var(--animation-duration) var(--animation-curve-default),
+    transition:
+        line-height var(--animation-duration) var(--animation-curve-default),
         opacity var(--animation-duration) var(--animation-curve-default),
         margin var(--animation-duration) var(--animation-curve-default);
 }

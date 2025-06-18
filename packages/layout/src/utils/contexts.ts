@@ -11,7 +11,7 @@ export const HeaderContext = createContext({
     sticky: true,
     /** Met à jour le caractère sticky du header. */
     setSticky(sticky: boolean) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        // oxlint-disable-next-line no-unused-expressions
         sticky;
     }
 });
@@ -94,9 +94,9 @@ export const ScrollspyContext = createContext({
      */
     registerPanel(name: string, panel: PanelDescriptor): (() => void) | undefined {
         return () => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            // oxlint-disable-next-line no-unused-expressions
             name;
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            // oxlint-disable-next-line no-unused-expressions
             panel;
         };
     }

@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Content} from "@focus4/layout";
 
 import {ContentMeta} from "./metas/content";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ContentMeta,

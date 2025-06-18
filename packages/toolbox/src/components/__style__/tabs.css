@@ -73,7 +73,8 @@
     pointer-events: none;
     opacity: 0;
     background-color: var(--tab-color);
-    transition: opacity var(--animation-duration-short) var(--animation-curve-default),
+    transition:
+        opacity var(--animation-duration-short) var(--animation-curve-default),
         color var(--animation-duration-short) var(--animation-curve-default);
 }
 

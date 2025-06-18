@@ -1,12 +1,12 @@
-import {readFile, writeFile} from "fs";
-import {resolve} from "path";
+import {readFile, writeFile} from "node:fs";
+import {resolve} from "node:path";
 
 // Enlève la dépréciation sur "useObserver".
-[
+for (const typeFile of [
     resolve(import.meta.dirname, "./node_modules/mobx-react-lite/es/index.js"),
     resolve(import.meta.dirname, "../../node_modules/mobx-react-lite/es/index.js"),
     resolve(import.meta.dirname, "../../mobx-react-lite/es/index.js")
-].forEach(typeFile => {
+]) {
     readFile(typeFile, "utf8", (err, data) => {
         if (!err) {
             writeFile(
@@ -18,8 +18,8 @@ import {resolve} from "path";
                     )
                     .replace("export function useObserver", "export function useObserverDeprecated"),
                 "utf8",
-                err2 => console.log(err2 ?? "useObserver undeprecated")
+                err2 => console.info(err2 ?? "useObserver undeprecated")
             );
         }
     });
-});
+}

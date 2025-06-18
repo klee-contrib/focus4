@@ -10,6 +10,7 @@ import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
 
 import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
+
 export {mainMenuCss, MainMenuItem};
 export type {MainMenuCss};
 

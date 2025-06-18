@@ -5,15 +5,16 @@ import {FormEntityField, FormListNode, FormNode} from "./form";
 import {StoreListNode, StoreNode} from "./store";
 
 /** Génère l'objet JS "normal" équivalent à un noeud de store. */
-export type NodeToType<SN> = SN extends FormListNode<infer LEF, infer _>
-    ? EntityToType<LEF>[]
-    : SN extends FormNode<infer OEF, infer __>
-    ? EntityToType<OEF>
-    : SN extends StoreListNode<infer LE>
-    ? EntityToType<LE>[]
-    : SN extends StoreNode<infer OE>
-    ? EntityToType<OE>
-    : never;
+export type NodeToType<SN> =
+    SN extends FormListNode<infer LEF, infer _>
+        ? EntityToType<LEF>[]
+        : SN extends FormNode<infer OEF, infer __>
+          ? EntityToType<OEF>
+          : SN extends StoreListNode<infer LE>
+            ? EntityToType<LE>[]
+            : SN extends StoreNode<infer OE>
+              ? EntityToType<OE>
+              : never;
 
 /** Génère l'objet JS "normal" équivalent au noeud source d'un FormNode. */
 export type SourceNodeType<FN extends FormNode | FormListNode> = NodeToType<FN["sourceNode"]>;

@@ -6,10 +6,10 @@ export type QueryParams<T extends QueryParamConfig> = {
     [P in keyof T]?: T[P] extends "string"
         ? string
         : T[P] extends "number"
-        ? number
-        : T[P] extends "boolean"
-        ? boolean
-        : never;
+          ? number
+          : T[P] extends "boolean"
+            ? boolean
+            : never;
 };
 
 export function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: QueryParams<Q>) {
@@ -21,14 +21,14 @@ export function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: Quer
                 value === undefined
                     ? undefined
                     : query[key] === "number"
-                    ? parseFloat(value)
-                    : query[key] === "boolean"
-                    ? value === "true"
-                        ? true
-                        : value === "false"
-                        ? false
-                        : Number.NaN
-                    : value;
+                      ? Number.parseFloat(value)
+                      : query[key] === "boolean"
+                        ? value === "true"
+                            ? true
+                            : value === "false"
+                              ? false
+                              : Number.NaN
+                        : value;
             (object as any)[key] = newValue;
             return newValue;
         };

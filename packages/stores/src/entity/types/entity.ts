@@ -22,10 +22,10 @@ export type DomainFieldType = DomainFieldTypeSingle | DomainFieldTypeMultiple | 
 export type SingleDomainFieldType<DT> = DT extends "boolean-array" | "boolean"
     ? "boolean"
     : DT extends "number-array" | "number"
-    ? "number"
-    : DT extends "object" | "string-array" | "string"
-    ? "string"
-    : never;
+      ? "number"
+      : DT extends "object" | "string-array" | "string"
+        ? "string"
+        : never;
 
 /** Définition d'un domaine. */
 export interface Domain<
@@ -93,32 +93,25 @@ export interface FieldEntry<
     readonly defaultValue?: T;
 }
 
-export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> = D extends Domain<
-    infer DT,
-    infer ICProps,
-    infer SCProps,
-    infer ACProps,
-    infer DCProps,
-    infer LCProps,
-    infer FProps
->
-    ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
-    : never;
+export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> =
+    D extends Domain<infer DT, infer ICProps, infer SCProps, infer ACProps, infer DCProps, infer LCProps, infer FProps>
+        ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
+        : never;
 
 /** Récupère le type primitif d'un champ associé à un type défini dans un domaine. */
 export type DomainType<DT> = DT extends "string"
     ? string
     : DT extends "number"
-    ? number
-    : DT extends "boolean"
-    ? boolean
-    : DT extends "string-array"
-    ? string[]
-    : DT extends "number-array"
-    ? number[]
-    : DT extends "boolean-array"
-    ? boolean[]
-    : any;
+      ? number
+      : DT extends "boolean"
+        ? boolean
+        : DT extends "string-array"
+          ? string[]
+          : DT extends "number-array"
+            ? number[]
+            : DT extends "boolean-array"
+              ? boolean[]
+              : any;
 
 /** Type effectif d'un champ. */
 export type FieldEntryType<F extends FieldEntry> = F extends FieldEntry<infer _, infer T> ? T : never;
@@ -176,12 +169,12 @@ export type EntityToType<E> = {
     -readonly [P in keyof E]?: E[P] extends FieldEntry
         ? FieldEntryType<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-        ? EntityToType<OE>
-        : E[P] extends ListEntry<infer LE>
-        ? EntityToType<LE>[]
-        : E[P] extends RecursiveListEntry
-        ? EntityToType<E>[]
-        : never;
+          ? EntityToType<OE>
+          : E[P] extends ListEntry<infer LE>
+            ? EntityToType<LE>[]
+            : E[P] extends RecursiveListEntry
+              ? EntityToType<E>[]
+              : never;
 };
 
 /** Définition de champ dans un store. */

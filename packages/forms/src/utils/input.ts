@@ -106,7 +106,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
 
                 let isNegative = false;
                 if (v.startsWith("-") && !noNegativeNumbers) {
-                    v = v.substring(1);
+                    v = v.slice(1);
                     isNegative = true;
                 }
 
@@ -124,9 +124,9 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 if (
                     ((maxDecimals && (right ?? "").length <= maxDecimals) || right === undefined) &&
                     nope === undefined &&
-                    !invalidCharRegex.exec(v)
+                    !invalidCharRegex.test(v)
                 ) {
-                    const newNumberValue = v ? (isNegative ? -1 : 1) * parseNumber(v) : NaN;
+                    const newNumberValue = v ? (isNegative ? -1 : 1) * parseNumber(v) : Number.NaN;
                     const newValue =
                         (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
                         (left
@@ -137,7 +137,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                               }).format(Math.abs(newNumberValue))
                             : "") +
                         (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
-                        (right ? takeWhile(right.split("").reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
+                        (right ? takeWhile([...right].reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
 
                     if (!newValue.includes("NaN")) {
                         newNumberStringValue = newValue;
@@ -151,18 +151,18 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                     const ajustedEnd =
                         Math.max(
                             0,
-                            v.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "")
+                            v.slice(0, end).replace(invalidCharRegex, "").replaceAll(new RegExp(thousands, "g"), "")
                                 .length +
-                                newNumberStringValue!.split("").filter(c => c === "0").length -
-                                v.split("").filter(c => c === "0").length
+                                [...newNumberStringValue!].filter(c => c === "0").length -
+                                [...v].filter(c => c === "0").length
                         ) + (isNegative ? 1 : 0);
 
                     let charCount = 0;
-                    const newEnd = newNumberStringValue!.split("").reduce((count, char) => {
+                    const newEnd = [...newNumberStringValue!].reduce((count, char) => {
                         if (charCount === ajustedEnd) {
                             return count;
                         }
-                        if (digitDecimalRegex.exec(char)) {
+                        if (digitDecimalRegex.test(char)) {
                             charCount++;
                         }
                         return count + 1;

@@ -10,6 +10,7 @@ import {ScrollspyContext} from "../utils";
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
 import panelCss, {PanelCss} from "./__style__/panel.css";
+
 export {panelCss};
 export type {PanelCss};
 
@@ -89,8 +90,8 @@ export function Panel({
         </div>
     );
 
-    const areButtonsTop = !!["top", "both"].find(i => i === buttonsPosition);
-    const areButtonsDown = !!["bottom", "both"].find(i => i === buttonsPosition);
+    const areButtonsTop = !!["top", "both"].some(i => i === buttonsPosition);
+    const areButtonsDown = !!["bottom", "both"].some(i => i === buttonsPosition);
 
     return (
         <div ref={ref} className={theme.panel({loading, editing})} id={name ? `panel-${name}` : undefined}>

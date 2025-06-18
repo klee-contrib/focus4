@@ -43,7 +43,7 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     !referenceStore[`_${ref}_loading`] &&
                     !(
                         referenceStore[`_${ref}_cache`] &&
-                        new Date().getTime() - referenceStore[`_${ref}_cache`] < coreConfig.referenceCacheDuration
+                        Date.now() - referenceStore[`_${ref}_cache`] < coreConfig.referenceCacheDuration
                     )
                 ) {
                     referenceStore[`_${ref}_loading`] = true;
@@ -51,15 +51,12 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     // On effectue l'appel et on met à jour la liste.
                     requestStore
                         .track(
-                            [
-                                referenceTrackingId,
-                                ...Array.from<string[]>(referenceStore[`_${ref}_trackingIds`].values()).flat()
-                            ],
+                            [referenceTrackingId, ...[...referenceStore[`_${ref}_trackingIds`].values()].flat()],
                             () => referenceLoader(ref)
                         )
                         .then(
                             action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
-                                referenceStore[`_${ref}_cache`] = new Date().getTime();
+                                referenceStore[`_${ref}_cache`] = Date.now();
                                 referenceStore[`_${ref}`].replace(refList);
                                 delete referenceStore[`_${ref}_loading`];
                             })

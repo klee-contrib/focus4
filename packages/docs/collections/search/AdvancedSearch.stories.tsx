@@ -1,10 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {AdvancedSearch} from "@focus4/collections";
 
 import {AdvancedSearchMeta} from "../metas/advanced-search";
 
 import {collectionStore} from "./store";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...AdvancedSearchMeta,

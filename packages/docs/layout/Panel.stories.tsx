@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Panel} from "@focus4/layout";
 
 import {PanelMeta} from "./metas/panel";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...PanelMeta,

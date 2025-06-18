@@ -39,7 +39,9 @@
     z-index: var(--z-index-highest);
     box-shadow: var(--shadow-4p);
     box-sizing: border-box;
-    transition: padding var(--animation-duration) var(--animation-curve-default), opacity 0.1s ease-out;
+    transition:
+        padding var(--animation-duration) var(--animation-curve-default),
+        opacity 0.1s ease-out;
     transition-delay: 0s, calc(var(--animation-duration) - 0.1s);
 }
 

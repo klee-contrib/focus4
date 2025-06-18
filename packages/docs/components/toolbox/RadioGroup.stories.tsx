@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {RadioGroup} from "@focus4/toolbox";
 
 import {RadioGroupMeta} from "./metas/radio-group";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...RadioGroupMeta,

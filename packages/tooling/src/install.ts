@@ -1,8 +1,7 @@
-import {spawn} from "child_process";
-import {readFileSync, writeFileSync} from "fs";
-import os from "os";
-
 import {sortBy} from "es-toolkit";
+import {spawn} from "node:child_process";
+import {readFileSync, writeFileSync} from "node:fs";
+import os from "node:os";
 import packageJson from "package-json";
 
 export async function install(appPackageJsonPath: string, version: string) {
@@ -12,8 +11,8 @@ export async function install(appPackageJsonPath: string, version: string) {
     const appPackageJson = JSON.parse(readFileSync(appPackageJsonPath).toString());
 
     const focusPackages = Object.keys({
-        ...(appPackageJson.dependencies ?? {}),
-        ...(appPackageJson.devDependencies ?? {})
+        ...appPackageJson.dependencies,
+        ...appPackageJson.devDependencies
     }).filter(dep => dep.startsWith("@focus4/"));
 
     if (focusPackages.filter(p => p !== "@focus4/tooling").length === 0) {
@@ -44,10 +43,10 @@ export async function install(appPackageJsonPath: string, version: string) {
             focusPackage in (appPackageJson.dependencies ?? {})
                 ? dependencies
                 : focusPackage in (appPackageJson.devDependencies ?? {})
-                ? devDependencies
-                : focusPackage === "@focus4/tooling"
-                ? devDependencies
-                : dependencies;
+                  ? devDependencies
+                  : focusPackage === "@focus4/tooling"
+                    ? devDependencies
+                    : dependencies;
 
         const targetDependenciesKey = targetDependencies === devDependencies ? "devDependencies" : "dependencies";
 
@@ -93,10 +92,11 @@ export async function install(appPackageJsonPath: string, version: string) {
         }
     }
 
-    dependencies = sortBy(Object.entries({...(appPackageJson.dependencies ?? {}), ...dependencies}), [
-        o => o[0]
-    ]).reduce((a, [b, c]) => ({...a, [b]: c}), {});
-    devDependencies = sortBy(Object.entries({...(appPackageJson.devDependencies ?? {}), ...devDependencies}), [
+    dependencies = sortBy(Object.entries({...appPackageJson.dependencies, ...dependencies}), [o => o[0]]).reduce(
+        (a, [b, c]) => ({...a, [b]: c}),
+        {}
+    );
+    devDependencies = sortBy(Object.entries({...appPackageJson.devDependencies, ...devDependencies}), [
         o => o[0]
     ]).reduce((a, [b, c]) => ({...a, [b]: c}), {});
 

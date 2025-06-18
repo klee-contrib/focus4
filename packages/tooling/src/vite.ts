@@ -1,8 +1,7 @@
-import {createHash} from "crypto";
-import dns from "dns";
-import {existsSync, promises as fs} from "fs";
-import path from "path";
-
+import {createHash} from "node:crypto";
+import dns from "node:dns";
+import {existsSync, promises as fs} from "node:fs";
+import path from "node:path";
 import nesting from "postcss-nesting";
 import {PluginOption, ResolvedConfig, UserConfigExport} from "vite";
 
@@ -18,8 +17,8 @@ export const baseConfig = {
                 return `${path.basename(filename).replace(".module.css", "")}_${name}__${createHash("sha1")
                     .update(filename + css)
                     .digest("base64")
-                    .replace(/[+/=]/g, "")
-                    .substring(0, 5)}`;
+                    .replaceAll(/[+/=]/g, "")
+                    .slice(0, 5)}`;
             }
         },
         postcss: {plugins: [nesting()]}
@@ -46,7 +45,7 @@ export function cssAutoModules(regex: RegExp): PluginOption {
                 const fixedId = `/${path.relative(
                     config.root,
                     path.resolve(importer ? path.dirname(importer) : "", id)
-                )}`.replace(/\\/g, "/");
+                )}`.replaceAll("\\", "/");
 
                 if (regex.test(fixedId)) {
                     return fixedId.replace(".css", ".module.css");
@@ -71,7 +70,7 @@ export function cssAutoModules(regex: RegExp): PluginOption {
             ) {
                 const id = `/${path
                     .relative(config.root, context.file.replace(".css", ".module.css"))
-                    .replace(/\\/g, "/")}`;
+                    .replaceAll("\\", "/")}`;
                 const module = context.server.moduleGraph.getModuleById(id);
                 return module ? [module] : [];
             }
@@ -88,7 +87,7 @@ export function ssiVariables(vars: Record<string, string>) {
         name: "ssi-variables",
         transformIndexHtml(html, ctx) {
             if (!ctx.bundle) {
-                return html.replace(/<!--#echo var='(\w+)'-->/g, (_, varName) => vars[varName] ?? "");
+                return html.replaceAll(/<!--#echo var='(\w+)'-->/g, (_, varName) => vars[varName] ?? "");
             }
 
             return html;

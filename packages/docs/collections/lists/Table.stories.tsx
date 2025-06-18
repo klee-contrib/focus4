@@ -1,9 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Table} from "@focus4/collections";
 import {CollectionStore} from "@focus4/stores";
 
 import {TableMeta} from "../metas/table";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 const {data, hasSelection, hasSelectAll, isLoading, store, ...argTypes} = TableMeta.argTypes;
 

@@ -82,16 +82,16 @@ export function FacetBox<T extends object>({
     const [openedMap] = useState(() => observable.map<string, boolean>());
 
     function toggleAll(opened: boolean, forceDefaults: boolean) {
-        openedMap.replace(
-            store.facets
-                .map(facet => [facet.code, forceDefaults && defaultFoldedFacets?.includes(facet.code) ? false : opened])
-                .concat(
-                    Object.keys(additionalFacets).map(code => [
-                        code,
-                        forceDefaults && defaultFoldedFacets?.includes(code) ? false : opened
-                    ])
-                ) as [string, boolean][]
-        );
+        openedMap.replace([
+            ...store.facets.map(facet => [
+                facet.code,
+                forceDefaults && defaultFoldedFacets?.includes(facet.code) ? false : opened
+            ]),
+            ...Object.keys(additionalFacets).map(code => [
+                code,
+                forceDefaults && defaultFoldedFacets?.includes(code) ? false : opened
+            ])
+        ] as [string, boolean][]);
     }
 
     useEffect(
@@ -118,7 +118,9 @@ export function FacetBox<T extends object>({
                 openedMap={openedMap}
                 store={store}
                 theme={
-                    customFacetComponents[facet.code] ?? additionalFacets[facet.code] ? fromBem(facetTheme) : undefined
+                    (customFacetComponents[facet.code] ?? additionalFacets[facet.code])
+                        ? fromBem(facetTheme)
+                        : undefined
                 }
             />
         );
@@ -127,15 +129,19 @@ export function FacetBox<T extends object>({
     const clearFacets = action((e: MouseEvent<HTMLButtonElement | HTMLLinkElement>) => {
         e.stopPropagation();
         store.removeFacetValue();
-        Object.values(additionalFacets).forEach(facet =>
-            facet.fields?.forEach((field, idx) => (field.value = facet.initialValues?.[idx]))
-        );
+        for (const facet of Object.values(additionalFacets)) {
+            if (facet.fields) {
+                for (const field of facet.fields) {
+                    field.value = facet.initialValues?.[facet.fields.indexOf(field)];
+                }
+            }
+        }
     });
 
     return useObserver(() => {
-        const facets = store.facets.slice();
+        const facets = [...store.facets];
 
-        Object.entries(additionalFacets).forEach(([code, def]) => {
+        for (const [code, def] of Object.entries(additionalFacets)) {
             facets.splice(def.position ?? 0, 0, {
                 code,
                 label: code,
@@ -144,7 +150,7 @@ export function FacetBox<T extends object>({
                 isMultiValued: false,
                 values: []
             });
-        });
+        }
 
         const filteredFacets = facets.filter(
             facet =>
@@ -201,7 +207,7 @@ export function FacetBox<T extends object>({
             }
         }
 
-        const opened = Array.from(openedMap.values()).some(v => v);
+        const opened = [...openedMap.values()].some(v => v);
 
         const shouldDisplayClear =
             Object.values(store.inputFacets).some(l => l.selected ?? l.excluded) ||

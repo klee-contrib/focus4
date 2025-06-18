@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Scrollable} from "@focus4/layout";
 
 import {ScrollableMeta} from "./metas/scrollable";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ScrollableMeta,

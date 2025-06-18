@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {SelectCheckbox} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
 import {SelectCheckboxMeta} from "./metas/select-checkbox";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SelectCheckboxMeta,

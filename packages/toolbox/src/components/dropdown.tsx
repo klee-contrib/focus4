@@ -19,6 +19,7 @@ import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
+
 export {dropdownCss};
 export type {DropdownCss};
 
@@ -334,12 +335,12 @@ export function Dropdown<TSource = {key: string; label: string}>({
                                   : "left"
                           }`
                         : direction === "up"
-                        ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                            ? "top"
-                            : "top-left"
-                        : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
-                        ? "bottom"
-                        : "bottom-left"
+                          ? sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                              ? "top"
+                              : "top-left"
+                          : sizing === "fit-to-field-and-wrap" || sizing === "fit-to-field-single-line"
+                            ? "bottom"
+                            : "bottom-left"
                 }
                 selected={selected}
             >

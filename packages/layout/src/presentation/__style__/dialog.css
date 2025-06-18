@@ -57,7 +57,8 @@
 
 .enterActive .dialog,
 .exitActive .dialog {
-    transition: opacity var(--animation-duration) var(--animation-curve-default) var(--animation-delay),
+    transition:
+        opacity var(--animation-duration) var(--animation-curve-default) var(--animation-delay),
         transform var(--animation-duration) var(--animation-curve-default) var(--animation-delay);
 }
 

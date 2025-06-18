@@ -25,6 +25,7 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import menuCss, {MenuCss} from "./__style__/menu.css";
+
 export {menuCss};
 export type {MenuCss};
 
@@ -223,12 +224,12 @@ export function Menu({
         pPosition === "auto-fill"
             ? "bottom"
             : pPosition === "auto-fit" || pPosition === "auto-left" || pPosition === "bottom-auto"
-            ? "bottom-left"
-            : pPosition === "auto-right"
-            ? "bottom-right"
-            : pPosition === "top-auto"
-            ? "top-left"
-            : pPosition
+              ? "bottom-left"
+              : pPosition === "auto-right"
+                ? "bottom-right"
+                : pPosition === "top-auto"
+                  ? "top-left"
+                  : pPosition
     );
     const [positions, setPositions] = useState({top: 0, bottom: 0, left: 0, right: 0});
     const [maxHeight, setMaxHeight] = useState(0);
@@ -275,9 +276,9 @@ export function Menu({
                 const cssMhValue = getComputedStyle(ref.current).getPropertyValue("--menu-max-height");
                 if (cssMhValue) {
                     if (cssMhValue.endsWith("vh")) {
-                        cssMh = (+cssMhValue.substring(0, cssMhValue.length - 2) / 100) * wh;
+                        cssMh = (+cssMhValue.slice(0, -2) / 100) * wh;
                     } else if (cssMhValue.endsWith("px")) {
-                        cssMh = +cssMhValue.substring(0, cssMhValue.length - 2);
+                        cssMh = +cssMhValue.slice(0, -2);
                     } else {
                         console.error(
                             `Invalid '${cssMhValue}' value for '--menu-max-height'. Value should be in 'px' or 'vh'.`
@@ -473,6 +474,7 @@ export function Menu({
                     animate:
                         !keepItemsInDOMWhenClosed || active ? {height: "auto", opacity: 1} : {height: 0, opacity: 0},
                     className: theme.item({focused: !noRing && selected === key && showRing}),
+                    // oxlint-disable-next-line no-useless-spread
                     ...{"data-key": key},
                     exit: {height: 0, opacity: 0},
                     initial: {height: 0, opacity: 0},
@@ -497,7 +499,7 @@ export function Menu({
             ref,
             className: classNames(
                 theme.menu({
-                    active: active && Children.toArray(children).filter(x => x).length > 0,
+                    active: active && Children.toArray(children).some(x => x),
                     full: position === "top" || position === "bottom"
                 }),
                 className
@@ -526,7 +528,7 @@ export function Menu({
 }
 
 function unselectable(item: ReactNode): boolean {
-    return (item as ReactElement)?.type === "hr" || ((item as ReactElement)?.props as any).disabled;
+    return (item as ReactElement)?.type === "hr" || ((item as ReactElement)?.props as any)?.disabled;
 }
 
 function isScrollable(ele: HTMLElement) {
@@ -542,6 +544,6 @@ function getScrollableParent(ele: HTMLElement): HTMLElement {
     return !ele || ele === document.body
         ? document.body
         : isScrollable(ele)
-        ? ele
-        : getScrollableParent(ele.parentNode as HTMLElement);
+          ? ele
+          : getScrollableParent(ele.parentNode as HTMLElement);
 }

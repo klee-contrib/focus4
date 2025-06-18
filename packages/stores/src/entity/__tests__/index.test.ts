@@ -5,6 +5,7 @@ import {describe, expect, test, vi} from "vitest";
 import {FormNodeBuilder} from "../form";
 import {makeEntityStore, toFlatValues} from "../store";
 import {clearNode, defaultLoad, replaceNode, setNode} from "../store/store";
+
 import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";

@@ -1,10 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {SearchBar} from "@focus4/collections";
 
 import {SearchBarMeta} from "../metas/search-bar";
 
 import {collectionStore} from "./store";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SearchBarMeta,

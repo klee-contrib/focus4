@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {FloatingActionButton} from "@focus4/toolbox";
 
 import {FloatingActionButtonMeta} from "./metas/floating-action-button";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...FloatingActionButtonMeta,

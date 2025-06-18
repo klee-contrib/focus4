@@ -1,5 +1,4 @@
 // @ts-check
-
 import typescript from "@rollup/plugin-typescript";
 import copy from "rollup-plugin-copy-glob";
 import postcss from "rollup-plugin-postcss";

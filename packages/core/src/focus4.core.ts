@@ -1,7 +1,9 @@
+import "i18next";
+
 import {configure} from "mobx";
+
 configure({enforceActions: "never"});
 
-import "i18next";
 declare module "i18next" {
     interface CustomTypeOptions {
         returnNull: false;

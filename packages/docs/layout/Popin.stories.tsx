@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Content, Layout, Popin} from "@focus4/layout";
 import {Button} from "@focus4/toolbox";
 
 import {PopinMeta} from "./metas/popin";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...PopinMeta,

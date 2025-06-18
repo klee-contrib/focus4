@@ -79,11 +79,11 @@ La fonction `get` prend **une section d'URL** comme `is`, et renvoie **la sectio
 
 Par exemple, `router.get(x => x("operation")("ofaId"))` peut renvoyer :
 
--   `"pret"` -> si l'URL active commence par `/operation/:ofaId/pret`
--   `"garantie"` -> si l'URL active commence par `/operation/:ofaId/garantie`
--   `"tam"` -> si l'URL active commence par `/operation/:ofaId/tam`
--   `"echeance"`-> si l'URL active commence par `/operation/:ofaId/echeance`
--   `undefined` -> sinon
+- `"pret"` -> si l'URL active commence par `/operation/:ofaId/pret`
+- `"garantie"` -> si l'URL active commence par `/operation/:ofaId/garantie`
+- `"tam"` -> si l'URL active commence par `/operation/:ofaId/tam`
+- `"echeance"`-> si l'URL active commence par `/operation/:ofaId/echeance`
+- `undefined` -> sinon
 
 `get` peut être utilisé dans un switch, pour afficher un composant différent par valeur par exemple, où bien plus directement pour récupérer la valeur pour l'utiliser dans un libellé ou une classe CSS.
 

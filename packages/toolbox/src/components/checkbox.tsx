@@ -10,6 +10,7 @@ import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import checkboxCss, {CheckboxCss} from "./__style__/checkbox.css";
+
 export {checkboxCss};
 export type {CheckboxCss};
 

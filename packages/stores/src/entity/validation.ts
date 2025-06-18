@@ -65,18 +65,21 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 error = validator(value);
             } else if (isRegexValidator(validator) && typeof value === "string") {
                 error =
-                    value && !validator.regex.test(value) ? validator.errorMessage ?? "focus.validation.regex" : false;
+                    value && !validator.regex.test(value)
+                        ? (validator.errorMessage ?? "focus.validation.regex")
+                        : false;
             } else if (isEmailValidator(validator) && typeof value === "string") {
-                error = value && !EMAIL_REGEX.test(value) ? validator.errorMessage ?? "focus.validation.email" : false;
+                error =
+                    value && !EMAIL_REGEX.test(value) ? (validator.errorMessage ?? "focus.validation.email") : false;
             } else if (isStringValidator(validator)) {
                 const {maxLength, minLength, errorMessage} = validator;
                 const text = value?.toString() ?? "";
                 const isMinLength = text.length < (minLength ?? 0);
                 const isMaxLength = maxLength !== undefined && text.length > maxLength;
-                error = isMinLength || isMaxLength ? errorMessage ?? "focus.validation.string" : undefined;
+                error = isMinLength || isMaxLength ? (errorMessage ?? "focus.validation.string") : undefined;
             } else if (isDateValidator(validator)) {
                 error = !DateTime.fromISO(value as string).isValid
-                    ? validator.errorMessage ?? "focus.validation.date"
+                    ? (validator.errorMessage ?? "focus.validation.date")
                     : false;
             } else if (isNumberValidator(validator)) {
                 const val = +value;
@@ -87,7 +90,7 @@ function validate<T>(value: T, validators?: Validator<T>[]) {
                 const isDecimals = maxDecimals !== undefined && (`${val}`.split(".")[1] || "").length > maxDecimals;
                 error =
                     Number.isNaN(val) || isMin || isMax || isDecimals
-                        ? errorMessage ?? "focus.validation.number"
+                        ? (errorMessage ?? "focus.validation.number")
                         : false;
             }
 

@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "storybook/internal/preview-api";
 
 import {Dialog, Layout} from "@focus4/layout";
 import {Button} from "@focus4/toolbox";
 
 import {DialogMeta} from "./metas/dialog";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...DialogMeta,

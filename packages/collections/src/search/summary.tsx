@@ -11,6 +11,7 @@ import {Button, ChipCss} from "@focus4/toolbox";
 import {ChipType, SearchChip, SearchChipProps} from "./chip";
 
 import summaryCss, {SummaryCss} from "./__style__/summary.css";
+
 export {summaryCss};
 export type {SummaryCss};
 
@@ -155,8 +156,8 @@ export function Summary<T extends object>({
                                     invert: inputFacet.selected?.find(v => v === value.code)
                                         ? false
                                         : inputFacet.excluded?.find(v => v === value.code)
-                                        ? true
-                                        : undefined
+                                          ? true
+                                          : undefined
                                 }))
                                 .filter(({invert}) => invert !== undefined),
                             onDeleteClick: () => props.store.removeFacetValue(facetKey)
@@ -201,8 +202,8 @@ export function Summary<T extends object>({
                         <span>{t(`${i18nPrefix}.search.summary.by`)}</span>
                         {state.includeList.map(({key, ...chip}) => (
                             <SearchChip
-                                {...chip}
                                 key={key}
+                                {...chip}
                                 className={theme.chip()}
                                 deletable
                                 keyResolver={chipKeyResolver}

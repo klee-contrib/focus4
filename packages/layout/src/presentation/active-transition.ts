@@ -45,11 +45,11 @@ export function useActiveTransition(
         status === "preEnter"
             ? enter
             : status === "entering"
-            ? classNames(enter, enterActive)
-            : status === "preExit"
-            ? exit
-            : status === "exiting"
-            ? classNames(exit, exitActive)
-            : ""
+              ? classNames(enter, enterActive)
+              : status === "preExit"
+                ? exit
+                : status === "exiting"
+                  ? classNames(exit, exitActive)
+                  : ""
     ];
 }

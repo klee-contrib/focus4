@@ -6,13 +6,13 @@ import {Meta} from "@storybook/addon-docs";
 
 Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
 
--   Définir un état d'édition initial
--   Désactiver l'édition sur un ou plusieurs champs
--   Rendre certains champs obligatoires (ou non)
--   Implémenter des validateurs supplémentaires
--   Modifier des métadonnées comme un libellé ou un composant d'affichage/saisie
--   Rendre n'importe lequel de ces exemples dépendant de la valeur d'un champ en particulier
--   ...
+- Définir un état d'édition initial
+- Désactiver l'édition sur un ou plusieurs champs
+- Rendre certains champs obligatoires (ou non)
+- Implémenter des validateurs supplémentaires
+- Modifier des métadonnées comme un libellé ou un composant d'affichage/saisie
+- Rendre n'importe lequel de ces exemples dépendant de la valeur d'un champ en particulier
+- ...
 
 Cela se fait via **le deuxième paramètre de `useFormNode`** qui est un "builder" qui va permettre de reconfigurer toutes ces définitions.
 
@@ -28,8 +28,8 @@ Permet de contrôler l'état d'édition du noeud. Elle fonctionne comme [`edit()
 
 `value` peut donc valoir :
 
--   `true` ou `false`, selon l'état souhaité.
--   Une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du noeud** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
+- `true` ou `false`, selon l'état souhaité.
+- Une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du noeud** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
 
 ### `edit(value, ...props)`
 
@@ -49,8 +49,8 @@ La façon standard de modifier l'état d'édition d'un membre d'objet est de pas
 
 Permet de surcharger le caractère obligatoire d'un noeud. Comme pour `edit()`, `value` peut valoir :
 
--   `true` ou `false`, selon l'état souhaité.
--   Une fonction retournant `true` ou `false`, pour que le caractère obligatoire soit calculé.
+- `true` ou `false`, selon l'état souhaité.
+- Une fonction retournant `true` ou `false`, pour que le caractère obligatoire soit calculé.
 
 ### `required(value, ...props)`
 
@@ -69,8 +69,8 @@ Pour des sous-noeuds, `required()` appellera le `required()` du builder du sous-
 
 La fonction `add` permet d'ajouter un nouveau champ au `FormNode`. Son API est identique à celle de [`makeField`](/docs/modèle-métier-makefield--docs#makefieldname-builder) :
 
--   Le premier paramètre est le nom du champ.
--   Le deuxième paramètre est un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder).
+- Le premier paramètre est le nom du champ.
+- Le deuxième paramètre est un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder).
 
 Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
 
@@ -82,8 +82,8 @@ Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud 
 
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
 
--   `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
--   `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
+- `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
+- `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
 
 ### `remove(...fields)`
 
@@ -160,9 +160,9 @@ const entity = useFormNode(utilisateurStore.utilisateur, e =>
 
 Le type de la variable `entity` prend bien en compte ici les trois modifications qu'on a fait qui l'impacte :
 
--   Les 3 champs retirés.
--   Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
--   Le champ `nombreUtilisateursMax` en plus.
+- Les 3 champs retirés.
+- Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
+- Le champ `nombreUtilisateursMax` en plus.
 
 Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus complexe qui prend en compte ces modifications. Si
 dans le cas général écrire ce type n'est pas nécessaire, cela peut l'être lorsque vos formulaires deviennent de plus en plus compliqués et que vous voulez le
@@ -230,12 +230,12 @@ Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière gé
 
 Les différentes possibilités (par ordre de précision croissante) sont :
 
--   `FieldEntry` => N'importe quel champ
--   `FieldEntry<"string">` => Un champ avec un domaine de type `"string"`.
--   `FieldEntry<"string", TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
--   `FieldEntry2<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
--   `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
--   `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
+- `FieldEntry` => N'importe quel champ
+- `FieldEntry<"string">` => Un champ avec un domaine de type `"string"`.
+- `FieldEntry<"string", TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+- `FieldEntry2<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
+- `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+- `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
 
 Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
 
@@ -287,8 +287,8 @@ useFormNode(utilisateurStore.utilisateur, f =>
 
 A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé. Il est cependant possible de renseigner des valeurs initiales :
 
--   En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
--   En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
+- En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
+- En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
 
 L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelques soient les modifications effectuées sur le store.
 

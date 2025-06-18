@@ -7,12 +7,12 @@ export type EntityToNode<E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? EntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-        ? StoreNode<OE>
-        : E[P] extends ListEntry<infer LE>
-        ? StoreListNode<LE>
-        : E[P] extends RecursiveListEntry
-        ? StoreListNode<E>
-        : never;
+          ? StoreNode<OE>
+          : E[P] extends ListEntry<infer LE>
+            ? StoreListNode<LE>
+            : E[P] extends RecursiveListEntry
+              ? StoreListNode<E>
+              : never;
 };
 
 /** Noeud de store simple. */

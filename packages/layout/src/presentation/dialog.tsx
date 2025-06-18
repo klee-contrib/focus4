@@ -10,6 +10,7 @@ import {useActiveTransition} from "./active-transition";
 import {useOverlay} from "./overlay";
 
 import dialogCss, {DialogCss} from "./__style__/dialog.css";
+
 export {dialogCss};
 export type {DialogCss};
 

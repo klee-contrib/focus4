@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {AutocompleteSearch} from "@focus4/form-toolbox";
 
 import {searchAdresse} from "./adresse";
 import {AutocompleteSearchMeta} from "./metas/autocomplete-search";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...AutocompleteSearchMeta,

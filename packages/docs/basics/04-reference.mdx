@@ -32,9 +32,9 @@ const typeDroit = {type: {} as TypeDroit, valueKey: "code", labelKey: "libelle"}
 
 La fonction `makeReferenceStore(referenceLoader, refConfig, referenceClearer?)` permet de créer un **store de listes de référence**, pour contenir des listes à charger depuis le serveur. Elle prend comme paramètres :
 
--   `referenceLoader`, une fonction qui prend en paramètre un nom de référence et renvoie la liste de référence (dans une Promise).
--   `refConfig`, un objet dont les propriétés sont des définitions de listes de référence, dont le format est vu au dessus (`{type, valueKey, labelKey}`).
--   `referenceClearer`, une fonction facultative qui permet de réinitialiser un éventuel cache côté serveur pour une liste de référence.
+- `referenceLoader`, une fonction qui prend en paramètre un nom de référence et renvoie la liste de référence (dans une Promise).
+- `refConfig`, un objet dont les propriétés sont des définitions de listes de référence, dont le format est vu au dessus (`{type, valueKey, labelKey}`).
+- `referenceClearer`, une fonction facultative qui permet de réinitialiser un éventuel cache côté serveur pour une liste de référence.
 
 Exemple de store de référence :
 
@@ -69,16 +69,16 @@ function Component() {
 
 Ce composant sera initialement rendu 3 fois :
 
--   La première fois, les deux utilisations de `droit` et de `typeDroit` vont lancer les appels de service (les deux listes sont vides).
--   La deuxième fois, l'une des deux listes aura été chargée et sera affichée.
--   La troisième fois, l'autre liste aura également été chargée et les deux seront affichées.
+- La première fois, les deux utilisations de `droit` et de `typeDroit` vont lancer les appels de service (les deux listes sont vides).
+- La deuxième fois, l'une des deux listes aura été chargée et sera affichée.
+- La troisième fois, l'autre liste aura également été chargée et les deux seront affichées.
 
 ### Autres APIs de `ReferenceStore`
 
--   `referenceStore.isLoading` permet de savoir s'il y a au moins une liste de référence en cours de chargement.
--   `referenceStore.get(ref)` permet de récupérer une liste de référence, en appelant le service de chargement si la liste n'est pas chargée. Cette fonction est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction ou du rendu d'un composant. Vous pouvez l'utiliser dans des handlers d'évènements ou dans des fonctions d'initialisation ([`on("load")`](/docs/modèle-métier-chargement-des-données--docs#onload-callback) ou un `useEffect`) par exemple.
--   `referenceStore.reload(ref?)` permet de **vider le store** (pour toutes les listes, ou seulement celles passées en paramètre), afin de forcer le rechargement d'une liste de référence au **prochain appel**. Cela appellera également le `referenceClearer` s'il a été défini. Cette fonction est à utiliser lorsque vous modifiez le contenu d'une liste de référence et qu'il y a besoin de la recharger.
--   `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) sur des listes de référence demandées (ou toutes si `refNames` est vide). Cela permet d'ajouter l'état de chargement de listes de référence à un autre état préexistant.
+- `referenceStore.isLoading` permet de savoir s'il y a au moins une liste de référence en cours de chargement.
+- `referenceStore.get(ref)` permet de récupérer une liste de référence, en appelant le service de chargement si la liste n'est pas chargée. Cette fonction est asynchrone (car elle peut appeler le serveur) et sert à récupérer une liste de référence de manière certaine en dehors d'une réaction ou du rendu d'un composant. Vous pouvez l'utiliser dans des handlers d'évènements ou dans des fonctions d'initialisation ([`on("load")`](/docs/modèle-métier-chargement-des-données--docs#onload-callback) ou un `useEffect`) par exemple.
+- `referenceStore.reload(ref?)` permet de **vider le store** (pour toutes les listes, ou seulement celles passées en paramètre), afin de forcer le rechargement d'une liste de référence au **prochain appel**. Cela appellera également le `referenceClearer` s'il a été défini. Cette fonction est à utiliser lorsque vous modifiez le contenu d'une liste de référence et qu'il y a besoin de la recharger.
+- `referenceStore.track(trackingId, ...refNames)` permet d'ajouter un [ID de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) sur des listes de référence demandées (ou toutes si `refNames` est vide). Cela permet d'ajouter l'état de chargement de listes de référence à un autre état préexistant.
 
     `referenceStore.track` renvoie une fonction pour retirer l'ID de suivi des listes de référence. Pour une intégration simplifiée dans un composant React, utiliser le hook `useReferenceTracking` :
 
@@ -92,10 +92,10 @@ Ce composant sera initialement rendu 3 fois :
 
 Une `ReferenceList` est une liste contenue dans un `ReferenceStore`. En plus d'être une liste observable classique, elle a contient aussi :
 
--   Une propriété `$valueKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme valeur.
--   Une propriété `$labelKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme libellé.
--   Une fonction `getLabel(value)` qui permet de résoudre une valeur.
--   Une fonction `filter()` modifiée qui permet de retourner une nouvelle `ReferenceList` avec les mêmes propriétés (au lieu d'un array classique qui n'aurait plus `$valueKey`/`$labelKey`/`getLabel()`);
+- Une propriété `$valueKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme valeur.
+- Une propriété `$labelKey` qui correspond au nom de la propriété des objets de la liste qui sera utilisée comme libellé.
+- Une fonction `getLabel(value)` qui permet de résoudre une valeur.
+- Une fonction `filter()` modifiée qui permet de retourner une nouvelle `ReferenceList` avec les mêmes propriétés (au lieu d'un array classique qui n'aurait plus `$valueKey`/`$labelKey`/`getLabel()`);
 
 ### `makeReferenceList(list, {valueKey, labelKey})`
 

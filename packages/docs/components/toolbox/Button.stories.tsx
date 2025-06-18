@@ -1,8 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Button} from "@focus4/toolbox";
 
 import {ButtonMeta} from "./metas/button";
 
-import type {Meta, StoryObj} from "@storybook/react";
 export default {
     ...ButtonMeta,
     title: "Composants/@focus4∕toolbox/Button",

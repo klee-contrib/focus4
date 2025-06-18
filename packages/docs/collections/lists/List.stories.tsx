@@ -1,9 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {LineProps, List} from "@focus4/collections";
 import {CollectionStore} from "@focus4/stores";
 
 import {ListMeta} from "../metas/list";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 const {data, hasSelection, isLoading, store, ...argTypes} = ListMeta.argTypes;
 

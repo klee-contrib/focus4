@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Dropdown} from "@focus4/toolbox";
 
 import {DropdownMeta} from "./metas/dropdown";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...DropdownMeta,

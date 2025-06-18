@@ -64,7 +64,7 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                 if (parentNode && parentNode.form.isEmpty && !parentNode.form.isRequired) {
                     return false;
                 }
-                return isFunction($required) ? $required() : $required ?? true;
+                return isFunction($required) ? $required() : ($required ?? true);
             }
         },
         {},
@@ -73,7 +73,9 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
 
     (node as any).dispose = function dispose() {
         if (isFormListNode<E>(node)) {
-            node.forEach(item => item.dispose());
+            for (const item of node) {
+                item.dispose();
+            }
             node._dispose();
         } else {
             for (const entry in node as StoreNode<E>) {
@@ -91,7 +93,10 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
     };
 
     if (isFormListNode(node)) {
-        node.forEach(item => nodeToFormNode(item, node));
+        for (const item of node) {
+            nodeToFormNode(item, node);
+        }
+
         extendObservable(node.form, {
             get hasChanged() {
                 return node.some(item => item.form.hasChanged);
@@ -119,8 +124,8 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                     const isReplace = change.addedCount === change.removedCount;
 
                     // Si on a exactement autant d'élément sources non existants dans la source et d'éléments cibles non liés à un élément de la source, alors on les lies (dans le même ordre).
-                    const unmatchedItems = node.sourceNode.filter(item => !node.find(ni => ni.sourceNode === item));
-                    const unlinkedItems = node.filter(item => !node.sourceNode.find(ni => ni === item.sourceNode));
+                    const unmatchedItems = node.sourceNode.filter(item => !node.some(ni => ni.sourceNode === item));
+                    const unlinkedItems = node.filter(item => !node.sourceNode.some(ni => ni === item.sourceNode));
 
                     if (!isReplace && unmatchedItems.length >= unlinkedItems.length) {
                         for (let i = 0; i < unlinkedItems.length; i++) {
@@ -162,7 +167,6 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                         do {
                             // On va donc chercher le premier item de la cible précédent l'index de la source qui est inclus dans la source.
                             changeIndex--;
-                            // eslint-disable-next-line @typescript-eslint/no-loop-func
                             previousIndex = node.findIndex(item =>
                                 isEqual(change.object[changeIndex], item.sourceNode)
                             );
@@ -176,7 +180,9 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
                     }
 
                     // Et on supprime les noeuds à supprimer.
-                    nodesToRemove.forEach(toRemove => node.remove(toRemove));
+                    for (const toRemove of nodesToRemove) {
+                        node.remove(toRemove);
+                    }
                 }
             })
         );
@@ -184,7 +190,9 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
         // En plus de monitorer les ajouts et les suppressions, il faut aussi disposer tous les noeuds supprimés de la liste.
         const onRemove = observe(node, change => {
             if (change.type === "splice") {
-                change.removed.forEach(deleted => deleted.dispose());
+                for (const deleted of change.removed) {
+                    deleted.dispose();
+                }
             }
         });
 
@@ -263,7 +271,7 @@ export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, p
 function addFormFieldProperties(field: BuildingFormEntityField, parentNode: FormNode) {
     if ("_metadatas" in field) {
         field._metadatas.push(metadata => ({
-            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : metadata?.isRequired ?? false
+            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : (metadata?.isRequired ?? false)
         }));
     } else {
         const {$field} = field as FormEntityField;

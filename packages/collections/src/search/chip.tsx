@@ -72,13 +72,13 @@ export function SearchChip(props: SearchChipProps) {
     useEffect(() => {
         valueLabels.replace(values?.map(value => [value.code, value.label ?? `${value.code as any}`]) ?? {});
         if (keyResolver && values && (type === "facet" || type === "filter")) {
-            values.forEach(value => {
+            for (const value of values) {
                 keyResolver(type, code, value.code).then(newValueLabel => {
                     if (newValueLabel) {
                         valueLabels.set(value.code, newValueLabel);
                     }
                 });
-            });
+            }
         }
     }, [values]);
 

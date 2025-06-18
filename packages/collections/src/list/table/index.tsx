@@ -150,7 +150,7 @@ export function Table<T extends object>({
                                 <th className={theme.actions()}>
                                     {operationList ? (
                                         <ContextualActions
-                                            data={store ? Array.from(store.selectedItems) : []}
+                                            data={store ? [...store.selectedItems] : []}
                                             operationList={operationList}
                                         />
                                     ) : null}
@@ -168,7 +168,6 @@ export function Table<T extends object>({
                                 domRef={getDomRef(idx)}
                                 hasActions={!!lineOperationList || !!operationList}
                                 hasSelection={hasSelection}
-                                i18nPrefix={i18nPrefix}
                                 onClick={onLineClick}
                                 operationList={lineOperationList}
                                 store={store}

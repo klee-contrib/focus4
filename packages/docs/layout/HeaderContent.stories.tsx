@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {HeaderContent} from "@focus4/layout";
 
 import {HeaderContentMeta} from "./metas/header-content";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...HeaderContentMeta,

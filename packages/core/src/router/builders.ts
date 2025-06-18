@@ -1,13 +1,14 @@
 import {Param, ParamDef} from "./param";
 
 /** Type décrivant l'objet de valeurs de paramètre d'un routeur de configuration quelconque. */
-export type ParamObject<C = any> = C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
-    ? Record<K1, T1> & Record<K2, T2>
-    : C extends ParamDef<infer A3, Param<infer N3>, infer U>
-    ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
-    : {
-          readonly [P in keyof C]: ParamObject<C[P]>;
-      };
+export type ParamObject<C = any> =
+    C extends ParamDef<infer K1, Param<infer T1>, ParamDef<infer K2, Param<infer T2>>>
+        ? Record<K1, T1> & Record<K2, T2>
+        : C extends ParamDef<infer A3, Param<infer N3>, infer U>
+          ? Record<A3, N3> & {readonly [P in keyof U]: ParamObject<U[P]>}
+          : {
+                readonly [P in keyof C]: ParamObject<C[P]>;
+            };
 
 /**
  * Construit la liste des endpoints du routeur.
@@ -58,7 +59,7 @@ export function buildParamsMap<C>(
 ) {
     if (Array.isArray(config)) {
         const setter = (value: string | undefined) => {
-            const newValue = config[1].type === "number" && value !== undefined ? parseFloat(value) : value;
+            const newValue = config[1].type === "number" && value !== undefined ? Number.parseFloat(value) : value;
             (object as any)[config[0]] = newValue;
             return newValue;
         };

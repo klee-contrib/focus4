@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 export const fr = {
     list: {
         add: "Ajouter",

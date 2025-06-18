@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {AutocompleteChips} from "@focus4/form-toolbox";
 
 import {searchAdresse} from "./adresse";
 import {AutocompleteChipsMeta} from "./metas/autocomplete-chips";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...AutocompleteChipsMeta,

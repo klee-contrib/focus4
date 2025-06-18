@@ -10,19 +10,20 @@ export type UrlRouteDescriptor<C, _K = unknown, _T = unknown> = (C extends Param
       ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
           ? UrlRouteDescriptor<C[K]>
           : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlRouteDescriptor<C[K]>) & {spec: C};
+            ? void
+            : UrlRouteDescriptor<C[K]>) & {spec: C};
 
 /** Callback permettant de décrire une URL. */
-export type UrlPathDescriptor<C> = C extends ParamDef<infer _0, Param<infer T>, infer V>
-    ? (param: T) => UrlPathDescriptor<V>
-    : <K extends keyof C>(
-          x: K
-      ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
-          ? UrlPathDescriptor<C[K]>
-          : C[K] extends ParamDef<infer _4, infer _5>
-          ? void
-          : UrlPathDescriptor<C[K]>;
+export type UrlPathDescriptor<C> =
+    C extends ParamDef<infer _0, Param<infer T>, infer V>
+        ? (param: T) => UrlPathDescriptor<V>
+        : <K extends keyof C>(
+              x: K
+          ) => C[K] extends ParamDef<infer _1, infer _2, infer _3>
+              ? UrlPathDescriptor<C[K]>
+              : C[K] extends ParamDef<infer _4, infer _5>
+                ? void
+                : UrlPathDescriptor<C[K]>;
 
 /** Router correspondant à la config donnée. */
 export interface Router<C = any, Q extends QueryParamConfig = {}> {

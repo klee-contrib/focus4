@@ -6,7 +6,7 @@ export function stringToDomainType<T extends DomainFieldType>(value: string | un
     }
 
     if (type === "number" && value) {
-        return parseFloat(value) as DomainType<T>;
+        return Number.parseFloat(value) as DomainType<T>;
     }
 
     if (type === "boolean") {
@@ -21,7 +21,7 @@ export function toSimpleType<T extends DomainFieldType>(type: T) {
         type === "boolean-array" || type === "boolean"
             ? "boolean"
             : type === "number-array" || type === "number"
-            ? "number"
-            : "string"
+              ? "number"
+              : "string"
     ) as SingleDomainFieldType<T>;
 }

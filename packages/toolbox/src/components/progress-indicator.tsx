@@ -6,6 +6,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {PointerEvents} from "../focus4.toolbox";
 
 import progressIndicatorCss, {ProgressIndicatorCss} from "./__style__/progress-indicator.css";
+
 export {progressIndicatorCss};
 export type {ProgressIndicatorCss};
 
@@ -215,6 +216,6 @@ function getDuration(element: Element) {
     return durationRaw.endsWith("ms")
         ? +durationRaw.replace("ms", "")
         : durationRaw.endsWith("s")
-        ? +durationRaw.replace("s", "") * 1000
-        : +durationRaw;
+          ? +durationRaw.replace("s", "") * 1000
+          : +durationRaw;
 }

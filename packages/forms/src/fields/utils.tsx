@@ -71,7 +71,7 @@ export function autocompleteFor<F extends FieldEntry>(field: EntityField<F>, opt
             field={field}
             onChange={getOnChange(field)}
             {...otherOptions}
-            autocompleteProps={{...((options.autocompleteProps as {}) || {}), keyResolver, querySearcher}}
+            autocompleteProps={{...options.autocompleteProps, keyResolver, querySearcher}}
             inputType="autocomplete"
         />
     );
@@ -104,7 +104,7 @@ export function selectFor<F extends FieldEntry>(
             {...options}
             inputType="select"
             selectProps={{
-                ...((options.selectProps as {}) || {}),
+                ...(options.selectProps as {}),
                 values
             }}
         />

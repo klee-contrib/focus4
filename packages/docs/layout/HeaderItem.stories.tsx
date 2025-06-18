@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {HeaderItem} from "@focus4/layout";
 
 import {HeaderItemMeta} from "./metas/header-item";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...HeaderItemMeta,

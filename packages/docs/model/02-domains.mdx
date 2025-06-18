@@ -10,9 +10,9 @@ Le **domaine** d'un champ représente le **type de donnée métier** qui lui est
 
 Un domaine se définit au minimum avec un **type de champ**, qui peut être :
 
--   Soit un type primitif : `"string"` / `"number"` / `"boolean"`
--   Soit un type array : `"string-array"` / `"number-array"` / `"boolean-array"`
--   Soit un type objet autre : `"object"`
+- Soit un type primitif : `"string"` / `"number"` / `"boolean"`
+- Soit un type array : `"string-array"` / `"number-array"` / `"boolean-array"`
+- Soit un type objet autre : `"object"`
 
 Le type de champ (sauf `"object"`) contraindra le type Typescript "réel" d'un champ de ce domaine (`string`/`number`/`boolean`, `string[]`/`number[]`/`boolean[]`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultant"` pour un domaine `"string"` )
 
@@ -32,13 +32,13 @@ Un domaine peut définir **un ou plusieurs validateurs**, qui permettront de vé
 
 Il existe quelques validateurs par défaut :
 
--   Type de champ `"string"` :
-    -   `"string"` : avec `minLength` et `maxLength`, permet de valider une longueur minimale ou maximale.
-    -   `"date"` : permet de valider que le string est une date ISO valide. (`2024-01-01T00:00:00Z` par exemple).
-    -   `"email"` : permet de valider que le string est un email valide (via une regex intégrée).
-    -   `"regex"` : permet de valider que le string est conforme à une regex donnée (dans `regex`).
--   Type de champ `"number"` :
-    -   `"number"` : permet de valider que le nombre est compris entre `min` et `max`, et de spécifier un nombre maximum de décimales (`maxDecimals`).
+- Type de champ `"string"` :
+    - `"string"` : avec `minLength` et `maxLength`, permet de valider une longueur minimale ou maximale.
+    - `"date"` : permet de valider que le string est une date ISO valide. (`2024-01-01T00:00:00Z` par exemple).
+    - `"email"` : permet de valider que le string est un email valide (via une regex intégrée).
+    - `"regex"` : permet de valider que le string est conforme à une regex donnée (dans `regex`).
+- Type de champ `"number"` :
+    - `"number"` : permet de valider que le nombre est compris entre `min` et `max`, et de spécifier un nombre maximum de décimales (`maxDecimals`).
 
 Tous ces validateurs prennent également une propriété `errorMessage`, pour surcharger le message d'erreur par défaut en cas d'erreur de validation.
 
@@ -61,16 +61,16 @@ const DO_IBAN = domain({
 
 Un domaine définit **5 composants** pour gérer l'affichage des champs associés :
 
--   Le composant d'affichage en consultation, **`DisplayComponent`**.
--   Le composant de saisie classique **`InputComponent`**.
--   Le composant de saisie via liste de réference **`SelectComponent`**.
--   Le composant de saisie via service d'autocomplétion **`AutocompleteComponent`**.
--   Le composant pour le libellé, **`LabelComponent`**
+- Le composant d'affichage en consultation, **`DisplayComponent`**.
+- Le composant de saisie classique **`InputComponent`**.
+- Le composant de saisie via liste de réference **`SelectComponent`**.
+- Le composant de saisie via service d'autocomplétion **`AutocompleteComponent`**.
+- Le composant pour le libellé, **`LabelComponent`**
 
 Il existe des composants par défaut pour les 5. Dans la grande majorité des cas :
 
--   Le `DisplayComponent` et le `LabelComponent` par défaut répondent au besoin.
--   Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé.
+- Le `DisplayComponent` et le `LabelComponent` par défaut répondent au besoin.
+- Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé.
 
 Les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` permettent de passer des props par défaut aux composants. La propriété `fieldProps` permettra en plus de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres composants.
 

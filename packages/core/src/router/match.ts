@@ -1,5 +1,5 @@
 function escapeRegExp(string: string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 function _compilePattern(pattern: string) {
@@ -33,13 +33,12 @@ function _compilePattern(pattern: string) {
 
         tokens.push(m[0]);
 
-        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         lastIndex = matcher.lastIndex;
     }
 
     if (lastIndex !== pattern.length) {
-        tokens.push(pattern.slice(lastIndex, pattern.length));
-        regexpSource += escapeRegExp(pattern.slice(lastIndex, pattern.length));
+        tokens.push(pattern.slice(lastIndex));
+        regexpSource += escapeRegExp(pattern.slice(lastIndex));
     }
 
     return {
@@ -109,7 +108,7 @@ export function match({pattern, path}: {pattern: string; path: string}): MatchRe
     }
 
     const matchedPath = m[0];
-    let remainingPath = path.substring(matchedPath.length);
+    let remainingPath = path.slice(matchedPath.length);
 
     if (remainingPath) {
         /*
@@ -132,6 +131,7 @@ export function match({pattern, path}: {pattern: string; path: string}): MatchRe
      */
     const paramValues: string[] = m.slice(1).map(v => v && decodeURIComponent(v));
     const params: any = {};
+    // oxlint-disable-next-line no-array-for-each
     paramNames.forEach((paramName: string, index: number) => {
         params[paramName] = paramValues[index];
     });

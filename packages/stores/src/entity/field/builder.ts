@@ -26,12 +26,10 @@ type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps :
 type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;
 type DomainAutocompleteProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer ACProps> ? ACProps : never;
 type DomainDisplayProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer DCProps> ? DCProps : never;
-type DomainLabelProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps>
-    ? LCProps
-    : never;
-type DomainFieldProps<D> = D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps>
-    ? FProps
-    : never;
+type DomainLabelProps<D> =
+    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer LCProps> ? LCProps : never;
+type DomainFieldProps<D> =
+    D extends Domain<infer _0, infer _1, infer _2, infer _3, infer _4, infer _5, infer FProps> ? FProps : never;
 
 /** Métadonnées surchargeables dans un champ. */
 export interface Metadata<
@@ -320,13 +318,13 @@ function mergeMetadata(domain: Domain, targetMetadata: Metadata, newMetadata: Me
             validator: !domain.validator
                 ? domainOverrides.validator
                 : !domainOverrides.validator
-                ? domain.validator
-                : [
-                      ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
-                      ...(Array.isArray(domainOverrides.validator)
-                          ? domainOverrides.validator
-                          : [domainOverrides.validator])
-                  ],
+                  ? domain.validator
+                  : [
+                        ...(Array.isArray(domain.validator) ? domain.validator : [domain.validator]),
+                        ...(Array.isArray(domainOverrides.validator)
+                            ? domainOverrides.validator
+                            : [domainOverrides.validator])
+                    ],
             inputProps: {
                 ...domain.inputProps,
                 ...domainOverrides.inputProps,

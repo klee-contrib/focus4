@@ -18,5 +18,24 @@
                 "tabWidth": 2
             }
         }
+    ],
+    "plugins": [
+        "@trivago/prettier-plugin-sort-imports"
+    ],
+    "importOrder": [
+        "^@focus4/(.*)$",
+        "^\\.\\.\/.+(?<!\\.css)$",
+        "^\\.\/.+(?<!\\.css)$",
+        "\\.css$"
+    ],
+    "importOrderCaseInsensitive": true,
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "importOrderSideEffects": false,
+    "importOrderParserPlugins": [
+        "decoratorAutoAccessors",
+        "decorators",
+        "jsx",
+        "typescript"
     ]
 }

@@ -1,10 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {FacetBox} from "@focus4/collections";
 
 import {FacetBoxMeta} from "../metas/facet-box";
 
 import {collectionStore} from "./store";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...FacetBoxMeta,

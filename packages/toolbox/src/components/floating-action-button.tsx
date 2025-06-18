@@ -11,6 +11,7 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import floatingActionButtonCss, {FloatingActionButtonCss} from "./__style__/floating-action-button.css";
+
 export {floatingActionButtonCss};
 export type {FloatingActionButtonCss};
 
@@ -140,7 +141,7 @@ export function FloatingActionButton({
                     transition={getDefaultTransition()}
                     variants={{extended: {width: "auto"}, folded: {width: 0}}}
                 >
-                    {label ?? "\xa0"}
+                    {label ?? "\u00A0"}
                 </motion.div>
             )}
         </Ripple>

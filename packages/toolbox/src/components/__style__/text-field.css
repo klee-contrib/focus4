@@ -50,8 +50,10 @@
     border-radius: var(--text-field-border-radius);
     border: var(--text-field-outline-size) solid var(--input-state-color);
     background-color: var(--text-field-background-color);
-    transition: clip-path var(--animation-duration-short) var(--animation-curve-default),
-        border-color var(--animation-duration-short) var(--animation-curve-default), border-width 0.1s linear 0s;
+    transition:
+        clip-path var(--animation-duration-short) var(--animation-curve-default),
+        border-color var(--animation-duration-short) var(--animation-curve-default),
+        border-width 0.1s linear 0s;
 }
 
 .icon {
@@ -90,7 +92,8 @@
     line-height: calc(var(--text-field-height) - 2 * var(--text-field-padding-vertical));
     transform: translate(var(--text-field-padding-horizontal), 0) scale(1);
     transform-origin: 0px 50%;
-    transition: color var(--animation-duration-short) var(--animation-curve-default),
+    transition:
+        color var(--animation-duration-short) var(--animation-curve-default),
         transform var(--animation-duration-short) var(--animation-curve-default);
 }
 

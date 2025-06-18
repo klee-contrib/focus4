@@ -55,7 +55,6 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                  * Il se s'agit pas d'une navigation, donc ce ne sera pas enregistré dans l'historique.
                  */
                 if (isActive && !isUndefined) {
-                    // eslint-disable-next-line
                     store._activeParams[cIn[0]] = `${change.newValue as string}`;
                     if (store._activeUrl !== window.location.hash?.replace("#", "")) {
                         history.replace(store._activeUrl);
@@ -86,7 +85,6 @@ export function makeRouter<C, Q extends QueryParamConfig>(
         Object.keys(queryConfig).reduce((s, q) => ({...s, [q]: undefined}), {})
     ) as QueryParams<Q>;
     for (const key in queryObject) {
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
         intercept(queryObject, key, change => {
             // Impossible de sauvegarder NaN en toute circonstance.
             if (Number.isNaN(change.newValue)) {
@@ -96,7 +94,6 @@ export function makeRouter<C, Q extends QueryParamConfig>(
             if (change.newValue === undefined || change.newValue === "") {
                 delete store._activeQuery[key];
             } else {
-                // eslint-disable-next-line
                 store._activeQuery[key] = `${change.newValue as string}`;
             }
 
@@ -163,109 +160,106 @@ export function makeRouter<C, Q extends QueryParamConfig>(
     async function start() {
         history = createHashHistory();
 
-        const routes = [
-            // Spécifie tous les endpoints dans le routeur.
-            ...uniq(buildEndpoints(config)).map(
-                $ =>
-                    ({
-                        $,
-                        enter: action(({params, oldPath, search}) => {
-                            if (store._pending) {
-                                return;
-                            }
+        const routes = uniq(buildEndpoints(config)).map(
+            $ =>
+                ({
+                    $,
+                    enter: action(({params, oldPath, search}) => {
+                        if (store._pending) {
+                            return;
+                        }
 
-                            const oldPathWithQuery = oldPath + buildQueryString(store._activeQuery);
+                        const oldPathWithQuery = oldPath + buildQueryString(store._activeQuery);
 
-                            // On refuse la navigation si on tombe sur un query param inconnu.
-                            if (
-                                Object.keys(search)
-                                    .filter(x => x)
-                                    .some(qp => !Object.keys(queryConfig).includes(qp))
-                            ) {
-                                return oldPathWithQuery;
-                            }
-
-                            const prevRoute = store._activeRoute;
-                            const prevParams = store._activeParams;
-                            const prevQuery = store._activeQuery;
-                            const prevUrl = store._activeUrl;
-
-                            const activeRoute = $;
-                            const activeParams = params;
-                            const activeQuery = Object.keys(search)
+                        // On refuse la navigation si on tombe sur un query param inconnu.
+                        if (
+                            Object.keys(search)
                                 .filter(x => x)
-                                .reduce((acc, k) => ({...acc, [k]: decodeURIComponent(search[k])}), {});
+                                .some(qp => !Object.keys(queryConfig).includes(qp))
+                        ) {
+                            return oldPathWithQuery;
+                        }
 
-                            if (
-                                isEqual(
-                                    {activeRoute, activeParams, activeQuery},
-                                    {activeRoute: prevRoute, activeParams: prevParams, activeQuery: prevQuery}
-                                )
-                            ) {
-                                return;
-                            }
+                        const prevRoute = store._activeRoute;
+                        const prevParams = store._activeParams;
+                        const prevQuery = store._activeQuery;
+                        const prevUrl = store._activeUrl;
 
-                            // On parcourt toutes les constraintes définies sur cette route.
-                            for (const constraint of constraints.filter(c => activeRoute.startsWith(c.route))) {
-                                // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
-                                if (constraint.condition()) {
-                                    const redirect =
-                                        (constraint.redirect?.() ?? (oldPath || "/")) + buildQueryString(activeQuery);
-                                    if (redirect !== window.location.hash?.replace("#", "")) {
-                                        store._activeRoute = prevRoute;
-                                        store._activeParams = prevParams;
-                                        return redirect;
-                                    }
+                        const activeRoute = $;
+                        const activeParams = params;
+                        const activeQuery = Object.keys(search)
+                            .filter(x => x)
+                            .reduce((acc, k) => ({...acc, [k]: decodeURIComponent(search[k])}), {});
+
+                        if (
+                            isEqual(
+                                {activeRoute, activeParams, activeQuery},
+                                {activeRoute: prevRoute, activeParams: prevParams, activeQuery: prevQuery}
+                            )
+                        ) {
+                            return;
+                        }
+
+                        // On parcourt toutes les constraintes définies sur cette route.
+                        for (const constraint of constraints.filter(c => activeRoute.startsWith(c.route))) {
+                            // S'il y a une condition de blocage respectée, alors on redirige (et c'est la première déclarée qui est choisie).
+                            if (constraint.condition()) {
+                                const redirect =
+                                    (constraint.redirect?.() ?? (oldPath || "/")) + buildQueryString(activeQuery);
+                                if (redirect !== window.location.hash?.replace("#", "")) {
+                                    store._activeRoute = prevRoute;
+                                    store._activeParams = prevParams;
+                                    return redirect;
                                 }
                             }
+                        }
 
-                            if (store._hasConfirm) {
-                                store._pending = {
-                                    activeRoute,
-                                    activeParams,
-                                    activeQuery,
-                                    prevUrl
-                                };
-                                return;
+                        if (store._hasConfirm) {
+                            store._pending = {
+                                activeRoute,
+                                activeParams,
+                                activeQuery,
+                                prevUrl
+                            };
+                            return;
+                        } else {
+                            store._activeRoute = activeRoute;
+                            store._activeParams = activeParams;
+                            store._activeQuery = activeQuery;
+                        }
+
+                        const newValues: (boolean | number | string | undefined)[] = [];
+
+                        // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
+                        for (const key in paramsMap) {
+                            if (key in store._activeParams) {
+                                newValues.push(paramsMap[key](store._activeParams[key]));
                             } else {
-                                store._activeRoute = activeRoute;
-                                store._activeParams = activeParams;
-                                store._activeQuery = activeQuery;
+                                paramsMap[key](undefined);
                             }
+                        }
 
-                            const newValues: (boolean | number | string | undefined)[] = [];
-
-                            // Chaque paramètre de l'objet de valeur est réinitialisé à partir de sa valeur dans la route courante.
-                            for (const key in paramsMap) {
-                                if (key in store._activeParams) {
-                                    newValues.push(paramsMap[key](store._activeParams[key]));
-                                } else {
-                                    paramsMap[key](undefined);
-                                }
+                        // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
+                        for (const key in queryMap) {
+                            if (key in store._activeQuery) {
+                                newValues.push(queryMap[key](store._activeQuery[key]));
+                            } else {
+                                queryMap[key](undefined);
                             }
+                        }
 
-                            // Chaque paramètre de l'objet de query est réinitialisé à partir de sa valeur dans la query courante.
-                            for (const key in queryMap) {
-                                if (key in store._activeQuery) {
-                                    newValues.push(queryMap[key](store._activeQuery[key]));
-                                } else {
-                                    queryMap[key](undefined);
-                                }
-                            }
+                        // Si une valeur est invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
+                        if (newValues.some(Number.isNaN)) {
+                            store._activeRoute = prevRoute;
+                            store._activeParams = prevParams;
+                            store._activeQuery = prevQuery;
+                            return oldPathWithQuery;
+                        }
 
-                            // Si une valeur est invalide (que pour les nombres, et ça sera toujours NaN), on refuse la navigation.
-                            if (newValues.some(Number.isNaN)) {
-                                store._activeRoute = prevRoute;
-                                store._activeParams = prevParams;
-                                store._activeQuery = prevQuery;
-                                return oldPathWithQuery;
-                            }
-
-                            return undefined;
-                        })
-                    } as RouteConfig)
-            )
-        ];
+                        return undefined;
+                    })
+                }) as RouteConfig
+        );
 
         await startHistory(history, routes);
     }
@@ -374,11 +368,7 @@ export function makeRouter<C, Q extends QueryParamConfig>(
                 const {activeRoute, activeParams, activeQuery} = store._pending;
 
                 if (save) {
-                    await Promise.all(
-                        Array.from(this._activeIds.values())
-                            .filter(x => !!x)
-                            .map(x => x())
-                    );
+                    await Promise.all([...this._activeIds.values()].filter(x => !!x).map(x => x()));
                 }
 
                 runInAction(() => {

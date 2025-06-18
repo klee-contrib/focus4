@@ -24,15 +24,15 @@ const actions = useFormActions(
 
 `actions` est un objet qui contient toutes les actions liées au formulaire :
 
--   `params`, la valeur courante des `params`.
--   `trackingId` : [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) propre à ces actions de formulaire.
--   `isLoading` : Précise si le formulaire est en cours de chargement ou de sauvegarde (`trackingId` est ajouté à tous les services).
--   `errorDisplay` : Le mode d'affichage des erreurs pour les champs du formulaire (décrit plus bas).
--   `init()` : Appelle l'initialisation du formulaire.
--   `load()` : Apelle le service de chargement du formulaire.
--   `onClickEdit()` : Passe le formulaire en édition.
--   `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
--   `save()` : Sauvegarde les données du formulaire. Voir plus bas pour le détail.
+- `params`, la valeur courante des `params`.
+- `trackingId` : [id de suivi](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services) propre à ces actions de formulaire.
+- `isLoading` : Précise si le formulaire est en cours de chargement ou de sauvegarde (`trackingId` est ajouté à tous les services).
+- `errorDisplay` : Le mode d'affichage des erreurs pour les champs du formulaire (décrit plus bas).
+- `init()` : Appelle l'initialisation du formulaire.
+- `load()` : Apelle le service de chargement du formulaire.
+- `onClickEdit()` : Passe le formulaire en édition.
+- `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
+- `save()` : Sauvegarde les données du formulaire. Voir plus bas pour le détail.
 
 Comme pour `useLoad`, `useFormActions` peut prendre un array de dépendances en troisième paramètre, qui servira à réenregistrer les services du formulaire. Attention néanmoins ici car, comme pour `useLoad`, le service de chargement sera rappelé à tout changement de dépendances, ce qui n'est pas forcément souhaitable si vos dépendances sont utilisées dans le service de sauvegarde ou dans un handler. Si vous ne pouvez pas utiliser d'état observable à la place (ce qui résout le problème car la référence de l'objet qui le contient peut être stable, avec `useLocalObservable` par exemple), vous pouvez toujours séparer le service de chargement dans un `useLoad` à part avec ses propres dépendances, par exemple :
 
@@ -61,24 +61,24 @@ _Remarque 2 : En dehors d'un composant fonction React, il est possible d'utilise
 
 Pour définir la sauvegarde d'un formulaire, il existe deux possibiités :
 
--   Vous pouvez définir un **service de sauvegarde unique**, via `builder.save()`, qui sera appelé avec le contenu du noeud de formulaire à la sauvegarde.
--   Vous pouvez définir un **service de création** (`builder.create()`) et/ou un **service de mise à jour** (`builder.update()`). `create` sera appelé à la sauvegarde **si les `params` ne sont pas définis**, et `update` s'ils le sont. `update` sera appelé avec les params, puis le contenu du noeud de formulaire.
+- Vous pouvez définir un **service de sauvegarde unique**, via `builder.save()`, qui sera appelé avec le contenu du noeud de formulaire à la sauvegarde.
+- Vous pouvez définir un **service de création** (`builder.create()`) et/ou un **service de mise à jour** (`builder.update()`). `create` sera appelé à la sauvegarde **si les `params` ne sont pas définis**, et `update` s'ils le sont. `update` sera appelé avec les params, puis le contenu du noeud de formulaire.
 
 Les deux possibiités sont mutuellement exclusives, vous ne pouvez pas définir `save` en même temps que `create` ou `update`.
 
 Les services peuvent retourner au choix :
 
--   Rien
--   Un objet du type du formulaire
--   Une primitive (un `string` ou un `number`)
+- Rien
+- Un objet du type du formulaire
+- Une primitive (un `string` ou un `number`)
 
 Dans tous les cas, la sauvegarde est appelée avec la méthode **`actions.save()`**. Dans l'ordre, elle :
 
--   Vérifie que le formulaire est valide (et jette une exception dans le cas contraire avec le détail)
--   Appelle le service de sauvegarde correspondant au cas courant (`create`, `update`, ou `save`).
--   Si le service a retourné des données, le noeud source est mis à jour avec ce que le service à renvoyé, sinon on le met à jour avec les données du formulaire.
--   On enregistre le message du succès dans le `messageStore`.
--   On appelle les handlers d'évènements correspondants au cas courant.
+- Vérifie que le formulaire est valide (et jette une exception dans le cas contraire avec le détail)
+- Appelle le service de sauvegarde correspondant au cas courant (`create`, `update`, ou `save`).
+- Si le service a retourné des données, le noeud source est mis à jour avec ce que le service à renvoyé, sinon on le met à jour avec les données du formulaire.
+- On enregistre le message du succès dans le `messageStore`.
+- On appelle les handlers d'évènements correspondants au cas courant.
 
 ## API de `FormActionsBuilder`
 
@@ -107,20 +107,20 @@ Idéalement, tout formulaire utilisé sans `load` devrait appeler `init`. Il est
 
 La fonction `on` est étendue pour les actions de formulaires et propose de définir des handlers pour les évènements suivant en plus de `"load"` :
 
--   `"init"` : appelé après l'appel à `init()`
--   `"error"` : appelé en cas d'erreur retournée par le serveur lors du chargement ou de la sauvegarde.
--   `"create"` : appelé après une sauvegarde en succès sur le serveur, avec `create`.
--   `"update"` : appelé après une sauvegarde en succès sur le serveur, avec `update`.
--   `"save"` : appelé après une sauvegarde en succès sur le serveur, avec `save`.
--   `"cancel"` : appelé avec `onClickCancel()`.
--   `"edit"` : appelé avec `onClickEdit()`.
+- `"init"` : appelé après l'appel à `init()`
+- `"error"` : appelé en cas d'erreur retournée par le serveur lors du chargement ou de la sauvegarde.
+- `"create"` : appelé après une sauvegarde en succès sur le serveur, avec `create`.
+- `"update"` : appelé après une sauvegarde en succès sur le serveur, avec `update`.
+- `"save"` : appelé après une sauvegarde en succès sur le serveur, avec `save`.
+- `"cancel"` : appelé avec `onClickCancel()`.
+- `"edit"` : appelé avec `onClickEdit()`.
 
 On peut en spécifier un seul ou bien un array d'évènements. Le handler passé en second paramètre sera appelé avec les trois paramètres suivants :
 
--   Le nom de l'évènement qui l'a déclenché.
--   La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"`, `"save"`), ou le nom du service en erreur pour `"error"`. En particulier, si votre service de création retourne un `id` par exemple, vous pourrez le récupérer ici.
+- Le nom de l'évènement qui l'a déclenché.
+- La valeur retournée par le service, si c'est un handler lié à un service qui renvoie des données (`"init"`, `"load"`, `"create"`, `"update"`, `"save"`), ou le nom du service en erreur pour `"error"`. En particulier, si votre service de création retourne un `id` par exemple, vous pourrez le récupérer ici.
 
--   Pour `"error"`, la réponse du serveur retournée par le service en erreur.
+- Pour `"error"`, la réponse du serveur retournée par le service en erreur.
 
 ### `errorDisplay(mode)`
 
@@ -130,8 +130,8 @@ Dans un formulaire, **le mode `"after-focus"` forcera également l'affichage des
 
 La valeur par défaut dépend du type de formulaire :
 
--   Pour un formulaire initialement en édition, le mode d'affichage est `"after-focus"`
--   Pour un formulaire initialement en consultation, le mode d'affichage est `"always"`
+- Pour un formulaire initialement en édition, le mode d'affichage est `"after-focus"`
+- Pour un formulaire initialement en consultation, le mode d'affichage est `"always"`
 
 ### `successMessage(message)`
 

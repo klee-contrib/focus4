@@ -30,7 +30,7 @@ export function setInputSelection(el: HTMLInputElement | HTMLTextAreaElement, se
                 rangeEl.moveEnd("character", selection.end - selection.start);
                 rangeEl.select();
             }
-        } catch (e: unknown) {
+        } catch {
             /* Not focused or not visible */
         }
 

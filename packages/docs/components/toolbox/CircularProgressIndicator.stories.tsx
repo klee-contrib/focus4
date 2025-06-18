@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {CircularProgressIndicator} from "@focus4/toolbox";
 
 import {CircularProgressIndicatorMeta} from "./metas/circular-progress-indicator";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...CircularProgressIndicatorMeta,

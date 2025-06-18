@@ -56,7 +56,7 @@ export function Select<const T extends DomainFieldTypeSingle>({
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? t(undefinedLabel) : undefinedLabel}
             value={value !== undefined ? `${value}` : undefined}
-            values={values.slice()}
+            values={[...values]}
         />
     ));
 }

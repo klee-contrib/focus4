@@ -8,12 +8,12 @@ export type EntityToForm<E, E0 = E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? FormEntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-        ? FormNode<OE, P extends keyof E0 ? (E0[P] extends ObjectEntry<infer OE0> ? OE0 : OE) : OE>
-        : E[P] extends ListEntry<infer LE>
-        ? FormListNode<LE, P extends keyof E0 ? (E0[P] extends ListEntry<infer LE0> ? LE0 : LE) : LE>
-        : E[P] extends RecursiveListEntry
-        ? FormListNode<E, E0>
-        : never;
+          ? FormNode<OE, P extends keyof E0 ? (E0[P] extends ObjectEntry<infer OE0> ? OE0 : OE) : OE>
+          : E[P] extends ListEntry<infer LE>
+            ? FormListNode<LE, P extends keyof E0 ? (E0[P] extends ListEntry<infer LE0> ? LE0 : LE) : LE>
+            : E[P] extends RecursiveListEntry
+              ? FormListNode<E, E0>
+              : never;
 };
 
 /** Champs additionnels pour un noeud de formulaire. */

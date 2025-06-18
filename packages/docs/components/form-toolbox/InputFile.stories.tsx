@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {InputFile} from "@focus4/form-toolbox";
 
 import {InputFileMeta} from "./metas/input-file";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...InputFileMeta,

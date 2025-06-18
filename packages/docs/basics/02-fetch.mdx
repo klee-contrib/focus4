@@ -12,10 +12,10 @@ Son API est la suivante :
 
 **`coreFetch(method, url, {body?, query?}, options?)`**
 
--   **`method`** permet de renseigner le verbe HTTP (GET, POST, PUT, DELETE...) de la requête.
--   **`url`** permet de renseigner l'URL que l'on veut appeler.
--   **`{body?, query?}`** permettent de renseigner le contenu du _body_ de la requête (pour un POST ou un PUT), ainsi que les _query params_ qui devront être ajoutés à l'URL. La méthode s'occupera d'inclure les _query params_ à l'URL et gère donc leur caractère optionnel.
--   **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la méthode et le body en particulier), mais il est surchargeable via ce paramètre.
+- **`method`** permet de renseigner le verbe HTTP (GET, POST, PUT, DELETE...) de la requête.
+- **`url`** permet de renseigner l'URL que l'on veut appeler.
+- **`{body?, query?}`** permettent de renseigner le contenu du _body_ de la requête (pour un POST ou un PUT), ainsi que les _query params_ qui devront être ajoutés à l'URL. La méthode s'occupera d'inclure les _query params_ à l'URL et gère donc leur caractère optionnel.
+- **`options`** est le paramètre d'options de `window.fetch`. Cet objet d'options est prérempli par `coreFetch` pour y inclure ce qu'on a déjà défini (la méthode et le body en particulier), mais il est surchargeable via ce paramètre.
 
 ### Gestion des erreurs
 
@@ -25,22 +25,22 @@ Focus supporte nativement les erreurs qui utilisent la spécification [ProblemDe
 
 Les messages suivants seront générés :
 
--   Si `detail` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
--   La méthode `addMessages` du `messageStore` est appelée avec tous les champs non standard présent dans la réponse (`type`, `status`, `title`,
-    `detail` et `instance`). Ces champs peuvent être typés :
-    -   `string` : enregistre un message de la catégorie du nom du champ.
-    -   `string[]` : enregistre plusieurs messages de la catégorie du nom du champ.
-    -   `Record<string, string>` : enregistre un message par valeur du record de la catégorie du nom du champ. Si la clé ne vaut pas `global` ou
-        `globals`, il sera préfixé par sa clé (ex : `"{champ}: {message}"`).
-    -   `Record<string, string[]>` : combinaison des deux cas précédents.
--   Si aucun message n'a été enregistré et que `title` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
+- Si `detail` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
+- La méthode `addMessages` du `messageStore` est appelée avec tous les champs non standard présent dans la réponse (`type`, `status`, `title`,
+  `detail` et `instance`). Ces champs peuvent être typés :
+    - `string` : enregistre un message de la catégorie du nom du champ.
+    - `string[]` : enregistre plusieurs messages de la catégorie du nom du champ.
+    - `Record<string, string>` : enregistre un message par valeur du record de la catégorie du nom du champ. Si la clé ne vaut pas `global` ou
+      `globals`, il sera préfixé par sa clé (ex : `"{champ}: {message}"`).
+    - `Record<string, string[]>` : combinaison des deux cas précédents.
+- Si aucun message n'a été enregistré et que `title` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
 
 Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que `error`, `info` ou `warning`. Ce mécanisme permet en revanche de pouvoir gérer des types de messages personnalisés à partir de erreurs serveur personnalisées. Cela peut par la suite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au delà du `MessageCenter` par défaut) par exemple.
 
 Après traitement des erreurs, `coreFetch` renverra une Promise rejetée avec la réponse du serveur, complétée :
 
--   De `type` et `status` si ce n'était pas un `ProblemDetails`.
--   D'une propriété `$messages` qui contient la liste des messages générés (dans l'ordre) par la lecture de la réponse.
+- De `type` et `status` si ce n'était pas un `ProblemDetails`.
+- D'une propriété `$messages` qui contient la liste des messages générés (dans l'ordre) par la lecture de la réponse.
 
 Vous pouvez utiliser la fonction `isHandledError` dans vos catchs (ou dans `on("error")` sur un formulaire) pour récupérer ces données.
 

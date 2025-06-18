@@ -12,8 +12,8 @@ Grâce aux métadonnées et au domaine portés par les champs dans un store d'en
 
 Cette fonction permet d'obtenir la représentation textuelle (elle renvoie un `string`) de la valeur d'un champ.
 
--   `field`, un `EntityField`
--   `values`, une éventuelle [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist).
+- `field`, un `EntityField`
+- `values`, une éventuelle [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist).
 
 ## Composant de champ
 
@@ -21,8 +21,8 @@ Le composant `Field` est le composant qui permet d'afficher un champ. Il ne s'ut
 
 Ce composant permet utilise les [composants](/docs/modèle-métier-domaines--docs#composants) définis dans le domaine :
 
--   En consultation, il affichera le `LabelComponent` et le `DisplayComponent`
--   En édition, il affichera le `LabelComponent` et le `InputComponent`/`SelectComponent`/`AutocompleteComponent` (selon la méthode utilisée).
+- En consultation, il affichera le `LabelComponent` et le `DisplayComponent`
+- En édition, il affichera le `LabelComponent` et le `InputComponent`/`SelectComponent`/`AutocompleteComponent` (selon la méthode utilisée).
 
 ## Méthodes de champs
 
@@ -32,25 +32,25 @@ Appelées sur un `EntityField` d'un `StoreNode`, ces méthodes **afficheront tou
 
 C'est la fonction principale, elle permet d'afficher un champ avec son libellé, à partir de ses métadonnées (en particulier le domaine). En édition, elle utilisera le **`InputComponent`** définit sur le domaine. Elle prend comme paramètres :
 
--   `field`, un `EntityField`
--   `options`, les différentes options à passer au champ. Il ne s'agit uniquement que de props pour `Field`, et _il n'y est pas possible de surcharger les métadonnées du champ_.
+- `field`, un `EntityField`
+- `options`, les différentes options à passer au champ. Il ne s'agit uniquement que de props pour `Field`, et _il n'y est pas possible de surcharger les métadonnées du champ_.
 
 ### `selectFor(field, values, options?)`
 
 La fonction `selectFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec une [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist). En édition, elle utilisera le **`SelectComponent`** définit sur le domaine. Elle prend comme paramètres :
 
--   `field`, le champ contenant le code
--   `values`, la [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist) à utiliser pour résoudre le code.
--   `options`, comme `fieldFor`.
+- `field`, le champ contenant le code
+- `values`, la [liste de référence](/docs/les-bases-store-de-référence--docs#referencelist) à utiliser pour résoudre le code.
+- `options`, comme `fieldFor`.
 
 ### `autocompleteFor(field, options)`
 
 La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l'affichage de champ avec un champ d'autocomplétion. En édition, elle utilisera le **`AutocompleteComponent`** définit sur le domaine. Elle prend comme paramètres :
 
--   `field`, le champ contenant le code
--   `options`, comme `fieldFor`, où on pourra également préciser :
-    -   Le `keyResolver`, qui permet de récupérer le libellé correspondant à la valeur du champ. Il est nécessaire dès lors que le champ sera utilisé avec des données préchargées. Sa signature est `(value: string) => Promise<string | undefined>`.
-    -   Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est `(query: string) => Promise<{key: string, label: string}[]>`.
+- `field`, le champ contenant le code
+- `options`, comme `fieldFor`, où on pourra également préciser :
+    - Le `keyResolver`, qui permet de récupérer le libellé correspondant à la valeur du champ. Il est nécessaire dès lors que le champ sera utilisé avec des données préchargées. Sa signature est `(value: string) => Promise<string | undefined>`.
+    - Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est `(query: string) => Promise<{key: string, label: string}[]>`.
 
 ## `FieldOptions`
 
@@ -60,8 +60,8 @@ Toutes les méthodes de champs peuvent prendre les options suivantes :
 
 Par défaut, le libellé et la valeur sont affichés sur une ligne, en prenant 100% de la largeur disponible, avec un ratio prédéterminé :
 
--   `labelWidth` permet de définir la largeur du composant de libellé (par défaut à 33%).
--   `valueWidth` permet de définir la largeur du composant de valeur (par défaut à 67%).
+- `labelWidth` permet de définir la largeur du composant de libellé (par défaut à 33%).
+- `valueWidth` permet de définir la largeur du composant de valeur (par défaut à 67%).
 
 Ces propriétés surchargent les valeurs des variables CSS `--field-label-width` et `--field-value-width`. Vous pouvez également gérer tout directement en CSS comme le reste.
 
@@ -71,9 +71,9 @@ Ces propriétés surchargent les valeurs des variables CSS `--field-label-width`
 
 Cette option permet de contrôler l'affichage de l'erreur pour un champ en édition dans le composant de saisie. Les trois possibilités sont :
 
--   `"never"` : L'erreur n'est jamais affichée.
--   `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
--   `"always"` : L'erreur est toujours affichée.
+- `"never"` : L'erreur n'est jamais affichée.
+- `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
+- `"always"` : L'erreur est toujours affichée.
 
 Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus, afin de ne pas perturber la saisie de l'utilisateur.
 

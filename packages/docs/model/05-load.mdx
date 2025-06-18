@@ -10,9 +10,9 @@ A première vue, rien de plus simple : on appelle un service quelconque, on réc
 
 En revanche, le besoin lié au chargement des données n'est en général pas simplement l'affaire d'appeler un service une fois pour toute. Bien souvent, il va falloir :
 
--   Gérer un état de chargement pour donner un retour à l'utilisateur que les données sont en train de charger.
--   Recharger les données quand les paramètres changent (par exemple : un id différent)
--   Recharger les données quand elles ont été rendues obsolètes par une action utilisateur, par exemple une sauvegarde.
+- Gérer un état de chargement pour donner un retour à l'utilisateur que les données sont en train de charger.
+- Recharger les données quand les paramètres changent (par exemple : un id différent)
+- Recharger les données quand elles ont été rendues obsolètes par une action utilisateur, par exemple une sauvegarde.
 
 Les deux premiers points peuvent être facilement résolus via une combinaison de `useEffect` et/ou `autorun`, qui permettra de relancer un `node.replace(await loadService(id))` à chaque fois que `id` change. Pour le deuxième, il faudra de toute façon recharger manuellement les données aux bons endroits, ce que l'on peut faire en rappelant `node.replace(await loadService(id))` la ou il faut (en s'assurant que l'id est le même).
 
@@ -50,9 +50,9 @@ _Remarque : En dehors d'un composant fonction React, il est possible d'utiliser 
 
 `useLoad` répond aux deux problématiques précédentes :
 
--   Il gère son état de chargement (en utilisant [le suivi personnalisé de services](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services)).
--   Il définit la fonction `load()` sur le `StoreNode` en premier paramètre, qui pourra être appelée n'importe où, et qui va appeler le service de chargement avec les paramètres qui ont été définis.
--   Une réaction est posée, qui va appeler `node.load()` à chaque fois que les paramètres changent (ainsi qu'au premier rendu).
+- Il gère son état de chargement (en utilisant [le suivi personnalisé de services](/docs/les-bases-gestion-des-requêtes--docs#suivi-personnalisé-de-services)).
+- Il définit la fonction `load()` sur le `StoreNode` en premier paramètre, qui pourra être appelée n'importe où, et qui va appeler le service de chargement avec les paramètres qui ont été définis.
+- Une réaction est posée, qui va appeler `node.load()` à chaque fois que les paramètres changent (ainsi qu'au premier rendu).
 
 `node.load()` est donc défini dès lors qu'un composant avec `useLoad` est affiché à l'écran. Dans le cas inverse, `node.load()` videra simplement le store.
 
@@ -72,10 +72,10 @@ Il dispose des deux méthodes suivantes :
 
 Cette méthode permet de définir les paramètres de la fonction de chargement. Ils peuvent prendre la forme :
 
--   D'une valeur simple, par exemple `params(data.id)`.
--   D'un array, par exemple `params([data.id, data.type])`, pour gérer le cas ou la fonction de chargement prend plusieurs paramètres
--   D'une fonction qui renvoie une valeur simple, par exemple `params(() => data.id)`, pour créer la réaction de rechargement
--   D'une fonction qui renvoie un array, par exemple `params(() => [data.id, data.type])`.
+- D'une valeur simple, par exemple `params(data.id)`.
+- D'un array, par exemple `params([data.id, data.type])`, pour gérer le cas ou la fonction de chargement prend plusieurs paramètres
+- D'une fonction qui renvoie une valeur simple, par exemple `params(() => data.id)`, pour créer la réaction de rechargement
+- D'une fonction qui renvoie un array, par exemple `params(() => [data.id, data.type])`.
 
 Cela veut dire que tout ceci est identique :
 

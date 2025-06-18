@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-
-import path from "path";
+import path from "node:path";
 
 import {generateCSSTypings} from "./generator";
 import {install} from "./install";
+
 export {generateCSSTypings};
 
-export {eslintConfig} from "./eslint";
 export {baseConfig, cssAutoModules, ssiVariables} from "./vite";
 
 if (process.argv?.[1]?.includes("focus4.tooling")) {
@@ -20,7 +19,7 @@ if (process.argv?.[1]?.includes("focus4.tooling")) {
             // Pour forcer node à ne pas kill le process avant la fin de la promise.
             const timer = setTimeout(() => {
                 /* */
-            }, 10000);
+            }, 10_000);
             await generateCSSTypings(rootDir, regex);
             clearTimeout(timer);
         })();
@@ -30,7 +29,7 @@ if (process.argv?.[1]?.includes("focus4.tooling")) {
             // Pour forcer node à ne pas kill le process avant la fin de la promise.
             const timer = setTimeout(() => {
                 /* */
-            }, 100000);
+            }, 100_000);
             await install(appPackageJsonPath, process.argv[3] ?? "latest");
             clearTimeout(timer);
         })();

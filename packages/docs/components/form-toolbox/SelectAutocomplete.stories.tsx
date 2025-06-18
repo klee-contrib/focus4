@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {SelectAutocomplete} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
 import {SelectAutocompleteMeta} from "./metas/select-autocomplete";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SelectAutocompleteMeta,

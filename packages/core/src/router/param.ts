@@ -16,8 +16,8 @@ export interface StringParam<S extends string = string> {
 export type Param<T extends number | string> = T extends number
     ? NumberParam<T>
     : T extends string
-    ? StringParam<T>
-    : never;
+      ? StringParam<T>
+      : never;
 
 /** Définition d'un paramètre : nom, type et routes suivantes. */
 export type ParamDef<K extends string, P extends NumberParam | StringParam, V = unknown> = [K, P, V?];

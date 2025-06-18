@@ -37,7 +37,9 @@ export class MessageStore {
         }
 
         this.messages.get(type)!.push(message);
-        (this.listeners.get(type) ?? []).forEach(listener => listener(type, message));
+        for (const listener of this.listeners.get(type) ?? []) {
+            listener(type, message);
+        }
     }
 
     /**
@@ -97,23 +99,23 @@ export class MessageStore {
     addMessages(messages: Record<string, string[] | string>) {
         const allMessages: {type: string; message: string}[] = [];
 
-        Object.keys(messages).forEach(type => {
+        for (const type in messages) {
             const possibleTypes = [
                 type,
-                type.endsWith("s") ? type.substring(0, type.length - 1) : "",
-                type.startsWith("global") ? lowerFirst(type.substring(6, type.length)) : "",
-                type.startsWith("global") && type.endsWith("s") ? lowerFirst(type.substring(6, type.length - 1)) : ""
+                type.endsWith("s") ? type.slice(0, -1) : "",
+                type.startsWith("global") ? lowerFirst(type.slice(6)) : "",
+                type.startsWith("global") && type.endsWith("s") ? lowerFirst(type.slice(6, -1)) : ""
             ].filter(Boolean);
 
-            possibleTypes.forEach(possibleType => {
+            for (const possibleType of possibleTypes) {
                 if (this.messageTypes.includes(possibleType)) {
-                    (Array.isArray(messages[type]) ? messages[type] : [messages[type]]).forEach(message => {
+                    for (const message of Array.isArray(messages[type]) ? messages[type] : [messages[type]]) {
                         this.addMessage(possibleType, message);
                         allMessages.push({type: possibleType, message});
-                    });
+                    }
                 }
-            });
-        });
+            }
+        }
 
         return allMessages;
     }
@@ -124,18 +126,18 @@ export class MessageStore {
      * @param listener Le callback.
      */
     addMessageListener(types: string[], listener: MessageListener) {
-        types.forEach(type => {
+        for (const type of types) {
             if (!this.listeners.get(type)) {
                 this.listeners.set(type, []);
             }
 
             this.listeners.get(type)!.push(listener);
-        });
+        }
 
         return () => {
-            types.forEach(type => {
+            for (const type of types) {
                 this.listeners.set(type, this.listeners.get(type)?.filter(l => l !== listener) ?? []);
-            });
+            }
         };
     }
 

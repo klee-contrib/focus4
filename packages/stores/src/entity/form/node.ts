@@ -28,13 +28,14 @@ type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E
 type ObjectsOf<E> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
 type ListsOf<E> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
 
-type EntryToEntity<E> = E extends ObjectEntry<infer E1>
-    ? E1
-    : E extends ListEntry<infer E2>
-    ? E2
-    : E extends RecursiveListEntry
-    ? E
-    : never;
+type EntryToEntity<E> =
+    E extends ObjectEntry<infer E1>
+        ? E1
+        : E extends ListEntry<infer E2>
+          ? E2
+          : E extends RecursiveListEntry
+            ? E
+            : never;
 
 export class FormNodeBuilder<E, E0 = E> {
     /** @internal */
@@ -112,7 +113,7 @@ export class FormNodeBuilder<E, E0 = E> {
         if (!params.length) {
             this.node.$edit = isEdit;
         } else {
-            params.forEach(key => {
+            for (const key of params) {
                 const child = this.node[key];
                 if (isStoreListNode(child)) {
                     // @ts-ignore
@@ -124,7 +125,7 @@ export class FormNodeBuilder<E, E0 = E> {
                     // @ts-ignore
                     this.node[key] = new EntityFieldBuilder(child).edit(isEdit).collect();
                 }
-            });
+            }
         }
         return this;
     }
@@ -180,7 +181,9 @@ export class FormNodeBuilder<E, E0 = E> {
      * @param fields Les champs à supprimer.
      */
     remove<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
-        fields.forEach(field => delete this.node[field]);
+        for (const field of fields) {
+            delete this.node[field];
+        }
         // @ts-ignore
         return this;
     }
@@ -229,7 +232,7 @@ export class FormNodeBuilder<E, E0 = E> {
         if (!params.length) {
             this.node.$required = isRequired;
         } else {
-            params.forEach(key => {
+            for (const key of params) {
                 const child = this.node[key];
                 if (isStoreListNode(child)) {
                     // @ts-ignore
@@ -243,7 +246,7 @@ export class FormNodeBuilder<E, E0 = E> {
                         .metadata(isFunction(isRequired) ? () => ({isRequired: isRequired()}) : {isRequired})
                         .collect();
                 }
-            });
+            }
         }
         return this;
     }

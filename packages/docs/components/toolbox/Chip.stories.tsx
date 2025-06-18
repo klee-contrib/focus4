@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Chip} from "@focus4/toolbox";
 
 import {ChipMeta} from "./metas/chip";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ChipMeta,

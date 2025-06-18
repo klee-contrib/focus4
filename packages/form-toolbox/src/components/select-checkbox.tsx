@@ -7,6 +7,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
+
 export {selectCheckboxCss};
 export type {SelectCheckboxCss};
 
@@ -27,7 +28,7 @@ function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
                 onChange((value ? value.filter(val => val !== optVal) : []) as DomainType<T>);
             } else {
                 // Is not selected -> add it
-                onChange((value ? [...value.slice(), optVal] : [optVal]) as DomainType<T>);
+                onChange((value ? [...value, optVal] : [optVal]) as DomainType<T>);
             }
         }
     };
@@ -90,7 +91,7 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                     const optVal = option[values.$valueKey];
                     const optLabel = option[values.$labelKey];
 
-                    const isSelected = value ? !!value.find((val: any) => optVal === val) : false;
+                    const isSelected = value ? !!value.some((val: any) => optVal === val) : false;
                     const isDisabled =
                         disabled === true ||
                         (Array.isArray(disabled) && (disabled as string[]).includes(optVal)) ||

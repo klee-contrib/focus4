@@ -23,8 +23,8 @@ export type ConfigToEntities<T> = {
     readonly [P in keyof T]: T[P] extends any[]
         ? ListEntry<T[P][0]>
         : T[P] extends StoreNode<infer E>
-        ? ObjectEntry<E>
-        : ObjectEntry<T[P]>;
+          ? ObjectEntry<E>
+          : ObjectEntry<T[P]>;
 };
 
 /**
@@ -93,18 +93,21 @@ export function buildNode<E>(entity: E | E[]): StoreListNode<E> | StoreNode<E> {
     return {
         ...mapValues(entity as any, (field: FieldEntry | ListEntry | ObjectEntry | RecursiveListEntry) => {
             switch (field.type) {
-                case "list":
+                case "list": {
                     const listNode = buildNode([field.entity]);
                     listNode.$required = field.isRequired ?? true;
                     return listNode;
-                case "recursive-list":
+                }
+                case "recursive-list": {
                     const rListNode = buildNode([entity]);
                     rListNode.$required = field.isRequired ?? true;
                     return rListNode;
-                case "object":
+                }
+                case "object": {
                     const node = buildNode(field.entity);
                     node.$required = field.isRequired ?? true;
                     return node;
+                }
                 default:
                     return extendObservable({$field: field}, {value: undefined}, {value: observable.ref});
             }
@@ -184,6 +187,7 @@ export function replaceNode<E>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
+            // oxlint-disable-next-line no-this-assignment
             const self = this;
             this.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(self, item)));
         } else if (isStoreNode(this) && typeof value === "object") {
@@ -228,7 +232,9 @@ export function setNode<E>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On va appeler récursivement `setNode` sur tous les éléments de la liste.
+            // oxlint-disable-next-line no-this-assignment
             const self = this;
+            // oxlint-disable-next-line no-array-for-each
             (value as {}[]).forEach((item, i) => {
                 if (i >= self.length) {
                     self.pushNode(item);

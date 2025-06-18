@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {LinearProgressIndicator} from "@focus4/toolbox";
 
 import {LinearProgressIndicatorMeta} from "./metas/linear-progress-indicator";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...LinearProgressIndicatorMeta,

@@ -11,6 +11,7 @@ import {Select} from "./select";
 import {SelectAutocomplete} from "./select-autocomplete";
 
 import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
+
 export {selectChipsCss};
 export type {SelectChipsCss};
 

@@ -22,9 +22,9 @@ L'objet d'actions expose une propriété **`formProps`** dédiée qui contient t
 
 Ce composant permet de :
 
--   Poser un formulaire HTML (désactivable avec la prop `noForm`).
--   Poser le service de sauvegarde (`save`) en `submit` du formulaire HTML.
--   Renseigner les [options](/docs/modèle-métier-afficher-des-champs--docs#fieldoptions) `errorDisplay`, `labelWidth`, `valueWidth` pour tous les champs posés à l'intérieur.
+- Poser un formulaire HTML (désactivable avec la prop `noForm`).
+- Poser le service de sauvegarde (`save`) en `submit` du formulaire HTML.
+- Renseigner les [options](/docs/modèle-métier-afficher-des-champs--docs#fieldoptions) `errorDisplay`, `labelWidth`, `valueWidth` pour tous les champs posés à l'intérieur.
 
 _Remarque : `formProps` renseigne donc `errorDisplay` et `save`._
 
@@ -32,11 +32,11 @@ _Remarque : `formProps` renseigne donc `errorDisplay` et `save`._
 
 Il s'agit du composant [`Panel`](/docs/mise-en-page-panel--docs) standard, pour lequel, comme pour `Form`, l'objet d'actions expose une propriété dédiée **`panelProps`**, avec les propriétés suivantes du Panel :
 
--   `editing` (`node.form.isEdit`)
--   `loading` (`actions.isLoading`)
--   `onClickCancel`
--   `onClickEdit`
--   `save`
+- `editing` (`node.form.isEdit`)
+- `loading` (`actions.isLoading`)
+- `onClickCancel`
+- `onClickEdit`
+- `save`
 
 Après avoir passé `{...actions.panelProps}` au `Panel`, vous pouvez utiliser (et même surcharger) les props classiques du `Panel`.
 

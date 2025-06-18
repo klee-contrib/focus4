@@ -55,13 +55,13 @@ export function DetailWrapper<T>({
                     displayedIdx === undefined && mode === "mosaic"
                         ? {left: -1000}
                         : mode === "mosaic"
-                        ? {
-                              left:
-                                  mosaic.width / 2 -
-                                  8.25 +
-                                  ((displayedIdx + (isAddItemShown ? 1 : 0)) % byLine) * (mosaic.width + 10)
-                          }
-                        : {}
+                          ? {
+                                left:
+                                    mosaic.width / 2 -
+                                    8.25 +
+                                    ((displayedIdx + (isAddItemShown ? 1 : 0)) % byLine) * (mosaic.width + 10)
+                            }
+                          : {}
                 }
             />
             <div className={theme.detail()}>

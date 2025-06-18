@@ -23,7 +23,8 @@
     background-color: transparent;
     color: var(--button-secondary-color);
     --progress-indicator-color: var(--button-secondary-color);
-    transition: color var(--animation-duration-short) var(--animation-curve-default),
+    transition:
+        color var(--animation-duration-short) var(--animation-curve-default),
         background-color var(--animation-duration-short) var(--animation-curve-default);
 }
 

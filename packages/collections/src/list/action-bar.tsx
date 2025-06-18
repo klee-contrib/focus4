@@ -13,6 +13,7 @@ import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
 import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
+
 export {actionBarCss};
 export type {ActionBarCss};
 
@@ -106,7 +107,7 @@ export function ActionBar<T extends object>({
                           // Ni sur une facette sélectionnée.
                           !Object.keys(store.inputFacets).includes(facet.code) &&
                           // Et on ne garde que les facettes demandées dans la liste.
-                          (!groupableFacets || groupableFacets.find(code => code === facet.code))
+                          (!groupableFacets || groupableFacets.some(code => code === facet.code))
                       ) {
                           return {...result, [facet.code]: facet.label};
                       }
@@ -269,7 +270,7 @@ export function ActionBar<T extends object>({
                 </div>
                 {operationList ? (
                     <ContextualActions
-                        data={Array.from(store.selectedItems)}
+                        data={[...store.selectedItems]}
                         operationList={operationList.filter(o => !!store.selectedItems.size || o.showIfNoData)}
                     />
                 ) : null}

@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {SelectChips} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
 import {SelectChipsMeta} from "./metas/select-chips";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SelectChipsMeta,

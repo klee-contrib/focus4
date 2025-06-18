@@ -124,7 +124,8 @@
 .sortIcon,
 .sortCount,
 .label {
-    transition: color var(--animation-duration-short) var(--animation-curve-default),
+    transition:
+        color var(--animation-duration-short) var(--animation-curve-default),
         border-color var(--animation-duration-short) var(--animation-curve-default);
     vertical-align: middle;
 }

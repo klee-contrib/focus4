@@ -10,16 +10,16 @@ Via **`useFormNode(storeNode)`** dans un composant, on pourra créer une **copie
 
 Le `FormNode` :
 
--   Est automatiquement mis à jour par toute modification du `StoreNode` (la synchronisation se fait champ par champ).
--   Ajoute un **état d'édition** sur les noeuds et les champs.
--   Calcule l'**état de validation** sur les noeuds et les champs.
+- Est automatiquement mis à jour par toute modification du `StoreNode` (la synchronisation se fait champ par champ).
+- Ajoute un **état d'édition** sur les noeuds et les champs.
+- Calcule l'**état de validation** sur les noeuds et les champs.
 
 _Remarque : Si on peut créer des champs en édition sans formulaire via [`makeField`](/docs/modèle-métier-makefield--docs#champs-en-édition), il n'est en revanche **pas possible d'avoir de la validation sans formulaire**._
 
 `useFormNode` est un hook et doit impérativement être déclaré dans un composant, puisque :
 
--   Il s'agit d'un état local à un composant, et non de données à partager à travers le reste de l'application. Vous pouvez néanmoins toujours passer le store de formulaire à un composant enfant.
--   Il pose un réaction de synchronisation entre avec son noeud source, qui devra être proprement supprimée une fois le composant démonté.
+- Il s'agit d'un état local à un composant, et non de données à partager à travers le reste de l'application. Vous pouvez néanmoins toujours passer le store de formulaire à un composant enfant.
+- Il pose un réaction de synchronisation entre avec son noeud source, qui devra être proprement supprimée une fois le composant démonté.
 
 Un `FormNode` peut aussi être **créé directement à partir d'une définition d'entité**, via `useFormNode(MyEntity)` ou `useFormNode([MyEntity])`, si vous n'avez pas besoin du `storeNode` sous-jacent en dehors de l'instance du composant qui définit le formulaire. Il sera créé à la volée avant de créer le store de formulaire.
 
@@ -29,9 +29,9 @@ Un `FormNode` peut aussi être **créé directement à partir d'une définition 
 
 Il peut être lu et modifié dans :
 
--   `node.form.isEdit` (pour un `FormNode`)
--   `list.form.isEdit` (pour un `FormListNode`)
--   `field.isEdit` (pour un `FormEntityField`)
+- `node.form.isEdit` (pour un `FormNode`)
+- `list.form.isEdit` (pour un `FormListNode`)
+- `field.isEdit` (pour un `FormEntityField`)
 
 En revanche, un noeud ou un champ ne peut être en édition **que si son parent est lui aussi en édition**.
 
@@ -71,9 +71,9 @@ Chaque noeud et champ porte également une propriété calculée `hasChanged`, q
 
 Cas particuliers :
 
--   Un champ ajouté à toujours `hasChanged = false`, puisqu'il n'existe pas dans le noeud source.
--   Un champ dans un noeud ajouté dans un noeud liste est toujours `hasChanged = true`, puisqu'il correspond à un item de liste qui n'existe pas dans le noeud source.
--   Les valeurs de champs sont comparées avec un simple "deep equals", ce qui implique par exemple qu'une valeur de champ d'un domaine multiple sera considérée comme modifiée même si elle contient les mêmes éléments dans un ordre différent.
+- Un champ ajouté à toujours `hasChanged = false`, puisqu'il n'existe pas dans le noeud source.
+- Un champ dans un noeud ajouté dans un noeud liste est toujours `hasChanged = true`, puisqu'il correspond à un item de liste qui n'existe pas dans le noeud source.
+- Les valeurs de champs sont comparées avec un simple "deep equals", ce qui implique par exemple qu'une valeur de champ d'un domaine multiple sera considérée comme modifiée même si elle contient les mêmes éléments dans un ordre différent.
 
 ## APIs de `FormNode`, `FormListNode` et `FormEntityField`
 
@@ -81,12 +81,12 @@ Ce sont tous des versions "dérivées" de leur objet source, donc toute API qui 
 
 En plus des quatre propriétés `hasChanged`, `isEdit`, `error(s)` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
 
--   `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud). Les champs ajoutés ne sont pas pris en compte.
--   `sourceNode`, une référence vers le noeud source parent du `FormNode`/`FormListNode` (dans le cas d'un store créé à partir d'une définition d'entité, c'est le seul moyen d'y accéder).
--   `reset()`, une méthode pour réinitialiser le `FormNode`/`FormListNode` sur son `sourceNode`.
+- `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud). Les champs ajoutés ne sont pas pris en compte.
+- `sourceNode`, une référence vers le noeud source parent du `FormNode`/`FormListNode` (dans le cas d'un store créé à partir d'une définition d'entité, c'est le seul moyen d'y accéder).
+- `reset()`, une méthode pour réinitialiser le `FormNode`/`FormListNode` sur son `sourceNode`.
 
 Le `sourceNode` correspond bien au même noeud sur la source, en particulier :
 
--   Sur le noeud racine du formulaire, il s'agit du noeud passé en paramètre à `useFormNode`
--   Sur un noeud enfant dans le formulaire, il s'agit du noeud enfant correspondant du noeud passé en paramètre à `useFormNode
--   Si un élément est ajouté à un `FormListNode`, alors **il n'aura pas de `sourceNode` associé** (en pratique, `sourceNode` pointera sur lui-même, ce qui est une simplification pour éviter de gérer le cas où il n'est pas défini...).
+- Sur le noeud racine du formulaire, il s'agit du noeud passé en paramètre à `useFormNode`
+- Sur un noeud enfant dans le formulaire, il s'agit du noeud enfant correspondant du noeud passé en paramètre à `useFormNode
+- Si un élément est ajouté à un `FormListNode`, alors **il n'aura pas de `sourceNode` associé** (en pratique, `sourceNode` pointera sur lui-même, ce qui est une simplification pour éviter de gérer le cas où il n'est pas défini...).

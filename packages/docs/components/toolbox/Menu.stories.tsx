@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Button, IconButton, Menu, MenuItem, useMenu} from "@focus4/toolbox";
 
 import {MenuMeta} from "./metas/menu";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...MenuMeta,

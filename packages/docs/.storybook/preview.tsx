@@ -6,20 +6,19 @@ import "@focus4/styling/lib/focus4.styling.css";
 import "@focus4/toolbox/lib/focus4.toolbox.css";
 import "./preview.css";
 
-import {i18nCollections} from "@focus4/collections";
-import {i18nFormToolbox} from "@focus4/form-toolbox";
-import {i18nLayout} from "@focus4/layout";
-import {i18nStores} from "@focus4/stores";
-
-import {baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
-
 import {Controls, Description, Primary, Subtitle, Title} from "@storybook/addon-docs";
-import {addons} from "storybook/preview-api";
 import type {Preview} from "@storybook/react";
+import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";
 import i18next from "i18next";
 import React from "react";
 import {initReactI18next} from "react-i18next";
-import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";
+import {addons} from "storybook/preview-api";
+
+import {i18nCollections} from "@focus4/collections";
+import {baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
+import {i18nFormToolbox} from "@focus4/form-toolbox";
+import {i18nLayout} from "@focus4/layout";
+import {i18nStores} from "@focus4/stores";
 
 import {CssVariables} from "./custom/CssVariables";
 import {DocsContainer} from "./custom/DocsContainer";

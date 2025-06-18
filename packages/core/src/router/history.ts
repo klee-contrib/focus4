@@ -51,7 +51,6 @@ export async function startHistory(history: HashHistory, routes: RouteConfig[]) 
                 }
 
                 enterMatch = route;
-                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
                 params = enterPreMatch.params;
             }
         }

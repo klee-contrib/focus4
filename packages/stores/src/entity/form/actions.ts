@@ -57,7 +57,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
     @observable accessor errorDisplay: "after-focus" | "always" | "never";
 
     // @ts-ignore
-    protected declare builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>;
+    declare protected builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>;
 
     private readonly formNode: FormListNode | FormNode;
 
@@ -116,7 +116,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
         }
         this.formNode.form.isEdit = false;
         this.formNode.reset();
-        (this.builder.handlers.cancel ?? []).forEach(handler => handler("cancel"));
+
+        for (const handler of this.builder.handlers.cancel ?? []) {
+            handler("cancel");
+        }
     }
 
     /**
@@ -130,7 +133,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
             this.errorDisplay = "after-focus";
         }
         this.formNode.form.isEdit = true;
-        (this.builder.handlers.edit ?? []).forEach(handler => handler("edit"));
+
+        for (const handler of this.builder.handlers.edit ?? []) {
+            handler("edit");
+        }
     }
 
     /** Appelle le service de sauvegarde avec le contenu du formulaire, si ce dernier est valide. */
@@ -143,10 +149,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
         const service = this.builder.saveService
             ? "save"
             : this.builder.updateService && this.params
-            ? "update"
-            : this.builder.createService && !this.params
-            ? "create"
-            : undefined;
+              ? "update"
+              : this.builder.createService && !this.params
+                ? "create"
+                : undefined;
 
         // On ne fait rien si on est déjà en chargement et qu'on a pas le bon service disponible à appeler.
         if (this.isLoading || !service) {
@@ -156,7 +162,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
         try {
             // On ne sauvegarde que si la validation est en succès.
             if (this.formNode.form && !this.formNode.form.isValid) {
-                // eslint-disable-next-line @typescript-eslint/only-throw-error
+                // oxlint-disable-next-line no-throw-literal
                 throw {
                     $validationError: true,
                     detail: this.formNode.form.errors
@@ -168,7 +174,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                 if (this.builder.saveService) {
                     return this.builder.saveService(d);
                 } else if (this.params && this.builder.updateService) {
-                    return this.builder.updateService(...[...this.params, d]);
+                    return this.builder.updateService(...this.params, d);
                 } else {
                     return this.builder.createService!(d);
                 }
@@ -217,10 +223,15 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                 this.errorDisplay = "after-focus";
             }
 
-            (this.builder.handlers[service] ?? []).forEach(handler => handler(service as never, data as any));
-        } catch (e: unknown) {
-            (this.builder.handlers.error ?? []).forEach(handler => handler("error", service, e));
-            throw e;
+            for (const handler of this.builder.handlers[service] ?? []) {
+                handler(service as never, data as any);
+            }
+        } catch (error) {
+            for (const handler of this.builder.handlers.error ?? []) {
+                handler("error", service, error);
+            }
+
+            throw error;
         }
     }
 
@@ -275,11 +286,17 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                     this.formNode.sourceNode.replaceNodes(this.formNode.form._initialData!);
                 }
 
-                (this.builder.handlers.init ?? []).forEach(handler => handler("init", initData));
-            } catch (e: unknown) {
+                for (const handler of this.builder.handlers.init ?? []) {
+                    handler("init", initData);
+                }
+            } catch (error) {
                 this.clear();
-                (this.builder.handlers.error ?? []).forEach(handler => handler("error", "init", e));
-                throw e;
+
+                for (const handler of this.builder.handlers.error ?? []) {
+                    handler("error", "init", error);
+                }
+
+                throw error;
             }
         }
     }

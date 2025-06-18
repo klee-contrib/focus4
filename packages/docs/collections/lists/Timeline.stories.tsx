@@ -1,3 +1,4 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {DateTime} from "luxon";
 
 import {LineProps, Timeline} from "@focus4/collections";
@@ -5,8 +6,6 @@ import {domain} from "@focus4/form-toolbox";
 import {CollectionStore, makeField} from "@focus4/stores";
 
 import {TimelineMeta} from "../metas/timeline";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 const {data, isLoading, store, ...argTypes} = TimelineMeta.argTypes;
 

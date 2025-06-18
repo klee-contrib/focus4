@@ -85,7 +85,7 @@ export function useMask({
     }
 
     // KeyPress ne renvoie pas de code de touche sur mobile donc le masque ne fonctionne pas...
-    if (/Android|iPhone|iPad/.exec(navigator.userAgent)) {
+    if (/Android|iPhone|iPad/.test(navigator.userAgent)) {
         sourcePattern = undefined;
     }
 
@@ -112,7 +112,7 @@ export function useMask({
             return {pattern: [], firstEditableIndex: 0, lastEditableIndex: 0, editableIndices: {}};
         }
 
-        const sourceChars = sourcePattern.split("");
+        const sourceChars = [...sourcePattern];
         let patternIndex = 0;
         const p = [];
 
@@ -146,7 +146,6 @@ export function useMask({
 
     const isEditableIndex = useCallback(
         function isEditableIndex(index: number) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion
             return !!editableIndices[index];
         },
         [editableIndices]
@@ -172,7 +171,7 @@ export function useMask({
 
     const format = useCallback(
         function format(v: string[]) {
-            const valueBuffer: string[] = new Array(pattern.length);
+            const valueBuffer: string[] = Array.from({length: pattern.length});
             let valueIndex = 0;
 
             for (let i = 0, l = pattern.length; i < l; i++) {
@@ -204,7 +203,7 @@ export function useMask({
 
     const emptyValue = useMemo(() => format([]).join(""), [format]);
 
-    const characters = useMemo(() => format(value?.split("") ?? []), [format, value]);
+    const characters = useMemo(() => format([...(value ?? [])]), [format, value]);
 
     const rawValue = useMemo(() => {
         const rv = [];
@@ -217,7 +216,7 @@ export function useMask({
     }, [characters, editableIndices]);
 
     const stringValue = useMemo(
-        () => (isRevealingMask ? format(rawValue.split("")) : characters).join(""),
+        () => (isRevealingMask ? format([...rawValue]) : characters).join(""),
         [characters, format, isRevealingMask, rawValue]
     );
 
@@ -312,8 +311,8 @@ export function useMask({
             }
 
             if (isRevealingMask) {
-                const firstPlaceholderCharIndex = newCharacters.findIndex(c => c === placeholderChar);
-                if (firstPlaceholderCharIndex >= 0) {
+                const firstPlaceholderCharIndex = newCharacters.indexOf(placeholderChar);
+                if (firstPlaceholderCharIndex !== -1) {
                     newCharacters = newCharacters.slice(0, firstPlaceholderCharIndex);
                 }
             }
@@ -327,7 +326,7 @@ export function useMask({
         (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             let result: ReturnType<typeof input> = false;
             const selection = getInputSelection(e.currentTarget);
-            const selectedText = e.currentTarget.value.substring(selection.start, selection.end);
+            const selectedText = e.currentTarget.value.slice(selection.start, selection.end);
             const isCut = e.ctrlKey && e.key === "x" && selectedText;
             if (e.key === "Backspace" || e.key === "Delete" || isCut) {
                 e.preventDefault();
@@ -392,7 +391,7 @@ export function useMask({
                  * Continue as if the selection and input started from the editable part of
                  * the pattern.
                  */
-                text = text.substring(firstEditableIndex - selection.start);
+                text = text.slice(firstEditableIndex - selection.start);
                 selection.start = firstEditableIndex;
             }
 
@@ -419,7 +418,6 @@ export function useMask({
                 }
 
                 newCharacters = valid.characters;
-                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
                 selection = valid.selection;
             }
 

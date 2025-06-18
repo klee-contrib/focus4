@@ -1,5 +1,4 @@
 // @ts-check
-
 import typescript from "@rollup/plugin-typescript";
 import shebang from "rollup-plugin-preserve-shebang";
 
@@ -15,5 +14,13 @@ export default {
         format: "esm",
         dir: "lib"
     },
-    external: [...Object.keys(pkg.dependencies || {}), "child_process", "crypto", "dns", "fs", "os", "path"]
+    external: [
+        ...Object.keys(pkg.dependencies || {}),
+        "node:child_process",
+        "node:crypto",
+        "node:dns",
+        "node:fs",
+        "node:os",
+        "node:path"
+    ]
 };

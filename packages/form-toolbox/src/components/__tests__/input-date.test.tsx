@@ -39,8 +39,8 @@ describe("Some date formation", () => {
                 onChange={() => {
                     /* */
                 }}
-                value={"10/11/2016"}
-                inputFormat={"dd/MM/yy"}
+                value="10/11/2016"
+                inputFormat="dd/MM/yy"
                 {...props}
             />
         );
@@ -56,8 +56,8 @@ describe("Some date formation", () => {
                 onChange={() => {
                     /* */
                 }}
-                value={"df/11/2016"}
-                inputFormat={"dd/MM/yyyy"}
+                value="df/11/2016"
+                inputFormat="dd/MM/yyyy"
                 {...props}
             />
         );
@@ -90,8 +90,8 @@ describe("Some date formation", () => {
                 onChange={() => {
                     /* */
                 }}
-                value={"sddqsdqsdq"}
-                inputFormat={"dd/MM/yyyy"}
+                value="sddqsdqsdq"
+                inputFormat="dd/MM/yyyy"
                 {...props}
             />
         );

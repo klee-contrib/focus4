@@ -11,6 +11,7 @@ import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
 import buttonCss, {ButtonCss} from "./__style__/button.css";
+
 export {buttonCss};
 export type {ButtonCss};
 
@@ -136,7 +137,7 @@ export function Button({
                 ) : icon ? (
                     <FontIcon className={theme.icon()} icon={icon} />
                 ) : null,
-                <span className={theme.label()}>{label ?? "\xa0"}</span>
+                <span className={theme.label()}>{label ?? "\u00A0"}</span>
             )}
         </Ripple>
     );

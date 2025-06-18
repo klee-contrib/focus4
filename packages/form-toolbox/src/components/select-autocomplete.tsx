@@ -60,7 +60,7 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
         () =>
             hasUndefined
                 ? [{[values.$valueKey]: undefinedKey, [values.$labelKey]: t(undefinedLabel)}, ...values]
-                : values.slice(),
+                : [...values],
         [hasUndefined, undefinedLabel, values, values.length]
     );
 

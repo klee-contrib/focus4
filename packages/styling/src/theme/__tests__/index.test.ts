@@ -1,8 +1,8 @@
 import {describe, expect, test} from "vitest";
 
 import {CSSElement, CSSMod} from "../common";
-import {fromBem, toBem} from "../to-bem";
 import {themeable} from "../themeable";
+import {fromBem, toBem} from "../to-bem";
 
 interface Actions {
     _f6135: void;

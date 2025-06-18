@@ -1,7 +1,5 @@
-/* eslint-disable no-unmodified-loop-condition */
-/* eslint-disable @typescript-eslint/no-loop-func */
 import {useObserver} from "mobx-react";
-import {Fragment} from "react/jsx-runtime";
+import {Fragment} from "react";
 import {useTranslation} from "react-i18next";
 
 import {Router, UrlRouteDescriptor} from "@focus4/core";
@@ -9,6 +7,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
 import filArianeCss, {FilArianeCss} from "./__style__/fil-ariane.css";
+
 export {filArianeCss};
 export type {FilArianeCss};
 
@@ -96,7 +95,7 @@ export function FilAriane({
                     dictionaryKey: t(`${routerI18nPrefix}.${key}.${rootName}`, {
                         param:
                             typeof currentState !== "object"
-                                ? paramResolver(currentRoute, currentState) ?? currentState
+                                ? (paramResolver(currentRoute, currentState) ?? currentState)
                                 : undefined
                     }),
                     url: currentRouter.href(x => x(typeof currentState === "object" ? currentRoute! : currentState))

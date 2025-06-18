@@ -7,6 +7,7 @@ import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
 import {Input, InputProps} from "./input";
 
 import inputDateCss, {InputDateCss} from "./__style__/input-date.css";
+
 export {inputDateCss};
 
 export interface InputDateProps {
@@ -170,8 +171,8 @@ export function InputDate({
             let dateTime = targetInputFormat
                 ? DateTime.fromFormat(newDate, targetInputFormat, zone ? {zone} : {})
                 : zone === "utc"
-                ? DateTime.utc()
-                : DateTime.now();
+                  ? DateTime.utc()
+                  : DateTime.now();
 
             if (ISOStringFormat === "local-utc-midnight") {
                 dateTime = dateTime.toUTC();
@@ -193,7 +194,7 @@ export function InputDate({
             onChange(
                 ISOStringFormat === "date-only"
                     ? newDate.toFormat("yyyy-MM-dd")
-                    : newDate.toISO({suppressMilliseconds: true}) ?? ""
+                    : (newDate.toISO({suppressMilliseconds: true}) ?? "")
             );
             setTimeout(() => {
                 if (fromKeyDown) {
@@ -219,7 +220,7 @@ export function InputDate({
                 onChange(
                     ISOStringFormat === "date-only"
                         ? newDate.toFormat("yyyy-MM-dd")
-                        : newDate.toISO({suppressMilliseconds: true}) ?? ""
+                        : (newDate.toISO({suppressMilliseconds: true}) ?? "")
                 );
             } else {
                 onChange(text);
@@ -272,7 +273,7 @@ export function InputDate({
                 error={error}
                 fieldRef={menu.anchor}
                 id={id}
-                mask={{pattern: inputFormat.replace(/\w/g, "1")}}
+                mask={{pattern: inputFormat.replaceAll(/\w/g, "1")}}
                 name={name}
                 onBlur={onInputBlur}
                 onChange={onInputChange}
@@ -289,14 +290,14 @@ export function InputDate({
                     calendarPosition === "bottom"
                         ? "bottom-auto"
                         : calendarPosition === "top"
-                        ? "top-auto"
-                        : calendarPosition === "left"
-                        ? "auto-left"
-                        : calendarPosition === "right"
-                        ? "auto-right"
-                        : calendarPosition === "auto"
-                        ? "auto-fit"
-                        : calendarPosition
+                          ? "top-auto"
+                          : calendarPosition === "left"
+                            ? "auto-left"
+                            : calendarPosition === "right"
+                              ? "auto-right"
+                              : calendarPosition === "auto"
+                                ? "auto-fit"
+                                : calendarPosition
                 }
             >
                 <Calendar

@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Snackbar} from "@focus4/toolbox";
 
 import {SnackbarMeta} from "./metas/snackbar";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SnackbarMeta,

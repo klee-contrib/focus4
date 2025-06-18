@@ -11,6 +11,7 @@ import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
 
 import chipCss, {ChipCss} from "./__style__/chip.css";
+
 export {chipCss};
 export type {ChipCss};
 

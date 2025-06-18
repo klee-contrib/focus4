@@ -10,6 +10,7 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import switchCss, {SwitchCss} from "./__style__/switch.css";
+
 export {switchCss};
 export type {SwitchCss};
 

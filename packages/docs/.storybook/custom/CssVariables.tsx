@@ -1,5 +1,4 @@
 import {PureArgsTable, useOf} from "@storybook/addon-docs";
-
 import {toJS} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import React from "react";

@@ -1,5 +1,4 @@
 // @ts-check
-
 import typescript from "@rollup/plugin-typescript";
 import chalk from "chalk";
 import copy from "rollup-plugin-copy-glob";

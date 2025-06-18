@@ -11,6 +11,7 @@ import {CSSProp, getSpringTransition, uiConfig, useTheme} from "@focus4/styling"
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
 import searchBarCss, {SearchBarCss} from "./__style__/search-bar.css";
+
 export {searchBarCss};
 export type {SearchBarCss};
 
@@ -83,13 +84,13 @@ export function SearchBar<T extends object, C>({
                  * Toute la difficulté réside dans le fait qu'on a besoin de conserver l'ordre dans lequel l'utilisateur à voulu saisir les critères.
                  * Et également de ne pas changer le rendu entre ce que l'utilisateur à tapé et ce qu'il voit.
                  */
-                const criteria = this.criteria
-                    .concat(
-                        difference(
-                            this.flatCriteria.map(c => c[0]),
-                            this.criteria
-                        )
+                const criteria = [
+                    ...this.criteria,
+                    ...difference(
+                        this.flatCriteria.map(c => c[0]),
+                        this.criteria
                     )
+                ]
                     .map(c => [
                         c,
                         this.flatCriteria.find(i => i[0] === c) && this.flatCriteria.find(i => i[0] === c)![1]
@@ -137,10 +138,11 @@ export function SearchBar<T extends object, C>({
                 this.criteriaList = [];
 
                 // On parcourt les tokens et on cherche pour un token de la forme critere:valeur.
+                // oxlint-disable-next-line no-constant-condition
                 while (1) {
                     const [crit = "", value = ""] = token?.split(/:(.+)/) || [];
                     // Si le token est de la bonne forme et que le critère existe, alors on l'enregistre.
-                    if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.find(u => u === crit)) {
+                    if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.some(u => u === crit)) {
                         ((store.criteria as any)[crit] as FormEntityField).value = value;
                         skip++;
                         this.criteriaList.push(crit);
@@ -151,9 +153,9 @@ export function SearchBar<T extends object, C>({
                 }
 
                 // On force tous les critères sont trouvés à undefined.
-                difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList).forEach(
-                    crit => (((store.criteria as any)[crit] as FormEntityField).value = undefined)
-                );
+                for (const crit of difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList)) {
+                    ((store.criteria as any)[crit] as FormEntityField).value = undefined;
+                }
 
                 // Et on reconstruit le reste de la query avec ce qu'il reste.
                 store.query = `${tokens.slice(skip).join(" ")}${/\s*$/.exec(currentTarget.value)![0]}`; // La regex sert à garder les espaces en plus à la fin.
@@ -183,7 +185,7 @@ export function SearchBar<T extends object, C>({
         function onDocumentClick({target}: Event) {
             let parent = target as HTMLElement | null;
 
-            while (parent && parent.getAttribute("data-focus") !== "search-bar") {
+            while (parent && parent.dataset.focus !== "search-bar") {
                 parent = parent.parentElement;
             }
 

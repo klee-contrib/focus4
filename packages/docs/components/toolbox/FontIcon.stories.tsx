@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {FontIcon} from "@focus4/toolbox";
 
 import {FontIconMeta} from "./metas/font-icon";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...FontIconMeta,

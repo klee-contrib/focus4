@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {DateTime} from "luxon";
 import {useState} from "react";
 
 import {InputDate} from "@focus4/form-toolbox";
 
 import {InputDateMeta} from "./metas/input-date";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...InputDateMeta,

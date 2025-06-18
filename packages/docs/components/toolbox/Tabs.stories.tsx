@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Tab, Tabs} from "@focus4/toolbox";
 
 import {TabsMeta} from "./metas/tabs";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...TabsMeta,

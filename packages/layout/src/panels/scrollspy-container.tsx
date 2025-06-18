@@ -21,6 +21,7 @@ import {LateralMenu} from "../presentation";
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "../utils";
 
 import scrollspyCss, {ScrollspyCss} from "./__style__/scrollspy.css";
+
 export {scrollspyCss};
 export type {ScrollspyCss};
 
@@ -79,7 +80,7 @@ export function ScrollspyContainer({
         headerHeight: offsetTopOverride ?? headerHeight,
         panels: observable.map<string, PanelDescriptor & {ratio: number; disposer: () => void}>(),
         get sortedPanels() {
-            return sortBy(Array.from(state.panels.entries()), [([_, {node}]) => getOffsetTop(node)]);
+            return sortBy([...state.panels.entries()], [([_, {node}]) => getOffsetTop(node)]);
         },
         get activeItem() {
             const panels = sortBy(state.sortedPanels, [
@@ -89,8 +90,8 @@ export function ScrollspyContainer({
                         rect.height === 0
                             ? 1
                             : !state.headerHeight
-                            ? 0
-                            : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
+                              ? 0
+                              : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
                     return headerRatio - (ratio >= 0.95 ? 1 : ratio);
                 }
             ]);
@@ -163,7 +164,7 @@ export function ScrollspyContainer({
  */
 function getOffsetTop(node: HTMLElement, headerHeight = 0) {
     const cpt = getComputedStyle(document.documentElement).getPropertyValue("--content-padding-top");
-    const padding = +cpt.substring(0, cpt.length - 2);
+    const padding = +cpt.slice(0, -2);
     return (
         node.offsetTop +
         ((node.offsetParent as HTMLElement)?.offsetTop ?? 0) -

@@ -18,6 +18,7 @@ import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
 
 import timelineCss, {TimelineCss} from "../__style__/timeline.css";
+
 export {timelineCss};
 export type {TimelineCss};
 

@@ -5,6 +5,7 @@ import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
 import lateralMenuCss, {LateralMenuCss} from "./__style__/lateral-menu.css";
+
 export {lateralMenuCss};
 export type {LateralMenuCss};
 

@@ -12,8 +12,8 @@ export function shouldDisplayFacet(
         (!showSingleValuedFacets &&
             facet.values.length === 1 &&
             facet.values[0].count === totalCount &&
-            !Object.values(inputFacets).find(
-                vs => !![...(vs.selected ?? []), ...(vs.excluded ?? [])].find(v => facet.values[0].code === v)
+            !Object.values(inputFacets).some(
+                vs => !![...(vs.selected ?? []), ...(vs.excluded ?? [])].some(v => facet.values[0].code === v)
             ))
     );
 }

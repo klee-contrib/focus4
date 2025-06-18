@@ -32,6 +32,6 @@ function getScrollableParent(ele: HTMLElement): HTMLElement {
     return !ele || ele === document.body
         ? (window as unknown as HTMLElement)
         : isScrollable(ele)
-        ? ele
-        : getScrollableParent(ele.parentNode as HTMLElement);
+          ? ele
+          : getScrollableParent(ele.parentNode as HTMLElement);
 }

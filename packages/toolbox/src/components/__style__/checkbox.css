@@ -46,7 +46,8 @@
     line-height: var(--checkbox-size);
     outline: var(--checkbox-outline-size) solid var(--input-outline-color);
     border-radius: 1%;
-    transition: background-color var(--animation-duration) var(--animation-curve-default),
+    transition:
+        background-color var(--animation-duration) var(--animation-curve-default),
         outline-color var(--animation-duration) var(--animation-curve-default);
 }
 

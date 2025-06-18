@@ -1,4 +1,5 @@
 import {EntityToType, StoreNode} from "../types";
+
 import {StructureEntity} from "./structure";
 
 export type Operation = EntityToType<typeof OperationEntity>;

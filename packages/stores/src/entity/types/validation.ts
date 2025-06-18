@@ -35,5 +35,5 @@ export type Validator<T> =
     | (T extends string
           ? DateValidator | EmailValidator | RegexValidator | StringValidator
           : T extends number
-          ? NumberValidator
-          : never);
+            ? NumberValidator
+            : never);

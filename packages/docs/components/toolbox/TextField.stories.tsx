@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {TextField} from "@focus4/toolbox";
 
 import {TextFieldMeta} from "./metas/text-field";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...TextFieldMeta,

@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Layout, Panel, ScrollspyContainer} from "@focus4/layout";
 
 import {ScrollspyContainerMeta} from "./metas/scrollspy-container";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ScrollspyContainerMeta,

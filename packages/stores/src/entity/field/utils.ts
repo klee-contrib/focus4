@@ -174,9 +174,9 @@ export function makeField(param1: any, param2: any = {}) {
                     label,
                     DisplayComponent,
                     LabelComponent,
-                    displayProps: {...(domain.displayProps ?? {}), ...displayProps},
-                    labelProps: {...(domain.labelProps ?? {}), ...labelProps},
-                    fieldProps: {...(domain.fieldProps ?? {}), ...fieldProps}
+                    displayProps: {...domain.displayProps, ...displayProps},
+                    labelProps: {...domain.labelProps, ...labelProps},
+                    fieldProps: {...domain.fieldProps, ...fieldProps}
                 })
                 .value(() => param1)
                 .edit(false)

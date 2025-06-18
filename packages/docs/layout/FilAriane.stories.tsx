@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {FilAriane} from "@focus4/layout";
 
 import {FilArianeMeta} from "./metas/fil-ariane";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...FilArianeMeta,

@@ -72,7 +72,7 @@ Ces deux modules proposent des composants graphiques de haut niveau qui permette
 ### `@focus4/tooling`
 
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
-En particulier, il inclut [Vite](https://vitejs.dev) et [ESLint](https://eslint.org/) et des configs par défaut à étendre pour ces outils.
+En particulier, il inclut [Vite](https://vitejs.dev) et [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) et des configs par défaut à étendre pour ces outils.
 
 De plus, il contient l'outil de génération de types CSS ainsi qu'un utilitaire pour faciliter l'installation et les montées de versions des modules de Focus.
 Cet outil s'utilise via la commande `npx focus4 install` ou `npx focus4 update` (les deux commandes sont identiques), et parcourera votre

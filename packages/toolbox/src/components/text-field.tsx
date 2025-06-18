@@ -29,6 +29,7 @@ import {CircularProgressIndicator} from "./progress-indicator";
 import {Tooltip} from "./tooltip";
 
 import textFieldCss, {TextFieldCss} from "./__style__/text-field.css";
+
 export {textFieldCss};
 export type {TextFieldCss};
 
@@ -255,7 +256,7 @@ export function TextField({
 
     const handleChange = useCallback(
         function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-            const newValue = e.target.value.substring(0, maxLength);
+            const newValue = e.target.value.slice(0, maxLength);
             onChange?.(newValue, e);
         },
         [maxLength, onChange]

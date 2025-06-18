@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Tooltip} from "@focus4/toolbox";
 
 import {TooltipMeta} from "./metas/tooltip";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...TooltipMeta,

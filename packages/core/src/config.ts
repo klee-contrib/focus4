@@ -1,7 +1,7 @@
 /** Config Focus de l'application */
 export const coreConfig = {
     /** Durée de cache par défaut pour les listes de référence. */
-    referenceCacheDuration: 3600000, // 1h.
+    referenceCacheDuration: 3_600_000, // 1h.
 
     /** Nombre de tentatives de fetch supplémentaires après un "Failed to fetch" */
     retryCountOnFailedFetch: 2,

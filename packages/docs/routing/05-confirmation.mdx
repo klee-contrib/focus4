@@ -8,8 +8,8 @@ Le routeur peut entrer un mode spécial appelé **"confirmation"**, qui permet d
 
 Lorsque le mode est activé, **toute tentative de navigation sera bloquée**. En particulier :
 
--   S'il s'agit d'une navigation **interne, la route dans l'URL changera mais la navigation effective ne sera réalisée (ou pas) qu'après confirmation de l'utilisateur**, via des méthodes dédiées sur le routeur.
--   S'il s'agit d'une navigation **externe (ou un rechargement de la page), une popup du navigateur apparaîtra** et vous demandera de confirmer ou non la navigation. Elle n'est pas paramétrable (il n'existe aucune API de navigateur qui permet de le faire).
+- S'il s'agit d'une navigation **interne, la route dans l'URL changera mais la navigation effective ne sera réalisée (ou pas) qu'après confirmation de l'utilisateur**, via des méthodes dédiées sur le routeur.
+- S'il s'agit d'une navigation **externe (ou un rechargement de la page), une popup du navigateur apparaîtra** et vous demandera de confirmer ou non la navigation. Elle n'est pas paramétrable (il n'existe aucune API de navigateur qui permet de le faire).
 
 Ce mode d'utilise via l'objet **`router.confirmation`**, qui expose les propriétés et méthodes suivantes :
 

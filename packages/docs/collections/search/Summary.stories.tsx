@@ -1,10 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Summary} from "@focus4/collections";
 
 import {SummaryMeta} from "../metas/summary";
 
 import {collectionStore} from "./store";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SummaryMeta,

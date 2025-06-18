@@ -19,7 +19,6 @@ export function TableLine<T extends object>({
     columns,
     domRef,
     hasActions,
-    i18nPrefix = "focus",
     onClick,
     operationList,
     theme,
@@ -37,8 +36,6 @@ export function TableLine<T extends object>({
     hasActions?: boolean;
     /** Affiche la sélection sur les lignes (store uniquement). */
     hasSelection?: boolean;
-    /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
-    i18nPrefix?: string;
     /** Appelé au clic sur une ligne. */
     onClick?: (data: T, event: MouseEvent<HTMLTableCellElement>) => void;
     /** La liste des actions sur chaque élément de la liste. */

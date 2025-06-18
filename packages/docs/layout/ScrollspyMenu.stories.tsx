@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {ScrollspyMenu} from "@focus4/layout";
 
 import {ScrollspyMenuMeta} from "./metas/scrollspy-menu";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ScrollspyMenuMeta,

@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {HeaderActions, HeaderContent, HeaderItem, HeaderScrolling, HeaderTopRow, Layout} from "@focus4/layout";
 
 import {HeaderScrollingMeta} from "./metas/header-scrolling";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...HeaderScrollingMeta,

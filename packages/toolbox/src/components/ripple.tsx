@@ -6,6 +6,7 @@ import {useTheme} from "@focus4/styling";
 import {PointerEvents} from "../utils/pointer-events";
 
 import rippleCss, {RippleCss} from "./__style__/ripple.css";
+
 export {rippleCss};
 export type {RippleCss};
 
@@ -76,6 +77,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
 
     const clearRipples = useCallback(function clearRipples() {
         state.current.isPointerOut = true;
+        // oxlint-disable-next-line no-array-for-each
         state.current.ripples.forEach((_, ripple) => onRippleFinish(ripple));
     }, []);
 
@@ -112,9 +114,9 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
             ripple.style.height = `${side}px`;
 
             element.style.overflow = "hidden";
-            element.appendChild(ripple);
+            element.append(ripple);
 
-            const {opacity, ...options} = getOptions(ripple);
+            const {opacity: _, ...options} = getOptions(ripple);
             const animation = ripple.animate(
                 [
                     {
@@ -172,8 +174,8 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
 
 function toMs(d: string) {
     if (d.endsWith("ms")) {
-        return +d.substring(0, d.length - 2);
+        return +d.slice(0, -2);
     } else {
-        return +d.substring(0, d.length - 1) * 1000;
+        return +d.slice(0, -1) * 1000;
     }
 }

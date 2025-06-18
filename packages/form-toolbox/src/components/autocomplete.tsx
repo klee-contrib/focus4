@@ -104,7 +104,7 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
                       })
                 ).then(async label => {
                     setQuery(label ?? `${value}`);
-                    if (!values.find(v => getKey(v) === value) && label && querySearcher) {
+                    if (!values.some(v => getKey(v) === value) && label && querySearcher) {
                         setValues(await querySearcher(label));
                     }
                 })
@@ -124,8 +124,8 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
                     setValues(await requestStore.track(trackingId, () => querySearcher(newQuery.trim(), {signal})));
 
                     abortController.current = undefined;
-                } catch (e: unknown) {
-                    if (isAbortError(e)) {
+                } catch (error) {
+                    if (isAbortError(error)) {
                         return;
                     }
                 }

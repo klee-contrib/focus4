@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {MainMenu, MainMenuItem} from "@focus4/layout";
 
 import {MainMenuMeta} from "./metas/main-menu";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...MainMenuMeta,

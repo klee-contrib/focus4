@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {BooleanRadio} from "@focus4/form-toolbox";
 
 import {BooleanRadioMeta} from "./metas/boolean-radio";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...BooleanRadioMeta,

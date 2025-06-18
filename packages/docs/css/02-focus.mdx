@@ -63,9 +63,9 @@ Vous pouvez donc, en plus des surcharges locales et globales, définir du CSS pe
 
 Focus définit des variables CSS à plusieurs niveaux :
 
--   Des variables "générales", utilisées par la plupart des composants.
--   Des variables par composant, préfixées par le nom du composant (ex : pour [`Chip`](/docs/composants-focus4∕toolbox-chip--docs), il s'agit de toutes les variables en `--chip-XXX`).
--   Des variables "communes", typiquement les variables en `--button-XXX` et `--input-XXX`, qui sont partagées par un ensemble de composants. (`--button-XXX` par tous les boutons et `--input-XXX` par tous les composants de saisies).
+- Des variables "générales", utilisées par la plupart des composants.
+- Des variables par composant, préfixées par le nom du composant (ex : pour [`Chip`](/docs/composants-focus4∕toolbox-chip--docs), il s'agit de toutes les variables en `--chip-XXX`).
+- Des variables "communes", typiquement les variables en `--button-XXX` et `--input-XXX`, qui sont partagées par un ensemble de composants. (`--button-XXX` par tous les boutons et `--input-XXX` par tous les composants de saisies).
 
 Toutes ces variables sont définies sur `:root` et sont donc des **variables globales**. Les variables peuvent néanmoins être surchargées localement dans une classe CSS pour s'appliquer à tous les éléments à l'intérieur. Focus utilise cette mécanique dans certains de ces composants complexes pour modifier certains aspects des composants de base.
 
@@ -93,8 +93,8 @@ De plus, vous devriez également utiliser des variables pour votre CSS personnal
 
 Focus définit des palettes de couleurs standard (issues de la première spécification Material Design). Elles prennent la forme `--palette-{color}-{intensity}`, où :
 
--   `intensity` est un chiffre valant `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `a100`, `a200`, `a400` ou `a700`
--   `color` une couleur au choix entre `red`, `pink`, `purple`, `deep-purple`, `indigo`, `blue`, `light-blue`, `cyan`, `teal`, `green`, `light-green`, `lime`, `yellow`, `amber`, `orange`, `deep-orange`, `brown`, `grey`, `blue-grey`.
+- `intensity` est un chiffre valant `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `a100`, `a200`, `a400` ou `a700`
+- `color` une couleur au choix entre `red`, `pink`, `purple`, `deep-purple`, `indigo`, `blue`, `light-blue`, `cyan`, `teal`, `green`, `light-green`, `lime`, `yellow`, `amber`, `orange`, `deep-orange`, `brown`, `grey`, `blue-grey`.
 
 Les deux couleurs `--color-white` et `--color-black` sont aussi définies.
 
@@ -112,9 +112,9 @@ Les deux couleurs `--color-white` et `--color-black` sont aussi définies.
 
 Il existe également 3 couleurs principales, utilisées **très** largement dans les composants Focus (surtout la première) :
 
--   `--color-primary`
--   `--color-primary-light`
--   `--color-accent`
+- `--color-primary`
+- `--color-primary-light`
+- `--color-accent`
 
 Elles sont initialisées avec 3 couleurs parmi le choix de palettes, et il s'agira probablement des premières variables à personnaliser dans votre application.
 
@@ -122,19 +122,19 @@ Elles sont initialisées avec 3 couleurs parmi le choix de palettes, et il s'agi
 
 ### Autres variables générales
 
--   `--preferred-font` est la police utilisée partout, en particulier dans tous les composants
--   `--shadow-2p` / `--shadow-4p` sont les ombres utilisées un peu partout
--   Les variables `--animation-XXX` régissent les types et les temps d'animations
--   Les variables `--font-size-XXX` et `--font-weight-XXX` parlent d'elles-mêmes
--   Les variables `--z-index-XXX` définissent des valeurs standard de z-index.
+- `--preferred-font` est la police utilisée partout, en particulier dans tous les composants
+- `--shadow-2p` / `--shadow-4p` sont les ombres utilisées un peu partout
+- Les variables `--animation-XXX` régissent les types et les temps d'animations
+- Les variables `--font-size-XXX` et `--font-weight-XXX` parlent d'elles-mêmes
+- Les variables `--z-index-XXX` définissent des valeurs standard de z-index.
 
 ### Variables partagées
 
 Un certain nombre de variables, en particulier pour définir des couleurs, sont partagées entre plusieurs composants :
 
--   Certaines variables en `--button-XXX` sont utilisées dans tous les composants de boutons.
--   Les variables en `--input-XXX` sont partagées entre tous les composants de saisie.
--   Les variables en `--focus-ring-X` sont utilisés pour gérer les indicateurs de focus sur tous les composants.
+- Certaines variables en `--button-XXX` sont utilisées dans tous les composants de boutons.
+- Les variables en `--input-XXX` sont partagées entre tous les composants de saisie.
+- Les variables en `--focus-ring-X` sont utilisés pour gérer les indicateurs de focus sur tous les composants.
 
 ### Variables locales
 

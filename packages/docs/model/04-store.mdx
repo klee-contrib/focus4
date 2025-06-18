@@ -84,9 +84,9 @@ Contrairement à de la donnée brute sous forme de JSON, un `StoreNode` contient
 
 La fonction `makeEntityStore` permet de créer un `StoreNode` composite à partir de plusieurs entités. Son unique paramètre est un objet de configuration, qui permet de décrire le contenu du `StoreNode` que l'on souhaite créer. Il peut donc contenir :
 
--   Des objets de définition d'entité (généralement générés sous le nom `ProfilReadEntity`), pour générér les `StoreNode` correspondants.
--   Des arrays contenants un objet d'entité (`[ProfilReadEntity]`), pour générer les `StoreListNode`s correspondants.
--   Des `StoreNode`s pré-existants. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées par exemple.
+- Des objets de définition d'entité (généralement générés sous le nom `ProfilReadEntity`), pour générér les `StoreNode` correspondants.
+- Des arrays contenants un objet d'entité (`[ProfilReadEntity]`), pour générer les `StoreListNode`s correspondants.
+- Des `StoreNode`s pré-existants. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées par exemple.
 
 ### `buildNode(entity)`
 
@@ -108,9 +108,9 @@ Pour rappel, un `StoreNode` ne peut contenir sur des `EntityField` et des `Store
 
 Le `StoreNode` expose les APIs suivantes :
 
--   **`node.clear()`**, pour vider le store et le retourner à son état initial (vide).
--   **`node.replace(data)`**, pour remplacer son contenu par l'objet `data` (au format "normal") dans le store.
--   **`node.set(data)`** pour mettre à jour les champs définis dans l'objet `data` (au format "normal") dans le store.
+- **`node.clear()`**, pour vider le store et le retourner à son état initial (vide).
+- **`node.replace(data)`**, pour remplacer son contenu par l'objet `data` (au format "normal") dans le store.
+- **`node.set(data)`** pour mettre à jour les champs définis dans l'objet `data` (au format "normal") dans le store.
 
     _Remarque : Vous n'êtes pas obligés d'utiliser `set()` pour mettre à jour une valeur, `field.value = value` fonctionne tout aussi bien. En revanche, `set()` à l'avantage de poser une action MobX, ce qui est idéal lorsque l'on veut mettre à jour **plusieurs** champs à la fois._
 

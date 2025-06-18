@@ -20,6 +20,7 @@ import {Ripple} from "./ripple";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
+
 export {autocompleteCss};
 export type {AutocompleteCss};
 
@@ -212,8 +213,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 case "anywhere":
                     return v.includes(q);
                 case "word":
-                    const re = new RegExp(`(?:^|\\s)${q}`, "g");
-                    return re.test(v);
+                    return new RegExp(`(?:^|\\s)${q}`, "g").test(v);
                 default:
                     return false;
             }
@@ -234,10 +234,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
             setSelected(getKey(suggestions[0]));
         } else if (
             selected &&
-            !suggestions
-                .map(getKey)
-                .concat(additionalSuggestions?.map(s => s.key) ?? [])
-                .includes(selected)
+            ![...suggestions.map(getKey), ...(additionalSuggestions?.map(s => s.key) ?? [])].includes(selected)
         ) {
             setSelected(undefined);
         }
@@ -375,12 +372,12 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                     direction === "auto"
                         ? `auto-${sizing === "no-fit-single-line" ? "left" : "fill"}`
                         : direction === "up"
-                        ? sizing === "no-fit-single-line"
-                            ? "top-left"
-                            : "top"
-                        : sizing === "no-fit-single-line"
-                        ? "bottom-left"
-                        : "bottom"
+                          ? sizing === "no-fit-single-line"
+                              ? "top-left"
+                              : "top"
+                          : sizing === "no-fit-single-line"
+                            ? "bottom-left"
+                            : "bottom"
                 }
                 selected={selected}
             >
@@ -421,7 +418,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
 function normalize(value: string) {
     return value
         .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
+        .replaceAll(/\p{Diacritic}/gu, "")
         .toLowerCase()
         .trim();
 }

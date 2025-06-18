@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Ripple} from "@focus4/toolbox";
 
 import {RippleMeta} from "./metas/ripple";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...RippleMeta,

@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Label} from "@focus4/form-toolbox";
 
 import {LabelMeta} from "./metas/label";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...LabelMeta,

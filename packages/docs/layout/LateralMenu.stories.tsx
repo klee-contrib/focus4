@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {LateralMenu} from "@focus4/layout";
 
 import {LateralMenuMeta} from "./metas/lateral-menu";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...LateralMenuMeta,

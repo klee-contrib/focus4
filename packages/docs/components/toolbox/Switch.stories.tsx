@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Switch} from "@focus4/toolbox";
 
 import {SwitchMeta} from "./metas/switch";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SwitchMeta,

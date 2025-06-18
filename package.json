@@ -30,9 +30,8 @@
     "docgen": "node scripts/docgen.mjs",
     "docs": "storybook dev --docs -p 6006 -c packages/docs/.storybook",
     "docs-build": "storybook build --docs -c packages/docs/.storybook -o docs",
-    "eslint": "eslint packages",
+    "oxlint": "oxlint packages",
     "publish": "lerna publish --exact",
-    "stylelint": "stylelint packages/**/*.css",
     "test": "vitest run",
     "test-ci": "vitest run --reporter=default --reporter=junit --outputFile=test-report.xml"
   },

@@ -14,10 +14,10 @@ Pour répondre à ces problématiques, Focus propose deux fonctions utilitaires 
 
 Cette fonction permet de créer un champ en lecture seule à partir d'une valeur. L'objet optionnel `options` peut contenir :
 
--   Un domaine (via `domain`).
--   Un formatter (via `displayFormatter`)
--   Les composants `LabelComponent` et `DisplayComponent`
--   Un libellé
+- Un domaine (via `domain`).
+- Un formatter (via `displayFormatter`)
+- Les composants `LabelComponent` et `DisplayComponent`
+- Un libellé
 
 Cet usage de `makeField` est pratique pour pouvoir utiliser [`stringFor`](/docs/modèle-métier-afficher-des-champs--docs#stringforfield-values) ou les [composants de champs](/docs/modèle-métier-afficher-des-champs--docs#méthodes-de-champs) en consultation sur une valeur externe.
 
@@ -62,8 +62,8 @@ Permet de contrôler l'état d'édition du champ.
 
 `value` peut valoir :
 
--   `true` ou `false`, selon l'état souhaité.
--   **Dans un formulaire uniquement**, une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du champ** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
+- `true` ou `false`, selon l'état souhaité.
+- **Dans un formulaire uniquement**, une fonction retournant `true` ou `false`. Utiliser une fonction permettra de **forcer l'état d'édition du champ** à la valeur retournée par la fonction, au lieu de la rendre librement modifiable.
 
 ### `domain(domain)`
 
@@ -77,10 +77,10 @@ _Remarque : vous serez très souvent obligés de poser un domaine afin de pouvoi
 
 La fonction `value` peut être utilisée pour:
 
--   Définir une valeur initiale à un champ
--   Définir la valeur du champ comme calculée, avec :
-    -   `get`, pour spécifier le getter du champ
-    -   `set`, pour spécifier le setter du champ (optionnel, le champ n'est pas obligé d'être modifiable).
+- Définir une valeur initiale à un champ
+- Définir la valeur du champ comme calculée, avec :
+    - `get`, pour spécifier le getter du champ
+    - `set`, pour spécifier le setter du champ (optionnel, le champ n'est pas obligé d'être modifiable).
 
 `value()` peut être utilisé aussi bien sur des nouveaux champs (`makeField` / `add`) que des champs préexistants (`patch`).
 
@@ -90,8 +90,8 @@ Le type de `value()` est contraint par le [type de champ du domaine](/docs/modè
 
 La fonction `metadata` permet de re(définir) les métadonnées d'un champ. Elle prend un seul paramètre, `$metadata`, qui contient toutes les métadonnées à remplacer. Cela peut être :
 
--   Tout ce qui est définit dans le [domaine](/docs/modèle-métier-domaines--docs) (formatteur, validateurs, composants... mais pas le type de champ).
--   Tout ce qui est définit sur le [champ](/docs/modèle-métier-champs-et-entités--docs#définition-dun-champ) (libellé, commentaire, caractère obligatoire).
+- Tout ce qui est définit dans le [domaine](/docs/modèle-métier-domaines--docs) (formatteur, validateurs, composants... mais pas le type de champ).
+- Tout ce qui est définit sur le [champ](/docs/modèle-métier-champs-et-entités--docs#définition-dun-champ) (libellé, commentaire, caractère obligatoire).
 
 **Dans un formulaire uniquement**, `$metadata` peut être une fonction qui renvoie ces mêmes métadonnées, afin de pouvoir les rendre dynamiques (pour dépendre d'un **état observable** et construire une dérivation, par exemple d'autres champs du même formulaire).
 

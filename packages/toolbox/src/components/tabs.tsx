@@ -9,6 +9,7 @@ import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
 import tabsCss, {TabsCss} from "./__style__/tabs.css";
+
 export {tabsCss};
 export type {TabsCss};
 

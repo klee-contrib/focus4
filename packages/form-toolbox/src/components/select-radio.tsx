@@ -8,6 +8,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
+
 export {selectRadioCss};
 export type {SelectRadioCss};
 
@@ -77,10 +78,10 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
     return useObserver(() => {
         let definitiveValues: any[] = values;
         if (hasUndefined === "last-option") {
-            definitiveValues = [...values.slice(), {[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}];
+            definitiveValues = [...values, {[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}];
         }
         if (hasUndefined === "first-option") {
-            definitiveValues = [{[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}, ...values.slice()];
+            definitiveValues = [{[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}, ...values];
         }
 
         return (

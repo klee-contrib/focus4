@@ -32,7 +32,7 @@ export class RequestStore {
     /** Récupère les requêtes en cours. */
     @computed.struct
     get pending(): Request[] {
-        return Array.from(this.pendingRequests).map(([id, {method, url}]) => ({id, method, url}));
+        return [...this.pendingRequests].map(([id, {method, url}]) => ({id, method, url}));
     }
 
     /**
@@ -41,7 +41,7 @@ export class RequestStore {
      * @returns true/false
      */
     readonly isLoading = computedFn((trackingId: string) =>
-        Array.from(this.trackedRequests.values()).some(trackingIds => trackingIds.includes(trackingId))
+        [...this.trackedRequests.values()].some(trackingIds => trackingIds.includes(trackingId))
     );
 
     /**
@@ -51,7 +51,7 @@ export class RequestStore {
      */
     readonly getPendingCount = computedFn(
         (trackingId: string) =>
-            Array.from(this.trackedRequests.values()).filter(trackingIds => trackingIds.includes(trackingId)).length
+            [...this.trackedRequests.values()].filter(trackingIds => trackingIds.includes(trackingId)).length
     );
 
     /**

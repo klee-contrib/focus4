@@ -11,6 +11,7 @@ import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
 import iconButtonCss, {IconButtonCss} from "./__style__/icon-button.css";
+
 export {iconButtonCss};
 export type {IconButtonCss};
 

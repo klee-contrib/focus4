@@ -1,10 +1,9 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {Slider} from "@focus4/toolbox";
 
 import {SliderMeta} from "./metas/slider";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SliderMeta,

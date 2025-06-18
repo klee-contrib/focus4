@@ -10,28 +10,28 @@ En général, un fichier CSS ne contient pas que des noms de classes "simples". 
 
 Supposons que l'on ait un composant `panel`, qui à un `content`, un `title`, dont le dernier peut être positionné en haut (`top`) ou en bas (`bottom`) :
 
--   Le "Block", qui correspondrait ici à `panel`
--   Les "Elements", qui correspondraient ici à `content` et à `title`
--   Les "Modifiers", qui correspondraient ici à `top` et à `bottom`
+- Le "Block", qui correspondrait ici à `panel`
+- Les "Elements", qui correspondraient ici à `content` et à `title`
+- Les "Modifiers", qui correspondraient ici à `top` et à `bottom`
 
 En convention BEM, ces classes s'appelleraient :
 
--   `.panel`
--   `.panel_content`
--   `.panel_title`
--   `.panel_title--top`
--   `.panel_title--bottom`
+- `.panel`
+- `.panel_content`
+- `.panel_title`
+- `.panel_title--top`
+- `.panel_title--bottom`
 
 Puisque l'on divise déjà nos classes CSS en fichiers distincts, on obtient déjà le niveau "Block - Element" immédiatement :
 
--   `panel.css : .panel` -> `.panel_panel` -> `panelCss.panel` (celui-là est un peu malheureux mais on pourra s'y faire)
--   `panel.css : .title` -> `.panel_title` -> `panelCss.title`
--   `panel.css : .content` -> `.panel_content` -> `panelCss.content`
+- `panel.css : .panel` -> `.panel_panel` -> `panelCss.panel` (celui-là est un peu malheureux mais on pourra s'y faire)
+- `panel.css : .title` -> `.panel_title` -> `panelCss.title`
+- `panel.css : .content` -> `.panel_content` -> `panelCss.content`
 
 Si on ajoute les cas de modifiers en revanche, ça devient tout de suite un peu moins sympa :
 
--   `panel.css : .title--top` -> `.panel_title--top` -> `panelCss['title--top']`
--   `panel.css : .title--bottom` -> `.panel_title--bottom` -> `panelCss['title--bottom']`
+- `panel.css : .title--top` -> `.panel_title--top` -> `panelCss['title--top']`
+- `panel.css : .title--bottom` -> `.panel_title--bottom` -> `panelCss['title--bottom']`
 
 _Remarque : malgré l'usage de l'indexeur d'objet, Typescript valide quand même le nom de la classe_
 

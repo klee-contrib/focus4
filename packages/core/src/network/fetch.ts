@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import {merge} from "es-toolkit";
 import i18next from "i18next";
 
@@ -30,13 +29,13 @@ export async function coreFetch(
                 body instanceof FormData
                     ? {body}
                     : body
-                    ? {
-                          headers: {
-                              "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
-                          },
-                          body: JSON.stringify(body)
-                      }
-                    : {}
+                      ? {
+                            headers: {
+                                "Content-Type": typeof body === "object" ? "application/json" : "text/plain"
+                            },
+                            body: JSON.stringify(body)
+                        }
+                      : {}
             ),
             options
         )
@@ -95,7 +94,7 @@ export async function coreFetch(
         } catch (error: unknown) {
             if (isAbortError(error)) {
                 requestStore.endRequest(id);
-                return Promise.reject(error);
+                throw error;
             }
 
             // Requête en erreur (= pas de retour serveur).
@@ -113,10 +112,10 @@ export async function coreFetch(
                             error as string
                         }.`
                     );
-                    return Promise.reject(error);
+                    throw error;
                 }
             } else {
-                return Promise.reject(error);
+                throw error;
             }
         }
     }
@@ -139,10 +138,10 @@ export async function downloadFile(response: Response) {
     const a = document.createElement("a");
     a.href = objectUrl;
     a.download = filename;
-    document.body.appendChild(a);
+    document.body.append(a);
     a.click();
     setTimeout(() => {
-        document.body.removeChild(a);
+        a.remove();
         window.URL.revokeObjectURL(objectUrl);
     }, 100);
 }

@@ -4,7 +4,7 @@ function get() {
     const delay = toMs(animationDelay);
     const duration = toMs(animationDuration);
     const ease = animationTimingFunction.startsWith("cubic-bezier")
-        ? (animationTimingFunction.substring(13).split(",").map(parseFloat) as [number, number, number, number])
+        ? (animationTimingFunction.slice(13).split(",").map(parseFloat) as [number, number, number, number])
         : undefined;
 
     return {delay, duration, ease};
@@ -31,8 +31,8 @@ export function getSpringTransition() {
 
 function toMs(d: string) {
     if (d.endsWith("ms")) {
-        return +d.substring(0, d.length - 2);
+        return +d.slice(0, -2);
     } else {
-        return +d.substring(0, d.length - 1) * 1000;
+        return +d.slice(0, -1) * 1000;
     }
 }

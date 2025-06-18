@@ -57,7 +57,7 @@ export function MessageCenter({
                     state.notifications.push({type, message, timeout: messageTypes[type]});
                 })
             ),
-        (Object.keys(messageTypes) as unknown[]).concat(Object.values(messageTypes))
+        [...(Object.keys(messageTypes) as unknown[]), ...Object.values(messageTypes)]
     );
 
     return useObserver(() => (

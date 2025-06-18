@@ -5,6 +5,7 @@ import {useTheme} from "@focus4/styling";
 import {Button, FontIcon} from "@focus4/toolbox";
 
 import listBaseCss from "./__style__/list-base.css";
+
 export interface AddItemProps<T extends object> {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler: () => void;

@@ -40,6 +40,7 @@ import {
     SelectionStatus,
     SortInput
 } from "./types";
+
 export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput, SortInput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
@@ -81,7 +82,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Facettes sélectionnées. */
     @computed.struct
     get inputFacets() {
-        return Array.from(this.innerInputFacets.entries()).reduce(
+        return [...this.innerInputFacets.entries()].reduce(
             (res, [key, value]) => ({...res, [key]: toJS(value)}),
             {} as InputFacets
         );
@@ -258,7 +259,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         return Object.entries(
             groupByFacet(
                 this.list,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                // oxlint-disable-next-line no-non-null-asserted-optional-chain
                 this.localStoreConfig.facetDefinitions.find(f => f.code === this.groupingKey)?.fieldName!
             )
         ).map(([code, list]) => ({
@@ -274,7 +275,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     get list(): T[] {
         if (this.type === "server") {
             if (this.innerGroups.length) {
-                return flatten(this.innerGroups.map(g => g.list.slice()));
+                return flatten(this.innerGroups.map(g => [...g.list]));
             } else {
                 return this.innerList;
             }
@@ -342,7 +343,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     /** Liste des éléments séléctionnés */
     @computed
     get selectedList(): readonly T[] {
-        return Array.from(this.selectedItems);
+        return [...this.selectedItems];
     }
 
     /** Etat de la sélection (aucune, partielle, totale). */
@@ -582,6 +583,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     removeFacetValue(facetKey?: string, facetValue?: string) {
         // Suppression globale : on fait un forEach au lieu d'un simple "clear" car on ne veut pas perdre les opérateurs.
         if (!facetKey) {
+            // oxlint-disable-next-line no-array-for-each
             this.innerInputFacets.forEach((_, code) => this.removeFacetValue(code));
             return;
         }
@@ -591,14 +593,14 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             return;
         }
 
-        (["excluded", "selected"] as const).forEach(type => {
+        for (const type of ["excluded", "selected"] as const) {
             const values = facet[type] as IObservableArray<string>;
             if (facetValue) {
                 values?.remove(facetValue);
             } else {
                 values?.clear();
             }
-        });
+        }
 
         // On nettoie...
         if (facet.selected?.length === 0) {
@@ -636,6 +638,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
      * @param groupCode Le code de la valeur de groupe en cours.
      */
     getSearchGroupStore(groupCode: string): CollectionStore<T> {
+        // oxlint-disable-next-line no-this-assignment
         const self = this;
         return observable(
             {
@@ -679,14 +682,16 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
                 toggleAll() {
                     const areAllItemsIn = this.selectionnableList.every(item => self.selectedItems.has(item));
 
-                    this.list.forEach(item => {
+                    for (const item of this.list) {
                         if (self.selectedItems.has(item)) {
                             self.selectedItems.delete(item);
                         }
-                    });
+                    }
 
                     if (!areAllItemsIn) {
-                        this.selectionnableList.forEach(item => self.selectedItems.add(item));
+                        for (const item of this.selectionnableList) {
+                            self.selectedItems.add(item);
+                        }
                     }
                 }
             },
@@ -737,28 +742,32 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
 }
 
 function groupByFacet<T>(list: T[], fieldName: keyof T) {
-    return list.reduce((buckets, item) => {
-        let value = item[fieldName];
-        if (isEntityField(value)) {
-            // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-            value = value.value;
-        }
-
-        function add(key?: any) {
-            buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`]?.slice() ?? []), item];
-        }
-
-        if (Array.isArray(value) || isObservableArray(value)) {
-            if (value.length === 0) {
-                add();
-            } else {
-                value.forEach(add);
+    return list.reduce(
+        (buckets, item) => {
+            let value = item[fieldName];
+            if (isEntityField(value)) {
+                value = value.value;
             }
-        } else {
-            add(value);
-        }
-        return buckets;
-    }, {} as Record<string, T[]>);
+
+            function add(key?: any) {
+                buckets[`${key ?? "<null>"}`] = [...(buckets[`${key ?? "<null>"}`] ?? []), item];
+            }
+
+            if (Array.isArray(value) || isObservableArray(value)) {
+                if (value.length === 0) {
+                    add();
+                } else {
+                    for (const item of value) {
+                        add(item);
+                    }
+                }
+            } else {
+                add(value);
+            }
+            return buckets;
+        },
+        {} as Record<string, T[]>
+    );
 }
 
 function isFacetMatch(facetValue: string, itemValue: any): boolean {
@@ -779,7 +788,7 @@ function isFacetMatch(facetValue: string, itemValue: any): boolean {
     }
 
     if (typeof itemValue === "number") {
-        return itemValue === (parseFloat(facetValue) || undefined);
+        return itemValue === (Number.parseFloat(facetValue) || undefined);
     }
 
     if (typeof itemValue === "boolean") {
@@ -794,6 +803,6 @@ function isFacetMatch(facetValue: string, itemValue: any): boolean {
         return !facetValue;
     }
 
-    // eslint-disable-next-line eqeqeq
+    // oxlint-disable-next-line eqeqeq
     return itemValue == facetValue;
 }

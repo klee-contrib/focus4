@@ -1,11 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
 
 import {SelectRadio} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
 
 import {SelectRadioMeta} from "./metas/select-radio";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...SelectRadioMeta,

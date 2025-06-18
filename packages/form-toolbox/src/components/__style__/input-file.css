@@ -18,7 +18,8 @@
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
-    transition: outline-color var(--animation-duration-short) var(--animation-curve-default),
+    transition:
+        outline-color var(--animation-duration-short) var(--animation-curve-default),
         outline-width 0.1s linear 0s;
     cursor: pointer;
 

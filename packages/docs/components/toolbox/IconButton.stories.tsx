@@ -1,8 +1,8 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {IconButton} from "@focus4/toolbox";
 
 import {IconButtonMeta} from "./metas/icon-button";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...IconButtonMeta,

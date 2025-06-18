@@ -13,6 +13,7 @@ import {OverlayContext, ScrollableContext} from "../utils";
 import {Overlay} from "./overlay";
 
 import scrollableCss, {ScrollableCss} from "./__style__/scrollable.css";
+
 export {scrollableCss};
 export type {ScrollableCss};
 
@@ -71,13 +72,14 @@ export function Scrollable({
 
     useLayoutEffect(() => {
         intersectionObserver.current = new IntersectionObserver(
-            entries =>
-                entries.forEach(e => {
+            entries => {
+                for (const e of entries) {
                     const onIntersect = onIntersects.get(e.target);
                     if (onIntersect) {
                         onIntersect(Math.round(e.intersectionRatio * 100) / 100, e.isIntersecting);
                     }
-                }),
+                }
+            },
             {root: scrollableNode.current, threshold: range(0, 1025, 25).map(t => t / 1000)}
         );
     }, []);
@@ -97,8 +99,7 @@ export function Scrollable({
                 intersectionObserver.current.unobserve(node);
             }
         };
-    },
-    []);
+    }, []);
 
     const portal = useCallback(function portal(node: ReactElement) {
         if (containerNode.current) {

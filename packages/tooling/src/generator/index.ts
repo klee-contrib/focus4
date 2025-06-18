@@ -1,8 +1,7 @@
-import {promises as fs} from "fs";
-import path from "path";
-
 import {camelCase, sortBy, upperFirst} from "es-toolkit";
 import {glob} from "glob";
+import {promises as fs} from "node:fs";
+import path from "node:path";
 import postcss from "postcss";
 import extractImports from "postcss-modules-extract-imports";
 import localByDefault from "postcss-modules-local-by-default";
@@ -27,7 +26,7 @@ export async function loadCSS(sourceString: string) {
 }
 
 export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
-    const root = path.join(process.cwd(), rootDir).replace(/\\/g, "/");
+    const root = path.join(process.cwd(), rootDir).replaceAll("\\", "/");
     const pattern = `${root}/**/*.css`;
     console.info(`Recherche des fichiers dans ${pattern}...`);
     const files = glob
@@ -36,9 +35,9 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             if (regex && !regex.test(file)) {
                 return {file: "", interfaceName: ""};
             }
-            const parts = file.replace(/\\/g, "/").split("/");
+            const parts = file.replaceAll("\\", "/").split("/");
             const fileName = parts[parts.length - 1];
-            const interfaceName = camelCase(fileName.substring(0, fileName.length - 4));
+            const interfaceName = camelCase(fileName.slice(0, -4));
             return {file, interfaceName};
         })
         .filter(f => !!f.file);
@@ -71,11 +70,11 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
 
             const output = `import {CSSElement${hasModifier ? ", CSSMod" : ""}} from "@focus4/styling";
 
-${Array.from(elements)
+${[...elements]
     .sort()
     .map(
         element =>
-            `interface ${element} { _${hashCode(filePath.replace(/\\/g, "/").replace(root, "") + element)}: void }`
+            `interface ${element} { _${hashCode(filePath.replaceAll("\\", "/").replace(root, "") + element)}: void }`
     )
     .join("\r\n")}
 
@@ -97,7 +96,8 @@ function hashCode(str: string) {
     let hash = 5381;
     let i = str.length;
     while (i) {
-        hash = (hash * 33) ^ str.charCodeAt(--i);
+        hash = (hash * 33) ^ str.codePointAt(--i)!;
     }
-    return (hash >>> 0).toString(16).substring(0, 5);
+    // oxlint-disable-next-line prefer-math-trunc
+    return (hash >>> 0).toString(16).slice(0, 5);
 }

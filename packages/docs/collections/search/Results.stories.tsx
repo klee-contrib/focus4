@@ -1,10 +1,10 @@
+import type {Meta, StoryObj} from "@storybook/react";
+
 import {Results} from "@focus4/collections";
 
 import {ResultsMeta} from "../metas/results";
 
 import {collectionStore} from "./store";
-
-import type {Meta, StoryObj} from "@storybook/react";
 
 export default {
     ...ResultsMeta,

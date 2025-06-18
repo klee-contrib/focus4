@@ -9,8 +9,8 @@ export type ToBem<CSS> = Omit<
         [P in keyof CSS]-?: CSS[P] extends CSSElement<infer E>
             ? BemFunction<CSS, P, E>
             : CSS[P] extends CSSMod<infer __, infer ___>
-            ? never
-            : BemFunction<CSS, P, string>;
+              ? never
+              : BemFunction<CSS, P, string>;
     },
     AllMods<CSS>
 >;

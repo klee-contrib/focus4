@@ -10,6 +10,7 @@ import {OverlayContext, ScrollableContext} from "../utils/contexts";
 import {useActiveTransition} from "./active-transition";
 
 import overlayCss, {OverlayCss} from "./__style__/overlay.css";
+
 export {overlayCss};
 export type {OverlayCss};
 

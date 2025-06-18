@@ -8,6 +8,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, Icon, IconButton} from "@focus4/toolbox";
 
 import inputFileCss, {InputFileCss} from "./__style__/input-file.css";
+
 export {inputFileCss, InputFileCss};
 
 type InputFileValue<T extends number> = T extends 1 ? File : File[];
@@ -71,6 +72,7 @@ export function InputFile<T extends number = number>({
     const addFiles = useCallback(
         async function addFiles(fileList: FileList) {
             let newFiles = [...files];
+            // oxlint-disable-next-line prefer-spread
             for (const file of Array.from(fileList)) {
                 if (files.some(f => f.name === file.name)) {
                     messageStore.addErrorMessage(t(`${i18nPrefix}.file.existing`, {file: file.name}));

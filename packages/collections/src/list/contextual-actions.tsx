@@ -14,6 +14,7 @@ import {
 } from "@focus4/toolbox";
 
 import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
+
 export {contextualActionsCss};
 export type {ContextualActionsCss};
 
@@ -67,15 +68,14 @@ export function ContextualActions<T>({
 
     const {primaryActions, secondaryActions} = operationList.reduce(
         (actionLists, operation, key) => {
-            // eslint-disable-next-line @typescript-eslint/no-shadow
             const {primaryActions, secondaryActions} = actionLists;
             if (operation.type !== "secondary") {
                 const hasTooltip = (isMosaic && !!operation.label) || operation.type === "icon-tooltip";
                 const FinalButton = isMosaic
                     ? FloatingActionButton
                     : !isMosaic && (operation.type === "icon" || operation.type === "icon-tooltip")
-                    ? IconButton
-                    : Button;
+                      ? IconButton
+                      : Button;
                 const button = (
                     <FinalButton
                         key={key}
@@ -150,7 +150,7 @@ export function ContextualActions<T>({
             <Menu {...menu}>
                 {secondaryActions
                     .filter(a => !a.hidden)
-                    .map(({hidden, ...a}, i) => (
+                    .map(({hidden: _, ...a}, i) => (
                         <MenuItem key={i} {...a} />
                     ))}
             </Menu>
