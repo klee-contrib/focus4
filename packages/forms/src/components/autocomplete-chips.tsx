@@ -104,7 +104,9 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     useEffect(() => {
         if (keyResolver) {
             for (const item of (value ?? []).filter(i => !labels.has(i))) {
-                keyResolver(item as DomainType<SingleDomainFieldType<T>>).then(label => labels.set(item, label ?? ""));
+                keyResolver(item as DomainType<SingleDomainFieldType<T>>).then(label =>
+                    labels.set(item, label ?? `${item}`)
+                );
             }
         }
     }, [keyResolver, value]);
