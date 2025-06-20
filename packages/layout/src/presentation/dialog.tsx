@@ -59,7 +59,7 @@ export function Dialog({
     return displayed
         ? portal(
               <div className={classNames(tClassName, theme.wrapper())}>
-                  <div className={classNames(theme.dialog(), className)} onClick={e => e.stopPropagation()}>
+                  <div className={classNames(theme.dialog(), className)}>
                       {title ? <h5 className={theme.title()}>{title}</h5> : null}
                       <section className={theme.body()}>{children}</section>
                       {actions.length ? (

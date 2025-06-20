@@ -296,6 +296,7 @@ export function Calendar({
     }, [focused, onKeyDown]);
 
     return (
+        // oxlint-disable-next-line click-events-have-key-events
         <div
             ref={root}
             className={classnames(className, theme.calendar())}

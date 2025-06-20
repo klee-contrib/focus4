@@ -33,7 +33,6 @@
         "eslint/sort-keys": "off",
         "eslint/yoda": "off",
         "jsx_a11y/aria-activedescendant-has-tabindex": "off",
-        "jsx_a11y/click-events-have-key-events": "off", // (Il faudra traiter les positifs un jour quand même ^^)
         "oxc/no-async-await": "off",
         "oxc/no-optional-chaining": "off",
         "oxc/no-rest-spread-properties": "off",

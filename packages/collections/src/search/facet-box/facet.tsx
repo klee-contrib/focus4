@@ -63,6 +63,7 @@ export function Facet({
 
         return (
             <div className={theme.facet()} data-facet={facet.code}>
+                {/* oxlint-disable-next-line click-events-have-key-events */}
                 <h4 onClick={() => openedMap.set(facet.code, !opened)}>
                     <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
                     {t(facet.label)}
@@ -102,6 +103,7 @@ export function Facet({
                                             onChange={clickHandler}
                                             value={selected || excluded}
                                         />
+                                        {/* oxlint-disable-next-line click-events-have-key-events */}
                                         <div className={theme.label({excluded})} onClick={clickHandler}>
                                             {t(item.label)}
                                         </div>
@@ -136,10 +138,7 @@ export function Facet({
                         ) : null}
                     </>
                 ) : count > 0 ? (
-                    <span onClick={() => openedMap.set(facet.code, !opened)}>{`(${t(
-                        `${i18nPrefix}.search.facets.filter`,
-                        {count}
-                    )})`}</span>
+                    <span>{`(${t(`${i18nPrefix}.search.facets.filter`, {count})})`}</span>
                 ) : null}
             </div>
         );

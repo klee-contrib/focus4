@@ -1,8 +1,7 @@
 import {useObserver} from "mobx-react";
-import {SyntheticEvent} from "react";
 import {useTranslation} from "react-i18next";
 
-import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
+import {DomainFieldTypeMultiple, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss} from "@focus4/toolbox";
 
@@ -10,29 +9,6 @@ import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.
 
 export {selectCheckboxCss};
 export type {SelectCheckboxCss};
-
-function clickHandlerFactory<T extends DomainFieldTypeMultiple>(
-    isDisabled: boolean,
-    isSelected: boolean,
-    value: DomainType<T> | undefined,
-    optVal: DomainType<SingleDomainFieldType<T>>,
-    onChange: (value?: DomainType<T>) => void
-) {
-    return (e: SyntheticEvent<any>) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (!isDisabled) {
-            if (isSelected) {
-                // Is selected -> remove it
-                onChange((value ? value.filter(val => val !== optVal) : []) as DomainType<T>);
-            } else {
-                // Is not selected -> add it
-                onChange((value ? [...value, optVal] : [optVal]) as DomainType<T>);
-            }
-        }
-    };
-}
 
 /** Props du SelectCheckbox */
 export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
@@ -96,16 +72,26 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                         disabled === true ||
                         (Array.isArray(disabled) && (disabled as string[]).includes(optVal)) ||
                         (maxSelectable !== undefined && maxSelectable === value?.length && !isSelected);
-                    const clickHandler = clickHandlerFactory(isDisabled, isSelected, value, optVal, onChange);
 
                     return (
-                        <li key={optVal} className={theme.option()} onClick={clickHandler}>
+                        <li key={optVal} className={theme.option()}>
                             <Checkbox
                                 disabled={isDisabled}
                                 id={`${id!}-${optVal as string}`}
                                 label={t(optLabel)}
                                 name={`${name!}-${optVal as string}`}
                                 theme={theme}
+                                onChange={() => {
+                                    if (!isDisabled) {
+                                        if (isSelected) {
+                                            onChange(
+                                                (value ? value.filter(val => val !== optVal) : []) as DomainType<T>
+                                            );
+                                        } else {
+                                            onChange((value ? [...value, optVal] : [optVal]) as DomainType<T>);
+                                        }
+                                    }
+                                }}
                                 value={isSelected}
                             />
                         </li>

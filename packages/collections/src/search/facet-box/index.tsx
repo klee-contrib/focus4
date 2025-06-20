@@ -217,6 +217,7 @@ export function FacetBox<T extends object>({
 
         return (
             <div className={theme.facetBox()}>
+                {/* oxlint-disable-next-line click-events-have-key-events */}
                 <h3 onClick={() => toggleAll(!opened, false)}>
                     <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
                     <span>{t(`${i18nPrefix}.search.facets.title`)}</span>
