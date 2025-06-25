@@ -33,6 +33,7 @@ export type {
     ActionsPanelProps,
     AutocompleteComponents,
     BaseAutocompleteProps,
+    BaseComponentProps,
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,

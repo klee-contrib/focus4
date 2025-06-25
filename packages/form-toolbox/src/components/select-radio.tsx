@@ -18,8 +18,6 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     disabled?: boolean | DomainType<T>[];
     /** Message d'erreur à afficher. */
     error?: string;
-    /** Libellé. */
-    label?: string;
     /** Permet de sélectionner `undefined` avec une option supplémentaire "vide" (`"first-option"` ou `"last-option"`), ou en re-cliquant sur le radio sélectionné (`"no-option"`) */
     hasUndefined?: "first-option" | "last-option" | "no-option";
     /** Préfixe i18n. Par défaut : "focus". */
@@ -54,7 +52,6 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
     error,
     hasUndefined,
     i18nPrefix = "focus",
-    label,
     name,
     onChange,
     showSupportingText = "always",
@@ -86,7 +83,6 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
 
         return (
             <div className={theme.select({error: !!error})}>
-                {label ? <h5 className={theme.title()}>{t(label)}</h5> : null}
                 <RadioGroup
                     allowUndefined={hasUndefined === "no-option"}
                     disabled={disabled === true}

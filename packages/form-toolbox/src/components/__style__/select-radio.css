@@ -10,10 +10,6 @@
     }
 }
 
-.title {
-    margin-bottom: 4px;
-}
-
 .supportingText {
     padding: var(--text-field-supporting-text-padding) var(--text-field-padding-horizontal);
     color: var(--input-state-color);

@@ -1,4 +1,4 @@
-import {CSSProperties, ReactNode} from "react";
+import {ReactNode} from "react";
 import {useTranslation} from "react-i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -13,6 +13,10 @@ export type {LabelCss};
 export interface LabelProps {
     /** Commentaire, affiché sur la tooltip */
     comment?: ReactNode;
+    /** Si le champ est en édition. */
+    edit?: boolean;
+    /** Erreur potentielle du champ. */
+    error?: string;
     /** Pour l'icône de la tooltip. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Libellé. */
@@ -21,10 +25,10 @@ export interface LabelProps {
     id?: string;
     /** Au click sur la tooltip. */
     onTooltipClick?: () => void;
+    /** Si le champ est obligatoire. */
+    required?: boolean;
     /** Affiche la tooltip. */
     showTooltip?: boolean;
-    /** Style inline. */
-    style?: CSSProperties;
     /** CSS de la tooltip. */
     tooltipTheme?: CSSProp<TooltipCss>;
     /** CSS. */
@@ -41,12 +45,14 @@ export interface LabelProps {
  */
 export function Label({
     comment,
+    edit,
+    error,
     i18nPrefix = "focus",
     label,
     id,
     onTooltipClick,
+    required,
     showTooltip,
-    style,
     tooltipTheme,
     theme: pTheme
 }: LabelProps) {
@@ -54,8 +60,13 @@ export function Label({
     const theme = useTheme("label", labelCss, pTheme);
 
     return (
-        <div className={theme.label()} style={style}>
-            <label htmlFor={id}>{(label && t(label)) ?? ""}</label>
+        <div className={theme.label({error: edit && !!error})}>
+            <span>
+                <label htmlFor={edit ? id : undefined}>{(label && t(label)) ?? ""}</label>
+                {edit && required ? (
+                    <span className={theme.required()}>{t(`${i18nPrefix}.label.required`)}</span>
+                ) : null}
+            </span>
             {comment && showTooltip ? (
                 <Tooltip
                     clickBehavior={onTooltipClick ? "hide" : "none"}

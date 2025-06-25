@@ -1,19 +1,24 @@
-import {CSSProperties, ReactNode} from "react";
+import {ReactNode} from "react";
 
 import {ReferenceList} from "../../reference";
 
 import {DomainFieldType, DomainType, SingleDomainFieldType} from "./entity";
 
-export interface WithThemeProps {
+export interface BaseComponentProps {
+    comment?: ReactNode;
+    error?: string;
+    label?: string;
+    name?: string;
+    id?: string;
+    required?: boolean;
     theme?: object;
 }
 
-export type OmitButKeepTheme<T extends WithThemeProps, U> = Pick<T, Exclude<keyof T, keyof U>> & {theme?: T["theme"]};
+export type OmitButKeepTheme<T extends BaseComponentProps, U> = Pick<T, Exclude<keyof T, keyof U>> & {
+    theme?: T["theme"];
+};
 
-export interface BaseInputProps<DT extends DomainFieldType> extends WithThemeProps {
-    error?: string;
-    id?: string;
-    name?: string;
+export interface BaseInputProps<DT extends DomainFieldType> extends BaseComponentProps {
     onChange?: (value?: DomainType<DT>) => void;
     type?: DT;
     value?: DomainType<DT>;
@@ -27,20 +32,16 @@ export interface BaseAutocompleteProps<DT extends DomainFieldType> extends BaseI
     keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
 }
 
-export interface BaseDisplayProps<DT extends DomainFieldType> extends WithThemeProps {
+export interface BaseDisplayProps<DT extends DomainFieldType> extends BaseComponentProps {
     formatter?: (value: DomainType<SingleDomainFieldType<DT>> | undefined) => string;
     keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
-    name?: string;
     type?: DT;
     value?: DomainType<DT>;
     values?: ReferenceList;
 }
 
-export interface BaseLabelProps extends WithThemeProps {
-    comment?: ReactNode;
-    label?: string;
-    id?: string;
-    style?: CSSProperties;
+export interface BaseLabelProps extends BaseComponentProps {
+    edit?: boolean;
 }
 
 export interface BaseComponents<
@@ -91,7 +92,7 @@ export interface FieldComponents<
     ACProps extends BaseAutocompleteProps<DT> = any,
     DCProps extends BaseDisplayProps<DT> = any,
     LCProps extends BaseLabelProps = any,
-    FProps extends WithThemeProps = any
+    FProps extends {theme?: object} = any
 > extends InputComponents<DT, ICProps, DCProps, LCProps>,
         SelectComponents<DT, SCProps, DCProps, LCProps>,
         AutocompleteComponents<DT, ACProps, DCProps, LCProps> {

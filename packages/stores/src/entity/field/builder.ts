@@ -15,8 +15,7 @@ import {
     FieldComponents,
     FieldEntry,
     FieldEntryType,
-    Validator,
-    WithThemeProps
+    Validator
 } from "../types";
 
 import {themeable} from "./themeable";
@@ -40,7 +39,7 @@ export interface Metadata<
     ACProps extends BaseAutocompleteProps<DT> = any,
     DCProps extends BaseDisplayProps<DT> = any,
     LCProps extends BaseLabelProps = any,
-    FProps extends WithThemeProps = any
+    FProps extends {theme?: object} = any
 > extends FieldComponents<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;

@@ -6,8 +6,7 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    FieldComponents,
-    WithThemeProps
+    FieldComponents
 } from "./components";
 import {Validator} from "./validation";
 
@@ -35,7 +34,7 @@ export interface Domain<
     ACProps extends BaseAutocompleteProps<DT> = any,
     DCProps extends BaseDisplayProps<DT> = any,
     LCProps extends BaseLabelProps = any,
-    FProps extends WithThemeProps = any
+    FProps extends {theme?: object} = any
 > extends FieldComponents<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
@@ -67,7 +66,7 @@ export interface FieldEntry<
     ACProps extends BaseAutocompleteProps<DT> = any,
     DCProps extends BaseDisplayProps<DT> = any,
     LCProps extends BaseLabelProps = any,
-    FProps extends WithThemeProps = any
+    FProps extends {theme?: object} = any
 > {
     readonly type: "field";
 

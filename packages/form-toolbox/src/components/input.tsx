@@ -3,7 +3,7 @@ import {DomainFieldTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 export interface InputProps<T extends DomainFieldTypeSingle>
-    extends Omit<TextFieldProps, "error" | "onChange" | "type" | "value">,
+    extends Omit<TextFieldProps, "error" | "label" | "onChange" | "type" | "value">,
         UseInputProps<T> {
     /** Erreur à afficher sous le champ. */
     error?: string;
@@ -20,8 +20,8 @@ export interface InputProps<T extends DomainFieldTypeSingle>
 export function Input<const T extends DomainFieldTypeSingle>({
     error,
     mask,
-    noNegativeNumbers = false,
     hasThousandsSeparator = false,
+    noNegativeNumbers = false,
     maxDecimals = 10,
     onChange,
     onKeyDown,
@@ -48,6 +48,7 @@ export function Input<const T extends DomainFieldTypeSingle>({
         <TextField
             {...props}
             error={!!error}
+            label={undefined}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}

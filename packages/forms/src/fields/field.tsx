@@ -160,7 +160,7 @@ export function Field<F extends FieldEntry>(
                 comment,
                 label,
                 name,
-                isRequired,
+                isRequired: required,
                 domain: {
                     AutocompleteComponent = UndefinedComponent,
                     autocompleteProps: domainACP = {},
@@ -183,11 +183,18 @@ export function Field<F extends FieldEntry>(
             setHasHadFocus(false);
         }, [isEdit]);
 
-        const iProps: BaseInputProps<F["domain"]["type"]> & {ref?: Ref<any>} = {
-            value,
+        const baseProps = {
+            comment,
             error: showError ? error : undefined,
+            label,
             name,
             id,
+            required
+        };
+
+        const iProps: BaseInputProps<F["domain"]["type"]> & {ref?: Ref<any>} = {
+            ...baseProps,
+            value,
             type,
             onChange:
                 onChange ??
@@ -236,24 +243,13 @@ export function Field<F extends FieldEntry>(
         }, [isEdit, DisplayComponent, name]);
 
         return (
-            <div
-                className={classNames(
-                    theme.field({
-                        edit: isEdit,
-                        error: !!(isEdit && error && showError),
-                        required: isRequired
-                    }),
-                    className
-                )}
-                style={style}
-            >
+            <div className={classNames(theme.field(), className)} style={style}>
                 {hasLabel ? (
                     <LabelComponent
                         {...domainLCP}
                         {...labelProps}
-                        comment={comment}
-                        id={id}
-                        label={label}
+                        {...baseProps}
+                        edit={isEdit}
                         theme={themeable({label: theme.label()}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
                     />
                 ) : null}
@@ -285,9 +281,9 @@ export function Field<F extends FieldEntry>(
                         <DisplayComponent
                             {...domainDCP}
                             {...displayProps}
+                            {...baseProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
-                            name={name}
                             theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
                             type={type}
                             value={value}

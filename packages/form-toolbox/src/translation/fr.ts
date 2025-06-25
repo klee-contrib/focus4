@@ -13,6 +13,9 @@ export const fr = {
         invalid: "Le type du fichier '{{file}}' n'est pas autorisé.",
         upload: "Glissez-déposer votre fichier, ou cliquez pour parcourir."
     },
+    label: {
+        required: "*"
+    },
     select: {
         noLabel: "",
         none: "Aucun",

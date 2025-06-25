@@ -16,8 +16,6 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     disabled?: boolean | DomainType<T>;
     /** Message d'erreur à afficher. */
     error?: string;
-    /** Libellé. */
-    label?: string;
     /** Id de l'input. */
     id?: string;
     /** Nombre maximal d'éléments sélectionnables. */
@@ -46,7 +44,6 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
 export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
     disabled = false,
     error,
-    label,
     id,
     maxSelectable,
     name,
@@ -61,7 +58,6 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
 
     return useObserver(() => (
         <div className={theme.select({error: !!error})}>
-            {label ? <h5>{t(label)}</h5> : null}
             <ul>
                 {values.map(option => {
                     const optVal = option[values.$valueKey];

@@ -7,7 +7,10 @@ import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 /** Props du Select. */
 export interface SelectProps<T extends DomainFieldTypeSingle>
-    extends Omit<DropdownProps<any>, "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"> {
+    extends Omit<
+        DropdownProps<any>,
+        "disabled" | "error" | "getKey" | "getLabel" | "label" | "onChange" | "value" | "values"
+    > {
     /** Désactive la Dropdown (si true), ou une liste d'options de la Dropdown (si liste de valeurs). */
     disabled?: boolean | DomainType<T>[];
     /** Message d'erreur à afficher. */
@@ -49,6 +52,7 @@ export function Select<const T extends DomainFieldTypeSingle>({
             {...props}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
+            label={undefined}
             getKey={v => `${v[$valueKey]}`}
             getLabel={v => (v[$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`)}
             onChange={val => onChange(stringToDomainType(val, type))}

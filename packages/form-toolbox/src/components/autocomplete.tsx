@@ -12,6 +12,7 @@ export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSourc
         AutocompleteProps<TSource>,
         | "disabled"
         | "error"
+        | "label"
         | "loading"
         | "noSuggestionsOnEmptyQuery"
         | "onChange"
@@ -168,6 +169,7 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
+            label={undefined}
             loading={requestStore.isLoading(trackingId)}
             noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}
             onChange={handleChange}

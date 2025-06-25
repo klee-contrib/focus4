@@ -14,7 +14,7 @@ import {
     EntityField,
     FieldEntry
 } from "../types";
-import {BaseComponents, WithThemeProps} from "../types/components";
+import {BaseComponents} from "../types/components";
 
 import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
 
@@ -25,7 +25,7 @@ interface ReadonlyFieldOptions<
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
-    FProps extends WithThemeProps = WithThemeProps
+    FProps extends {theme?: object} = {theme?: object}
 > extends BaseComponents<DT, DCProps, LCProps> {
     className?: string;
     comment?: ReactNode;
@@ -69,7 +69,7 @@ export function fromField<
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
-    FProps extends WithThemeProps = WithThemeProps
+    FProps extends {theme?: object} = {theme?: object}
 >(
     field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps, FProps>>,
     options: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
@@ -113,7 +113,7 @@ export function makeField<
     LCDProps extends BaseLabelProps = BaseLabelProps,
     DCProps extends BaseDisplayProps<DT> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
-    FProps extends WithThemeProps = WithThemeProps
+    FProps extends {theme?: object} = {theme?: object}
 >(
     value: T | undefined,
     options?: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> & {name?: string}
@@ -135,7 +135,7 @@ export function makeField<F extends FieldEntry>(
                 BaseAutocompleteProps<"string">,
                 BaseDisplayProps<"string">,
                 BaseLabelProps,
-                WithThemeProps
+                {theme?: object}
             >
         >
     ) => EntityFieldBuilder<F>

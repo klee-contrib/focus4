@@ -2,7 +2,6 @@
     --field-label-width: 33%;
     --field-value-width: 67%;
     --field-label-value-spacing: 16px;
-    --field-label-required-star-margin: 3px;
 }
 
 .field {
@@ -30,13 +29,4 @@
         padding-left: 0;
         width: calc(var(--field-label-width) + var(--field-value-width));
     }
-}
-
-.field--edit.field--required .label label::after {
-    content: "*";
-    margin-left: var(--field-label-required-star-margin);
-}
-
-.field--error .label label {
-    color: var(--input-error-color);
 }

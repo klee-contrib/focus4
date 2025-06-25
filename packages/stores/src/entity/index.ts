@@ -19,6 +19,7 @@ export type {ActionsFormProps, ActionsPanelProps} from "./form";
 export type {
     AutocompleteComponents,
     BaseAutocompleteProps,
+    BaseComponentProps,
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,

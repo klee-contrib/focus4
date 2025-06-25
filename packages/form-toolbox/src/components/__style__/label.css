@@ -1,6 +1,7 @@
 :root {
     --label-font-size: var(--font-size-small);
     --label-line-height: 20px;
+    --label-required-margin: 3px;
 }
 
 .label {
@@ -13,6 +14,14 @@
     line-height: var(--label-line-height);
     min-height: var(--label-line-height);
     padding: calc((var(--text-field-height) - var(--label-line-height)) / 2) 0;
+}
+
+.label--error > span {
+    color: var(--input-error-color);
+}
+
+.required {
+    margin-inline-start: var(--label-required-margin);
 }
 
 .icon {

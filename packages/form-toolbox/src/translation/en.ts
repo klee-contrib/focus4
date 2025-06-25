@@ -13,6 +13,9 @@ export const en = {
         invalid: "The file type '{{file}}' is not allowed.",
         upload: "Drag and drop your file, or click to browse."
     },
+    label: {
+        required: "*"
+    },
     select: {
         noLabel: "",
         none: "None",
