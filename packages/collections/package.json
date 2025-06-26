@@ -22,8 +22,8 @@
         "@focus4/styling": "12.2.3",
         "@focus4/toolbox": "12.2.3",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.39.3",
-        "motion": "~12.18.1",
+        "es-toolkit": "~1.39.5",
+        "motion": "~12.19.1",
         "tslib": "~2.8.1"
     },
     "peerDependencies": {

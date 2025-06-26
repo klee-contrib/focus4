@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import {FocusTrap} from "focus-trap-react";
 import {ReactNode, useContext} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -58,19 +59,21 @@ export function Dialog({
 
     return displayed
         ? portal(
-              <div className={classNames(tClassName, theme.wrapper())}>
-                  <div className={classNames(theme.dialog(), className)}>
-                      {title ? <h5 className={theme.title()}>{title}</h5> : null}
-                      <section className={theme.body()}>{children}</section>
-                      {actions.length ? (
-                          <nav className={theme.navigation()}>
-                              {actions.map((action, idx) => (
-                                  <Button key={idx} {...action} />
-                              ))}
-                          </nav>
-                      ) : null}
+              <FocusTrap focusTrapOptions={{allowOutsideClick: true, escapeDeactivates: false}} active={!tClassName}>
+                  <div className={classNames(tClassName, theme.wrapper())}>
+                      <div className={classNames(theme.dialog(), className)}>
+                          {title ? <h5 className={theme.title()}>{title}</h5> : null}
+                          <section className={theme.body()}>{children}</section>
+                          {actions.length ? (
+                              <nav className={theme.navigation()}>
+                                  {actions.map((action, idx) => (
+                                      <Button key={idx} {...action} />
+                                  ))}
+                              </nav>
+                          ) : null}
+                      </div>
                   </div>
-              </div>
+              </FocusTrap>
           )
         : null;
 }

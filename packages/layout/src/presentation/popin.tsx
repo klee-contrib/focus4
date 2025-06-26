@@ -81,6 +81,7 @@ export function Popin({
                   scrollBehaviour={scrollBehaviour}
                   showOverlay
                   theme={scrollableTheme}
+                  trapFocus={!tClassName}
               >
                   {children}
               </Scrollable>

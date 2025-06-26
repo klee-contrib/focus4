@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import {range} from "es-toolkit";
+import {FocusTrap} from "focus-trap-react";
 import {useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
@@ -32,6 +33,8 @@ export interface ScrollableProps {
     showOverlay?: boolean;
     /** Reset le scroll (à 0) dès que les children du scrollable changent.  */
     resetScrollOnChildrenChange?: boolean;
+    /** Active le focus trap dans le scrollable. */
+    trapFocus?: boolean;
     /** CSS. */
     theme?: CSSProp<ScrollableCss>;
 }
@@ -57,7 +60,8 @@ export function Scrollable({
     scrollBehaviour = "smooth",
     showOverlay = false,
     resetScrollOnChildrenChange,
-    theme: pTheme
+    theme: pTheme,
+    trapFocus = false
 }: ScrollableProps) {
     const theme = useTheme("scrollable", scrollableCss, pTheme);
 
@@ -150,28 +154,30 @@ export function Scrollable({
                 [headerHeight, portal, registerIntersect, scrollTo]
             )}
         >
-            <div ref={containerNode} className={classNames(theme.container(), className)}>
-                {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
-                <div ref={scrollableNode} className={theme.scrollable()}>
-                    {children}
+            <FocusTrap active={trapFocus} focusTrapOptions={{allowOutsideClick: true, escapeDeactivates: false}}>
+                <div ref={containerNode} className={classNames(theme.container(), className)}>
+                    {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
+                    <div ref={scrollableNode} className={theme.scrollable()}>
+                        {children}
+                    </div>
+                    <AnimatePresence>
+                        {!hideBackToTop && hasBackToTop ? (
+                            <motion.div
+                                animate={{scale: 1}}
+                                className={theme.backToTop()}
+                                exit={{scale: 0}}
+                                initial={{scale: 0}}
+                            >
+                                <FloatingActionButton
+                                    color="accent"
+                                    icon="expand_less"
+                                    onClick={() => scrollTo({top: 0})}
+                                />
+                            </motion.div>
+                        ) : undefined}
+                    </AnimatePresence>
                 </div>
-                <AnimatePresence>
-                    {!hideBackToTop && hasBackToTop ? (
-                        <motion.div
-                            animate={{scale: 1}}
-                            className={theme.backToTop()}
-                            exit={{scale: 0}}
-                            initial={{scale: 0}}
-                        >
-                            <FloatingActionButton
-                                color="accent"
-                                icon="expand_less"
-                                onClick={() => scrollTo({top: 0})}
-                            />
-                        </motion.div>
-                    ) : undefined}
-                </AnimatePresence>
-            </div>
+            </FocusTrap>
         </ScrollableContext.Provider>
     ));
 }
