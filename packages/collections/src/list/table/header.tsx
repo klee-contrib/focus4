@@ -68,6 +68,17 @@ export function TableHeader<T extends object>({
                 })
             )}
             onClick={store && sortKey ? onSort : undefined}
+            tabIndex={store && sortKey ? 0 : undefined}
+            onKeyDown={e => {
+                if (e.code === "Space") {
+                    e.preventDefault();
+                }
+            }}
+            onKeyUp={e => {
+                if (e.code === "Space") {
+                    onSort();
+                }
+            }}
         >
             {store && maxSort > 1 && sortKey ? (
                 <span className={theme.sortCount()}>{store.sort.findIndex(s => s.fieldName === sortKey) + 1}</span>

@@ -188,7 +188,7 @@
 .row--clickable {
     cursor: pointer;
 
-    &:hover {
+    &:has(.cell:hover) {
         --table-row-background-color: var(--table-row-background-hover-color);
     }
 
@@ -201,6 +201,15 @@
     --table-row-color: var(--table-row-selected-color);
     --table-row-background-color: var(--table-row-background-selected-color);
     --table-row-background-hover-color: var(--table-row-background-hover-selected-color);
+}
+
+.row:focus-visible {
+    animation-name: focus;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: var(--animation-curve-focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+    border-radius: var(--table-border-radius);
 }
 
 .heading--sortable {
@@ -216,8 +225,10 @@
     border-bottom-color: var(--table-header-sorted-color);
 }
 
+.heading:focus-visible,
 .heading--sortable:hover,
 .heading--sorted {
+    outline: none;
     color: var(--table-header-sorted-color);
 
     & .sortIcon {
@@ -232,5 +243,20 @@
 
     & .sortCount {
         opacity: 1;
+    }
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+        outline-offset: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+        outline-offset: calc(-2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+        outline-offset: calc(-1 * var(--focus-ring-width));
     }
 }

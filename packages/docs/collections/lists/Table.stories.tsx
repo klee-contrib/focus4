@@ -51,10 +51,7 @@ Cet exemple est assez minimaliste, mais montre quand même l'usage de \`onLineCl
                 content: item => item.count
             }
         ],
-        itemKey: item => item.id,
-        onLineClick: () => {
-            /* */
-        }
+        itemKey: item => item.id
     }
 };
 
@@ -130,6 +127,9 @@ Cet exemple utilise les fonctionnalités suivantes :
         itemKey: item => item.id,
         perPage: 4,
         isManualFetch: true,
-        maxSort: 2
+        maxSort: 2,
+        onLineClick: () => {
+            console.log("clic");
+        }
     }
 };

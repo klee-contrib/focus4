@@ -93,7 +93,10 @@ export function ContextualActions<T>({
                         }
                         label={!isMosaic && FinalButton === Button ? operation.label : undefined}
                         loading={operation.loading}
-                        onClick={() => operationList[key].action(data)}
+                        onClick={e => {
+                            e.stopPropagation();
+                            operationList[key].action(data);
+                        }}
                         variant={operation.variant as "filled"}
                     />
                 );
@@ -132,14 +135,20 @@ export function ContextualActions<T>({
             className={theme.item({hidden: secondaryActions.every(c => c.hidden)})}
             color={saColor}
             icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
-            onClick={menu.toggle}
+            onClick={e => {
+                e.stopPropagation();
+                menu.toggle();
+            }}
         />
     ) : (
         <IconButton
             className={theme.item({hidden: secondaryActions.every(c => c.hidden)})}
             color={saColor}
             icon={{i18nKey: `${i18nPrefix}.icons.contextualActions.secondary`}}
-            onClick={menu.toggle}
+            onClick={e => {
+                e.stopPropagation();
+                menu.toggle();
+            }}
             variant={operationList.find(sa => sa.type === "secondary" && !!sa.variant)?.variant as "filled"}
         />
     );

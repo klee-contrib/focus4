@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
-import {MouseEvent, useEffect} from "react";
+import {KeyboardEvent, MouseEvent, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
@@ -37,7 +37,7 @@ export function TableLine<T extends object>({
     /** Affiche la sélection sur les lignes (store uniquement). */
     hasSelection?: boolean;
     /** Appelé au clic sur une ligne. */
-    onClick?: (data: T, event: MouseEvent<HTMLTableCellElement>) => void;
+    onClick?: (data: T, event: MouseEvent<HTMLTableCellElement> | KeyboardEvent<HTMLTableRowElement>) => void;
     /** La liste des actions sur chaque élément de la liste. */
     operationList?: (data: T) => OperationListItem<T>[];
     /** Le store contenant la liste. */
@@ -71,7 +71,8 @@ export function TableLine<T extends object>({
         },
 
         /** Handler de clic sur la case de sélection. */
-        onSelection() {
+        onSelection(_?: boolean, e?: MouseEvent<HTMLInputElement>) {
+            e?.stopPropagation();
             props.store?.toggle(props.data);
         }
     }));
@@ -83,6 +84,12 @@ export function TableLine<T extends object>({
                 theme.row({clickable: !!onClick, selected: state.isSelected}),
                 className?.(props.data) ?? ""
             )}
+            tabIndex={onClick ? 0 : undefined}
+            onKeyUp={e => {
+                if (e.target === e.currentTarget && e.key === "Enter") {
+                    onClick?.(props.data, e);
+                }
+            }}
         >
             {props.hasSelection ? (
                 <td className={theme.checkbox()}>
@@ -90,6 +97,7 @@ export function TableLine<T extends object>({
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
+                // oxlint-disable-next-line click-events-have-key-events
                 <td
                     key={idx}
                     className={classNames(cellClassName, theme.cell())}

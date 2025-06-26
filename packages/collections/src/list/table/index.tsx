@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import {ComponentType, MouseEvent, useContext, useRef} from "react";
+import {ComponentType, KeyboardEvent, MouseEvent, useContext, useRef} from "react";
 
 import {ScrollableContext, useStickyClip} from "@focus4/layout";
 import {CollectionStore} from "@focus4/stores";
@@ -36,7 +36,10 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
      */
     offsetTopOverride?: number;
     /** Appelé au clic sur une ligne. */
-    onLineClick?: (data: NoInfer<T>, event: MouseEvent<HTMLTableCellElement>) => void;
+    onLineClick?: (
+        data: NoInfer<T>,
+        event: MouseEvent<HTMLTableCellElement> | KeyboardEvent<HTMLTableRowElement>
+    ) => void;
     /** Actions globales sur le tableau, affichées dans le header. */
     operationList?: OperationListItem<NoInfer<T>[]>[];
     /** Rend le `<thead>` sticky. Attention au rendu avec `box-shadow` sur le tableau (qui est présent par défaut). */
