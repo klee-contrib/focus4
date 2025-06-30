@@ -129,7 +129,7 @@ Cet exemple utilise les fonctionnalités suivantes :
         isManualFetch: true,
         maxSort: 2,
         onLineClick: () => {
-            console.log("clic");
+            console.info("clic");
         }
     }
 };
