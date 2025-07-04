@@ -2,6 +2,10 @@
     position: relative;
 }
 
+.container:focus-visible {
+    outline: none;
+}
+
 .scrollable {
     overflow: auto;
     height: 100%;

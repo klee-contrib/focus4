@@ -43,6 +43,10 @@
     pointer-events: auto;
 }
 
+.dialog:focus-visible {
+    outline: none;
+}
+
 .enter .dialog,
 .exit.exitActive .dialog {
     opacity: 0;

@@ -59,9 +59,16 @@ export function Dialog({
 
     return displayed
         ? portal(
-              <FocusTrap focusTrapOptions={{allowOutsideClick: true, escapeDeactivates: false}} active={!tClassName}>
+              <FocusTrap
+                  focusTrapOptions={{
+                      allowOutsideClick: true,
+                      escapeDeactivates: false,
+                      fallbackFocus: `.${theme.dialog()}`
+                  }}
+                  active={!tClassName}
+              >
                   <div className={classNames(tClassName, theme.wrapper())}>
-                      <div className={classNames(theme.dialog(), className)}>
+                      <div className={classNames(theme.dialog(), className)} tabIndex={-1}>
                           {title ? <h5 className={theme.title()}>{title}</h5> : null}
                           <section className={theme.body()}>{children}</section>
                           {actions.length ? (

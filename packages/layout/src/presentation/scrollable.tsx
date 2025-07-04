@@ -154,8 +154,15 @@ export function Scrollable({
                 [headerHeight, portal, registerIntersect, scrollTo]
             )}
         >
-            <FocusTrap active={trapFocus} focusTrapOptions={{allowOutsideClick: true, escapeDeactivates: false}}>
-                <div ref={containerNode} className={classNames(theme.container(), className)}>
+            <FocusTrap
+                active={trapFocus}
+                focusTrapOptions={{
+                    allowOutsideClick: true,
+                    escapeDeactivates: false,
+                    fallbackFocus: `.${theme.container()}`
+                }}
+            >
+                <div ref={containerNode} className={classNames(theme.container(), className)} tabIndex={-1}>
                     {showOverlay ? <Overlay active={overlay.activeLevel >= level} close={overlay.close} /> : null}
                     <div ref={scrollableNode} className={theme.scrollable()}>
                         {children}
