@@ -29,7 +29,7 @@ export interface RadioButtonProps extends PointerEvents<HTMLLabelElement> {
     /** Id pour l'input[type=radio] posé par le RadioButton. */
     id?: string;
     /** Libellé à poser à côté de la Checkbox. */
-    label?: ReactNode;
+    label?: string;
     /** Name pour l'input[type=radio] posé par le RadioButton. */
     name?: string;
     /** Au blur du Radio. */
