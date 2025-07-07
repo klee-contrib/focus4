@@ -1,6 +1,6 @@
 {
     "name": "@focus4/toolbox",
-    "version": "12.3.2",
+    "version": "12.3.3",
     "description": "Focus v4, toolbox module",
     "main": "lib/focus4.toolbox.js",
     "type": "module",
