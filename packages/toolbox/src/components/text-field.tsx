@@ -26,8 +26,10 @@ import {PointerEvents} from "../utils/pointer-events";
 import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {CircularProgressIndicator} from "./progress-indicator";
+import {SupportingText} from "./supporting-text";
 import {Tooltip} from "./tooltip";
 
+import {SupportingTextCss} from "./__style__/supporting-text.css";
 import textFieldCss, {TextFieldCss} from "./__style__/text-field.css";
 
 export {textFieldCss};
@@ -118,7 +120,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** Définition des icônes à poser après le texte dans le champ. */
     trailing?: TrailingIcon | TrailingIcon[];
     /** CSS. */
-    theme?: CSSProp<TextFieldCss>;
+    theme?: CSSProp<TextFieldCss & SupportingTextCss>;
     /** `type` pour l'input HTML. */
     type?: string;
     /** Valeur du champ. */
@@ -182,7 +184,7 @@ export function TextField({
     value,
     ...props
 }: TextFieldProps) {
-    const theme = useTheme("textField", textFieldCss, pTheme);
+    const theme = useTheme<TextFieldCss & SupportingTextCss>("textField", textFieldCss, pTheme);
 
     const rootNode = useRef<HTMLDivElement>(null);
     const outlineNode = useRef<HTMLDivElement>(null);
@@ -396,16 +398,16 @@ export function TextField({
                     }
                 })}
             </div>
-            {showSupportingText === "always" || (showSupportingText === "auto" && (!!supportingText || !!maxLength)) ? (
-                <div className={theme.supportingText()}>
-                    <div id={id ? `${id}-st` : undefined}>{supportingText}</div>
-                    {maxLength ? (
-                        <div>
-                            {value?.length ?? 0}/{maxLength}
-                        </div>
-                    ) : null}
-                </div>
-            ) : null}
+            <SupportingText
+                disabled={disabled}
+                error={error}
+                id={id}
+                length={value?.length}
+                maxLength={maxLength}
+                showSupportingText={showSupportingText}
+                supportingText={supportingText}
+                theme={theme}
+            />
         </div>
     );
 }

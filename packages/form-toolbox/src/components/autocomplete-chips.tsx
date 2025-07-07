@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {AutocompleteCss, Chip, ChipCss, Icon, TextFieldCss} from "@focus4/toolbox";
+import {AutocompleteCss, Chip, ChipCss, Icon, SupportingText, SupportingTextCss, TextFieldCss} from "@focus4/toolbox";
 
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
@@ -56,7 +56,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss>;
+    theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
@@ -97,7 +97,11 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     value
 }: AutocompleteChipsProps<T, TSource>) {
     const {t} = useTranslation();
-    const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
+    const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>(
+        "selectChips",
+        selectChipsCss,
+        pTheme
+    );
 
     const [labels] = useState(() => observable.map<boolean | number | string, string>());
 
@@ -148,7 +152,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     );
 
     return useObserver(() => (
-        <div className={theme.select({error: !!error})}>
+        <div className={theme.select()}>
             <AutocompleteSearch<SingleDomainFieldType<T>, TSource>
                 clearQueryOnChange
                 direction={direction}
@@ -194,11 +198,14 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                     ))}
                 </div>
             ) : null}
-            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText()}>
-                    <div id={id ? `${id}-st` : undefined}>{error}</div>
-                </div>
-            ) : null}
+            <SupportingText
+                disabled={disabled === true}
+                error={!!error}
+                id={id}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
         </div>
     ));
 }

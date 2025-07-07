@@ -166,6 +166,25 @@ span.icon {
     background-color: var(--input-state-hover-color);
 }
 
+.switch--error:not(.switch--disabled):hover .state {
+    background-color: var(--input-error-hover-color);
+}
+
+.switch--error:not(.switch--disabled) {
+    & .track {
+        border-color: var(--input-error-color);
+    }
+
+    &:not(.switch--checked) .thumb,
+    &.switch--checked .track {
+        background-color: var(--input-error-color);
+    }
+
+    & .icon--checked {
+        color: var(--input-error-color);
+    }
+}
+
 .input:focus + .track {
     animation-name: focus;
     animation-duration: var(--animation-duration);

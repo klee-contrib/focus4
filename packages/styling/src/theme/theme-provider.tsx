@@ -61,6 +61,7 @@ export interface FocusCSSContext extends CSSContext {
     ripple: {};
     slider: {};
     snackbar: {};
+    supportingText: {};
     switch: {};
     textField: {};
     tabs: {};

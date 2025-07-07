@@ -3,7 +3,7 @@ import {useTranslation} from "react-i18next";
 
 import {DomainFieldTypeMultiple, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Checkbox, CheckboxCss} from "@focus4/toolbox";
+import {Checkbox, CheckboxCss, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
 import selectCheckboxCss, {SelectCheckboxCss} from "./__style__/select-checkbox.css";
 
@@ -27,7 +27,7 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<CheckboxCss & SelectCheckboxCss>;
+    theme?: CSSProp<CheckboxCss & SelectCheckboxCss & SupportingTextCss>;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Valeur. */
@@ -54,10 +54,14 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
     values
 }: SelectCheckboxProps<T>) {
     const {t} = useTranslation();
-    const theme = useTheme<CheckboxCss & SelectCheckboxCss>("selectCheckbox", selectCheckboxCss, pTheme);
+    const theme = useTheme<CheckboxCss & SelectCheckboxCss & SupportingTextCss>(
+        "selectCheckbox",
+        selectCheckboxCss,
+        pTheme
+    );
 
     return useObserver(() => (
-        <div className={theme.select({error: !!error})}>
+        <div className={theme.select()}>
             <ul>
                 {values.map(option => {
                     const optVal = option[values.$valueKey];
@@ -94,11 +98,14 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                     );
                 })}
             </ul>
-            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText()}>
-                    <div>{error}</div>
-                </div>
-            ) : null}
+            <SupportingText
+                disabled={disabled === true}
+                error={!!error}
+                id={id}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
         </div>
     ));
 }

@@ -17,6 +17,7 @@ import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
 
 import {Menu, useMenu} from "./menu";
 import {Ripple} from "./ripple";
+import {SupportingTextCss} from "./supporting-text";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
@@ -82,7 +83,7 @@ export interface AutocompleteProps<TSource = {key: string; label: string}>
     /** Précise le mode de correspondance utilisé entre la query et le libellé. Par défaut : "start". */
     suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
     /** CSS. */
-    theme?: CSSProp<AutocompleteCss & TextFieldCss>;
+    theme?: CSSProp<AutocompleteCss & TextFieldCss & SupportingTextCss>;
     /** Valeurs disponibles pour la sélection. */
     values: TSource[];
 }

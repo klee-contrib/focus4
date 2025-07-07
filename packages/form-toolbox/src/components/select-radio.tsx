@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import {stringToDomainType} from "@focus4/forms";
 import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
+import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
 import selectRadioCss, {SelectRadioCss} from "./__style__/select-radio.css";
 
@@ -29,7 +29,7 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<RadioCss & SelectRadioCss>;
+    theme?: CSSProp<RadioCss & SelectRadioCss & SupportingTextCss>;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Libellé du cas vide. */
@@ -62,7 +62,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
     values
 }: SelectRadioProps<T>) {
     const {t} = useTranslation();
-    const theme = useTheme<RadioCss & SelectRadioCss>("selectRadio", selectRadioCss, pTheme);
+    const theme = useTheme<RadioCss & SelectRadioCss & SupportingTextCss>("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
     const handleChange = useCallback(
@@ -82,7 +82,7 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
         }
 
         return (
-            <div className={theme.select({error: !!error})}>
+            <div className={theme.select()}>
                 <RadioGroup
                     allowUndefined={hasUndefined === "no-option"}
                     disabled={disabled === true}
@@ -105,11 +105,13 @@ export function SelectRadio<const T extends DomainFieldTypeSingle>({
                         );
                     })}
                 </RadioGroup>
-                {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                    <div className={theme.supportingText()}>
-                        <div>{error}</div>
-                    </div>
-                ) : null}
+                <SupportingText
+                    disabled={disabled === true}
+                    error={!!error}
+                    showSupportingText={showSupportingText}
+                    supportingText={error}
+                    theme={theme}
+                />
             </div>
         );
     });

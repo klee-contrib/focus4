@@ -14,7 +14,12 @@ export default {
         close: () => {
             /* */
         },
-        action: {label: "Action"}
+        action: {
+            label: "Action",
+            onClick: () => {
+                /** */
+            }
+        }
     }
 } as Meta<typeof Snackbar>;
 

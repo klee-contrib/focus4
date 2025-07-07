@@ -1,0 +1,26 @@
+:root {
+    --supporting-text-height: 16px;
+    --supporting-text-padding-horizontal: 12px /* 16px */;
+    --supporting-text-padding-vertical: 3px /* 4px */;
+    --supporting-text-size: 12px;
+}
+
+.supportingText {
+    padding: var(--supporting-text-padding-vertical) var(--supporting-text-padding-horizontal);
+    display: flex;
+    gap: var(--padding-horizontal);
+    color: var(--input-state-color);
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: var(--supporting-text-size);
+    line-height: var(--supporting-text-height);
+    min-height: var(--supporting-text-height);
+}
+
+.supportingText--disabled {
+    color: var(--input-disabled-color);
+}
+
+.supportingText--error {
+    color: var(--input-error-color);
+}

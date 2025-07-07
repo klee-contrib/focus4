@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 
 import {messageStore} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {FontIcon, Icon, IconButton} from "@focus4/toolbox";
+import {FontIcon, Icon, IconButton, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
 import inputFileCss, {InputFileCss} from "./__style__/input-file.css";
 
@@ -40,7 +40,7 @@ export interface InputFileProps<T extends number = number> {
     /** "tabindex" pour l'élément HTML. */
     tabIndex?: number;
     /** CSS. */
-    theme?: CSSProp<InputFileCss>;
+    theme?: CSSProp<InputFileCss & SupportingTextCss>;
     /** Fichier unique (si `maxFiles` == 1), ou liste de fichiers sélectionnés. */
     value?: InputFileValue<T>;
 }
@@ -63,7 +63,7 @@ export function InputFile<T extends number = number>({
     theme: pTheme
 }: InputFileProps<T>) {
     const {t} = useTranslation();
-    const theme = useTheme("inputFile", inputFileCss, pTheme);
+    const theme = useTheme<InputFileCss & SupportingTextCss>("inputFile", inputFileCss, pTheme);
     const [files, setFiles] = useState(getFiles(value));
     const [dragOver, setDragOver] = useState(false);
 
@@ -174,17 +174,15 @@ export function InputFile<T extends number = number>({
                     type="file"
                 />
             </label>
-            {showSupportingText === "always" ||
-            (showSupportingText === "auto" && (!!error || (maxFiles !== Infinity && maxFiles > 1))) ? (
-                <div className={theme.supportingText()}>
-                    <div id={`${id}-st`}>{error}</div>
-                    {maxFiles !== Infinity && maxFiles > 1 ? (
-                        <div>
-                            {files.length ?? 0}/{maxFiles}
-                        </div>
-                    ) : null}
-                </div>
-            ) : null}
+            <SupportingText
+                error={!!error}
+                id={id}
+                length={files.length ?? 0}
+                maxLength={maxFiles !== Infinity && maxFiles > 1 ? maxFiles : undefined}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
         </div>
     );
 }

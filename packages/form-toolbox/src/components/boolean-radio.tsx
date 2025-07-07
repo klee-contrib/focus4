@@ -1,7 +1,7 @@
 import {useTranslation} from "react-i18next";
 
 import {CSSProp, useTheme} from "@focus4/styling";
-import {RadioButton, RadioCss, RadioGroup} from "@focus4/toolbox";
+import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
 import booleanRadioCss, {BooleanRadioCss} from "./__style__/boolean-radio.css";
 
@@ -26,7 +26,7 @@ export interface BooleanRadioProps {
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
-    theme?: CSSProp<BooleanRadioCss & RadioCss>;
+    theme?: CSSProp<BooleanRadioCss & RadioCss & SupportingTextCss>;
     /** Value. */
     value?: boolean;
 }
@@ -47,7 +47,7 @@ export function BooleanRadio({
     value
 }: BooleanRadioProps) {
     const {t} = useTranslation();
-    const theme = useTheme<BooleanRadioCss & RadioCss>("booleanRadio", booleanRadioCss, pTheme);
+    const theme = useTheme<BooleanRadioCss & RadioCss & SupportingTextCss>("booleanRadio", booleanRadioCss, pTheme);
     return (
         <>
             <RadioGroup
@@ -60,11 +60,13 @@ export function BooleanRadio({
                 <RadioButton label={t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />
                 <RadioButton label={t(labelNo)} name={`${name}-no`} theme={theme} value="false" />
             </RadioGroup>
-            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText({error: !!error})}>
-                    <div>{error}</div>
-                </div>
-            ) : null}
+            <SupportingText
+                disabled={disabled}
+                error={!!error}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
         </>
     );
 }

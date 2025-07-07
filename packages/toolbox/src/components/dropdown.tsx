@@ -16,6 +16,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {Menu, useMenu} from "./menu";
 import {Ripple} from "./ripple";
+import {SupportingTextCss} from "./supporting-text";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
 import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
@@ -63,7 +64,7 @@ export interface DropdownProps<TSource = {key: string; label: string}>
      */
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
-    theme?: CSSProp<DropdownCss & TextFieldCss>;
+    theme?: CSSProp<DropdownCss & TextFieldCss & SupportingTextCss>;
     /** Libellé de l'option vide. */
     undefinedLabel?: ReactNode;
     /** Valeurs disponibles pour la sélection. */

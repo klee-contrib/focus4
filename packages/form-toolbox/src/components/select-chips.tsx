@@ -5,7 +5,16 @@ import {useTranslation} from "react-i18next";
 import {toSimpleType} from "@focus4/forms";
 import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Chip, ChipCss, DropdownCss, FontIcon, Icon, TextFieldCss} from "@focus4/toolbox";
+import {
+    Chip,
+    ChipCss,
+    DropdownCss,
+    FontIcon,
+    Icon,
+    SupportingText,
+    SupportingTextCss,
+    TextFieldCss
+} from "@focus4/toolbox";
 
 import {Select} from "./select";
 import {SelectAutocomplete} from "./select-autocomplete";
@@ -53,7 +62,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
      */
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
-    theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss>;
+    theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
     /** Type du champ (celui du domaine). */
     type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
@@ -95,7 +104,11 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     values
 }: SelectChipsProps<T>) {
     const {t} = useTranslation();
-    const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss>("selectChips", selectChipsCss, pTheme);
+    const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>(
+        "selectChips",
+        selectChipsCss,
+        pTheme
+    );
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: DomainType<SingleDomainFieldType<T>>) {
@@ -188,7 +201,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     );
 
     return useObserver(() => (
-        <div className={theme.select({error: !!error})}>
+        <div className={theme.select()}>
             {autocomplete ? (
                 <SelectAutocomplete
                     allowUnmatched
@@ -250,11 +263,14 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     ))}
                 </div>
             ) : null}
-            {showSupportingText === "always" || (showSupportingText === "auto" && error) ? (
-                <div className={theme.supportingText()}>
-                    <div id={id ? `${id}-st` : undefined}>{error}</div>
-                </div>
-            ) : null}
+            <SupportingText
+                disabled={disabled === true}
+                error={!!error}
+                id={id}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
         </div>
     ));
 }

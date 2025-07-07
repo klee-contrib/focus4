@@ -19,6 +19,8 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     className?: string;
     /** Désactive le Switch. */
     disabled?: boolean;
+    /** Si renseigné, le Switch sera affiché en rouge. */
+    error?: boolean;
     /** Icône a afficher dans le Switch quand il est "off". */
     iconOff?: Icon;
     /** Icône a afficher dans le Switch quand il est "on". */
@@ -32,13 +34,13 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     /** Au blur du Switch. */
     onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur le Switch. */
-    onChange?: (value?: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** Au focus du Switch. */
     onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */
     theme?: CSSProp<SwitchCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
-    value?: boolean;
+    value: boolean;
 }
 
 /**
@@ -50,6 +52,7 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
 export function Switch({
     className,
     disabled,
+    error = false,
     id,
     label,
     name,
@@ -76,7 +79,7 @@ export function Switch({
 
     return (
         <label
-            className={classNames(theme.switch({checked: value, disabled, loading: !loaded}), className)}
+            className={classNames(theme.switch({checked: value, disabled, error, loading: !loaded}), className)}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={handlePointerLeave}

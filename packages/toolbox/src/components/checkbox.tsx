@@ -21,7 +21,7 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     /** Désactive la Checkbox. */
     disabled?: boolean;
     /** Si renseigné, la Checkbox sera affichée en rouge. */
-    error?: string;
+    error?: boolean;
     /** Affiche une icône "indéterminée" à la place du "check" */
     indeterminate?: boolean;
     /** Id pour l'input[type=checkbox] posé par la Checkbox. */
@@ -33,13 +33,13 @@ export interface CheckboxProps extends PointerEvents<HTMLLabelElement> {
     /** Au blur de la Checkbox. */
     onBlur?: FocusEventHandler<HTMLInputElement>;
     /** Handler appelé au clic sur la Checkbox. */
-    onChange?: (value?: boolean, event?: MouseEvent<HTMLInputElement>) => void;
+    onChange?: (value: boolean, event?: MouseEvent<HTMLInputElement>) => void;
     /** Au focus de la Checkbox. */
     onFocus?: FocusEventHandler<HTMLInputElement>;
     /** CSS. */
     theme?: CSSProp<CheckboxCss>;
     /** Valeur (correspond à 'checked' sur l'input). */
-    value?: boolean;
+    value: boolean;
 }
 
 /**
@@ -80,10 +80,7 @@ export function Checkbox({
 
     return (
         <label
-            className={classNames(
-                theme.checkbox({checked: value, disabled, error: !!error, loading: !loaded}),
-                className
-            )}
+            className={classNames(theme.checkbox({checked: value, disabled, error, loading: !loaded}), className)}
             onPointerDown={onPointerDown}
             onPointerEnter={onPointerEnter}
             onPointerLeave={handlePointerLeave}
