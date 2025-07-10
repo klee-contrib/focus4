@@ -1,8 +1,11 @@
 import {createContext, ReactElement, ReactPortal} from "react";
 
+import {Icon} from "@focus4/toolbox";
+
 export interface PanelDescriptor {
     node: HTMLDivElement;
     title?: string;
+    icon?: Icon;
 }
 
 /** Contexte d'un header, pour gérer son caractère sticky avec la présence ou non d'un `HeaderContent` */

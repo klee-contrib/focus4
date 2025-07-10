@@ -14,8 +14,10 @@ import {
     useRef
 } from "react";
 import {useTranslation} from "react-i18next";
+import {tabbable} from "tabbable";
 
 import {CSSProp, ToBem, useTheme} from "@focus4/styling";
+import {FontIcon, Icon} from "@focus4/toolbox";
 
 import {LateralMenu} from "../presentation";
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "../utils";
@@ -51,8 +53,9 @@ export interface ScrollspyContainerRef {
     /**
      * Scrolle vers le panel demandé.
      * @param name Id du panel.
+     * @param focus Pour essayer de focus le panel ciblé.
      */
-    scrollToPanel: (name: string) => void;
+    scrollToPanel: (name: string, focus?: boolean) => void;
 }
 
 /**
@@ -126,10 +129,14 @@ export function ScrollspyContainer({
         []
     );
 
-    const scrollToPanel = useCallback(function scrollToPanel(name: string) {
+    const scrollToPanel = useCallback(function scrollToPanel(name: string, focus = false) {
         const panel = state.panels.get(name);
         if (panel) {
             scrollTo({top: getOffsetTop(panel.node, state.headerHeight)});
+            const focusables = tabbable(panel.node);
+            if (focus && focusables.length > 0) {
+                focusables[0].focus({preventScroll: true});
+            }
         }
     }, []);
 
@@ -141,9 +148,10 @@ export function ScrollspyContainer({
                 <MenuComponent
                     activeId={state.activeItem}
                     headerHeight={state.headerHeight}
-                    panels={state.sortedPanels.map(([id, {title}]) => ({
+                    panels={state.sortedPanels.map(([id, {title, icon}]) => ({
                         id,
-                        title: (title && t(title)) ?? ""
+                        title: (title && t(title)) ?? "",
+                        icon
                     }))}
                     retractable={retractable}
                     scrollToPanel={scrollToPanel}
@@ -180,11 +188,15 @@ export interface ScrollspyMenuProps {
     /** Taille du header, pour le 'position: sticky'. */
     headerHeight: number;
     /** Liste des panels. */
-    panels: {title: string; id: string}[];
+    panels: {title: string; id: string; icon?: Icon}[];
     /** Menu rétractable. */
     retractable?: boolean;
-    /** Fonction pour scroller vers un panel. */
-    scrollToPanel: (id: string) => void;
+    /**
+     * Scrolle vers le panel demandé.
+     * @param name Id du panel.
+     * @param focus Pour essayer de focus le panel ciblé.
+     */
+    scrollToPanel: (id: string, focus?: boolean) => void;
     /** CSS. */
     theme: ToBem<ScrollspyCss>;
 }
@@ -202,14 +214,23 @@ export function ScrollspyMenu({
         <LateralMenu headerHeight={headerHeight} retractable={retractable}>
             <nav className={theme.menu()}>
                 <ul>
-                    {panels.map(({title, id}) => (
+                    {panels.map(({title, id, icon}) => (
                         <li
                             key={id}
                             className={activeId === id ? theme.active() : undefined}
                             id={`menu-${id}`}
                             onClick={() => scrollToPanel(id)}
+                            onKeyUp={e => {
+                                if (e.code === "Enter") {
+                                    scrollToPanel(id, true);
+                                }
+                            }}
+                            tabIndex={0}
                         >
-                            {title}
+                            <span>
+                                {icon ? <FontIcon className={theme.icon()} icon={icon} /> : null}
+                                {title}
+                            </span>
                         </li>
                     ))}
                 </ul>

@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from "@storybook/react";
 
 import {Layout, Panel, ScrollspyContainer} from "@focus4/layout";
+import {TextField} from "@focus4/toolbox";
 
 import {ScrollspyContainerMeta} from "./metas/scrollspy-container";
 
@@ -14,11 +15,12 @@ export const Showcase: StoryObj<typeof ScrollspyContainer> = {
         return (
             <Layout theme={{scrollable: "doc-scrollable"}}>
                 <ScrollspyContainer {...props}>
-                    <Panel title="1 Panel">
+                    <Panel title="1 Panel" icon="home">
                         <p>Contenu 1</p>
                     </Panel>
-                    <Panel title="2 Panel">
+                    <Panel title="2 Panel" icon="settings">
                         <p>Contenu 2</p>
+                        <TextField />
                     </Panel>
                     <Panel title="3 Panel">
                         <p>Contenu 3</p>

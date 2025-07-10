@@ -73,9 +73,9 @@ export function Panel({
     /** On s'enregistre dans le scrollspy. */
     useEffect(() => {
         if (!hideOnScrollspy && name) {
-            return scrollSpyContext.registerPanel(name, {title, node: ref.current!});
+            return scrollSpyContext.registerPanel(name, {title, node: ref.current!, icon});
         }
-    }, [hideOnScrollspy, title]);
+    }, [hideOnScrollspy, title, icon]);
 
     const buttons = (
         <div className={theme.actions()}>

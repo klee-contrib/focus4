@@ -3,6 +3,9 @@
     --scrollspy-active-border-size: 3px;
     --scrollspy-active-color: rgb(var(--color-accent));
     --scrollspy-menu-size: 220px;
+    --scrollspy-menu-item-height: 20px;
+    --scrollspy-menu-icon-size: 20px;
+    --scrollspy-menu-text-size: 15px;
 }
 
 .scrollspy {
@@ -26,14 +29,30 @@
     padding: 0;
 
     & li {
-        padding: 2.5px 0 2.5px 10px;
+        padding: 3px 0 3px 10px;
         margin: 5px 0;
         cursor: pointer;
-        font-size: 15px;
-    }
+        font-size: var(--scrollspy-menu-text-size);
+        height: var(--scrollspy-menu-item-height);
 
-    & li:hover {
-        color: var(--scrollspy-active-color);
+        & > span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        &:hover {
+            color: var(--scrollspy-active-color);
+        }
+
+        &:focus-visible {
+            animation-name: focus;
+            animation-duration: var(--animation-duration);
+            animation-timing-function: var(--animation-curve-focus-ring);
+            outline: var(--focus-ring-width) solid var(--focus-ring-color);
+            outline-offset: calc(-1 * var(--focus-ring-width));
+            border-radius: var(--scrollspy-active-border-size);
+        }
     }
 
     & .active {
@@ -41,5 +60,24 @@
         font-weight: var(--font-weight-bold);
         border-left: var(--scrollspy-active-border-size) solid var(--scrollspy-active-border-color);
         color: var(--scrollspy-active-color);
+    }
+
+    & .icon {
+        font-size: var(--scrollspy-menu-icon-size);
+    }
+}
+
+@keyframes focus {
+    0% {
+        outline-width: 0px;
+        outline-offset: 0px;
+    }
+    50% {
+        outline-width: calc(2 * var(--focus-ring-width));
+        outline-offset: calc(-2 * var(--focus-ring-width));
+    }
+    100% {
+        outline-width: var(--focus-ring-width);
+        outline-offset: calc(-1 * var(--focus-ring-width));
     }
 }
