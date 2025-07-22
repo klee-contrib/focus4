@@ -301,34 +301,37 @@ export class Input<T extends "number" | "string"> extends Component<InputProps<T
                 }
             }
 
-            const end = getSelection(this.inputElement).end! - (isNegative ? 1 : 0);
-            const ajustedEnd =
-                Math.max(
-                    0,
-                    value.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "").length +
-                        this.numberStringValue!.split("").filter(c => c === "0").length -
-                        value.split("").filter(c => c === "0").length
-                ) + (isNegative ? 1 : 0);
+            if (this.numberStringValue !== value) {
+                const end = getSelection(this.inputElement).end! - (isNegative ? 1 : 0);
+                const ajustedEnd =
+                    Math.max(
+                        0,
+                        value.slice(0, end).replace(invalidCharRegex, "").replace(new RegExp(thousands, "g"), "")
+                            .length +
+                            this.numberStringValue!.split("").filter(c => c === "0").length -
+                            value.split("").filter(c => c === "0").length
+                    ) + (isNegative ? 1 : 0);
 
-            let charCount = 0;
-            const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
-                if (charCount === ajustedEnd) {
-                    return count;
-                }
-                if (digitDecimalRegex.exec(char)) {
-                    charCount++;
-                }
-                return count + 1;
-            }, 0);
+                let charCount = 0;
+                const newEnd = this.numberStringValue!.split("").reduce((count, char) => {
+                    if (charCount === ajustedEnd) {
+                        return count;
+                    }
+                    if (digitDecimalRegex.exec(char)) {
+                        charCount++;
+                    }
+                    return count + 1;
+                }, 0);
 
-            this.pendingAnimationFrame = true;
-            window.requestAnimationFrame(() => {
-                setSelection(this.inputElement, {
-                    start: newEnd,
-                    end: newEnd
+                this.pendingAnimationFrame = true;
+                window.requestAnimationFrame(() => {
+                    setSelection(this.inputElement, {
+                        start: newEnd,
+                        end: newEnd
+                    });
+                    this.pendingAnimationFrame = false;
                 });
-                this.pendingAnimationFrame = false;
-            });
+            }
         }
     }
 
