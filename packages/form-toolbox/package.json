@@ -20,7 +20,7 @@
         "@focus4/stores": "12.3.4",
         "@focus4/styling": "12.3.4",
         "@focus4/toolbox": "12.3.4",
-        "es-toolkit": "~1.39.7",
+        "es-toolkit": "~1.39.8",
         "file-type": "~21.0.0",
         "luxon": "~3.7.1",
         "tslib": "~2.8.1"

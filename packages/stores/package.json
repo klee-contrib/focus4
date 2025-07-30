@@ -16,8 +16,8 @@
     },
     "dependencies": {
         "@focus4/core": "12.3.4",
-        "@types/luxon": "~3.6.2",
-        "es-toolkit": "~1.39.7",
+        "@types/luxon": "~3.7.1",
+        "es-toolkit": "~1.39.8",
         "luxon": "~3.7.1",
         "tslib": "~2.8.1"
     },

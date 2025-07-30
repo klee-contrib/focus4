@@ -58,6 +58,7 @@
         "unicorn/no-useless-undefined": "off",
         "unicorn/prefer-global-this": "off",
         "unicorn/prefer-object-from-entries": "off",
-        "unicorn/prefer-native-coercion-functions": "off"
+        "unicorn/prefer-native-coercion-functions": "off",
+        "unicorn/switch-case-braces": ["warn", "avoid"]
     }
 }

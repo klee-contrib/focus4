@@ -1,5 +1,5 @@
 // @ts-check
-import fs from "fs";
+import fs from "node:fs";
 import {glob} from "glob";
 import rimraf from "rimraf";
 
