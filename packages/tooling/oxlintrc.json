@@ -31,6 +31,13 @@
         "eslint/no-ternary": "off",
         "eslint/no-undefined": "off",
         "eslint/no-unexpected-multiline": "off",
+        "eslint/prefer-destructuring": [
+            "warn",
+            {
+                "VariableDeclarator": {"array": false, "object": true},
+                "AssignmentExpression": {"array": false, "object": false}
+            }
+        ],
         "eslint/radix": "off",
         "eslint/require-await": "off",
         "eslint/sort-imports": ["warn", {"ignoreDeclarationSort": true, "ignoreCase": true}],

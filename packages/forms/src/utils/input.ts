@@ -1,5 +1,5 @@
 import {takeWhile} from "es-toolkit";
-import NumberParser from "intl-number-parser";
+import numberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
 
 import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
@@ -71,7 +71,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
         [hasThousandsSeparator, maxDecimals]
     );
 
-    const parseNumber = useMemo(() => NumberParser(navigator.language, numberFormat.resolvedOptions()), [numberFormat]);
+    const parseNumber = useMemo(() => numberParser(navigator.language, numberFormat.resolvedOptions()), [numberFormat]);
 
     const [numberStringValue, setNumberStringValue] = useState(
         type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
@@ -100,7 +100,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
             } else {
                 let newNumberStringValue = numberStringValue;
 
-                if (navigator.language === "fr") {
+                if (navigator.language.toLowerCase().startsWith("fr")) {
                     v = v.replace(".", ",");
                 }
 
