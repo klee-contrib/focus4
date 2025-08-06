@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "12.3.5",
+    "version": "12.3.6",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "type": "module",
@@ -29,6 +29,6 @@
         "react-i18next": ">= 15.4 < 16"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.3.5"
+        "@focus4/tooling": "12.3.6"
     }
 }
