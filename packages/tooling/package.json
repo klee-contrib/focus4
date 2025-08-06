@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@trivago/prettier-plugin-sort-imports": "5.2.2",
-        "@types/node": "24.1.0",
+        "@types/node": "24.2.0",
         "@types/postcss-modules-extract-imports": "3.0.5",
         "@types/postcss-modules-local-by-default": "4.0.2",
         "@types/postcss-modules-scope": "3.0.4",
@@ -31,7 +31,7 @@
         "postcss-modules-local-by-default": "4.2.0",
         "postcss-modules-scope": "3.2.1",
         "postcss-nesting": "13.0.2",
-        "typescript": "5.8.3"
+        "typescript": "5.9.2"
     },
     "peerDependencies": {
         "@vitejs/plugin-react": ">= 4.3 < 5",

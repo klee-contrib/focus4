@@ -39,6 +39,7 @@ export function FormCheckbox({
                 {...props}
                 disabled={disabled}
                 error={!!error}
+                id={id}
                 label={undefined}
                 theme={theme}
                 value={value ?? false}
