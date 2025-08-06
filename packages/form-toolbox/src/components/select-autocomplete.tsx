@@ -77,6 +77,7 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
             error={!!error}
             getKey={getKey}
             getLabel={getLabel}
+            label={undefined}
             onChange={val => {
                 val = val === undefinedKey ? undefined : val;
                 onChange(stringToDomainType(val, type));
