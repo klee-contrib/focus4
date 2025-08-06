@@ -137,7 +137,7 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                               }).format(Math.abs(newNumberValue))
                             : "") +
                         (right !== undefined && !+right ? decimal : "") + // Ajoute la virgule si elle était là et a été retirée par le format().
-                        (right ? takeWhile([...right].reverse(), c => c === "0").join("") : ""); // Ajoute les "0" de fin.
+                        (right ? takeWhile([...right].reverse(), c => c === "0").join("") : ""); // Ajoute les "0" à la fin.
 
                     if (!newValue.includes("NaN")) {
                         newNumberStringValue = newValue;
