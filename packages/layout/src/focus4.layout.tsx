@@ -14,6 +14,7 @@ export {
     LateralMenu,
     lateralMenuCss,
     layoutCss,
+    Overlay,
     overlayCss,
     Popin,
     popinCss,

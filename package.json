@@ -42,7 +42,7 @@
     "lerna": "8.2.3",
     "postcss": "8.5.6",
     "react-docgen-typescript": "2.4.0",
-    "rollup": "4.46.2",
+    "rollup": "4.48.1",
     "rollup-plugin-copy-glob": "0.4.1",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-preserve-shebang": "1.0.1",
