@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "12.3.9",
+    "version": "12.3.10",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "type": "module",
@@ -15,7 +15,7 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/form-toolbox": "12.3.8",
+        "@focus4/form-toolbox": "12.3.10",
         "@focus4/forms": "12.3.7",
         "@focus4/layout": "12.3.9",
         "@focus4/stores": "12.3.5",
