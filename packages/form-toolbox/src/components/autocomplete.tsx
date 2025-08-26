@@ -1,6 +1,6 @@
 import {debounce} from "es-toolkit";
 import {useObserver} from "mobx-react";
-import {useCallback, useEffect, useId, useRef, useState} from "react";
+import {FocusEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 
 import {isAbortError, requestStore} from "@focus4/core";
 import {stringToDomainType} from "@focus4/forms";
@@ -77,6 +77,7 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
     getKey = defaultGetKey,
     keyResolver,
     onChange,
+    onFocus,
     onQueryChange,
     query: pQuery = "",
     querySearcher,
@@ -157,10 +158,12 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
         onChange?.(stringToDomainType(newKey, type), newValue);
     }
 
-    function handleFocus() {
+    function handleFocus(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
         if (searchOnEmptyQuery && !values.length) {
             search(query);
         }
+
+        onFocus?.(e);
     }
 
     return useObserver(() => (
