@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/core": "12.3.5",
         "@types/luxon": "~3.7.1",
-        "es-toolkit": "~1.39.8",
+        "es-toolkit": "~1.39.10",
         "luxon": "~3.7.1",
         "tslib": "~2.8.1"
     },

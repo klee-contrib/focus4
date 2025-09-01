@@ -49,6 +49,7 @@
         "oxc/no-rest-spread-properties": "off",
         "react/exhaustive-deps": "off",
         "react/jsx-filename-extension": "off",
+        "react/jsx-handler-name": "off",
         "react/jsx-no-target-blank": "off",
         "react/no-unescaped-entities": "off",
         "react/react-in-jsx-scope": "off",
