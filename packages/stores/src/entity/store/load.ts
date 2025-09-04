@@ -76,7 +76,7 @@ export class LoadRegistration<A extends readonly any[] = never> {
     @computed.struct
     get params(): A | undefined {
         const params = this.builder.getLoadParams?.();
-        if (!params) {
+        if (params === undefined) {
             return undefined;
         }
 
@@ -293,3 +293,4 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode | CollectionSt
         return this;
     }
 }
+
