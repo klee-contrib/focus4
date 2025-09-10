@@ -125,8 +125,8 @@ Cet exemple utilise les fonctionnalités suivantes :
             }
         ],
         itemKey: item => item.id,
+        paginationMode: "single-manual",
         perPage: 4,
-        isManualFetch: true,
         maxSort: 2,
         onLineClick: () => {
             console.info("clic");

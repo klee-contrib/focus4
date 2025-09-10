@@ -74,8 +74,7 @@ Il faudra construire un \`TimelineComponent\` adapté au contenu que vous voulez
 
 const collectionStore = new CollectionStore<{id: number; label: string; date: string}>();
 collectionStore.list = list;
-collectionStore.sortBy = "date";
-collectionStore.sortAsc = false;
+collectionStore.sort = [{fieldName: "date", sortDesc: true}];
 
 export const Store: StoryObj<typeof Timeline<{id: number; label: string; date: string}>> = {
     name: "timelineFor avec un store",
@@ -93,7 +92,7 @@ Hormis la pagination serveur apportée par le \`CollectionStore\` (qui est ici r
         store: collectionStore,
         TimelineComponent,
         itemKey: item => item.id,
-        perPage: 4,
-        isManualFetch: true
+        paginationMode: "single-manual",
+        perPage: 4
     }
 };

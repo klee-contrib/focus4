@@ -6,11 +6,11 @@ export const fr = {
             list: "Liste",
             mosaic: "Mosaïque"
         },
+        pagination: "{{start}} - {{end}} sur {{total}} éléments",
         show: {
             all: "Voir tout",
-            displayed: "éléments affichés",
             less: "Voir moins",
-            more: "Voir plus"
+            more: "Voir plus ({{displayed}} / {{total}} éléments affichés)"
         }
     },
     search: {

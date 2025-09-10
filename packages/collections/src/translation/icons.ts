@@ -45,6 +45,18 @@ export const icons = {
         mosaic: {
             name: "apps"
         },
+        first: {
+            name: "first_page"
+        },
+        last: {
+            name: "last_page"
+        },
+        next: {
+            name: "keyboard_arrow_right"
+        },
+        previous: {
+            name: "keyboard_arrow_left"
+        },
         showAll: {
             name: "arrow_forward"
         }

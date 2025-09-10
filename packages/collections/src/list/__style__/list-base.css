@@ -1,3 +1,9 @@
+:root {
+    --list-base-loading-padding: 5px;
+    --list-base-bottom-padding: 10px 0;
+    --list-base-pagination-text-padding: 0 12px;
+}
+
 .add {
     display: flex;
     flex-direction: column;
@@ -13,23 +19,28 @@
     }
 }
 
+.loading {
+    padding: var(--list-base-loading-padding);
+}
+
+table + .loading {
+    margin-top: var(--list-base-loading-padding);
+}
+
 .bottomRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: var(--list-base-bottom-padding);
 }
 
-.bottomRow button {
-    margin: 0;
-    font-weight: var(--font-weight-bold);
-    text-transform: none;
+.navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
 }
 
-.loading {
-    padding: 5px;
-}
-
-table + .loading {
-    margin-top: 5px;
+.items {
+    padding: var(--list-base-pagination-text-padding);
 }

@@ -4,7 +4,7 @@ import {ComponentType} from "react";
 import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {ListBaseProps, useListBase} from "../list-base";
+import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
 import {
     AddItemProps,
     DefaultAddItemComponent,
@@ -23,7 +23,7 @@ export {timelineCss};
 export type {TimelineCss};
 
 /** Props du composant de TimeLine. */
-export type TimelineProps<T extends object> = ListBaseProps<NoInfer<T>> & {
+export type TimelineProps<T extends object> = ListBaseProps<T> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
     AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -54,7 +54,7 @@ export type TimelineProps<T extends object> = ListBaseProps<NoInfer<T>> & {
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * La timeline se définit avec :
  * - un `TimelineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a aucune
@@ -67,17 +67,38 @@ export type TimelineProps<T extends object> = ListBaseProps<NoInfer<T>> & {
 export function Timeline<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
+    baseTheme,
+    // @ts-ignore
+    data,
     dateSelector,
     EmptyComponent = DefaultEmptyComponent,
     LoadingComponent = DefaultLoadingComponent,
+    i18nPrefix = "focus",
+    // @ts-ignore
+    isLoading,
+    itemKey,
+    paginationMode = "single-auto",
+    perPage,
+    sentinelItemIndex = 5,
+    showAllHandler,
+    // @ts-ignore
+    store,
     TimelineComponent,
-    theme: pTheme,
-    ...baseProps
+    theme: pTheme
 }: TimelineProps<T>) {
     const theme = useTheme("timeline", timelineCss, pTheme);
-    return useObserver(() => {
-        const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
-        return !isLoading && !displayedData.length ? (
+
+    const state = useListState<T>({data, isLoading, perPage, store});
+    const {getDomRef, ...pagination} = usePagination({
+        paginationMode,
+        perPage,
+        sentinelItemIndex,
+        state,
+        store
+    });
+
+    return useObserver(() =>
+        !state.isLoading && !state.displayedData.length ? (
             <EmptyComponent addItemHandler={addItemHandler} i18nPrefix={i18nPrefix} store={store} />
         ) : (
             <ul className={theme.timeline()}>
@@ -91,7 +112,7 @@ export function Timeline<T extends object>({
                         />
                     </TimelineAddItem>
                 ) : null}
-                {displayedData.map((item, idx) => (
+                {state.displayedData.map((item, idx) => (
                     <TimelineLine
                         key={itemKey(item, idx)}
                         data={item}
@@ -101,11 +122,20 @@ export function Timeline<T extends object>({
                         theme={theme}
                     />
                 ))}
-                {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
-                {bottomRow}
+                {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
+                <BottomRow
+                    {...pagination}
+                    i18nPrefix={i18nPrefix}
+                    paginationMode={paginationMode}
+                    perPage={perPage}
+                    showAllHandler={showAllHandler}
+                    state={state}
+                    store={store}
+                    theme={baseTheme}
+                />
             </ul>
-        );
-    });
+        )
+    );
 }
 
 /**
@@ -113,7 +143,7 @@ export function Timeline<T extends object>({
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * La timeline se définit avec :
  * - un `TimelineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a aucune

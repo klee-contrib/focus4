@@ -51,7 +51,6 @@ export const Showcase: StoryObj<typeof AdvancedSearch<(typeof collectionStore.li
         return (
             <AdvancedSearch
                 {...props}
-                isManualFetch
                 listProps={{
                     itemKey: i => i.id,
                     LineComponent: ({data}) => (
@@ -60,6 +59,7 @@ export const Showcase: StoryObj<typeof AdvancedSearch<(typeof collectionStore.li
                         </div>
                     )
                 }}
+                paginationMode="single-manual"
                 store={collectionStore}
             />
         );

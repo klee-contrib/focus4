@@ -25,23 +25,32 @@ export interface ResultsProps<T extends object, P extends ListBaseProps<T> = Lis
     groupPageSize?: number;
     /** Nombre de groupes affichés par page de liste de groupe (pagination locale, indépendante de la recherche). Par défaut: 10. */
     groupPageListSize?: number;
-    /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
-    groupPageItemIndex?: number;
+    /**
+     * Index du groupe en partant du bas de page courante qui chargera, dès qu'il sera visible à l'écran, la page suivante (en pagination `"single-auto"`).
+     *
+     * Par défaut : 2.
+     */
+    groupSentinelItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: CSSProp<GroupCss>;
     /** Affiche la sélection sur l'ActionBar et les lignes. */
     hasSelection?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Chargement manuel (à la place du scroll infini). */
-    isManualFetch?: boolean;
     /** Composant de liste. */
     ListComponent?: ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
-        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
+        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "paginationMode" | "showAllHandler" | "store"
     >;
+    /**
+     * Mode de pagination :
+     * - `"single-auto"` (par défaut) : Le contenu de la page suivante s'affichera automatiquement à la suite de la page courante, une fois que l'élement sentinelle (déterminé par `sentinelItemIndex`) sera visible à l'écran.
+     * - `"single-manual"` : Le contenu de la page suivante s'affichera à la suite de la page courante, via un bouton "Voir plus" dédié.
+     * - `"multiple"` : Le contenu de la page suivante remplacera le contenu de la page courante. La navigation entre les pages se fera via des boutons de navigation dédiés.
+     */
+    paginationMode?: "multiple" | "single-auto" | "single-manual";
     /** Store contenant la liste. */
     store: CollectionStore<T>;
     /** Utilise des ActionBar comme header de groupe, qui remplacent l'ActionBar générale. */
@@ -60,14 +69,14 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
     GroupHeader,
     groupOperationList,
     groupPageListSize = 10,
-    groupPageItemIndex = 2,
     groupPageSize = 5,
+    groupSentinelItemIndex = 2,
     groupTheme,
     hasSelection,
     i18nPrefix,
-    isManualFetch,
     listProps,
     ListComponent = List,
+    paginationMode = "single-auto",
     store,
     useGroupActionBars
 }: ResultsProps<T, P>) {
@@ -109,7 +118,7 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
                     <List
                         key="result-group-list"
                         data={filteredGroups}
-                        isManualFetch={isManualFetch}
+                        paginationMode={paginationMode}
                         itemKey={data => data.code}
                         LineComponent={({data}) => (
                             <Group
@@ -128,8 +137,8 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
                             />
                         )}
                         mode="list"
-                        pageItemIndex={groupPageItemIndex}
                         perPage={groupPageListSize}
+                        sentinelItemIndex={groupSentinelItemIndex}
                     />
                 ) : (
                     <ListComponent
@@ -137,7 +146,7 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
                         {...(listProps as P)}
                         {...{hasSelection}}
                         i18nPrefix={i18nPrefix}
-                        isManualFetch={isManualFetch}
+                        paginationMode={paginationMode}
                         store={store}
                     />
                 )}

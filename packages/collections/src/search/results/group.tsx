@@ -38,7 +38,7 @@ export interface GroupProps<T extends object, P extends ListBaseProps<T> = ListP
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
-        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
+        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "paginationMode" | "showAllHandler" | "store"
     >;
     /** Map des états d'ouverture des groupes.  */
     openedMap: ObservableMap<string, boolean>;
@@ -110,7 +110,7 @@ export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T
                     {...(listProps as P)}
                     {...{hasSelection, hideAdditionalItems: true}}
                     i18nPrefix={i18nPrefix}
-                    isManualFetch
+                    paginationMode="single-manual"
                     showAllHandler={group.list.length < group.totalCount ? state.showAllHandler : undefined}
                     store={state.store}
                 />

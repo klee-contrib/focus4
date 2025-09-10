@@ -6,8 +6,8 @@ import {ComponentType, Fragment, useContext, useEffect} from "react";
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
+import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
 import {OperationListItem} from "../contextual-actions";
-import {ListBaseProps, useListBase} from "../list-base";
 import {
     AddItemProps,
     DefaultAddItemComponent,
@@ -27,7 +27,7 @@ export {ListContext, listCss};
 export type {DetailProps, LineProps, ListCss};
 
 /** Props du composant de liste standard. */
-export type ListProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
+export type ListProps<T extends object> = ListBaseProps<T> & {
     /** Composant personnalisé pour le bouton "Ajouter". */
     AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
@@ -74,7 +74,7 @@ export type ListProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoa
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
  * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.
@@ -98,33 +98,45 @@ export type ListProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoa
 export function List<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
+    baseTheme,
     canOpenDetail = () => true,
+    // @ts-ignore
+    data,
     DetailComponent,
     EmptyComponent = DefaultEmptyComponent,
     // @ts-ignore
     hasSelection,
     hideAdditionalItems,
+    i18nPrefix = "focus",
+    // @ts-ignore
+    isLoading,
+    itemKey,
     LineComponent,
     LoadingComponent = DefaultLoadingComponent,
     mode,
     mosaic = {width: 200, height: 200},
     MosaicComponent,
     operationList,
-    theme: pTheme,
-    ...baseProps
+    paginationMode = "single-auto",
+    perPage,
+    sentinelItemIndex = 5,
+    showAllHandler,
+    // @ts-ignore
+    store,
+    theme: pTheme
 }: ListProps<T>) {
     const listContext = useContext(ListContext);
     const theme = useTheme("list", listCss, pTheme);
-    const state = useLocalObservable(
+    const listState = useLocalObservable(
         () => ({
             _addItemHandler: addItemHandler,
             get addItemHandler() {
-                return state._addItemHandler ?? listContext.addItemHandler;
+                return this._addItemHandler ?? listContext.addItemHandler;
             },
 
             _mode: mode,
             get mode() {
-                return state._mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
+                return this._mode ?? listContext.mode ?? (MosaicComponent && !LineComponent ? "mosaic" : "list");
             },
 
             /** Nombre de mosaïque par ligne, déterminé à la volée. */
@@ -139,7 +151,7 @@ export function List<T extends object>({
                 idx: number,
                 {onOpen, onClose}: {onOpen?: () => Promise<void> | void; onClose?: () => Promise<void> | void} = {}
             ) {
-                const displayedIdx = state.displayedIdx !== idx ? idx : undefined;
+                const displayedIdx = this.displayedIdx !== idx ? idx : undefined;
                 if (displayedIdx !== undefined && onOpen) {
                     await onOpen();
                 }
@@ -147,27 +159,28 @@ export function List<T extends object>({
                     await onClose();
                 }
 
-                state.displayedIdx = displayedIdx;
+                this.displayedIdx = displayedIdx;
             },
 
             /** Ferme le détail. */
             closeDetail() {
-                state.displayedIdx = undefined;
+                this.displayedIdx = undefined;
             }
         }),
         {_addItemHandler: observable.ref}
     );
 
     useEffect(() => {
-        state._addItemHandler = addItemHandler;
-        state._mode = mode;
+        listState._addItemHandler = addItemHandler;
+        listState._mode = mode;
     }, [addItemHandler, mode]);
 
     /** Met à jour `byLine`. */
     useEffect(() => {
         const updateByLine = () => {
-            if (state.ulRef) {
-                state.byLine = state.mode === "mosaic" ? Math.floor(state.ulRef.clientWidth / (mosaic.width + 10)) : 1;
+            if (listState.ulRef) {
+                listState.byLine =
+                    listState.mode === "mosaic" ? Math.floor(listState.ulRef.clientWidth / (mosaic.width + 10)) : 1;
             }
         };
 
@@ -180,13 +193,20 @@ export function List<T extends object>({
         };
     }, []);
 
-    return useObserver(() => {
-        const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
+    const state = useListState<T>({data, isLoading, perPage, store});
+    const {getDomRef, ...pagination} = usePagination({
+        paginationMode,
+        perPage,
+        sentinelItemIndex,
+        state,
+        store
+    });
 
+    return useObserver(() => {
         /** Réaction pour fermer le détail si la liste change. */
         useEffect(
             () =>
-                reaction(() => displayedData.map(itemKey), state.closeDetail, {
+                reaction(() => state.displayedData.map(itemKey), listState.closeDetail, {
                     fireImmediately: true,
                     equals: comparer.structural
                 }),
@@ -194,59 +214,59 @@ export function List<T extends object>({
         );
 
         /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
-        const isAddItemShown = !!(!hideAdditionalItems && state.addItemHandler && state.mode === "mosaic");
+        const isAddItemShown = !!(!hideAdditionalItems && listState.addItemHandler && listState.mode === "mosaic");
 
         let Component: ComponentType<LineProps<T>>;
-        if (state.mode === "list" && LineComponent) {
+        if (listState.mode === "list" && LineComponent) {
             Component = LineComponent;
-        } else if (state.mode === "mosaic" && MosaicComponent) {
+        } else if (listState.mode === "mosaic" && MosaicComponent) {
             Component = MosaicComponent;
         } else {
             throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
         }
 
         const detailIdx =
-            state.displayedIdx !== undefined
-                ? state.mode === "list"
-                    ? state.displayedIdx
+            listState.displayedIdx !== undefined
+                ? listState.mode === "list"
+                    ? listState.displayedIdx
                     : Math.min(
-                          (Math.floor((state.displayedIdx + (isAddItemShown ? 1 : 0)) / state.byLine) + 1) *
-                              state.byLine -
+                          (Math.floor((listState.displayedIdx + (isAddItemShown ? 1 : 0)) / listState.byLine) + 1) *
+                              listState.byLine -
                               (isAddItemShown ? 1 : 0) -
                               1,
-                          displayedData.length - 1
+                          state.displayedData.length - 1
                       )
                 : undefined;
 
-        const lines = displayedData.map((item, idx) => (
+        const lines = state.displayedData.map((item, idx) => (
             <Fragment key={itemKey(item, idx)}>
                 <LineWrapper
                     data={item}
                     domRef={getDomRef(idx)}
                     hasSelection={store ? hasSelection : undefined}
                     LineComponent={Component}
-                    mosaic={state.mode === "mosaic" ? mosaic : undefined}
+                    mosaic={listState.mode === "mosaic" ? mosaic : undefined}
                     operationList={operationList}
                     store={store}
                     theme={theme}
                     toggleDetail={
                         canOpenDetail(item) && DetailComponent
-                            ? (callbacks?: {}) => state.toggleDetail(idx, callbacks)
+                            ? (callbacks?: {}) => listState.toggleDetail(idx, callbacks)
                             : undefined
                     }
                 />
                 {DetailComponent ? (
                     <AnimatePresence mode="wait">
-                        {state.displayedIdx !== undefined && idx === detailIdx ? (
+                        {listState.displayedIdx !== undefined && idx === detailIdx ? (
                             <DetailWrapper
-                                key={`detail-${state.displayedIdx}`}
-                                byLine={state.byLine}
-                                closeDetail={state.closeDetail}
+                                key={`detail-${listState.displayedIdx}`}
+                                byLine={listState.byLine}
+                                closeDetail={listState.closeDetail}
                                 DetailComponent={DetailComponent}
-                                displayedIdx={state.displayedIdx}
+                                displayedIdx={listState.displayedIdx}
                                 isAddItemShown={isAddItemShown}
-                                item={displayedData[state.displayedIdx]}
-                                mode={state.mode}
+                                item={state.displayedData[listState.displayedIdx]}
+                                mode={listState.mode}
                                 mosaic={mosaic}
                                 theme={theme}
                             />
@@ -259,17 +279,17 @@ export function List<T extends object>({
         return (
             <div
                 className={theme.list({
-                    mosaic: state.mode === "mosaic",
+                    mosaic: listState.mode === "mosaic",
                     selected: (store && store.selectionStatus !== "none") ?? false
                 })}
             >
                 {/* Gestion de l'empty state. */}
-                {!isLoading && !hideAdditionalItems && !displayedData.length ? (
-                    <EmptyComponent addItemHandler={state.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
+                {!state.isLoading && !hideAdditionalItems && !state.displayedData.length ? (
+                    <EmptyComponent addItemHandler={listState.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
                 ) : (
                     <ul
                         ref={ul => {
-                            state.ulRef = ul;
+                            listState.ulRef = ul;
                         }}
                     >
                         {/* On regarde si on doit ajouter l'élément d'ajout. */}
@@ -280,7 +300,7 @@ export function List<T extends object>({
                                 style={{width: mosaic.width, height: mosaic.height}}
                             >
                                 <AddItemComponent
-                                    addItemHandler={state.addItemHandler}
+                                    addItemHandler={listState.addItemHandler}
                                     i18nPrefix={i18nPrefix}
                                     mode="mosaic"
                                 />
@@ -290,8 +310,17 @@ export function List<T extends object>({
                     </ul>
                 )}
                 {/* Gestion de l'affichage du chargement. */}
-                {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
-                {bottomRow}
+                {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
+                <BottomRow
+                    {...pagination}
+                    i18nPrefix={i18nPrefix}
+                    paginationMode={paginationMode}
+                    perPage={perPage}
+                    showAllHandler={showAllHandler}
+                    state={state}
+                    store={store}
+                    theme={baseTheme}
+                />
             </div>
         );
     });
@@ -302,7 +331,7 @@ export function List<T extends object>({
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
  * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.

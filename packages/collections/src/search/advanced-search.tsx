@@ -88,8 +88,12 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     groupPageSize?: number;
     /** Nombre de groupes affichés par page de liste de groupe (pagination locale, indépendante de la recherche). Par défaut: 10. */
     groupPageListSize?: number;
-    /** (Scroll infini, affichage en groupe) Index du groupe, en partant du bas de la liste de groupe affichée, qui charge la page suivante dès qu'il est visible. Par défaut : 2. */
-    groupPageItemIndex?: number;
+    /**
+     * Index du groupe en partant du bas de page courante qui chargera, dès qu'il sera visible à l'écran, la page suivante (en pagination `"single-auto"`).
+     *
+     * Par défaut : 2.
+     */
+    groupSentinelItemIndex?: number;
     /** CSS des groupes. */
     groupTheme?: CSSProp<GroupCss>;
     /** Affiche le bouton de groupe dans l'ActionBar. */
@@ -114,14 +118,12 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     hideSummarySort?: boolean;
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
-    /** Chargement manuel (à la place du scroll infini). */
-    isManualFetch?: boolean;
     /** Composant de liste. */
     ListComponent?: ComponentType<P & {store: CollectionStore<T>}>;
     /** Props pour le composant de liste. */
     listProps: Omit<
         P,
-        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "isManualFetch" | "showAllHandler" | "store"
+        "data" | "groupCode" | "hasSelection" | "i18nPrefix" | "paginationMode" | "showAllHandler" | "store"
     >;
     /** Mode des listes dans le wrapper. Par défaut : "list". */
     mode?: "list" | "mosaic";
@@ -138,6 +140,13 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     operationList?: OperationListItem<T[]>[];
     /** Liste des colonnes sur lesquels on peut trier. */
     orderableColumnList?: {label: string; sort: SortInput[]}[];
+    /**
+     * Mode de pagination :
+     * - `"single-auto"` (par défaut) : Le contenu de la page suivante s'affichera automatiquement à la suite de la page courante, une fois que l'élement sentinelle (déterminé par `sentinelItemIndex`) sera visible à l'écran.
+     * - `"single-manual"` : Le contenu de la page suivante s'affichera à la suite de la page courante, via un bouton "Voir plus" dédié.
+     * - `"multiple"` : Le contenu de la page suivante remplacera le contenu de la page courante. La navigation entre les pages se fera via des boutons de navigation dédiés.
+     */
+    paginationMode?: "multiple" | "single-auto" | "single-manual";
     /** Placeholder pour la barre de recherche de l'ActionBar. */
     searchBarPlaceholder?: string;
     /** Lance la recherche à la construction du composant. Par défaut: true. */
@@ -184,9 +193,9 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
     facetSections,
     GroupHeader,
     groupOperationList,
-    groupPageItemIndex,
     groupPageListSize,
     groupPageSize,
+    groupSentinelItemIndex,
     groupTheme,
     groupableFacets,
     hasGrouping,
@@ -200,7 +209,6 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
     hideSummaryResults,
     hideSummarySort,
     i18nPrefix = "focus",
-    isManualFetch,
     ListComponent,
     listProps,
     mode = "list",
@@ -208,6 +216,7 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
     offsetTopOverride,
     operationList,
     orderableColumnList,
+    paginationMode = "single-auto",
     searchBarPlaceholder,
     searchOnMount = true,
     showSingleValuedFacets,
@@ -339,15 +348,15 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                         defaultFoldedGroups={defaultFoldedGroups}
                         GroupHeader={GroupHeader}
                         groupOperationList={groupOperationList}
-                        groupPageItemIndex={groupPageItemIndex}
                         groupPageListSize={groupPageListSize}
                         groupPageSize={groupPageSize}
+                        groupSentinelItemIndex={groupSentinelItemIndex}
                         groupTheme={groupTheme}
                         hasSelection={hasSelection}
                         i18nPrefix={i18nPrefix}
-                        isManualFetch={isManualFetch}
                         ListComponent={ListComponent}
                         listProps={listProps}
+                        paginationMode={paginationMode}
                         store={store}
                         useGroupActionBars={useGroupActionBars}
                     />

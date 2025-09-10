@@ -6,8 +6,8 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
+import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
 import {ContextualActions, OperationListItem} from "../contextual-actions";
-import {ListBaseProps, useListBase} from "../list-base";
 import {DefaultLoadingComponent, LoadingProps} from "../shared";
 
 import {TableColumn, TableHeader} from "./header";
@@ -19,7 +19,7 @@ export {tableCss};
 export type {TableColumn, TableCss};
 
 /** Props du tableau de base. */
-export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLoading"> & {
+export type TableProps<T extends object> = ListBaseProps<T> & {
     /** La description des colonnes du tableau. */
     columns: TableColumn<NoInfer<T>>[];
     /** Classe CSS pour une ligne. */
@@ -68,7 +68,7 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * Le tableau se base sur des définitions de colonnes (`columns`) qui doivent définir un titre et un contenu, ce dernier étant défini comme une fonction des
  * données qui retourne un rendu JSX. Le CSS de chaque ligne et de chaque colonne peut être personnalisé via `lineClassName` et `column.className`.
@@ -87,11 +87,18 @@ export type TableProps<T extends object> = Omit<ListBaseProps<NoInfer<T>>, "isLo
  * hook `useListBase` et le CSS du tableau en utilisant `tableCss`.
  */
 export function Table<T extends object>({
+    baseTheme,
     columns,
+    // @ts-ignore
+    data,
     // @ts-ignore
     hasSelection,
     // @ts-ignore
     hasSelectAll,
+    i18nPrefix = "focus",
+    // @ts-ignore
+    isLoading,
+    itemKey,
     lineClassName,
     lineOperationList,
     LoadingComponent = DefaultLoadingComponent,
@@ -99,9 +106,14 @@ export function Table<T extends object>({
     offsetTopOverride,
     onLineClick,
     operationList,
+    paginationMode = "single-auto",
+    perPage,
+    sentinelItemIndex = 5,
+    showAllHandler,
     stickyHeader = false,
-    theme: pTheme,
-    ...baseProps
+    // @ts-ignore
+    store,
+    theme: pTheme
 }: TableProps<T>) {
     const theme = useTheme("table", tableCss, pTheme);
     const {headerHeight} = useContext(ScrollableContext);
@@ -109,82 +121,97 @@ export function Table<T extends object>({
     const tbody = useRef<HTMLTableSectionElement>(null);
     useStickyClip(tbody);
 
-    return useObserver(() => {
-        const {bottomRow, displayedData, getDomRef, i18nPrefix, isLoading, itemKey, store} = useListBase(baseProps);
-        return (
-            <>
-                <table
-                    className={theme.table({
-                        empty: displayedData.length === 0,
-                        selected: (store && store.selectionStatus !== "none") ?? false,
-                        sticky: stickyHeader
-                    })}
+    const state = useListState<T>({data, isLoading, perPage, store});
+    const {getDomRef, ...pagination} = usePagination({
+        paginationMode,
+        perPage,
+        sentinelItemIndex,
+        state,
+        store
+    });
+
+    return useObserver(() => (
+        <>
+            <table
+                className={theme.table({
+                    empty: state.displayedData.length === 0,
+                    selected: (store && store.selectionStatus !== "none") ?? false,
+                    sticky: stickyHeader
+                })}
+            >
+                <thead
+                    style={
+                        stickyHeader
+                            ? {top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}
+                            : undefined
+                    }
                 >
-                    <thead
-                        style={
-                            stickyHeader
-                                ? {top: `calc(${offsetTopOverride ?? headerHeight}px + var(--content-padding-top))`}
-                                : undefined
-                        }
-                    >
-                        <tr className={theme.header()}>
-                            {hasSelection ? (
-                                <th className={theme.checkbox({all: hasSelectAll})}>
-                                    {hasSelectAll && store ? (
-                                        <Checkbox
-                                            indeterminate={store.selectionStatus === "partial"}
-                                            onChange={store.toggleAll}
-                                            value={store.selectionStatus !== "none"}
-                                        />
-                                    ) : null}
-                                </th>
-                            ) : null}
-                            {columns.map(column => (
-                                <TableHeader
-                                    key={column.title}
-                                    column={column}
-                                    i18nPrefix={i18nPrefix}
-                                    maxSort={maxSort}
-                                    store={store}
-                                    theme={theme}
-                                />
-                            ))}
-                            {!!lineOperationList || !!operationList ? (
-                                <th className={theme.actions()}>
-                                    {operationList ? (
-                                        <ContextualActions
-                                            data={store ? [...store.selectedItems] : []}
-                                            operationList={operationList}
-                                        />
-                                    ) : null}
-                                </th>
-                            ) : null}
-                        </tr>
-                    </thead>
-                    <tbody ref={tbody}>
-                        {displayedData.map((item, idx) => (
-                            <TableLine
-                                key={itemKey(item, idx)}
-                                className={lineClassName}
-                                columns={columns}
-                                data={item}
-                                domRef={getDomRef(idx)}
-                                hasActions={!!lineOperationList || !!operationList}
-                                hasSelection={hasSelection}
-                                onClick={onLineClick}
-                                operationList={lineOperationList}
+                    <tr className={theme.header()}>
+                        {hasSelection ? (
+                            <th className={theme.checkbox({all: hasSelectAll})}>
+                                {hasSelectAll && store ? (
+                                    <Checkbox
+                                        indeterminate={store.selectionStatus === "partial"}
+                                        onChange={store.toggleAll}
+                                        value={store.selectionStatus !== "none"}
+                                    />
+                                ) : null}
+                            </th>
+                        ) : null}
+                        {columns.map(column => (
+                            <TableHeader
+                                key={column.title}
+                                column={column}
+                                i18nPrefix={i18nPrefix}
+                                maxSort={maxSort}
                                 store={store}
                                 theme={theme}
                             />
                         ))}
-                    </tbody>
-                </table>
-                {/* Gestion de l'affichage du chargement. */}
-                {isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
-                {bottomRow}
-            </>
-        );
-    });
+                        {!!lineOperationList || !!operationList ? (
+                            <th className={theme.actions()}>
+                                {operationList ? (
+                                    <ContextualActions
+                                        data={store ? [...store.selectedItems] : []}
+                                        operationList={operationList}
+                                    />
+                                ) : null}
+                            </th>
+                        ) : null}
+                    </tr>
+                </thead>
+                <tbody ref={tbody}>
+                    {state.displayedData.map((item, idx) => (
+                        <TableLine
+                            key={itemKey(item, idx)}
+                            className={lineClassName}
+                            columns={columns}
+                            data={item}
+                            domRef={getDomRef(idx)}
+                            hasActions={!!lineOperationList || !!operationList}
+                            hasSelection={hasSelection}
+                            onClick={onLineClick}
+                            operationList={lineOperationList}
+                            store={store}
+                            theme={theme}
+                        />
+                    ))}
+                </tbody>
+            </table>
+            {/* Gestion de l'affichage du chargement. */}
+            {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
+            <BottomRow
+                {...pagination}
+                i18nPrefix={i18nPrefix}
+                paginationMode={paginationMode}
+                perPage={perPage}
+                showAllHandler={showAllHandler}
+                state={state}
+                store={store}
+                theme={baseTheme}
+            />
+        </>
+    ));
 }
 
 /**
@@ -192,7 +219,7 @@ export function Table<T extends object>({
  *
  * Comme tous les composants de listes :
  * - Il peut s'utiliser soit directement avec une liste de données passée dans la prop `data`, soit avec un [`CollectionStore`](/docs/listes-store-de-collection--docs) passé dans la prop `store`.
- * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `isManualFetch`).
+ * - Il peut gérer de la pagination (côté client avec `perPage` et/ou côté serveur avec le store), automatique ou manuelle (via `paginationMode`).
  *
  * Le tableau se base sur des définitions de colonnes (`columns`) qui doivent définir un titre et un contenu, ce dernier étant défini comme une fonction des
  * données qui retourne un rendu JSX. Le CSS de chaque ligne et de chaque colonne peut être personnalisé via `lineClassName` et `column.className`.

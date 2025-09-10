@@ -97,7 +97,7 @@ fonctionnalités suivantes :
         ],
         LineComponent: p => <LineComponent {...p} hasCheckbox />,
         itemKey: item => item.id,
-        perPage: 4,
-        isManualFetch: true
+        paginationMode: "multiple",
+        perPage: 2
     }
 };

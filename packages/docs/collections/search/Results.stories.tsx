@@ -20,7 +20,6 @@ export const Showcase: StoryObj<typeof Results<(typeof collectionStore.list)[0]>
         return (
             <Results
                 {...props}
-                isManualFetch
                 listProps={{
                     itemKey: i => i.id,
                     LineComponent: ({data}) => (
@@ -29,6 +28,7 @@ export const Showcase: StoryObj<typeof Results<(typeof collectionStore.list)[0]>
                         </div>
                     )
                 }}
+                paginationMode="single-manual"
                 store={collectionStore}
             />
         );
