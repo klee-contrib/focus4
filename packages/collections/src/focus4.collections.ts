@@ -17,7 +17,6 @@ export {
     Timeline,
     timelineCss,
     timelineFor,
-    useListState,
     usePagination
 } from "./list";
 export {
@@ -55,12 +54,12 @@ export type {
     ListProps,
     ListState,
     OperationListItem,
+    PaginationState,
     TableColumn,
     TableCss,
     TableProps,
     TimelineCss,
     TimelineProps,
-    UseListStateArgs,
     UsePaginationArgs
 } from "./list";
 export type {

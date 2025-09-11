@@ -4,7 +4,7 @@ import {ComponentType} from "react";
 import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
+import {BottomRow, ListBaseProps, usePagination} from "../base";
 import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps} from "../shared";
 
 import {TimelineAddItem} from "./add";
@@ -78,12 +78,12 @@ export function Timeline<T extends object>({
 }: TimelineProps<T>) {
     const theme = useTheme("timeline", timelineCss, pTheme);
 
-    const state = useListState<T>({data, isLoading, perPage, store});
-    const {getDomRef, ...pagination} = usePagination({
+    const {getDomRef, state, ...pagination} = usePagination<T>({
+        data,
+        isLoading,
         paginationMode,
         perPage,
         sentinelItemIndex,
-        state,
         store
     });
 

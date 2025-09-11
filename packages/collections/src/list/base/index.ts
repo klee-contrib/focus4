@@ -3,12 +3,10 @@ import {CSSProp} from "@focus4/styling";
 import {ListBaseCss} from "./bottom-row";
 
 export {BottomRow, listBaseCss} from "./bottom-row";
-export {useListState} from "./list-state";
 export {usePagination} from "./pagination";
 
 export type {BottomRowProps, ListBaseCss} from "./bottom-row";
-export type {ListState, UseListStateArgs} from "./list-state";
-export type {UsePaginationArgs} from "./pagination";
+export type {ListState, PaginationState, UsePaginationArgs} from "./pagination";
 
 /** Props communes à tous les composants de liste. */
 export interface ListBaseProps<T extends object> {

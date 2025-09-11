@@ -5,7 +5,7 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, CircularProgressIndicator, IconButton} from "@focus4/toolbox";
 
-import {ListState} from "./list-state";
+import {PaginationState} from "./pagination";
 
 import listBaseCss, {ListBaseCss} from "../__style__/list-base.css";
 
@@ -13,15 +13,7 @@ export {listBaseCss};
 export type {ListBaseCss};
 
 /** Props du composant `BottomRow`. */
-export interface BottomRowProps<T extends object> {
-    /** Handler pour le bouton de première page. */
-    handleFirst: () => void;
-    /** Handler pour le bouton de dernière page.. */
-    handleLast: () => void;
-    /** Handler pour le bouton de page suivante. */
-    handleNext: () => void;
-    /** Handler pour le bouton de page précédente. */
-    handlePrevious: () => void;
+export interface BottomRowProps<T extends object> extends Omit<PaginationState<T>, "getDomRef"> {
     /** Préfixe i18n pour les libellés de la liste. Par défaut : "focus". */
     i18nPrefix?: string;
     /**
@@ -35,8 +27,6 @@ export interface BottomRowProps<T extends object> {
     perPage?: number;
     /** Affiche un bouton "Voir tout" qui effectue cette action. */
     showAllHandler?: () => void;
-    /** L'état de liste, retourné par `useListState`. */
-    state: ListState<T>;
     /** Le store contenant la liste. */
     store?: CollectionStore<T>;
     /** CSS */

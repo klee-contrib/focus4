@@ -6,7 +6,7 @@ import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox} from "@focus4/toolbox";
 
-import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
+import {BottomRow, ListBaseProps, usePagination} from "../base";
 import {ContextualActions, OperationListItem} from "../contextual-actions";
 
 import {TableColumn, TableHeader} from "./header";
@@ -117,12 +117,12 @@ export function Table<T extends object>({
     const tbody = useRef<HTMLTableSectionElement>(null);
     useStickyClip(tbody);
 
-    const state = useListState<T>({data, isLoading, perPage, store});
-    const {getDomRef, ...pagination} = usePagination({
+    const {getDomRef, state, ...pagination} = usePagination<T>({
+        data,
+        isLoading,
         paginationMode,
         perPage,
         sentinelItemIndex,
-        state,
         store
     });
 

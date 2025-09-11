@@ -6,7 +6,7 @@ import {ComponentType, Fragment, useContext, useEffect} from "react";
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
+import {BottomRow, ListBaseProps, usePagination} from "../base";
 import {OperationListItem} from "../contextual-actions";
 import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps} from "../shared";
 
@@ -183,12 +183,12 @@ export function List<T extends object>({
         };
     }, []);
 
-    const state = useListState<T>({data, isLoading, perPage, store});
-    const {getDomRef, ...pagination} = usePagination({
+    const {getDomRef, state, ...pagination} = usePagination<T>({
+        data,
+        isLoading,
         paginationMode,
         perPage,
         sentinelItemIndex,
-        state,
         store
     });
 
