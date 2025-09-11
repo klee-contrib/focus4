@@ -1,5 +1,5 @@
 :root {
-    --list-base-loading-padding: 5px;
+    --list-base-empty-padding: 5px;
     --list-base-bottom-padding: 10px 0;
     --list-base-pagination-text-padding: 0 12px;
 }
@@ -19,19 +19,22 @@
     }
 }
 
-.loading {
-    padding: var(--list-base-loading-padding);
-}
-
-table + .loading {
-    margin-top: var(--list-base-loading-padding);
+.empty {
+    padding: var(--list-base-empty-padding);
 }
 
 .bottomRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.bottomRow:has(> *) {
     padding: var(--list-base-bottom-padding);
+}
+
+.loading {
+    margin: auto;
 }
 
 .navigation {

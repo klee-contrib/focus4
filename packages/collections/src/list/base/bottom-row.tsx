@@ -3,7 +3,7 @@ import {useTranslation} from "react-i18next";
 
 import {CollectionStore} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {Button, IconButton} from "@focus4/toolbox";
+import {Button, CircularProgressIndicator, IconButton} from "@focus4/toolbox";
 
 import {ListState} from "./list-state";
 
@@ -60,64 +60,66 @@ export function BottomRow<T extends object>({
 
     return useObserver(() => {
         const theme = useTheme("listBase", listBaseCss, pTheme);
-        if ((paginationMode !== "single-auto" && (state.hasMoreBefore || state.hasMoreAfter)) || showAllHandler) {
-            return (
-                <div className={theme.bottomRow()}>
-                    {paginationMode === "single-manual" && (state.hasMoreAfter || state.hasMoreToLoad) ? (
-                        <Button
-                            icon={{i18nKey: `${i18nPrefix}.icons.list.add`}}
-                            label={t(`${i18nPrefix}.list.show.more`, {
-                                displayed: state.displayedData.length,
+        return (
+            <div className={theme.bottomRow()}>
+                {state.isLoading && (!state.displayedData.length || paginationMode === "single-auto") ? (
+                    <CircularProgressIndicator className={theme.loading()} indeterminate />
+                ) : null}
+                {paginationMode === "single-manual" && (state.hasMoreAfter || state.hasMoreToLoad) ? (
+                    <Button
+                        color={state.isLoading ? "primary" : undefined}
+                        disabled={state.isLoading}
+                        icon={{i18nKey: `${i18nPrefix}.icons.list.add`}}
+                        label={t(`${i18nPrefix}.list.show.more`, {
+                            displayed: state.displayedData.length,
+                            total: store?.totalCount ?? state.data.length
+                        })}
+                        loading={state.isLoading}
+                        onClick={handleNext}
+                    />
+                ) : paginationMode === "multiple" ? (
+                    <div className={theme.navigation()}>
+                        <IconButton
+                            disabled={!state.hasMoreBefore || state.isLoading}
+                            icon={{i18nKey: `${i18nPrefix}.icons.list.first`}}
+                            onClick={handleFirst}
+                        />
+                        <IconButton
+                            disabled={!state.hasMoreBefore || state.isLoading}
+                            icon={{i18nKey: `${i18nPrefix}.icons.list.previous`}}
+                            onClick={handlePrevious}
+                        />
+                        <span className={theme.items()}>
+                            {t(`${i18nPrefix}.list.pagination`, {
+                                start: state.displayedStart + 1,
+                                end: Math.min(state.displayedEnd ?? Infinity, state.data.length),
                                 total: store?.totalCount ?? state.data.length
                             })}
+                        </span>
+                        <IconButton
+                            color={state.isLoading ? "primary" : undefined}
+                            disabled={(!state.hasMoreAfter && !state.hasMoreToLoad) || state.isLoading}
+                            icon={{i18nKey: `${i18nPrefix}.icons.list.next`}}
+                            loading={state.isLoading}
                             onClick={handleNext}
                         />
-                    ) : paginationMode === "multiple" ? (
-                        <div className={theme.navigation()}>
+                        {store?.type !== "server" ? (
                             <IconButton
-                                disabled={!state.hasMoreBefore}
-                                icon={{i18nKey: `${i18nPrefix}.icons.list.first`}}
-                                onClick={handleFirst}
+                                disabled={!state.hasMoreAfter}
+                                icon={{i18nKey: `${i18nPrefix}.icons.list.last`}}
+                                onClick={handleLast}
                             />
-                            <IconButton
-                                disabled={!state.hasMoreBefore}
-                                icon={{i18nKey: `${i18nPrefix}.icons.list.previous`}}
-                                onClick={handlePrevious}
-                            />
-                            <span className={theme.items()}>
-                                {t(`${i18nPrefix}.list.pagination`, {
-                                    start: state.displayedStart + 1,
-                                    end: Math.min(state.displayedEnd ?? Infinity, state.data.length),
-                                    total: store?.totalCount ?? state.data.length
-                                })}
-                            </span>
-                            <IconButton
-                                disabled={!state.hasMoreAfter && !state.hasMoreToLoad}
-                                icon={{i18nKey: `${i18nPrefix}.icons.list.next`}}
-                                onClick={handleNext}
-                            />
-                            {store?.type !== "server" ? (
-                                <IconButton
-                                    disabled={!state.hasMoreAfter}
-                                    icon={{i18nKey: `${i18nPrefix}.icons.list.last`}}
-                                    onClick={handleLast}
-                                />
-                            ) : null}
-                        </div>
-                    ) : (
-                        <div />
-                    )}
-                    {showAllHandler ? (
-                        <Button
-                            icon={{i18nKey: `${i18nPrefix}.icons.list.showAll`}}
-                            label={t(`${i18nPrefix}.list.show.all`)}
-                            onClick={showAllHandler}
-                        />
-                    ) : null}
-                </div>
-            );
-        } else {
-            return null;
-        }
+                        ) : null}
+                    </div>
+                ) : null}
+                {showAllHandler ? (
+                    <Button
+                        icon={{i18nKey: `${i18nPrefix}.icons.list.showAll`}}
+                        label={t(`${i18nPrefix}.list.show.all`)}
+                        onClick={showAllHandler}
+                    />
+                ) : null}
+            </div>
+        );
     });
 }

@@ -8,14 +8,7 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
 import {OperationListItem} from "../contextual-actions";
-import {
-    AddItemProps,
-    DefaultAddItemComponent,
-    DefaultEmptyComponent,
-    DefaultLoadingComponent,
-    EmptyProps,
-    LoadingProps
-} from "../shared";
+import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps} from "../shared";
 
 import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
@@ -42,8 +35,6 @@ export type ListProps<T extends object> = ListBaseProps<T> & {
     hideAdditionalItems?: boolean;
     /** Composant de ligne. */
     LineComponent?: ComponentType<LineProps<NoInfer<T>>>;
-    /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** Mode des listes dans le wrapper. Par défaut : celui du composant fourni, ou "list". */
     mode?: "list" | "mosaic";
     /** Taille de la mosaïque. */
@@ -112,7 +103,6 @@ export function List<T extends object>({
     isLoading,
     itemKey,
     LineComponent,
-    LoadingComponent = DefaultLoadingComponent,
     mode,
     mosaic = {width: 200, height: 200},
     MosaicComponent,
@@ -309,8 +299,6 @@ export function List<T extends object>({
                         {lines}
                     </ul>
                 )}
-                {/* Gestion de l'affichage du chargement. */}
-                {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
                 <BottomRow
                     {...pagination}
                     i18nPrefix={i18nPrefix}

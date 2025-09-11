@@ -37,7 +37,6 @@ export const fr = {
             filter: "{{count}} filtre",
             filter_other: "{{count}} filtres"
         },
-        loading: "Chargement...",
         results: {
             exists: "Renseigné",
             missing: "Non renseigné",

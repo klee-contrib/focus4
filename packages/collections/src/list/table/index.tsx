@@ -1,5 +1,5 @@
 import {useObserver} from "mobx-react";
-import {ComponentType, KeyboardEvent, MouseEvent, useContext, useRef} from "react";
+import {KeyboardEvent, MouseEvent, useContext, useRef} from "react";
 
 import {ScrollableContext, useStickyClip} from "@focus4/layout";
 import {CollectionStore} from "@focus4/stores";
@@ -8,7 +8,6 @@ import {Checkbox} from "@focus4/toolbox";
 
 import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
 import {ContextualActions, OperationListItem} from "../contextual-actions";
-import {DefaultLoadingComponent, LoadingProps} from "../shared";
 
 import {TableColumn, TableHeader} from "./header";
 import {TableLine} from "./line";
@@ -26,8 +25,6 @@ export type TableProps<T extends object> = ListBaseProps<T> & {
     lineClassName?: (data: NoInfer<T>) => string;
     /** La liste des actions sur chaque élément de la liste. */
     lineOperationList?: (data: NoInfer<T>) => OperationListItem<NoInfer<T>>[];
-    /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** Nombre de colonnes maximum sur lequelles il est possible de trier en même temps. Par défaut : 1. */
     maxSort?: number;
     /**
@@ -101,7 +98,6 @@ export function Table<T extends object>({
     itemKey,
     lineClassName,
     lineOperationList,
-    LoadingComponent = DefaultLoadingComponent,
     maxSort = 1,
     offsetTopOverride,
     onLineClick,
@@ -198,8 +194,6 @@ export function Table<T extends object>({
                     ))}
                 </tbody>
             </table>
-            {/* Gestion de l'affichage du chargement. */}
-            {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
             <BottomRow
                 {...pagination}
                 i18nPrefix={i18nPrefix}

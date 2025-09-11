@@ -5,14 +5,7 @@ import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {BottomRow, ListBaseProps, useListState, usePagination} from "../base";
-import {
-    AddItemProps,
-    DefaultAddItemComponent,
-    DefaultEmptyComponent,
-    DefaultLoadingComponent,
-    EmptyProps,
-    LoadingProps
-} from "../shared";
+import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps} from "../shared";
 
 import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
@@ -32,8 +25,6 @@ export type TimelineProps<T extends object> = ListBaseProps<T> & {
     dateSelector: (data: NoInfer<T>) => EntityField<FieldEntry<"string">>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ComponentType<EmptyProps<NoInfer<T>>>;
-    /** Composant à afficher pendant le chargement. */
-    LoadingComponent?: ComponentType<LoadingProps<NoInfer<T>>>;
     /** CSS. */
     theme?: CSSProp<TimelineCss>;
     /** Le composant de ligne. */
@@ -72,7 +63,6 @@ export function Timeline<T extends object>({
     data,
     dateSelector,
     EmptyComponent = DefaultEmptyComponent,
-    LoadingComponent = DefaultLoadingComponent,
     i18nPrefix = "focus",
     // @ts-ignore
     isLoading,
@@ -122,7 +112,6 @@ export function Timeline<T extends object>({
                         theme={theme}
                     />
                 ))}
-                {state.isLoading ? <LoadingComponent i18nPrefix={i18nPrefix} store={store} /> : null}
                 <BottomRow
                     {...pagination}
                     i18nPrefix={i18nPrefix}

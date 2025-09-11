@@ -27,14 +27,6 @@ export interface EmptyProps<T extends object> {
     store?: CollectionStore<T>;
 }
 
-/** Props de base d'un composant de chargement. */
-export interface LoadingProps<T extends object> {
-    /** Préfixe i18n. Par défaut : "focus". */
-    i18nPrefix?: string;
-    /** Store de la liste. */
-    store?: CollectionStore<T>;
-}
-
 /** Composant par défaut pour afficher le bouton d'ajout d'élément. */
 export function DefaultAddItemComponent({addItemHandler, i18nPrefix = "focus", mode}: AddItemProps<any>) {
     const {t} = useTranslation();
@@ -65,13 +57,5 @@ export function DefaultEmptyComponent({i18nPrefix = "focus"}: EmptyProps<any>) {
     const {t} = useTranslation();
     const theme = useTheme("listBase", listBaseCss);
 
-    return <div className={theme.loading()}>{t(`${i18nPrefix}.list.empty`)}</div>;
-}
-
-/** Composant de chargement par défaut. */
-export function DefaultLoadingComponent({i18nPrefix = "focus"}: LoadingProps<any>) {
-    const {t} = useTranslation();
-    const theme = useTheme("listBase", listBaseCss);
-
-    return <div className={theme.loading()}>{t(`${i18nPrefix}.search.loading`)}</div>;
+    return <div className={theme.empty()}>{t(`${i18nPrefix}.list.empty`)}</div>;
 }

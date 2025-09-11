@@ -37,7 +37,6 @@ export const en = {
             filter: "{{count}} filter",
             filter_other: "{{count}} filters"
         },
-        loading: "Loading...",
         results: {
             exists: "Filled",
             missing: "Not filled",
