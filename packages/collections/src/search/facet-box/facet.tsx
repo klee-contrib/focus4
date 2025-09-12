@@ -132,8 +132,13 @@ export function Facet({
                             })}
                         </ul>
                         {(facet.isMultiSelectable || count === 0) && facet.values.length > nbDefaultDataList ? (
-                            <div className={theme.show()} onClick={() => setIsShowAll(!isShowAll)}>
-                                {t(isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`)}
+                            <div className={theme.show()}>
+                                <Button
+                                    onClick={() => setIsShowAll(!isShowAll)}
+                                    label={t(
+                                        isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`
+                                    )}
+                                />
                             </div>
                         ) : null}
                     </>

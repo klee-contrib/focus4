@@ -67,19 +67,24 @@
 }
 
 .show {
-    text-align: right;
-    padding: var(--facet-list-margin) calc((var(--icon-button-size) - var(--icon-button-icon-size)) / 2);
+    display: flex;
+    flex-direction: row-reverse;
+
+    --button-height: 32px;
+    --button-padding: 12px;
+
+    & > button {
+        width: fit-content;
+    }
 }
 
-.facet > ul li,
-.show {
+.facet > ul li {
     cursor: pointer;
     font-size: var(--facet-font-size);
     color: rgb(var(--palette-grey-900));
 }
 
-.facet li:hover,
-.show:hover {
+.facet li:hover {
     color: rgb(var(--color-black));
 }
 
