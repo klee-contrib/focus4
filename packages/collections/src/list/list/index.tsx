@@ -21,7 +21,7 @@ export type {DetailProps, LineProps, ListCss};
 
 /** Props du composant de liste standard. */
 export type ListProps<T extends object> = ListBaseProps<T> & {
-    /** Composant personnalisé pour le bouton "Ajouter". */
+    /** Composant personnalisé pour le bouton "Ajouter" en mode mosaïque. */
     AddItemComponent?: ComponentType<AddItemProps<NoInfer<T>>>;
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
@@ -286,7 +286,7 @@ export function List<T extends object>({
                         {isAddItemShown ? (
                             <li
                                 key="mosaic-add"
-                                className={theme.mosaicAdd()}
+                                className={theme.mosaic()}
                                 style={{width: mosaic.width, height: mosaic.height}}
                             >
                                 <AddItemComponent

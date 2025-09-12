@@ -2,20 +2,29 @@
     --list-base-empty-padding: 5px;
     --list-base-bottom-padding: 10px 0;
     --list-base-pagination-text-padding: 0 12px;
+
+    --list-base-mosaic-add-icon-size: 24px;
+    --list-base-mosaic-add-text-size: 16px;
 }
 
-.add {
-    display: flex;
+.mosaicAdd {
+    --button-height: 100%;
+    --button-icon-size: var(--list-base-mosaic-add-icon-size);
+    --button-text-size: var(--list-base-mosaic-add-text-size);
+
+    width: 100%;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 24px;
-    width: 100%;
-    height: 100%;
+    gap: var(--button-spacing);
 
-    & span {
-        font-size: 35px;
+    & .mosaicAddIcon {
+        height: auto;
+        position: static;
+    }
+
+    & .mosaicAddLabel {
+        margin: 0 !important;
+        height: auto;
     }
 }
 
