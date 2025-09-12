@@ -18,20 +18,20 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@trivago/prettier-plugin-sort-imports": "5.2.2",
-        "@types/node": "24.3.0",
-        "@types/postcss-modules-extract-imports": "3.0.5",
-        "@types/postcss-modules-local-by-default": "4.0.2",
-        "@types/postcss-modules-scope": "3.0.4",
+        "@trivago/prettier-plugin-sort-imports": "~5.2.2",
+        "@types/node": "~24.3.1",
+        "@types/postcss-modules-extract-imports": "~3.0.5",
+        "@types/postcss-modules-local-by-default": "~4.0.2",
+        "@types/postcss-modules-scope": "~3.0.4",
         "es-toolkit": "~1.39.10",
-        "glob": "11.0.3",
-        "package-json": "10.0.1",
-        "postcss": "8.5.6",
-        "postcss-modules-extract-imports": "3.1.0",
-        "postcss-modules-local-by-default": "4.2.0",
-        "postcss-modules-scope": "3.2.1",
-        "postcss-nesting": "13.0.2",
-        "typescript": "5.9.2"
+        "glob": "~11.0.3",
+        "package-json": "~10.0.1",
+        "postcss": "~8.5.6",
+        "postcss-modules-extract-imports": "~3.1.0",
+        "postcss-modules-local-by-default": "~4.2.0",
+        "postcss-modules-scope": "~3.2.1",
+        "postcss-nesting": "~13.0.2",
+        "typescript": "~5.9.2"
     },
     "peerDependencies": {
         "@vitejs/plugin-react": ">= 5 < 6",
