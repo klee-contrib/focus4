@@ -79,14 +79,17 @@ export function InputFile<T extends number = number>({
                 } else {
                     if (accept) {
                         const acceptedTypes = accept.split(",");
-                        const type = await fileTypeFromBlob(file);
+                        const type = (await fileTypeFromBlob(file)) ?? {
+                            mime: file.type,
+                            ext: file.name.split(".").at(-1)
+                        };
                         if (
                             !acceptedTypes.some(at =>
                                 at.includes("/")
                                     ? at.includes("*")
-                                        ? at.split("/")[0] === type?.mime.split("/")[0]
-                                        : at === type?.mime
-                                    : `.${type?.ext}` === at
+                                        ? at.split("/")[0] === type.mime.split("/")[0]
+                                        : at === type.mime
+                                    : `.${type.ext}` === at
                             )
                         ) {
                             messageStore.addErrorMessage(t(`${i18nPrefix}.file.invalid`, {file: file.name}));
