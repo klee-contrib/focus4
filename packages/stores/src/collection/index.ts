@@ -97,6 +97,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
     skipToken?: string;
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
+    // oxlint-disable-next-line class-methods-use-this
     @observable accessor isItemSelectionnable: (data: T) => boolean = () => true;
 
     /** StoreNode contenant les critères personnalisés de recherche. */

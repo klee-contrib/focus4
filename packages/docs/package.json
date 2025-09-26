@@ -22,10 +22,10 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.4.0",
-        "@storybook/addon-docs": "9.1.6",
-        "@storybook/react-vite": "9.1.6",
+        "@storybook/addon-docs": "9.1.8",
+        "@storybook/react-vite": "9.1.8",
         "@vueless/storybook-dark-mode": "9.0.8",
-        "storybook": "9.1.6",
+        "storybook": "9.1.8",
         "storybook-react-i18next": "4.0.11"
     }
 }
