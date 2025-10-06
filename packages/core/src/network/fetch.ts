@@ -88,7 +88,7 @@ export async function coreFetch(
                 } else {
                     // Sinon, on renvoie le body de la réponse sous format texte (faute de mieux).
                     console.error(`Une erreur ${response.status} est survenue lors de l'appel à "${url}".`);
-                    return await Promise.reject<string>(await response.text());
+                    return await Promise.reject(response);
                 }
             }
         } catch (error: unknown) {
