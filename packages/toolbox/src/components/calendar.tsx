@@ -23,6 +23,8 @@ export interface CalendarProps {
      * Par défaut : "yyyy-MM-dd"
      */
     format?: "yyyy-MM-dd" | "yyyy-MM" | "yyyy";
+    /** N'affiche pas la valeur de référence sur la calendrier. */
+    hideReferenceValue?: boolean;
     /** Date maximale autorisée pour la saisie. */
     max?: string;
     /** Date minimale autorisée pour la saisie. */
@@ -31,6 +33,14 @@ export interface CalendarProps {
     onChange?: (value: string, fromKeyDown: boolean) => void;
     /** Ref vers le calendrier pour le focus. */
     ref?: Ref<{focus(): void}>;
+    /**
+     * Date de référence pour le calendrier.
+     *
+     * Elle sera affichée en color primary avec outline, et son mois sera celui par défaut à l'affichage si aucune date n'est sélectionnée.
+     *
+     * Par défaut : la date du jour.
+     */
+    referenceValue?: string;
     /** TabIndex pour le Calendar. Par défaut : 0. */
     tabIndex?: number;
     /** CSS. */
@@ -47,11 +57,13 @@ export interface CalendarProps {
  */
 export function Calendar({
     className,
+    format = "yyyy-MM-dd",
+    hideReferenceValue = false,
     max,
     min,
-    format = "yyyy-MM-dd",
     onChange,
     ref,
+    referenceValue,
     tabIndex = 0,
     theme: pTheme,
     value
@@ -59,7 +71,17 @@ export function Calendar({
     const theme = useTheme("calendar", calendarCss, pTheme);
 
     const [date, setDate] = useState(handleValue(value, format));
-    const [displayedMonth, setDisplayedMonth] = useState(DateTime.fromISO((date ?? DateTime.now()).toFormat("yyyyMM")));
+
+    const [refDate, setRefDate] = useState(getRefDate(referenceValue));
+    const [displayedMonth, setDisplayedMonth] = useState(DateTime.fromISO((date ?? refDate).toFormat("yyyyMM")));
+
+    useEffect(() => {
+        const newRefDate = getRefDate(referenceValue);
+        setRefDate(newRefDate);
+        if (!date) {
+            setDisplayedMonth(DateTime.fromISO(newRefDate.toFormat("yyyyMM")));
+        }
+    }, [date, referenceValue]);
 
     const [maxDate, setMaxDate] = useState(handleValue(max, format));
     useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);
@@ -415,20 +437,15 @@ export function Calendar({
                                             color={
                                                 (view === "days" &&
                                                     ((!!date && d.equals(date)) ||
-                                                        d.equals(
-                                                            DateTime.now().set({
-                                                                hour: 0,
-                                                                minute: 0,
-                                                                second: 0,
-                                                                millisecond: 0
-                                                            })
-                                                        ))) ||
+                                                        (!hideReferenceValue && d.equals(refDate)))) ||
                                                 (view === "months" &&
                                                     ((d.year === date?.year && d.month === date?.month) ||
-                                                        (d.year === DateTime.now().year &&
-                                                            d.month === DateTime.now().month))) ||
+                                                        (!hideReferenceValue &&
+                                                            d.year === refDate.year &&
+                                                            d.month === refDate.month))) ||
                                                 (view === "years" &&
-                                                    (d.year === date?.year || d.year === DateTime.now().year))
+                                                    (d.year === date?.year ||
+                                                        (!hideReferenceValue && d.year === refDate.year)))
                                                     ? "primary"
                                                     : undefined
                                             }
@@ -461,19 +478,12 @@ export function Calendar({
                                                     d.month === date?.month) ||
                                                 (view === "days" && date && d.equals(date))
                                                     ? "filled"
-                                                    : (view === "years" && d.year === DateTime.now().year) ||
-                                                        (view === "months" &&
-                                                            d.year === DateTime.now().year &&
-                                                            d.month === DateTime.now().month) ||
-                                                        (view === "days" &&
-                                                            d.equals(
-                                                                DateTime.now().set({
-                                                                    hour: 0,
-                                                                    minute: 0,
-                                                                    second: 0,
-                                                                    millisecond: 0
-                                                                })
-                                                            ))
+                                                    : !hideReferenceValue &&
+                                                        ((view === "years" && d.year === refDate.year) ||
+                                                            (view === "months" &&
+                                                                d.year === refDate.year &&
+                                                                d.month === refDate.month) ||
+                                                            (view === "days" && d.equals(refDate)))
                                                       ? "outlined"
                                                       : undefined
                                             }
@@ -559,6 +569,16 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
 
         return years;
     }
+}
+
+function getRefDate(referenceValue?: string) {
+    const refDate = referenceValue ? DateTime.fromISO(referenceValue) : undefined;
+    return (refDate?.isValid ? refDate : DateTime.now()).set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0
+    });
 }
 
 function getWeekNumber(day: DateTime) {

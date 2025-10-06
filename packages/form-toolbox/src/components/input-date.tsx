@@ -43,6 +43,8 @@ export interface InputDateProps {
         | "top";
     /** Erreur à afficher sous le champ. */
     error?: string;
+    /** N'affiche pas la valeur de référence sur la calendrier. */
+    hideReferenceValue?: boolean;
     /** Id pour l'input. */
     id?: string;
     /** Format de la date dans l'input. */
@@ -77,6 +79,14 @@ export interface InputDateProps {
     /** Appelé lorsque la date change. */
     onChange: (date: string | undefined) => void;
     /**
+     * Date de référence pour le calendrier.
+     *
+     * Elle sera affichée en color primary avec outline, et son mois sera celui par défaut à l'affichage si aucune date n'est sélectionnée.
+     *
+     * Par défaut : la date du jour.
+     */
+    referenceValue?: string;
+    /**
      * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)
      * Incompatible avec l'usage de ISOStringFormat
      */
@@ -99,6 +109,7 @@ export function InputDate({
     calendarFormat = "yyyy-MM-dd",
     calendarPosition = "left",
     error,
+    hideReferenceValue = false,
     id,
     inputFormat = "MM/dd/yyyy",
     inputProps = {},
@@ -107,6 +118,7 @@ export function InputDate({
     min,
     name,
     onChange,
+    referenceValue,
     theme: pTheme,
     timezoneCode,
     value
@@ -304,9 +316,11 @@ export function InputDate({
                     ref={calendarRef}
                     className={theme.calendar()}
                     format={calendarFormat}
+                    hideReferenceValue={hideReferenceValue}
                     max={max}
                     min={min}
                     onChange={onCalendarChange}
+                    referenceValue={referenceValue}
                     tabIndex={-1}
                     theme={theme}
                     value={value}
