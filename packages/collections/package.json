@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "12.4.4",
+    "version": "12.4.5",
     "description": "Focus v4, collections module",
     "main": "lib/focus4.collections.js",
     "type": "module",
@@ -15,12 +15,12 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/form-toolbox": "12.4.4",
+        "@focus4/form-toolbox": "12.4.5",
         "@focus4/forms": "12.4.4",
-        "@focus4/layout": "12.4.4",
+        "@focus4/layout": "12.4.5",
         "@focus4/stores": "12.4.4",
         "@focus4/styling": "12.4.0",
-        "@focus4/toolbox": "12.4.3",
+        "@focus4/toolbox": "12.4.5",
         "classnames": "~2.5.1",
         "es-toolkit": "~1.39.10",
         "motion": "~12.23.22",
