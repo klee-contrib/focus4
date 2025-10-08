@@ -224,7 +224,7 @@ export function Calendar({
         if (
             focusedDate.length < viewFormat.length ||
             newDate.toMillis() < lines[0].items[0].toMillis() ||
-            newDate.toMillis() > lines[lines.length - 1].items[lines[lines.length - 1].items.length - 1].toMillis()
+            newDate.toMillis() > lines.at(-1)!.items[lines.at(-1)!.items.length - 1].toMillis()
         ) {
             const middle = lines[Math.floor((lines.length - 1) / 2)];
             newDate = middle.items[(middle.items.length - 1) / 2];
@@ -526,12 +526,12 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
             w[0].items.splice(0, 0, w[0].items[0].minus({day: 1}));
         }
 
-        while (w[w.length - 1].items.length < 7) {
-            w[w.length - 1].items.push(w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1}));
+        while (w.at(-1)!.items.length < 7) {
+            w.at(-1)!.items.push(w.at(-1)!.items[w.at(-1)!.items.length - 1].plus({day: 1}));
         }
 
         while (w.length < 6) {
-            const nextDay = w[w.length - 1].items[w[w.length - 1].items.length - 1].plus({day: 1});
+            const nextDay = w.at(-1)!.items[w.at(-1)!.items.length - 1].plus({day: 1});
             w.push({
                 line: getWeekNumber(nextDay),
                 items: range(0, 7).map(day => nextDay.plus({day}))
@@ -561,10 +561,8 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
             years[0].items.splice(0, 0, years[0].items[0].minus({year: 1}));
         }
 
-        while (years[years.length - 1].items.length < 3) {
-            years[years.length - 1].items.push(
-                years[years.length - 1].items[years[years.length - 1].items.length - 1].plus({year: 1})
-            );
+        while (years.at(-1)!.items.length < 3) {
+            years.at(-1)!.items.push(years.at(-1)!.items[years.at(-1)!.items.length - 1].plus({year: 1}));
         }
 
         return years;

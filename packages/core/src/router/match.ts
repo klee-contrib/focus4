@@ -98,7 +98,7 @@ export function match({pattern, path}: {pattern: string; path: string}): MatchRe
     }
 
     // Special-case patterns like '*' for catch-all routes.
-    if (tokens[tokens.length - 1] === "*") {
+    if (tokens.at(-1) === "*") {
         regexpSource += "$";
     }
 
