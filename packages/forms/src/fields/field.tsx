@@ -44,7 +44,7 @@ export interface FieldOptions<F extends FieldEntry> {
     /** Surcharge la valeur de la variable CSS `--field-label-width` pour ce champ. */
     labelWidth?: string;
     /** Handler de modification de la valeur. */
-    onChange?: (value: F["fieldType"] | undefined) => void;
+    onChange?: (value: F["fieldType"]) => void;
     /** CSS. */
     theme?: CSSProp<FieldCss>;
     /** Surcharge la valeur de la variable CSS `--field-value-width` pour ce champ. */

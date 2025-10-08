@@ -10,7 +10,6 @@ import {
     BaseSelectProps,
     EntityField,
     FieldEntry,
-    FieldEntryType,
     InputComponents,
     ReferenceList,
     SelectComponents,
@@ -20,10 +19,7 @@ import {
 import {Field, FieldOptions} from "./field";
 
 function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
-    return action(
-        `on${upperFirst(field.$field.name)}Change`,
-        (value: FieldEntryType<F> | undefined) => (field.value = value)
-    );
+    return action(`on${upperFirst(field.$field.name)}Change`, (value: F["fieldType"]) => (field.value = value));
 }
 
 /** Options pour `autocompleteFor` */
