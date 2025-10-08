@@ -1,6 +1,7 @@
 import {isFunction} from "es-toolkit";
 import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
+import z from "zod";
 
 import {
     BaseAutocompleteProps,
@@ -9,8 +10,6 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
-    DomainFieldType,
-    DomainType,
     EntityField,
     FieldEntry
 } from "../types";
@@ -19,17 +18,17 @@ import {BaseComponents} from "../types/components";
 import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
 
 interface ReadonlyFieldOptions<
-    DT extends DomainFieldType = "string",
-    T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
+    S extends z.ZodType = z.ZodType<string>,
+    T extends z.output<S> = z.output<S>,
+    DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps<DT> = DCDProps,
+    DCProps extends BaseDisplayProps<S> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends {theme?: object} = {theme?: object}
-> extends BaseComponents<DT, DCProps, LCProps> {
+> extends BaseComponents<S, DCProps, LCProps> {
     className?: string;
     comment?: ReactNode;
-    domain?: Domain<DT, any, any, any, DCDProps, LCDProps, FProps>;
+    domain?: Domain<S, any, any, any, DCDProps, LCDProps, FProps>;
     displayFormatter?: (value: T | undefined) => string;
     DisplayComponent?: ComponentType<DCProps>;
     label?: string;
@@ -63,16 +62,16 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: 
  * @param builder Builder pour spécifier le domaine et les métadonnées.
  */
 export function fromField<
-    DT extends DomainFieldType = "string",
-    T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
+    S extends z.ZodType = z.ZodType<string>,
+    T extends z.output<S> = z.output<S>,
+    DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps<DT> = DCDProps,
+    DCProps extends BaseDisplayProps<S> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends {theme?: object} = {theme?: object}
 >(
-    field: EntityField<FieldEntry<DT, T, any, any, any, DCDProps, LCDProps, FProps>>,
-    options: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
+    field: EntityField<FieldEntry<S, T, any, any, any, DCDProps, LCDProps, FProps>>,
+    options: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
 ) {
     const {
         className = field.$field.domain.className,
@@ -107,17 +106,17 @@ export function fromField<
  * @param options Options (domain, formatter, libellé)
  */
 export function makeField<
-    DT extends DomainFieldType = "string",
-    T extends DomainType<DT> = DomainType<DT>,
-    DCDProps extends BaseDisplayProps<DT> = BaseDisplayProps<DT>,
+    S extends z.ZodType = z.ZodType<string>,
+    T extends z.output<S> = z.output<S>,
+    DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps<DT> = DCDProps,
+    DCProps extends BaseDisplayProps<S> = DCDProps,
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends {theme?: object} = {theme?: object}
 >(
     value: T | undefined,
-    options?: ReadonlyFieldOptions<DT, T, DCDProps, LCDProps, DCProps, LCProps, FProps> & {name?: string}
-): EntityField<FieldEntry<DT, T, any, any, any, DCProps, LCProps, FProps>>;
+    options?: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> & {name?: string}
+): EntityField<FieldEntry<S, T, any, any, any, DCProps, LCProps, FProps>>;
 /**
  * Crée un champ éditable.
  * @param name Nom du champ
@@ -128,12 +127,12 @@ export function makeField<F extends FieldEntry>(
     builder: (
         f: EntityFieldBuilder<
             FieldEntry<
-                "string",
+                z.ZodType<string>,
                 string,
-                BaseInputProps<"string">,
-                BaseSelectProps<"string">,
-                BaseAutocompleteProps<"string">,
-                BaseDisplayProps<"string">,
+                BaseInputProps<z.ZodType<string>>,
+                BaseSelectProps<z.ZodType<string>>,
+                BaseAutocompleteProps<z.ZodType<string>>,
+                BaseDisplayProps<z.ZodType<string>>,
                 BaseLabelProps,
                 {theme?: object}
             >
@@ -148,7 +147,7 @@ export function makeField(param1: any, param2: any = {}) {
             className,
             comment,
             domain = {
-                type: "string",
+                schema: z.string(),
                 AutocompleteComponent: UndefinedComponent,
                 DisplayComponent: UndefinedComponent,
                 LabelComponent: UndefinedComponent,

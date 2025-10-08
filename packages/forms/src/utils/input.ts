@@ -1,13 +1,14 @@
 import {takeWhile} from "es-toolkit";
 import numberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
+import {output} from "zod";
 
-import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
+import {ZodTypeSingle} from "@focus4/stores";
 
 import {MaskDefinition, useMask} from "./mask";
 import {getInputSelection, setInputSelection} from "./selection";
 
-export interface UseInputProps<T extends DomainFieldTypeSingle> {
+export interface UseInputProps<S extends ZodTypeSingle> {
     /** Pour un input de type "number", affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
     /**
@@ -35,15 +36,15 @@ export interface UseInputProps<T extends DomainFieldTypeSingle> {
     /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
     noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
-    onChange: (value?: DomainType<T>) => void;
+    onChange: (value?: output<S>) => void;
     /** Au `keydown` du champ. */
     onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au collage de texte dans le champ. */
     onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-    /** Type du champ (celui du domaine). */
-    type: T;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
 }
 
 /**
@@ -51,7 +52,7 @@ export interface UseInputProps<T extends DomainFieldTypeSingle> {
  *
  * Utilisé par `Input`.
  */
-export function useInput<const T extends DomainFieldTypeSingle>({
+export function useInput<const S extends ZodTypeSingle>({
     noNegativeNumbers = false,
     hasThousandsSeparator = false,
     maxDecimals = 10,
@@ -59,9 +60,9 @@ export function useInput<const T extends DomainFieldTypeSingle>({
     onChange,
     onKeyDown,
     onPaste,
-    type,
+    schema,
     value
-}: UseInputProps<T>) {
+}: UseInputProps<S>) {
     const numberFormat = useMemo(
         () =>
             new Intl.NumberFormat(navigator.language, {
@@ -74,10 +75,13 @@ export function useInput<const T extends DomainFieldTypeSingle>({
     const parseNumber = useMemo(() => numberParser(navigator.language, numberFormat.resolvedOptions()), [numberFormat]);
 
     const [numberStringValue, setNumberStringValue] = useState(
-        type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
+        schema.type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
     );
     useEffect(() => {
-        if (type === "number" && (!numberStringValue || (value ?? undefined) !== parseNumber(numberStringValue))) {
+        if (
+            schema.type === "number" &&
+            (!numberStringValue || (value ?? undefined) !== parseNumber(numberStringValue))
+        ) {
             setNumberStringValue(value !== undefined ? numberFormat.format(value as number) : "");
         }
     }, [numberFormat, parseNumber, value]);
@@ -92,8 +96,8 @@ export function useInput<const T extends DomainFieldTypeSingle>({
 
     const handleChange = useCallback(
         (v: string, e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            if (type !== "number") {
-                onChange(v === "" ? undefined : (v as DomainType<T>));
+            if (schema.type !== "number") {
+                onChange(v === "" ? undefined : (v as output<S>));
             } else if (v === "") {
                 setNumberStringValue("");
                 onChange(undefined);
@@ -175,13 +179,13 @@ export function useInput<const T extends DomainFieldTypeSingle>({
                 }
             }
         },
-        [noNegativeNumbers, numberFormat, numberStringValue, onChange, type]
+        [noNegativeNumbers, numberFormat, numberStringValue, onChange, schema]
     );
 
     const finalValue = useMemo(() => {
-        if (type === "string") {
+        if (schema.type === "string") {
             return stringValue;
-        } else if (type === "number") {
+        } else if (schema.type === "number") {
             return numberStringValue!;
         } else {
             return value?.toString() ?? "";

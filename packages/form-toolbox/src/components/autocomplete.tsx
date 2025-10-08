@@ -1,13 +1,14 @@
 import {debounce} from "es-toolkit";
 import {useObserver} from "mobx-react";
 import {FocusEvent, useCallback, useEffect, useId, useRef, useState} from "react";
+import {output} from "zod";
 
 import {isAbortError, requestStore} from "@focus4/core";
-import {stringToDomainType} from "@focus4/forms";
-import {DomainFieldTypeSingle, DomainType} from "@focus4/stores";
+import {stringToSchemaOutput} from "@focus4/forms";
+import {ZodTypeSingle} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>
+export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key: string; label: string}>
     extends Omit<
         AutocompleteProps<TSource>,
         | "disabled"
@@ -21,30 +22,30 @@ export interface AutocompleteSearchProps<T extends DomainFieldTypeSingle, TSourc
         | "values"
     > {
     /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
-    disabled?: boolean | DomainType<T>[];
+    disabled?: boolean | output<S>[];
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** Service de résolution de clé. Doit retourner le libellé. */
-    keyResolver?: (key: DomainType<T>) => Promise<string | undefined>;
+    keyResolver?: (key: output<S>) => Promise<string | undefined>;
     /**
      * Appelé à la sélection d'une valeur.
      *
      * En plus de passer la valeur choisie comme tout composant de saisie, le composant envoie aussi en second paramètre l'objet source entier qui correspond à cette valeur.
      * Même si la signature de `onChange` de `autocompleteFor` ne vous le dit pas, vous pouvez quand même la récupérer par ici dans votre composant.
      */
-    onChange: (key: DomainType<T> | undefined, value?: TSource) => void;
+    onChange: (key: output<S> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Délai (en ms) entre la fin de la saisie de l'utilisateur et le lancement de la recherche. Par défaut : 500.  */
     searchDelay?: number;
     /** Active l'appel à la recherche si le champ est vide. */
     searchOnEmptyQuery?: boolean;
     /** Rappelle la recherche quand le `querySearcher` change (nécessite un `querySearcher` stable). */
     searchOnQuerySearcherChange?: boolean;
-    /** Type du champ (celui du domaine). */
-    type: T;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -71,7 +72,7 @@ const defaultGetKey = (x: any) => x.key;
  *     }))
  * ```
  */
-export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSource = {key: string; label: string}>({
+export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key: string; label: string}>({
     disabled,
     error,
     getKey = defaultGetKey,
@@ -81,15 +82,15 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
     onQueryChange,
     query: pQuery = "",
     querySearcher,
+    schema,
     searchDelay = 500,
     searchOnEmptyQuery = false,
     searchOnQuerySearcherChange = false,
     supportingText,
     showSupportingText = "always",
-    type,
     value,
     ...props
-}: AutocompleteSearchProps<T, TSource>) {
+}: AutocompleteSearchProps<S, TSource>) {
     const [query, setQuery] = useState(pQuery);
     useEffect(() => setQuery(pQuery), [pQuery]);
 
@@ -155,7 +156,7 @@ export function AutocompleteSearch<const T extends DomainFieldTypeSingle, TSourc
     }
 
     function handleChange(newKey?: string, newValue?: TSource) {
-        onChange?.(stringToDomainType(newKey, type), newValue);
+        onChange?.(stringToSchemaOutput(newKey, schema), newValue);
     }
 
     function handleFocus(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {

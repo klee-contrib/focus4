@@ -23,10 +23,6 @@ export type {
 } from "./components";
 export type {
     Domain,
-    DomainFieldType,
-    DomainFieldTypeMultiple,
-    DomainFieldTypeSingle,
-    DomainType,
     EntityField,
     EntityToType,
     FieldEntry,
@@ -35,7 +31,9 @@ export type {
     ListEntry,
     ObjectEntry,
     RecursiveListEntry,
-    SingleDomainFieldType
+    SingleZodType,
+    ZodTypeMultiple,
+    ZodTypeSingle
 } from "./entity";
 export type {FormEntityField, FormListNode, FormNode} from "./form";
 export type {

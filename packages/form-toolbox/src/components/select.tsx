@@ -1,28 +1,29 @@
 import {useObserver} from "mobx-react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {stringToDomainType} from "@focus4/forms";
-import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
+import {stringToSchemaOutput} from "@focus4/forms";
+import {ReferenceList, ZodTypeSingle} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 /** Props du Select. */
-export interface SelectProps<T extends DomainFieldTypeSingle>
+export interface SelectProps<S extends ZodTypeSingle>
     extends Omit<
         DropdownProps<any>,
         "disabled" | "error" | "getKey" | "getLabel" | "label" | "onChange" | "value" | "values"
     > {
     /** Désactive la Dropdown (si true), ou une liste d'options de la Dropdown (si liste de valeurs). */
-    disabled?: boolean | DomainType<T>[];
+    disabled?: boolean | output<S>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
-    /** Type du champ (celui du domaine). */
-    type: T;
+    onChange: (value?: output<S>) => void;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -32,19 +33,19 @@ export interface SelectProps<T extends DomainFieldTypeSingle>
  *
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
-export function Select<const T extends DomainFieldTypeSingle>({
+export function Select<const S extends ZodTypeSingle>({
     disabled,
     error,
     i18nPrefix = "focus",
     onChange,
+    schema,
     showSupportingText = "always",
     supportingText,
-    type,
     value,
     values,
     undefinedLabel = `${i18nPrefix}.select.unselected`,
     ...props
-}: SelectProps<T>) {
+}: SelectProps<S>) {
     const {t} = useTranslation();
     const {$labelKey, $valueKey} = values;
     return useObserver(() => (
@@ -55,7 +56,7 @@ export function Select<const T extends DomainFieldTypeSingle>({
             label={undefined}
             getKey={v => `${v[$valueKey]}`}
             getLabel={v => (v[$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`)}
-            onChange={val => onChange(stringToDomainType(val, type))}
+            onChange={val => onChange(stringToSchemaOutput(val, schema))}
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? t(undefinedLabel) : undefinedLabel}

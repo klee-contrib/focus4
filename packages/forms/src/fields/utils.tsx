@@ -1,5 +1,6 @@
 import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
+import {output} from "zod";
 
 import {
     AutocompleteComponents,
@@ -7,14 +8,13 @@ import {
     BaseDisplayProps,
     BaseInputProps,
     BaseSelectProps,
-    DomainType,
     EntityField,
     FieldEntry,
     FieldEntryType,
     InputComponents,
     ReferenceList,
     SelectComponents,
-    SingleDomainFieldType
+    SingleZodType
 } from "@focus4/stores";
 
 import {Field, FieldOptions} from "./field";
@@ -28,23 +28,23 @@ function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
 
 /** Options pour `autocompleteFor` */
 export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponents<
-    F["domain"]["type"],
-    BaseAutocompleteProps<F["domain"]["type"]> & NonNullable<F["domain"]["autocompleteProps"]>,
-    BaseDisplayProps<F["domain"]["type"]> & NonNullable<F["domain"]["displayProps"]>,
+    F["domain"]["schema"],
+    BaseAutocompleteProps<F["domain"]["schema"]> & NonNullable<F["domain"]["autocompleteProps"]>,
+    BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
     NonNullable<F["domain"]["labelProps"]>
 > &
     Partial<FieldOptions<F>> & {
         /** Service de résolution de code. */
-        keyResolver?: (key: DomainType<SingleDomainFieldType<F["domain"]["type"]>>) => Promise<string | undefined>;
+        keyResolver?: (key: output<SingleZodType<F["domain"]["schema"]>>) => Promise<string | undefined>;
         /** Service de recherche. */
         querySearcher?: (text: string, options?: RequestInit) => Promise<{key: string; label: string}[]>;
     };
 
 /** Options pour `fieldFor` */
 export type FieldForOptions<F extends FieldEntry> = InputComponents<
-    F["domain"]["type"],
-    BaseInputProps<F["domain"]["type"]> & NonNullable<F["domain"]["inputProps"]>,
-    BaseDisplayProps<F["domain"]["type"]> & NonNullable<F["domain"]["displayProps"]>,
+    F["domain"]["schema"],
+    BaseInputProps<F["domain"]["schema"]> & NonNullable<F["domain"]["inputProps"]>,
+    BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
     NonNullable<F["domain"]["labelProps"]>
 > &
     Partial<FieldOptions<F>>;
@@ -52,9 +52,9 @@ export type FieldForOptions<F extends FieldEntry> = InputComponents<
 /** Options pour `selectFor`. */
 export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     SelectComponents<
-        F["domain"]["type"],
-        BaseSelectProps<F["domain"]["type"]> & NonNullable<F["domain"]["selectProps"]>,
-        BaseDisplayProps<F["domain"]["type"]> & NonNullable<F["domain"]["displayProps"]>,
+        F["domain"]["schema"],
+        BaseSelectProps<F["domain"]["schema"]> & NonNullable<F["domain"]["selectProps"]>,
+        BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
         NonNullable<F["domain"]["labelProps"]>
     >;
 

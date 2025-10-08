@@ -1,9 +1,10 @@
 import {useObserver} from "mobx-react";
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {stringToDomainType} from "@focus4/forms";
-import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
+import {stringToSchemaOutput} from "@focus4/forms";
+import {ReferenceList, ZodTypeSingle} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
@@ -13,9 +14,9 @@ export {selectRadioCss};
 export type {SelectRadioCss};
 
 /** Props du SelectRadio. */
-export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
+export interface SelectRadioProps<S extends ZodTypeSingle> {
     /** Désactive le select. */
-    disabled?: boolean | DomainType<T>[];
+    disabled?: boolean | output<S>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Permet de sélectionner `undefined` avec une option supplémentaire "vide" (`"first-option"` ou `"last-option"`), ou en re-cliquant sur le radio sélectionné (`"no-option"`) */
@@ -25,17 +26,17 @@ export interface SelectRadioProps<T extends DomainFieldTypeSingle> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
+    onChange: (value?: output<S>) => void;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<RadioCss & SelectRadioCss & SupportingTextCss>;
-    /** Type du champ (celui du domaine). */
-    type: T;
     /** Libellé du cas vide. */
     undefinedLabel?: string;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -47,29 +48,29 @@ const undefinedKey = "$$undefined$$";
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectRadio<const T extends DomainFieldTypeSingle>({
+export function SelectRadio<const S extends ZodTypeSingle>({
     disabled = false,
     error,
     hasUndefined,
     i18nPrefix = "focus",
     name,
     onChange,
+    schema,
     showSupportingText = "always",
     theme: pTheme,
-    type,
     undefinedLabel = `${i18nPrefix}.select.none`,
     value,
     values
-}: SelectRadioProps<T>) {
+}: SelectRadioProps<S>) {
     const {t} = useTranslation();
     const theme = useTheme<RadioCss & SelectRadioCss & SupportingTextCss>("selectRadio", selectRadioCss, pTheme);
     const {$labelKey, $valueKey} = values;
 
     const handleChange = useCallback(
         (newValue?: string) => {
-            onChange(stringToDomainType(newValue === undefinedKey ? undefined : newValue, type));
+            onChange(stringToSchemaOutput(newValue === undefinedKey ? undefined : newValue, schema));
         },
-        [onChange, type]
+        [onChange, schema]
     );
 
     return useObserver(() => {

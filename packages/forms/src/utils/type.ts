@@ -1,27 +1,17 @@
-import {DomainFieldType, DomainType, SingleDomainFieldType} from "@focus4/stores";
+import {output, ZodType} from "zod";
 
-export function stringToDomainType<T extends DomainFieldType>(value: string | undefined, type: T) {
-    if (type === "string" && value) {
-        return value as DomainType<T>;
+export function stringToSchemaOutput<T extends ZodType>(value: string | undefined, schema: T) {
+    if (schema.type === "string" && value) {
+        return value as output<T>;
     }
 
-    if (type === "number" && value) {
-        return Number.parseFloat(value) as DomainType<T>;
+    if (schema.type === "number" && value) {
+        return Number.parseFloat(value) as output<T>;
     }
 
-    if (type === "boolean") {
-        return (value === "true" ? true : value === "false" ? false : undefined) as DomainType<T>;
+    if (schema.type === "boolean") {
+        return (value === "true" ? true : value === "false" ? false : undefined) as output<T>;
     }
 
     return undefined;
-}
-
-export function toSimpleType<T extends DomainFieldType>(type: T) {
-    return (
-        type === "boolean-array" || type === "boolean"
-            ? "boolean"
-            : type === "number-array" || type === "number"
-              ? "number"
-              : "string"
-    ) as SingleDomainFieldType<T>;
 }

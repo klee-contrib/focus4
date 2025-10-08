@@ -1,6 +1,7 @@
 import {isFunction} from "es-toolkit";
 import {computed, extendObservable, observable, remove} from "mobx";
 import {ComponentType, ReactNode} from "react";
+import z from "zod";
 
 import {
     BaseAutocompleteProps,
@@ -9,8 +10,6 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
-    DomainFieldType,
-    DomainType,
     EntityField,
     FieldComponents,
     FieldEntry,
@@ -32,15 +31,15 @@ type DomainFieldProps<D> =
 
 /** Métadonnées surchargeables dans un champ. */
 export interface Metadata<
-    DT extends DomainFieldType = any,
-    T extends DomainType<DT> = DomainType<DT>,
-    ICProps extends BaseInputProps<DT> = any,
-    SCProps extends BaseSelectProps<DT> = any,
-    ACProps extends BaseAutocompleteProps<DT> = any,
-    DCProps extends BaseDisplayProps<DT> = any,
+    S extends z.ZodType = any,
+    T extends z.output<S> = z.output<S>,
+    ICProps extends BaseInputProps<S> = any,
+    SCProps extends BaseSelectProps<S> = any,
+    ACProps extends BaseAutocompleteProps<S> = any,
+    DCProps extends BaseDisplayProps<S> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends {theme?: object} = any
-> extends FieldComponents<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
+> extends FieldComponents<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Commentaire du champ. */
@@ -51,7 +50,11 @@ export interface Metadata<
     isRequired?: boolean;
     /** Libellé du champ. */
     label?: string;
-    /** Validateur(s). */
+    /**
+     * Validateurs.
+     *
+     * @deprecated Vous n'avez plus besoin de validateurs dédiés, ils peuvent être intégrés au schéma.
+     */
     validator?: Validator<T> | Validator<T>[];
 
     /** Composant personnalisé pour l'autocomplete. */
@@ -84,7 +87,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 $field: {
                     type: "field",
                     domain: {
-                        type: "string",
+                        schema: z.string(),
                         AutocompleteComponent: UndefinedComponent,
                         DisplayComponent: UndefinedComponent,
                         LabelComponent: UndefinedComponent,
@@ -142,8 +145,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         domain: D
     ): EntityFieldBuilder<
         FieldEntry<
-            D["type"],
-            DomainType<D["type"]>,
+            D["schema"],
+            z.output<D["schema"]>,
             DomainInputProps<D>,
             DomainSelectProps<D>,
             DomainAutocompleteProps<D>,
@@ -176,15 +179,16 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
-        ICProps extends BaseInputProps<F["domain"]["type"]> = DomainInputProps<F["domain"]>,
-        SCProps extends BaseSelectProps<F["domain"]["type"]> = DomainSelectProps<F["domain"]>,
-        ACProps extends BaseAutocompleteProps<F["domain"]["type"]> = DomainAutocompleteProps<F["domain"]>,
-        DCProps extends BaseDisplayProps<F["domain"]["type"]> = DomainDisplayProps<F["domain"]>,
+        ICProps extends BaseInputProps<F["domain"]["schema"]> = DomainInputProps<F["domain"]>,
+        SCProps extends BaseSelectProps<F["domain"]["schema"]> = DomainSelectProps<F["domain"]>,
+        ACProps extends BaseAutocompleteProps<F["domain"]["schema"]> = DomainAutocompleteProps<F["domain"]>,
+        DCProps extends BaseDisplayProps<F["domain"]["schema"]> = DomainDisplayProps<F["domain"]>,
         LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(
         $field:
             | Metadata<
-                  F["domain"]["type"],
+                  F["domain"]["schema"],
+                  // @ts-ignore
                   FieldEntryType<F>,
                   ICProps,
                   SCProps,
@@ -194,7 +198,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                   DomainFieldProps<F["domain"]>
               >
             | (() => Metadata<
-                  F["domain"]["type"],
+                  F["domain"]["schema"],
+                  // @ts-ignore
                   FieldEntryType<F>,
                   ICProps,
                   SCProps,
@@ -205,7 +210,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
               >)
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["type"],
+            F["domain"]["schema"],
+            // @ts-ignore
             FieldEntryType<F>,
             ICProps,
             SCProps,
@@ -223,11 +229,11 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * Initialise la valeur du champ.
      * @param value Valeur initiale.
      */
-    value<T extends DomainType<F["domain"]["type"]>>(
+    value<T extends z.output<F["domain"]["schema"]>>(
         value?: T
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["type"],
+            F["domain"]["schema"],
             T,
             DomainInputProps<F["domain"]>,
             DomainSelectProps<F["domain"]>,
@@ -242,12 +248,12 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param get Getter.
      * @param set Setter (optionnel).
      */
-    value<T extends DomainType<F["domain"]["type"]>>(
+    value<T extends z.output<F["domain"]["schema"]>>(
         get: () => T | undefined,
         set?: (value: T | undefined) => void
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["type"],
+            F["domain"]["schema"],
             T,
             DomainInputProps<F["domain"]>,
             DomainSelectProps<F["domain"]>,
@@ -257,7 +263,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
             DomainFieldProps<F["domain"]>
         >
     >;
-    value<T extends DomainType<F["domain"]["type"]>>(
+    value<T extends z.output<F["domain"]["schema"]>>(
         getOrValue: T | (() => T),
         set: (value: T | undefined) => void = () => {
             /**/

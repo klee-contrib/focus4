@@ -57,7 +57,7 @@ let nameMap: [string, string][] = [];
 
 /** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
 export function Field<F extends FieldEntry>(
-    props: FieldOptions<F> & Omit<FieldComponents<F["domain"]["type"]>, "fieldProps"> & {field: EntityField<F>}
+    props: FieldOptions<F> & Omit<FieldComponents<F["domain"]["schema"]>, "fieldProps"> & {field: EntityField<F>}
 ) {
     return useObserver(() => {
         const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
@@ -174,7 +174,7 @@ export function Field<F extends FieldEntry>(
                     inputProps: domainICP = {},
                     SelectComponent = UndefinedComponent,
                     selectProps: domainSCP = {},
-                    type
+                    schema
                 }
             }
         } = field as FormEntityField<F>;
@@ -192,10 +192,10 @@ export function Field<F extends FieldEntry>(
             required
         };
 
-        const iProps: BaseInputProps<F["domain"]["type"]> & {ref?: Ref<any>} = {
+        const iProps: BaseInputProps<F["domain"]["schema"]> & {ref?: Ref<any>} = {
             ...baseProps,
+            schema,
             value,
-            type,
             onChange:
                 onChange ??
                 (() => {
@@ -284,8 +284,8 @@ export function Field<F extends FieldEntry>(
                             {...baseProps}
                             formatter={displayFormatter}
                             keyResolver={autocompleteProps.keyResolver}
+                            schema={schema}
                             theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
-                            type={type}
                             value={value}
                             values={selectProps.values}
                         />

@@ -1,10 +1,10 @@
 import {useInput, UseInputProps} from "@focus4/forms";
-import {DomainFieldTypeSingle} from "@focus4/stores";
+import {ZodTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
-export interface InputProps<T extends DomainFieldTypeSingle>
+export interface InputProps<S extends ZodTypeSingle>
     extends Omit<TextFieldProps, "error" | "label" | "onChange" | "type" | "value">,
-        UseInputProps<T> {
+        UseInputProps<S> {
     /** Erreur à afficher sous le champ. */
     error?: string;
 }
@@ -17,7 +17,7 @@ export interface InputProps<T extends DomainFieldTypeSingle>
  *
  * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
-export function Input<const T extends DomainFieldTypeSingle>({
+export function Input<const S extends ZodTypeSingle>({
     error,
     mask,
     hasThousandsSeparator = false,
@@ -26,12 +26,12 @@ export function Input<const T extends DomainFieldTypeSingle>({
     onChange,
     onKeyDown,
     onPaste,
+    schema,
     showSupportingText = "always",
     supportingText,
-    type,
     value,
     ...props
-}: InputProps<T>) {
+}: InputProps<S>) {
     const {handleChange, handleKeyDown, handlePaste, stringValue} = useInput({
         hasThousandsSeparator,
         mask,
@@ -40,7 +40,7 @@ export function Input<const T extends DomainFieldTypeSingle>({
         onChange,
         onKeyDown,
         onPaste,
-        type,
+        schema,
         value
     });
 

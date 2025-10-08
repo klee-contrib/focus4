@@ -1,19 +1,20 @@
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {stringToDomainType} from "@focus4/forms";
-import {DomainFieldTypeSingle, DomainType, ReferenceList} from "@focus4/stores";
+import {stringToSchemaOutput} from "@focus4/forms";
+import {ReferenceList, ZodTypeSingle} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
 /** Props du Select. */
-export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>
+export interface SelectAutocompleteProps<S extends ZodTypeSingle>
     extends Omit<
         AutocompleteProps<any>,
         "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"
     > {
     /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
-    disabled?: boolean | DomainType<T>[];
+    disabled?: boolean | output<S>[];
     /** Message d'erreur à afficher. */
     error?: string;
     /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
@@ -21,13 +22,13 @@ export interface SelectAutocompleteProps<T extends DomainFieldTypeSingle>
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
-    /** Type du champ (celui du domaine). */
-    type: T;
+    onChange: (value?: output<S>) => void;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Libellé de l'option vide. */
     undefinedLabel?: string;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -39,21 +40,21 @@ const undefinedKey = "$$undefined$$";
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
+export function SelectAutocomplete<const S extends ZodTypeSingle>({
     disabled,
     error,
     hasUndefined = true,
     i18nPrefix = "focus",
     onChange,
+    schema,
     showSupportingText = "always",
     supportingText,
     trailing,
-    type,
     undefinedLabel = `${i18nPrefix}.select.unselected`,
     value,
     values,
     ...props
-}: SelectAutocompleteProps<T>) {
+}: SelectAutocompleteProps<S>) {
     const {t} = useTranslation();
 
     const finalValues = useMemo(
@@ -80,7 +81,7 @@ export function SelectAutocomplete<const T extends DomainFieldTypeSingle>({
             label={undefined}
             onChange={val => {
                 val = val === undefinedKey ? undefined : val;
-                onChange(stringToDomainType(val, type));
+                onChange(stringToSchemaOutput(val, schema));
             }}
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
