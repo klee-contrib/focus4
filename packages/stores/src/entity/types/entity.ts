@@ -160,5 +160,5 @@ export interface EntityField<F extends FieldEntry = FieldEntry> {
     readonly $field: F;
 
     /** Valeur. */
-    value: F["fieldType"] | undefined;
+    value: F["fieldType"];
 }

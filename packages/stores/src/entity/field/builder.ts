@@ -189,7 +189,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         $field:
             | Metadata<
                   F["domain"]["schema"],
-                  F["fieldType"],
+                  NonNullable<F["fieldType"]>,
                   ICProps,
                   SCProps,
                   ACProps,
@@ -199,7 +199,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
               >
             | (() => Metadata<
                   F["domain"]["schema"],
-                  F["fieldType"],
+                  NonNullable<F["fieldType"]>,
                   ICProps,
                   SCProps,
                   ACProps,
@@ -210,7 +210,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     ): EntityFieldBuilder<
         FieldEntry<
             F["domain"]["schema"],
-            F["fieldType"],
+            NonNullable<F["fieldType"]>,
             ICProps,
             SCProps,
             ACProps,
