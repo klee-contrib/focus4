@@ -26,6 +26,7 @@
         "eslint/no-magic-numbers": "off",
         "eslint/no-negated-condition": "off",
         "eslint/no-nested-ternary": "off",
+        "eslint/no-param-reassign": "off",
         "eslint/no-plusplus": "off",
         "eslint/no-prototype-builtins": "off",
         "eslint/no-ternary": "off",
@@ -68,6 +69,7 @@
         "unicorn/prefer-global-this": "off",
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/prefer-native-coercion-functions": "off",
+        "unicorn/prefer-top-level-await": "off",
         "unicorn/switch-case-braces": ["warn", "avoid"]
     }
 }
