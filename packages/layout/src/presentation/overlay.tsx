@@ -67,8 +67,8 @@ export function OverlayProvider({children}: {children: ReactNode}) {
         },
         close() {
             if (overlays.length > 0) {
-                const topOverlay = overlays[overlays.length - 1];
-                topOverlay.close?.();
+                const topOverlay = overlays.at(-1);
+                topOverlay?.close?.();
             }
         }
     }));

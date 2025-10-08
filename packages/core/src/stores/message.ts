@@ -143,7 +143,7 @@ export class MessageStore {
 
     /** Récupère le dernier message du type demandé. */
     getLatestMessage(type: string) {
-        return (this.messages.get(type) ?? []).slice(-1).pop();
+        return (this.messages.get(type) ?? []).at(-1);
     }
 }
 

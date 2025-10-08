@@ -19,7 +19,7 @@
         "@focus4/styling": "12.4.0",
         "@focus4/toolbox": "12.4.5",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.39.10",
+        "es-toolkit": "~1.40.0",
         "focus-trap-react": "~11.0.4",
         "luxon": "~3.7.2",
         "motion": "~12.23.22",

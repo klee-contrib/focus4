@@ -36,7 +36,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
                 return {file: "", interfaceName: ""};
             }
             const parts = file.replaceAll("\\", "/").split("/");
-            const fileName = parts[parts.length - 1];
+            const fileName = parts.at(-1)!;
             const interfaceName = camelCase(fileName.slice(0, -4));
             return {file, interfaceName};
         })
@@ -71,7 +71,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
             const output = `import {CSSElement${hasModifier ? ", CSSMod" : ""}} from "@focus4/styling";
 
 ${[...elements]
-    .sort()
+    .toSorted()
     .map(
         element =>
             `interface ${element} { _${hashCode(filePath.replaceAll("\\", "/").replace(root, "") + element)}: void }`
