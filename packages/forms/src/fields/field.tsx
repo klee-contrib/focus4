@@ -8,7 +8,6 @@ import {
     EntityField,
     FieldComponents,
     FieldEntry,
-    FieldEntryType,
     FormEntityField,
     UndefinedComponent
 } from "@focus4/stores";
@@ -45,7 +44,7 @@ export interface FieldOptions<F extends FieldEntry> {
     /** Surcharge la valeur de la variable CSS `--field-label-width` pour ce champ. */
     labelWidth?: string;
     /** Handler de modification de la valeur. */
-    onChange?: (value: FieldEntryType<F> | undefined) => void;
+    onChange?: (value: F["fieldType"] | undefined) => void;
     /** CSS. */
     theme?: CSSProp<FieldCss>;
     /** Surcharge la valeur de la variable CSS `--field-value-width` pour ce champ. */

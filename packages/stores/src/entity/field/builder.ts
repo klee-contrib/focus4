@@ -13,7 +13,6 @@ import {
     EntityField,
     FieldComponents,
     FieldEntry,
-    FieldEntryType,
     Validator
 } from "../types";
 
@@ -50,6 +49,8 @@ export interface Metadata<
     isRequired?: boolean;
     /** Libellé du champ. */
     label?: string;
+    /** Configurateur pour le schéma du champ (issu du domaine). */
+    schema?: (schema: S) => z.ZodType;
     /**
      * Validateurs.
      *
@@ -188,8 +189,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         $field:
             | Metadata<
                   F["domain"]["schema"],
-                  // @ts-ignore
-                  FieldEntryType<F>,
+                  F["fieldType"],
                   ICProps,
                   SCProps,
                   ACProps,
@@ -199,8 +199,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
               >
             | (() => Metadata<
                   F["domain"]["schema"],
-                  // @ts-ignore
-                  FieldEntryType<F>,
+                  F["fieldType"],
                   ICProps,
                   SCProps,
                   ACProps,
@@ -211,8 +210,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     ): EntityFieldBuilder<
         FieldEntry<
             F["domain"]["schema"],
-            // @ts-ignore
-            FieldEntryType<F>,
+            F["fieldType"],
             ICProps,
             SCProps,
             ACProps,
@@ -320,6 +318,7 @@ function mergeMetadata(domain: Domain, targetMetadata: Metadata, newMetadata: Me
         {
             ...domain,
             ...domainOverrides,
+            schema: domainOverrides.schema?.(domain.schema) ?? domain.schema,
             validator: !domain.validator
                 ? domainOverrides.validator
                 : !domainOverrides.validator

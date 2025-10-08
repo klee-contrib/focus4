@@ -93,9 +93,6 @@ export type FieldEntry2<D extends Domain, T extends output<D["schema"]> = output
         ? FieldEntry<S, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
         : never;
 
-/** Type effectif d'un champ. */
-export type FieldEntryType<F extends FieldEntry> = F extends FieldEntry<infer _, infer T> ? T : never;
-
 /** Métadonnées d'une entrée de type "object" pour une entité. */
 export interface ObjectEntry<E = any> {
     readonly type: "object";
@@ -147,7 +144,7 @@ export interface RecursiveListEntry {
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
 export type EntityToType<E> = {
     -readonly [P in keyof E]?: E[P] extends FieldEntry
-        ? FieldEntryType<E[P]>
+        ? E[P]["fieldType"]
         : E[P] extends ObjectEntry<infer OE>
           ? EntityToType<OE>
           : E[P] extends ListEntry<infer LE>
@@ -163,5 +160,5 @@ export interface EntityField<F extends FieldEntry = FieldEntry> {
     readonly $field: F;
 
     /** Valeur. */
-    value: FieldEntryType<F> | undefined;
+    value: F["fieldType"] | undefined;
 }
