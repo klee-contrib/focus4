@@ -1,4 +1,4 @@
-import {ZodType} from "zod";
+import z from "zod";
 
 import {FieldOptions} from "@focus4/forms";
 import {
@@ -31,13 +31,13 @@ import {
     SelectProps
 } from "./components";
 
-type DefaultICProps<S extends ZodType> = S extends ZodTypeSingle ? InputProps<S> : {};
-type DefaultSCProps<S extends ZodType> = S extends ZodTypeSingle
+type DefaultICProps<S extends z.ZodType> = S extends ZodTypeSingle ? InputProps<S> : {};
+type DefaultSCProps<S extends z.ZodType> = S extends ZodTypeSingle
     ? SelectProps<S>
     : S extends ZodTypeMultiple
       ? SelectChipsProps<S>
       : {values: ReferenceList};
-type DefaultACProps<S extends ZodType> = S extends ZodTypeSingle
+type DefaultACProps<S extends z.ZodType> = S extends ZodTypeSingle
     ? AutocompleteSearchProps<S>
     : S extends ZodTypeMultiple
       ? AutocompleteChipsProps<S>
@@ -49,7 +49,7 @@ type FCProps = Omit<FieldOptions<any>, "inputType" | "onChange" | "type">;
  * @param domain Définition du domaine.
  */
 export function domain<
-    const S extends ZodType,
+    const S extends z.ZodType = z.ZodUnknown,
     ICProps extends BaseInputProps<S> = DefaultICProps<S>,
     SCProps extends BaseSelectProps<S> = DefaultSCProps<S>,
     // @ts-ignore
@@ -57,15 +57,15 @@ export function domain<
     DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
     LCProps extends BaseLabelProps = LabelProps
 >(
-    domain: Partial<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>> & {schema: S}
+    domain: Partial<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>>
 ): Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
 
 /**
  * Crée un domaine avec les composants par défaut du module `form-toolbox` à partir d'un schéma Zod.
  * @param schema Schéma Zod pour le champ du domaine.
  */
-export function domain<S extends ZodType>(
-    schema: S
+export function domain<S extends z.ZodType = z.ZodUnknown>(
+    schema?: S
 ): Domain<
     S,
     DefaultICProps<S>,
@@ -76,8 +76,8 @@ export function domain<S extends ZodType>(
     LabelProps,
     FCProps
 >;
-export function domain(d: (Partial<Domain> & {schema: ZodType}) | ZodType): Domain {
-    if (!("schema" in d)) {
+export function domain(d?: Partial<Domain> | z.ZodType): Domain {
+    if (d && "_zod" in d) {
         d = {schema: d};
     }
 
@@ -87,23 +87,21 @@ export function domain(d: (Partial<Domain> & {schema: ZodType}) | ZodType): Doma
         LabelComponent: Label,
         InputComponent: UndefinedComponent,
         SelectComponent: UndefinedComponent,
+        schema: z.unknown(),
         ...d
     };
 
-    switch (d.schema.type) {
-        case "string":
-        case "number":
-        case "boolean":
-            domain.AutocompleteComponent = AutocompleteSearch;
-            domain.SelectComponent = Select;
-            domain.InputComponent = Input;
-            break;
-        case "array":
+    const {type} = domain.schema;
+    if (type === "string" || type === "number" || type === "boolean") {
+        domain.AutocompleteComponent = AutocompleteSearch;
+        domain.SelectComponent = Select;
+        domain.InputComponent = Input;
+    } else if (type === "array") {
+        const {element} = domain.schema;
+        if (element === "string" || element === "number" || element === "boolean") {
             domain.AutocompleteComponent = AutocompleteChips;
             domain.SelectComponent = SelectChips;
-            break;
-        default:
-            break;
+        }
     }
 
     return domain;

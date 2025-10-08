@@ -1,6 +1,6 @@
 import {isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
-import {ZodType} from "zod";
+import {ZodNever} from "zod";
 
 import {EntityFieldBuilder} from "../field";
 import {nodeToFormNode} from "../store";
@@ -57,12 +57,12 @@ export class FormNodeBuilder<E, E0 = E> {
         builder: (
             b: EntityFieldBuilder<
                 FieldEntry<
-                    ZodType<string>,
-                    string,
-                    BaseInputProps<ZodType<string>>,
-                    BaseSelectProps<ZodType<string>>,
-                    BaseAutocompleteProps<ZodType<string>>,
-                    BaseDisplayProps<ZodType<string>>,
+                    ZodNever,
+                    never,
+                    BaseInputProps<ZodNever>,
+                    BaseSelectProps<ZodNever>,
+                    BaseAutocompleteProps<ZodNever>,
+                    BaseDisplayProps<ZodNever>,
                     BaseLabelProps
                 >
             >,

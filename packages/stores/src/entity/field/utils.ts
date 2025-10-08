@@ -18,7 +18,7 @@ import {BaseComponents} from "../types/components";
 import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
 
 interface ReadonlyFieldOptions<
-    S extends z.ZodType = z.ZodType<string>,
+    S extends z.ZodType = z.ZodNever,
     T extends z.output<S> = z.output<S>,
     DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
@@ -62,7 +62,7 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: 
  * @param builder Builder pour spécifier le domaine et les métadonnées.
  */
 export function fromField<
-    S extends z.ZodType = z.ZodType<string>,
+    S extends z.ZodType = z.ZodNever,
     T extends z.output<S> = z.output<S>,
     DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
@@ -106,7 +106,7 @@ export function fromField<
  * @param options Options (domain, formatter, libellé)
  */
 export function makeField<
-    S extends z.ZodType = z.ZodType<string>,
+    S extends z.ZodType = z.ZodNever,
     T extends z.output<S> = z.output<S>,
     DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
     LCDProps extends BaseLabelProps = BaseLabelProps,
@@ -127,12 +127,12 @@ export function makeField<F extends FieldEntry>(
     builder: (
         f: EntityFieldBuilder<
             FieldEntry<
-                z.ZodType<string>,
-                string,
-                BaseInputProps<z.ZodType<string>>,
-                BaseSelectProps<z.ZodType<string>>,
-                BaseAutocompleteProps<z.ZodType<string>>,
-                BaseDisplayProps<z.ZodType<string>>,
+                z.ZodNever,
+                never,
+                BaseInputProps<z.ZodNever>,
+                BaseSelectProps<z.ZodNever>,
+                BaseAutocompleteProps<z.ZodNever>,
+                BaseDisplayProps<z.ZodNever>,
                 BaseLabelProps,
                 {theme?: object}
             >
@@ -147,7 +147,7 @@ export function makeField(param1: any, param2: any = {}) {
             className,
             comment,
             domain = {
-                schema: z.string(),
+                schema: z.never(),
                 AutocompleteComponent: UndefinedComponent,
                 DisplayComponent: UndefinedComponent,
                 LabelComponent: UndefinedComponent,

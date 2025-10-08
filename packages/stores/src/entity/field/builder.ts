@@ -88,7 +88,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 $field: {
                     type: "field",
                     domain: {
-                        schema: z.string(),
+                        schema: z.never(),
                         AutocompleteComponent: UndefinedComponent,
                         DisplayComponent: UndefinedComponent,
                         LabelComponent: UndefinedComponent,
