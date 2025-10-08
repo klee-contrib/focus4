@@ -1,3 +1,5 @@
+import z from "zod";
+
 import {EntityToType, StoreNode} from "../types";
 
 export type Ligne = EntityToType<typeof LigneEntity>;
@@ -7,7 +9,7 @@ export const LigneEntity = {
     id: {
         type: "field",
         domain: {
-            type: "number",
+            schema: z.number(),
             AutocompleteComponent: () => null,
             DisplayComponent: () => null,
             LabelComponent: () => null,

@@ -5,7 +5,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import z from "zod";
 
-import {SelectCheckbox} from "@focus4/form-toolbox";
+import {domain, SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
 import {CSSProp, getSpringTransition, uiConfig, useTheme} from "@focus4/styling";
@@ -246,11 +246,12 @@ export function SearchBar<T extends object, C>({
                             ? fieldFor(
                                   makeField("query", f =>
                                       f
+                                          .domain(domain(z.string()))
+                                          .metadata({label: `${i18nPrefix}.search.bar.query`})
                                           .value(
                                               () => store.query,
                                               query => (store.query = query ?? "")
                                           )
-                                          .metadata({label: `${i18nPrefix}.search.bar.query`})
                                   )
                               )
                             : null}

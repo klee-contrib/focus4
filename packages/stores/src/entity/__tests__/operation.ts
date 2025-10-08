@@ -1,3 +1,5 @@
+import z from "zod";
+
 import {EntityToType, StoreNode} from "../types";
 
 import {StructureEntity} from "./structure";
@@ -6,7 +8,7 @@ export type Operation = EntityToType<typeof OperationEntity>;
 export type OperationNode = StoreNode<typeof OperationEntity>;
 
 const numberDomain = {
-    type: "number",
+    schema: z.number(),
     AutocompleteComponent: () => null,
     DisplayComponent: () => null,
     LabelComponent: () => null,
@@ -14,7 +16,7 @@ const numberDomain = {
     SelectComponent: () => null
 } as const;
 const stringDomain = {
-    type: "string",
+    schema: z.string(),
     AutocompleteComponent: () => null,
     DisplayComponent: () => null,
     LabelComponent: () => null,
