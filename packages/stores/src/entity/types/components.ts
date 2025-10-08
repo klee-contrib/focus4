@@ -1,8 +1,9 @@
 import {ReactNode} from "react";
+import {output, ZodType} from "zod";
 
 import {ReferenceList} from "../../reference";
 
-import {DomainFieldType, DomainType, SingleDomainFieldType} from "./entity";
+import {SingleZodType} from "./entity";
 
 export interface BaseComponentProps {
     comment?: ReactNode;
@@ -18,25 +19,25 @@ export type OmitButKeepTheme<T extends BaseComponentProps, U> = Pick<T, Exclude<
     theme?: T["theme"];
 };
 
-export interface BaseInputProps<DT extends DomainFieldType> extends BaseComponentProps {
-    onChange?: (value?: DomainType<DT>) => void;
-    type?: DT;
-    value?: DomainType<DT>;
+export interface BaseInputProps<S extends ZodType> extends BaseComponentProps {
+    onChange?: (value?: output<S>) => void;
+    schema?: S;
+    value?: output<S>;
 }
 
-export interface BaseSelectProps<DT extends DomainFieldType> extends BaseInputProps<DT> {
+export interface BaseSelectProps<S extends ZodType> extends BaseInputProps<S> {
     values: ReferenceList;
 }
 
-export interface BaseAutocompleteProps<DT extends DomainFieldType> extends BaseInputProps<DT> {
-    keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
+export interface BaseAutocompleteProps<S extends ZodType> extends BaseInputProps<S> {
+    keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
 }
 
-export interface BaseDisplayProps<DT extends DomainFieldType> extends BaseComponentProps {
-    formatter?: (value: DomainType<SingleDomainFieldType<DT>> | undefined) => string;
-    keyResolver?: (key: DomainType<SingleDomainFieldType<DT>>) => Promise<string | undefined>;
-    type?: DT;
-    value?: DomainType<DT>;
+export interface BaseDisplayProps<S extends ZodType> extends BaseComponentProps {
+    formatter?: (value: output<SingleZodType<S>> | undefined) => string;
+    keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
+    schema?: S;
+    value?: output<S>;
     values?: ReferenceList;
 }
 
@@ -45,57 +46,57 @@ export interface BaseLabelProps extends BaseComponentProps {
 }
 
 export interface BaseComponents<
-    DT extends DomainFieldType,
-    DCProps extends BaseDisplayProps<DT>,
+    S extends ZodType,
+    DCProps extends BaseDisplayProps<S>,
     LCProps extends BaseLabelProps
 > {
     /** Props pour le composant d'affichage */
-    displayProps?: Partial<OmitButKeepTheme<DCProps, BaseDisplayProps<DT>>>;
+    displayProps?: Partial<OmitButKeepTheme<DCProps, BaseDisplayProps<S>>>;
     /** Props pour le composant de libellé. */
     labelProps?: Partial<OmitButKeepTheme<LCProps, BaseLabelProps>>;
 }
 
 export interface InputComponents<
-    DT extends DomainFieldType,
-    ICProps extends BaseInputProps<DT>,
-    DCProps extends BaseDisplayProps<DT>,
+    S extends ZodType,
+    ICProps extends BaseInputProps<S>,
+    DCProps extends BaseDisplayProps<S>,
     LCProps extends BaseLabelProps
-> extends BaseComponents<DT, DCProps, LCProps> {
+> extends BaseComponents<S, DCProps, LCProps> {
     /** Props pour le composant d'input. */
-    inputProps?: Partial<OmitButKeepTheme<ICProps, BaseInputProps<DT>>>;
+    inputProps?: Partial<OmitButKeepTheme<ICProps, BaseInputProps<S>>>;
 }
 
 export interface SelectComponents<
-    DT extends DomainFieldType,
-    SCProps extends BaseSelectProps<DT>,
-    DCProps extends BaseDisplayProps<DT>,
+    S extends ZodType,
+    SCProps extends BaseSelectProps<S>,
+    DCProps extends BaseDisplayProps<S>,
     LCProps extends BaseLabelProps
-> extends BaseComponents<DT, DCProps, LCProps> {
+> extends BaseComponents<S, DCProps, LCProps> {
     /** Props pour le composant de select. */
-    selectProps?: Partial<OmitButKeepTheme<SCProps, BaseSelectProps<DT>>>;
+    selectProps?: Partial<OmitButKeepTheme<SCProps, BaseSelectProps<S>>>;
 }
 
 export interface AutocompleteComponents<
-    DT extends DomainFieldType,
-    ACProps extends BaseAutocompleteProps<DT>,
-    DCProps extends BaseDisplayProps<DT>,
+    S extends ZodType,
+    ACProps extends BaseAutocompleteProps<S>,
+    DCProps extends BaseDisplayProps<S>,
     LCProps extends BaseLabelProps
-> extends BaseComponents<DT, DCProps, LCProps> {
+> extends BaseComponents<S, DCProps, LCProps> {
     /** Props pour le composant d'autocomplete. */
-    autocompleteProps?: Partial<OmitButKeepTheme<ACProps, BaseAutocompleteProps<DT>>>;
+    autocompleteProps?: Partial<OmitButKeepTheme<ACProps, BaseAutocompleteProps<S>>>;
 }
 
 export interface FieldComponents<
-    DT extends DomainFieldType,
-    ICProps extends BaseInputProps<DT> = any,
-    SCProps extends BaseSelectProps<DT> = any,
-    ACProps extends BaseAutocompleteProps<DT> = any,
-    DCProps extends BaseDisplayProps<DT> = any,
+    S extends ZodType,
+    ICProps extends BaseInputProps<S> = any,
+    SCProps extends BaseSelectProps<S> = any,
+    ACProps extends BaseAutocompleteProps<S> = any,
+    DCProps extends BaseDisplayProps<S> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends {theme?: object} = any
-> extends InputComponents<DT, ICProps, DCProps, LCProps>,
-        SelectComponents<DT, SCProps, DCProps, LCProps>,
-        AutocompleteComponents<DT, ACProps, DCProps, LCProps> {
+> extends InputComponents<S, ICProps, DCProps, LCProps>,
+        SelectComponents<S, SCProps, DCProps, LCProps>,
+        AutocompleteComponents<S, ACProps, DCProps, LCProps> {
     /** Props pour le composant de champ. */
     fieldProps?: FProps;
 }

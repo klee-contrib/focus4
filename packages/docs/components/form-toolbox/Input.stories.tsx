@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
+import z from "zod";
 
 import {Input} from "@focus4/form-toolbox";
 
@@ -27,10 +28,10 @@ export const Showcase: StoryObj<Partial<typeof Input>> = {
                     hint="1111-1111-1111-1111"
                     mask={{pattern: "1111-1111-1111-1111"}}
                     onChange={setV1}
-                    type="string"
+                    schema={z.string()}
                     value={v1}
                 />
-                <Input {...props} onChange={setV2} type="number" value={v2} supportingText={v2?.toString()} />
+                <Input {...props} onChange={setV2} schema={z.number()} value={v2} supportingText={v2?.toString()} />
             </div>
         );
     }

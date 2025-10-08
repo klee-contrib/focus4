@@ -25,10 +25,6 @@ export type {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
-    DomainFieldType,
-    DomainFieldTypeMultiple,
-    DomainFieldTypeSingle,
-    DomainType,
     EntityField,
     EntityToType,
     FieldComponents,
@@ -52,9 +48,11 @@ export type {
     PatchSelect,
     RecursiveListEntry,
     SelectComponents,
-    SingleDomainFieldType,
+    SingleZodType,
     SourceNodeType,
     StoreListNode,
     StoreNode,
-    Validator
+    Validator,
+    ZodTypeMultiple,
+    ZodTypeSingle
 } from "./types";

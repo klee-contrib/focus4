@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {DateTime} from "luxon";
+import z from "zod";
 
 import {Display} from "@focus4/form-toolbox";
 
@@ -17,11 +18,11 @@ export const Showcase: StoryObj<typeof Display> = {
         return (
             <div className="stack">
                 <Display {...props} />
-                <Display {...props} type="string-array" value={["Valeur 1", "Valeur 2"]} />
+                <Display {...props} schema={z.array(z.string())} value={["Valeur 1", "Valeur 2"]} />
                 <Display
                     {...props}
                     formatter={v => (v ? DateTime.fromISO(v).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS) : "")}
-                    type="string"
+                    schema={z.string()}
                     value={DateTime.now().toISO()}
                 />
             </div>

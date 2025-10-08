@@ -1,5 +1,6 @@
 import {useObserver} from "mobx-react";
 import {ComponentType} from "react";
+import {ZodType} from "zod";
 
 import {CollectionStore, EntityField, FieldEntry} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -22,7 +23,7 @@ export type TimelineProps<T extends object> = ListBaseProps<T> & {
     /** Handler au clic sur le bouton "Ajouter". */
     addItemHandler?: () => void;
     /** Le sélecteur du champ contenant la date. */
-    dateSelector: (data: NoInfer<T>) => EntityField<FieldEntry<"string">>;
+    dateSelector: (data: NoInfer<T>) => EntityField<FieldEntry<ZodType<string>>>;
     /** Component à afficher lorsque la liste est vide. */
     EmptyComponent?: ComponentType<EmptyProps<NoInfer<T>>>;
     /** CSS. */

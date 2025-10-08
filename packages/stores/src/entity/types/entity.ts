@@ -1,4 +1,5 @@
 import {ComponentType, ReactNode} from "react";
+import {output, ZodArray, ZodType} from "zod";
 
 import {
     BaseAutocompleteProps,
@@ -10,40 +11,35 @@ import {
 } from "./components";
 import {Validator} from "./validation";
 
-export type DomainFieldTypeSingle = "boolean" | "number" | "string";
+export type ZodTypeSingle = ZodType<boolean> | ZodType<number> | ZodType<string>;
 
-export type DomainFieldTypeMultiple = "boolean-array" | "number-array" | "string-array";
-
-/** Type possible pour un champ de domaine.  */
-export type DomainFieldType = DomainFieldTypeSingle | DomainFieldTypeMultiple | "object";
+export type ZodTypeMultiple = ZodArray<ZodType<boolean>> | ZodArray<ZodType<number>> | ZodArray<ZodType<string>>;
 
 /** Récupère le type de domaine simple d'un type de domaine multiple. */
-export type SingleDomainFieldType<DT> = DT extends "boolean-array" | "boolean"
-    ? "boolean"
-    : DT extends "number-array" | "number"
-      ? "number"
-      : DT extends "object" | "string-array" | "string"
-        ? "string"
-        : never;
+export type SingleZodType<S> = S extends ZodArray<infer ES> ? ES : S;
 
 /** Définition d'un domaine. */
 export interface Domain<
-    DT extends DomainFieldType = any,
-    ICProps extends BaseInputProps<DT> = any,
-    SCProps extends BaseSelectProps<DT> = any,
-    ACProps extends BaseAutocompleteProps<DT> = any,
-    DCProps extends BaseDisplayProps<DT> = any,
+    S extends ZodType = any,
+    ICProps extends BaseInputProps<S> = any,
+    SCProps extends BaseSelectProps<S> = any,
+    ACProps extends BaseAutocompleteProps<S> = any,
+    DCProps extends BaseDisplayProps<S> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends {theme?: object} = any
-> extends FieldComponents<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
+> extends FieldComponents<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
     /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: DomainType<DT> | undefined) => string;
-    /** Type d'un champ du domaine. */
-    type: DT;
-    /** Liste des validateurs. */
-    validator?: Validator<DomainType<DT>> | Validator<DomainType<DT>>[];
+    displayFormatter?: (value: output<S> | undefined) => string;
+    /** Schéma Zod d'un champ du domaine. */
+    schema: S;
+    /**
+     * Liste des validateurs.
+     *
+     * @deprecated Vous n'avez plus besoin de validateurs dédiés, ils peuvent être intégrés au schéma.
+     */
+    validator?: Validator<output<S>> | Validator<output<S>>[];
 
     /** Composant personnalisé pour l'autocomplete. */
     AutocompleteComponent: ComponentType<ACProps>;
@@ -59,12 +55,12 @@ export interface Domain<
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
 export interface FieldEntry<
-    DT extends DomainFieldType = any,
-    T extends DomainType<DT> = DomainType<DT>,
-    ICProps extends BaseInputProps<DT> = any,
-    SCProps extends BaseSelectProps<DT> = any,
-    ACProps extends BaseAutocompleteProps<DT> = any,
-    DCProps extends BaseDisplayProps<DT> = any,
+    S extends ZodType = any,
+    T extends output<S> = output<S>,
+    ICProps extends BaseInputProps<S> = any,
+    SCProps extends BaseSelectProps<S> = any,
+    ACProps extends BaseAutocompleteProps<S> = any,
+    DCProps extends BaseDisplayProps<S> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends {theme?: object} = any
 > {
@@ -74,7 +70,7 @@ export interface FieldEntry<
     readonly fieldType?: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
+    readonly domain: Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -92,25 +88,10 @@ export interface FieldEntry<
     readonly defaultValue?: T;
 }
 
-export type FieldEntry2<D extends Domain, T extends DomainType<D["type"]> = DomainType<D["type"]>> =
-    D extends Domain<infer DT, infer ICProps, infer SCProps, infer ACProps, infer DCProps, infer LCProps, infer FProps>
-        ? FieldEntry<DT, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
+export type FieldEntry2<D extends Domain, T extends output<D["schema"]> = output<D["schema"]>> =
+    D extends Domain<infer S, infer ICProps, infer SCProps, infer ACProps, infer DCProps, infer LCProps, infer FProps>
+        ? FieldEntry<S, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
         : never;
-
-/** Récupère le type primitif d'un champ associé à un type défini dans un domaine. */
-export type DomainType<DT> = DT extends "string"
-    ? string
-    : DT extends "number"
-      ? number
-      : DT extends "boolean"
-        ? boolean
-        : DT extends "string-array"
-          ? string[]
-          : DT extends "number-array"
-            ? number[]
-            : DT extends "boolean-array"
-              ? boolean[]
-              : any;
 
 /** Type effectif d'un champ. */
 export type FieldEntryType<F extends FieldEntry> = F extends FieldEntry<infer _, infer T> ? T : never;

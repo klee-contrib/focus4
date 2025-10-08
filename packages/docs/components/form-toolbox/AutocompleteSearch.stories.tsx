@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
+import z from "zod";
 
 import {AutocompleteSearch} from "@focus4/form-toolbox";
 
@@ -12,7 +13,7 @@ export default {
     tags: ["autodocs"]
 } as Meta<typeof AutocompleteSearch>;
 
-export const Showcase: StoryObj<typeof AutocompleteSearch> = {
+export const Showcase: StoryObj<typeof AutocompleteSearch<z.ZodString>> = {
     render(props) {
         const [value, setValue] = useState<string>();
         return (
@@ -22,7 +23,7 @@ export const Showcase: StoryObj<typeof AutocompleteSearch> = {
                 onChange={setValue}
                 querySearcher={searchAdresse}
                 supportingText={value ? `Code sélectionné : ${value}` : undefined}
-                type="string"
+                schema={z.string()}
                 value={value}
             />
         );

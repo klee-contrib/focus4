@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
+import z from "zod";
 
 import {SelectAutocomplete} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
@@ -11,7 +12,7 @@ export default {
     title: "Composants/@focus4∕form-toolbox/SelectAutocomplete",
     tags: ["autodocs"],
     args: {
-        type: "string",
+        schema: z.number(),
         values: makeReferenceList([
             {code: 1, label: "Valeur 1"},
             {code: 2, label: "Valeur 2"}
@@ -19,7 +20,7 @@ export default {
     }
 } as Meta<typeof SelectAutocomplete>;
 
-export const Showcase: StoryObj<typeof SelectAutocomplete<"number">> = {
+export const Showcase: StoryObj<typeof SelectAutocomplete<z.ZodNumber>> = {
     render(props) {
         const [value, setValue] = useState<number>();
         return <SelectAutocomplete {...props} onChange={setValue} value={value} />;

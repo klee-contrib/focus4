@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
+import z from "zod";
 
 import {AutocompleteChips} from "@focus4/form-toolbox";
 
@@ -12,7 +13,7 @@ export default {
     tags: ["autodocs"]
 } as Meta<typeof AutocompleteChips>;
 
-export const Showcase: StoryObj<typeof AutocompleteChips> = {
+export const Showcase: StoryObj<typeof AutocompleteChips<z.ZodArray<z.ZodString>>> = {
     render(props) {
         const [value, setValue] = useState<string[] | undefined>([]);
         return (
@@ -22,7 +23,7 @@ export const Showcase: StoryObj<typeof AutocompleteChips> = {
                 keyResolver={async x => x}
                 onChange={setValue}
                 querySearcher={searchAdresse}
-                type="string-array"
+                schema={z.array(z.string())}
                 value={value}
             />
         );

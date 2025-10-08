@@ -1,3 +1,5 @@
+import {ZodType} from "zod";
+
 import {FieldOptions} from "@focus4/forms";
 import {
     BaseAutocompleteProps,
@@ -6,11 +8,10 @@ import {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
-    DomainFieldType,
-    DomainFieldTypeMultiple,
-    DomainFieldTypeSingle,
     ReferenceList,
-    UndefinedComponent
+    UndefinedComponent,
+    ZodTypeMultiple,
+    ZodTypeSingle
 } from "@focus4/stores";
 
 import {
@@ -32,17 +33,17 @@ import {
 
 /** Crée un domaine avec les composants par défaut du module `form-toolbox`. */
 export function domain<
-    const DT extends DomainFieldTypeSingle,
-    ICProps extends BaseInputProps<DT> = InputProps<DT>,
-    SCProps extends BaseSelectProps<DT> = SelectProps<DT>,
+    const S extends ZodTypeSingle,
+    ICProps extends BaseInputProps<S> = InputProps<S>,
+    SCProps extends BaseSelectProps<S> = SelectProps<S>,
     // @ts-ignore
-    ACProps extends BaseAutocompleteProps<DT> = AutocompleteSearchProps<DT>,
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
+    ACProps extends BaseAutocompleteProps<S> = AutocompleteSearchProps<S>,
+    DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
     LCProps extends BaseLabelProps = LabelProps
 >(
     d: Partial<
         Domain<
-            DT,
+            S,
             ICProps,
             SCProps,
             ACProps,
@@ -50,19 +51,19 @@ export function domain<
             LCProps,
             Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
         >
-    > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
+    > & {schema: S}
+): Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
 export function domain<
-    const DT extends DomainFieldTypeMultiple,
-    ICProps extends BaseInputProps<DT> = {},
-    SCProps extends BaseSelectProps<DT> = SelectChipsProps<DT>,
-    ACProps extends BaseAutocompleteProps<DT> = AutocompleteChipsProps<DT>,
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
+    const S extends ZodTypeMultiple,
+    ICProps extends BaseInputProps<S> = {},
+    SCProps extends BaseSelectProps<S> = SelectChipsProps<S>,
+    ACProps extends BaseAutocompleteProps<S> = AutocompleteChipsProps<S>,
+    DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
     LCProps extends BaseLabelProps = LabelProps
 >(
     d: Partial<
         Domain<
-            DT,
+            S,
             ICProps,
             SCProps,
             ACProps,
@@ -70,19 +71,19 @@ export function domain<
             LCProps,
             Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
         >
-    > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
+    > & {schema: S}
+): Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
 export function domain<
-    const DT extends "object",
-    ICProps extends BaseInputProps<DT> = {},
-    SCProps extends BaseSelectProps<DT> = {values: ReferenceList},
-    ACProps extends BaseAutocompleteProps<DT> = {},
-    DCProps extends BaseDisplayProps<DT> = DisplayProps<DT>,
+    const S extends ZodType,
+    ICProps extends BaseInputProps<S> = {},
+    SCProps extends BaseSelectProps<S> = {values: ReferenceList},
+    ACProps extends BaseAutocompleteProps<S> = {},
+    DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
     LCProps extends BaseLabelProps = LabelProps
 >(
     d: Partial<
         Domain<
-            DT,
+            S,
             ICProps,
             SCProps,
             ACProps,
@@ -90,10 +91,10 @@ export function domain<
             LCProps,
             Omit<FieldOptions<any>, "inputType" | "onChange" | "type">
         >
-    > & {type: DT}
-): Domain<DT, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
-export function domain(d: Partial<Domain> & {type: DomainFieldType}): Domain {
-    if (d.type === "boolean" || d.type === "number" || d.type === "string") {
+    > & {schema: S}
+): Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, Omit<FieldOptions<any>, "inputType" | "onChange" | "type">>;
+export function domain(d: Partial<Domain> & {schema: ZodType}): Domain {
+    if (d.schema.type === "boolean" || d.schema.type === "number" || d.schema.type === "string") {
         return {
             AutocompleteComponent: AutocompleteSearch,
             DisplayComponent: Display,
@@ -102,7 +103,7 @@ export function domain(d: Partial<Domain> & {type: DomainFieldType}): Domain {
             SelectComponent: Select,
             ...d
         };
-    } else if (d.type === "boolean-array" || d.type === "number-array" || d.type === "string-array") {
+    } else if (d.schema.type === "array") {
         return {
             AutocompleteComponent: AutocompleteChips,
             DisplayComponent: Display,

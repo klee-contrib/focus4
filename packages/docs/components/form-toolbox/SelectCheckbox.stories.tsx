@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {useState} from "react";
+import z from "zod";
 
 import {SelectCheckbox} from "@focus4/form-toolbox";
 import {makeReferenceList} from "@focus4/stores";
@@ -11,7 +12,7 @@ export default {
     title: "Composants/@focus4∕form-toolbox/SelectCheckbox",
     tags: ["autodocs"],
     args: {
-        type: "string-array",
+        schema: z.array(z.string()),
         values: makeReferenceList([
             {code: "1", label: "Valeur 1"},
             {code: "2", label: "Valeur 2"},
@@ -20,7 +21,7 @@ export default {
     }
 } as Meta<typeof SelectCheckbox>;
 
-export const Showcase: StoryObj<typeof SelectCheckbox<"string-array">> = {
+export const Showcase: StoryObj<typeof SelectCheckbox<z.ZodArray<z.ZodString>>> = {
     render(props) {
         const [value, setValue] = useState<string[]>();
         return <SelectCheckbox {...props} onChange={setValue} value={value} />;

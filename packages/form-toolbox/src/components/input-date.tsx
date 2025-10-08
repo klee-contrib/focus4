@@ -1,5 +1,6 @@
 import {DateTime} from "luxon";
 import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
+import z from "zod";
 
 import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
 import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
@@ -51,8 +52,8 @@ export interface InputDateProps {
     inputFormat?: string;
     /** Props de l'input. */
     inputProps?: Omit<
-        InputProps<"string">,
-        "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "type" | "value"
+        InputProps<z.ZodType<string>>,
+        "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "schema" | "value"
     >;
     /**
      * Définit la correspondance entre une date et l'ISOString (date/heure) associé.
@@ -291,7 +292,7 @@ export function InputDate({
                 onChange={onInputChange}
                 onFocus={menu.open}
                 onKeyDown={onKeyDown}
-                type="string"
+                schema={z.string()}
                 value={dateText ?? ""}
             />
             <Menu

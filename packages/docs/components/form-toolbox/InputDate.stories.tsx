@@ -10,7 +10,7 @@ export default {
     ...InputDateMeta,
     title: "Composants/@focus4∕form-toolbox/InputDate",
     tags: ["autodocs"],
-    args: {type: "string", inputFormat: "dd/MM/yyyy"}
+    args: {inputFormat: "dd/MM/yyyy"}
 } as Meta<typeof InputDate>;
 
 export const Showcase: StoryObj<typeof InputDate> = {

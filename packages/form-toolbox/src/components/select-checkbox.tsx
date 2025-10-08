@@ -1,7 +1,8 @@
 import {useObserver} from "mobx-react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {DomainFieldTypeMultiple, DomainType, ReferenceList} from "@focus4/stores";
+import {ReferenceList, ZodTypeMultiple} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
@@ -11,9 +12,9 @@ export {selectCheckboxCss};
 export type {SelectCheckboxCss};
 
 /** Props du SelectCheckbox */
-export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
+export interface SelectCheckboxProps<S extends ZodTypeMultiple> {
     /** Désactive le select en entier (si `true`) ou bien une liste d'options. */
-    disabled?: boolean | DomainType<T>;
+    disabled?: boolean | output<S>;
     /** Message d'erreur à afficher. */
     error?: string;
     /** Id de l'input. */
@@ -23,15 +24,15 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
+    onChange: (value?: output<S>) => void;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
     theme?: CSSProp<CheckboxCss & SelectCheckboxCss & SupportingTextCss>;
-    /** Type du champ (celui du domaine). */
-    type: T;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -41,7 +42,7 @@ export interface SelectCheckboxProps<T extends DomainFieldTypeMultiple> {
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) sur un champ liste.
  */
-export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
+export function SelectCheckbox<const S extends ZodTypeMultiple>({
     disabled = false,
     error,
     id,
@@ -52,7 +53,7 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
     theme: pTheme,
     value,
     values
-}: SelectCheckboxProps<T>) {
+}: SelectCheckboxProps<S>) {
     const {t} = useTranslation();
     const theme = useTheme<CheckboxCss & SelectCheckboxCss & SupportingTextCss>(
         "selectCheckbox",
@@ -84,11 +85,9 @@ export function SelectCheckbox<const T extends DomainFieldTypeMultiple>({
                                 onChange={() => {
                                     if (!isDisabled) {
                                         if (isSelected) {
-                                            onChange(
-                                                (value ? value.filter(val => val !== optVal) : []) as DomainType<T>
-                                            );
+                                            onChange((value ? value.filter(val => val !== optVal) : []) as output<S>);
                                         } else {
-                                            onChange((value ? [...value, optVal] : [optVal]) as DomainType<T>);
+                                            onChange((value ? [...value, optVal] : [optVal]) as output<S>);
                                         }
                                     }
                                 }}

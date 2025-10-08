@@ -1,9 +1,9 @@
 import {useObserver} from "mobx-react";
 import {useCallback, useMemo} from "react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {toSimpleType} from "@focus4/forms";
-import {DomainFieldTypeMultiple, DomainType, ReferenceList, SingleDomainFieldType} from "@focus4/stores";
+import {ReferenceList, SingleZodType, ZodTypeMultiple} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {
     Chip,
@@ -24,7 +24,7 @@ import selectChipsCss, {SelectChipsCss} from "./__style__/select-chips.css";
 export {selectChipsCss};
 export type {SelectChipsCss};
 
-export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
+export interface SelectChipsProps<S extends ZodTypeMultiple> {
     /** Si renseigné, utilise un `SelectAutocomplete` à la place d'un `Select`. */
     autocomplete?: boolean;
     /** CSS pour les Chips. */
@@ -32,7 +32,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
     /** Désactive le Select (si true), ou une liste d'options du Select (si liste de valeurs). */
-    disabled?: boolean | DomainType<T>;
+    disabled?: boolean | output<S>;
     /** Message d'erreur à afficher. */
     error?: string;
     /** Permet la sélection de tous les éléments à la fois. */
@@ -50,7 +50,9 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
+    onChange: (value?: output<S>) => void;
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /**
@@ -63,14 +65,12 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
     theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
-    /** Type du champ (celui du domaine). */
-    type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
-    undeletable?: (value: DomainType<SingleDomainFieldType<T>>) => boolean;
+    undeletable?: (value: output<SingleZodType<S>>) => boolean;
     /** Retire les valeurs qui correspondent à ce filtre des valeurs sélectionnables dans le Select. */
     unselectable?: (value: any) => boolean;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
     /** Liste des valeurs. */
     values: ReferenceList;
 }
@@ -80,7 +80,7 @@ export interface SelectChipsProps<T extends DomainFieldTypeMultiple> {
  *
  * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
-export function SelectChips<const T extends DomainFieldTypeMultiple>({
+export function SelectChips<const S extends ZodTypeMultiple>({
     autocomplete = false,
     chipTheme,
     direction,
@@ -94,15 +94,15 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     maxSelectable,
     name,
     onChange,
+    schema,
     showSupportingText = "always",
     sizing,
     theme: pTheme,
-    type,
     undeletable,
     unselectable,
     value,
     values
-}: SelectChipsProps<T>) {
+}: SelectChipsProps<S>) {
     const {t} = useTranslation();
     const theme = useTheme<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>(
         "selectChips",
@@ -111,14 +111,14 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     );
 
     const handleRemoveValue = useCallback(
-        function handleRemoveValue(v: DomainType<SingleDomainFieldType<T>>) {
-            onChange((value?.filter(i => i !== v) as DomainType<T>) ?? []);
+        function handleRemoveValue(v: output<SingleZodType<S>>) {
+            onChange((value?.filter(i => i !== v) as output<S>) ?? []);
         },
         [onChange, value]
     );
 
     const handleAddValue = useCallback(
-        function handleAddValue(v?: DomainType<SingleDomainFieldType<T>>) {
+        function handleAddValue(v?: output<SingleZodType<S>>) {
             const hasValue = v !== undefined && (value ?? []).includes(v as never);
 
             if (
@@ -127,7 +127,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                 (!maxSelectable || (value?.length ?? 0) < maxSelectable) &&
                 values.some(i => i[values.$valueKey] === v)
             ) {
-                onChange([...(value ?? []), v] as DomainType<T>);
+                onChange([...(value ?? []), v] as output<S>);
             } else if (hasValue) {
                 handleRemoveValue(v);
             }
@@ -137,14 +137,14 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
 
     const handleAddAll = useCallback(
         function handleRemoveAll() {
-            onChange(values.map(i => i[values.$valueKey]) as DomainType<T>);
+            onChange(values.map(i => i[values.$valueKey]) as output<S>);
         },
         [onChange, values]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange([] as DomainType<T>);
+            onChange([] as output<S>);
         },
         [onChange]
     );
@@ -203,7 +203,7 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
     return useObserver(() => (
         <div className={theme.select()}>
             {autocomplete ? (
-                <SelectAutocomplete
+                <SelectAutocomplete<S["element"]>
                     allowUnmatched
                     clearQueryOnChange
                     direction={direction}
@@ -216,15 +216,15 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     name={name}
                     noCloseOnChange={keepSelectedValuesInSelect}
                     onChange={handleAddValue}
+                    schema={schema.element}
                     showSupportingText="never"
                     sizing={sizing === "no-fit-single-line" ? sizing : "fit-to-field-single-line"}
                     theme={theme}
                     trailing={trailing}
-                    type={toSimpleType(type)}
                     values={finalValues}
                 />
             ) : (
-                <Select
+                <Select<S["element"]>
                     direction={direction}
                     disableArrowSelectionWhenClosed
                     disabled={disabled as any}
@@ -236,11 +236,11 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                     name={name}
                     noCloseOnChange={keepSelectedValuesInSelect}
                     onChange={handleAddValue}
+                    schema={schema.element}
                     showSupportingText="never"
                     sizing={sizing}
                     theme={theme}
                     trailing={trailing}
-                    type={toSimpleType(type)}
                     values={finalValues}
                 />
             )}
@@ -254,8 +254,8 @@ export function SelectChips<const T extends DomainFieldTypeMultiple>({
                             disabled={disabled === true}
                             label={values.getLabel(item)}
                             onDeleteClick={
-                                !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
-                                    ? () => handleRemoveValue(item as DomainType<SingleDomainFieldType<T>>)
+                                !undeletable?.(item as output<SingleZodType<S>>)
+                                    ? () => handleRemoveValue(item as output<SingleZodType<S>>)
                                     : undefined
                             }
                             theme={chipTheme}

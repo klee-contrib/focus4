@@ -281,7 +281,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                 this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
 
                 if (isFormNode(this.formNode)) {
-                    this.formNode.sourceNode.replace(this.formNode.form._initialData);
+                    this.formNode.sourceNode.replace(this.formNode.form._initialData!);
                 } else {
                     this.formNode.sourceNode.replaceNodes(this.formNode.form._initialData!);
                 }

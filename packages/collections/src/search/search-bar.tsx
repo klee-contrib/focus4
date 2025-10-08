@@ -3,6 +3,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
+import z from "zod";
 
 import {SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
@@ -275,8 +276,8 @@ export function SearchBar<T extends object, C>({
                                 />
                                 <SelectCheckbox
                                     onChange={fields => (store.searchFields = fields)}
+                                    schema={z.array(z.string())}
                                     showSupportingText="never"
-                                    type="string-array"
                                     value={store.searchFields ?? store.availableSearchFields}
                                     values={makeReferenceList(
                                         store.availableSearchFields.map(f => ({

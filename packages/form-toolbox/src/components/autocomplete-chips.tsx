@@ -2,22 +2,22 @@ import {observable} from "mobx";
 import {useObserver} from "mobx-react";
 import {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
+import {output} from "zod";
 
-import {toSimpleType} from "@focus4/forms";
-import {DomainFieldTypeMultiple, DomainType, SingleDomainFieldType} from "@focus4/stores";
+import {SingleZodType, ZodTypeMultiple} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {AutocompleteCss, Chip, ChipCss, Icon, SupportingText, SupportingTextCss, TextFieldCss} from "@focus4/toolbox";
 
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
 
-export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSource = {key: string; label: string}> {
+export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {key: string; label: string}> {
     /** CSS pour les Chips. */
     chipTheme?: CSSProp<ChipCss>;
     /** Précise dans quel sens les suggestions doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
     /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
-    disabled?: boolean | DomainType<T>;
+    disabled?: boolean | output<S>;
     /** Message d'erreur à afficher. */
     error?: string;
     /**
@@ -32,7 +32,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
      */
     getLabel?: (item: TSource) => string;
     /** Service de résolution de clé. Doit retourner le libellé. */
-    keyResolver?: (key: DomainType<SingleDomainFieldType<T>>) => Promise<string | undefined>;
+    keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
     /** Placeholder pour le champ texte. */
     hint?: string;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -46,7 +46,7 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: DomainType<T>) => void;
+    onChange: (value?: output<S>) => void;
     /** Service de recherche. */
     querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
     /** Délai (en ms) entre la fin de la saisie de l'utilisateur et le lancement de la recherche. Par défaut : 500.  */
@@ -55,14 +55,14 @@ export interface AutocompleteChipsProps<T extends DomainFieldTypeMultiple, TSour
     searchOnEmptyQuery?: boolean;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
+    /** Schéma du champ (celui du domaine). */
+    schema: S;
     /** CSS. */
     theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
-    /** Type du champ (celui du domaine). */
-    type: T;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
-    undeletable?: (value: DomainType<SingleDomainFieldType<T>>) => boolean;
+    undeletable?: (value: output<SingleZodType<S>>) => boolean;
     /** Valeur. */
-    value?: DomainType<T>;
+    value?: output<S>;
 }
 
 const defaultGetKey = (x: any) => x.key;
@@ -72,7 +72,7 @@ const defaultGetKey = (x: any) => x.key;
  *
  * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
-export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSource = {key: string; label: string}>({
+export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {key: string; label: string}>({
     chipTheme,
     direction,
     disabled = false,
@@ -88,14 +88,14 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     name,
     onChange,
     querySearcher,
+    schema,
     searchDelay = 500,
     searchOnEmptyQuery = false,
     showSupportingText = "always",
     theme: pTheme,
-    type,
     undeletable,
     value
-}: AutocompleteChipsProps<T, TSource>) {
+}: AutocompleteChipsProps<S, TSource>) {
     const {t} = useTranslation();
     const theme = useTheme<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>(
         "selectChips",
@@ -108,9 +108,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     useEffect(() => {
         if (keyResolver) {
             for (const item of (value ?? []).filter(i => !labels.has(i))) {
-                keyResolver(item as DomainType<SingleDomainFieldType<T>>).then(label =>
-                    labels.set(item, label ?? `${item}`)
-                );
+                keyResolver(item as output<SingleZodType<S>>).then(label => labels.set(item, label ?? `${item}`));
             }
         }
     }, [keyResolver, value]);
@@ -118,7 +116,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || (value?.length ?? 0) < maxSelectable)) {
-                onChange([...(value ?? []), v] as DomainType<T>);
+                onChange([...(value ?? []), v] as output<S>);
             }
         },
         [onChange, maxSelectable, value]
@@ -126,14 +124,14 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange((value ?? []).filter(i => i !== v) as DomainType<T>);
+            onChange((value ?? []).filter(i => i !== v) as output<S>);
         },
         [onChange, value]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange([] as DomainType<T>);
+            onChange([] as output<S>);
         },
         [onChange]
     );
@@ -153,7 +151,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
 
     return useObserver(() => (
         <div className={theme.select()}>
-            <AutocompleteSearch<SingleDomainFieldType<T>, TSource>
+            <AutocompleteSearch<S["element"], TSource>
                 clearQueryOnChange
                 direction={direction}
                 disabled={disabled as any}
@@ -167,6 +165,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                 name={name}
                 onChange={handleAddValue}
                 querySearcher={fixedQuerySearcher}
+                schema={schema.element}
                 searchDelay={searchDelay}
                 searchOnEmptyQuery={searchOnEmptyQuery}
                 showSupportingText="never"
@@ -177,7 +176,6 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                     tooltip: t(`${i18nPrefix}.select.unselectAll`),
                     noFocusOnClick: true
                 }}
-                type={toSimpleType(type)}
             />
             {value?.length ? (
                 <div className={theme.chips()}>
@@ -189,7 +187,7 @@ export function AutocompleteChips<const T extends DomainFieldTypeMultiple, TSour
                             disabled={disabled === true}
                             label={labels.get(item) ?? ""}
                             onDeleteClick={
-                                !undeletable?.(item as DomainType<SingleDomainFieldType<T>>)
+                                !undeletable?.(item as output<SingleZodType<S>>)
                                     ? () => handleRemoveValue(item)
                                     : undefined
                             }
