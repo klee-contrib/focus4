@@ -2,6 +2,7 @@ import {chunk} from "es-toolkit";
 import {autorun} from "mobx";
 import {useObserver} from "mobx-react";
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {output, ZodType} from "zod";
 
 import {ReferenceList, SingleZodType} from "@focus4/stores";
@@ -57,6 +58,8 @@ export function Display<S extends ZodType>({
     value,
     values
 }: DisplayProps<S>) {
+    const {t} = useTranslation();
+
     const theme = useTheme("display", displayCss, pTheme);
 
     const [label, setLabel] = useState<string[] | string>();
@@ -99,18 +102,18 @@ export function Display<S extends ZodType>({
                             ? chunk(label, listChunkSize ?? label.length).map((group, k) => (
                                   <ul key={k}>
                                       {group.map((v, i) => (
-                                          <li key={i}>{v}</li>
+                                          <li key={i}>{t(v)}</li>
                                       ))}
                                   </ul>
                               ))
                             : null}
                     </div>
                 ) : (
-                    label.join(", ")
+                    label.map(l => t(l)).join(", ")
                 )
-            ) : (
-                label
-            )}
+            ) : label ? (
+                t(label)
+            ) : null}
         </div>
     ));
 }
