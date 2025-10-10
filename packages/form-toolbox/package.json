@@ -1,6 +1,6 @@
 {
     "name": "@focus4/form-toolbox",
-    "version": "12.5.0-rc.0",
+    "version": "12.5.0-rc.1",
     "description": "Focus v4, form-toolbox module",
     "main": "lib/focus4.form-toolbox.js",
     "type": "module",
@@ -19,7 +19,7 @@
         "@focus4/forms": "12.5.0-rc.0",
         "@focus4/stores": "12.5.0-rc.0",
         "@focus4/styling": "12.5.0-rc.0",
-        "@focus4/toolbox": "12.5.0-rc.0",
+        "@focus4/toolbox": "12.5.0-rc.1",
         "es-toolkit": "~1.40.0",
         "file-type": "~21.0.0",
         "luxon": "~3.7.2",
