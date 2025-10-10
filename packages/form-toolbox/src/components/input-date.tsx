@@ -106,6 +106,8 @@ export interface InputDateProps {
  * - Affiche un masque de saisie sur le champ texte.
  * - Permet de choisir parmi 4 formats de dates (et la saisie de jour/mois/année du `Calendar`)
  * - Peut gérer un fuseau horaire séparé.
+ *
+ * La locale du composant est synchronisée avec celle configurée dans i18next.
  */
 export function InputDate({
     calendarFormat = "yyyy-MM-dd",

@@ -2,7 +2,17 @@ import {merge} from "es-toolkit";
 import z from "zod";
 
 import {FieldOptions} from "@focus4/forms";
-import {Domain, ReferenceList, UndefinedComponent, ZodTypeMultiple, ZodTypeSingle} from "@focus4/stores";
+import {
+    BaseDisplayProps,
+    BaseInputProps,
+    BaseLabelProps,
+    BaseSelectProps,
+    Domain,
+    ReferenceList,
+    UndefinedComponent,
+    ZodTypeMultiple,
+    ZodTypeSingle
+} from "@focus4/stores";
 
 import {
     AutocompleteChips,
@@ -49,9 +59,18 @@ type FCProps = Omit<FieldOptions<any>, "inputType" | "onChange" | "type">;
  * @param schema Schéma Zod pour le champ du domaine.
  * @param options Options pour le domaine.
  */
-export function domain<S extends z.ZodType = z.ZodUnknown>(
+export function domain<
+    const S extends z.ZodType = z.ZodUnknown,
+    // @ts-ignore
+    ICProps extends BaseInputProps<S> = DefaultICProps<S>,
+    SCProps extends BaseSelectProps<S> = DefaultSCProps<S>,
+    // @ts-ignore
+    ACProps extends BaseAutocompleteProps<S> = DefaultACProps<S>,
+    DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
+    LCProps extends BaseLabelProps = LabelProps
+>(
     schema: S = z.unknown() as unknown as S,
-    options?: Omit<Partial<Domain>, "schema">
+    options?: Omit<Partial<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>>, "schema">
 ) {
     const displayFormatter = isBoolean(schema)
         ? "focus.boolean"
@@ -95,17 +114,7 @@ export function domain<S extends z.ZodType = z.ZodUnknown>(
                 : UndefinedComponent,
         ...options,
         inputProps: merge(inputProps, options?.inputProps ?? {})
-    } as Domain<
-        S,
-        // @ts-ignore
-        DefaultICProps<S>,
-        DefaultSCProps<S>,
-        // @ts-ignore
-        DefaultACProps<S>,
-        DisplayProps<S>,
-        LabelProps,
-        FCProps
-    >;
+    } as Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>;
 }
 
 function isArray(schema: z.ZodType): schema is z.ZodArray<z.ZodType> {

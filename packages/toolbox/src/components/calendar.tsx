@@ -55,6 +55,8 @@ export interface CalendarProps {
  *
  * - Intégré avec un champ de saisie texte via le composant [`InputDate`](/docs/composants-focus4∕form-toolbox-inputdate--docs).
  * - Peut être configuré pour limiter la saisie à un mois ou une année.
+ *
+ * La locale du calendrier est synchronisée avec celle configurée dans i18next.
  */
 export function Calendar({
     className,
