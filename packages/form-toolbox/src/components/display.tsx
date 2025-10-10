@@ -1,7 +1,7 @@
 import {chunk} from "es-toolkit";
 import {autorun} from "mobx";
 import {useObserver} from "mobx-react";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output, ZodType} from "zod";
 
@@ -16,7 +16,7 @@ export type {DisplayCss};
 /** Props du composant d'affichage. */
 export interface DisplayProps<S extends ZodType> {
     /** Formatteur. */
-    formatter?: (value: output<SingleZodType<S>> | undefined) => string;
+    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string;
     /** Service de résolution de code. */
     keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
     /** Si renseigné pour un affichage multiple en mode `list`, découpe les listes en plusieurs morceaux pour pouvoir les afficher en colonnes par exemple. */
@@ -62,6 +62,17 @@ export function Display<S extends ZodType>({
 
     const theme = useTheme("display", displayCss, pTheme);
 
+    const format = useCallback(
+        function format(v?: output<SingleZodType<S>>) {
+            if (typeof formatter === "string") {
+                return t(formatter, {value: v});
+            } else {
+                return formatter(v);
+            }
+        },
+        [formatter, t]
+    );
+
     const [label, setLabel] = useState<string[] | string>();
     useEffect(
         () =>
@@ -81,16 +92,16 @@ export function Display<S extends ZodType>({
                         setLabel(
                             values
                                 ?.filter(v => value.find((v2: output<SingleZodType<S>>) => v[values.$valueKey] === v2))
-                                .map(v => formatter(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
+                                .map(v => format(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
                         );
                     } else {
-                        setLabel(value.map((v: output<SingleZodType<S>>) => formatter(v)));
+                        setLabel(value.map((v: output<SingleZodType<S>>) => format(v)));
                     }
                 } else {
-                    setLabel(formatter(values?.getLabel(value) ?? value));
+                    setLabel(format(values?.getLabel(value) ?? value));
                 }
             }),
-        [keyResolver, value, values]
+        [format, keyResolver, value, values]
     );
 
     return useObserver(() => (
@@ -102,18 +113,18 @@ export function Display<S extends ZodType>({
                             ? chunk(label, listChunkSize ?? label.length).map((group, k) => (
                                   <ul key={k}>
                                       {group.map((v, i) => (
-                                          <li key={i}>{t(v)}</li>
+                                          <li key={i}>{v}</li>
                                       ))}
                                   </ul>
                               ))
                             : null}
                     </div>
                 ) : (
-                    label.map(l => t(l)).join(", ")
+                    label.join(", ")
                 )
-            ) : label ? (
-                t(label)
-            ) : null}
+            ) : (
+                label
+            )}
         </div>
     ));
 }

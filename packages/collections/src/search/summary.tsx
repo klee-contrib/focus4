@@ -124,7 +124,15 @@ export function Summary<T extends object>({
                             key: `${criteriaKey}-${value as string}`,
                             code: label,
                             codeLabel: label,
-                            values: [{code: value, label: domain?.displayFormatter?.(value)}],
+                            values: [
+                                {
+                                    code: value,
+                                    label:
+                                        typeof domain?.displayFormatter === "string"
+                                            ? t(domain.displayFormatter, {value})
+                                            : domain?.displayFormatter?.(value)
+                                }
+                            ],
                             onDeleteClick: () => {
                                 (props.store.criteria[criteriaKey] as FormEntityField).value = undefined;
                             }

@@ -21,5 +21,7 @@ export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: R
     } = field;
     const found = values.find(val => val[values.$valueKey] === value);
     const processedValue = found?.[values.$labelKey] ?? value;
-    return displayFormatter(processedValue);
+    return typeof displayFormatter === "string"
+        ? i18next.t(displayFormatter, {value: processedValue})
+        : displayFormatter(processedValue);
 }

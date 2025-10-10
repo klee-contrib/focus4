@@ -43,8 +43,12 @@ export interface Metadata<
     className?: string;
     /** Commentaire du champ. */
     comment?: ReactNode;
-    /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: T | undefined) => string;
+    /**
+     * Formatteur pour l'affichage du champ en consulation.
+     *
+     * Peut être une fonction de la valeur, ou une clé i18n qui sera appelée avec la variable `value`.
+     */
+    displayFormatter?: ((value: T | undefined) => string) | string;
     /** Champ obligatoire. */
     isRequired?: boolean;
     /** Libellé du champ. */

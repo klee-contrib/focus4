@@ -1,5 +1,6 @@
 import {DateTime} from "luxon";
 import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 import z from "zod";
 
 import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
@@ -48,7 +49,7 @@ export interface InputDateProps {
     hideReferenceValue?: boolean;
     /** Id pour l'input. */
     id?: string;
-    /** Format de la date dans l'input. */
+    /** Format de la date dans l'input. Par défaut : dépend de la locale. */
     inputFormat?: string;
     /** Props de l'input. */
     inputProps?: Omit<
@@ -112,7 +113,7 @@ export function InputDate({
     error,
     hideReferenceValue = false,
     id,
-    inputFormat = "MM/dd/yyyy",
+    inputFormat,
     inputProps = {},
     ISOStringFormat = "utc-midnight",
     max,
@@ -124,6 +125,17 @@ export function InputDate({
     timezoneCode,
     value
 }: InputDateProps) {
+    const {
+        i18n: {language}
+    } = useTranslation();
+
+    inputFormat ??= DateTime.fromObject({year: 3333, month: 11, day: 22})
+        .setLocale(language)
+        .toLocaleString()
+        .replace("3333", "yyyy")
+        .replace("11", "MM")
+        .replace("22", "dd");
+
     const theme = useTheme("inputDate", inputDateCss, pTheme);
 
     const zone =

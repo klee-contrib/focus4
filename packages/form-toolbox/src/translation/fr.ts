@@ -1,8 +1,5 @@
 export const fr = {
-    boolean: {
-        no: "Non",
-        yes: "Oui"
-    },
+    bool: {true: "Oui", false: "Non"},
     button: {
         cancel: "Annuler",
         edit: "Modifier",

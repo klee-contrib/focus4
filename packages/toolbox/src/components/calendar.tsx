@@ -4,6 +4,7 @@ import {DateTime} from "luxon";
 import {animate} from "motion";
 import {AnimatePresence, motion} from "motion/react";
 import {Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 
@@ -68,26 +69,32 @@ export function Calendar({
     theme: pTheme,
     value
 }: CalendarProps) {
+    const {
+        i18n: {language}
+    } = useTranslation();
+
     const theme = useTheme("calendar", calendarCss, pTheme);
 
-    const [date, setDate] = useState(handleValue(value, format));
+    const [date, setDate] = useState(handleValue(value, format, language));
 
-    const [refDate, setRefDate] = useState(getRefDate(referenceValue));
-    const [displayedMonth, setDisplayedMonth] = useState(DateTime.fromISO((date ?? refDate).toFormat("yyyyMM")));
+    const [refDate, setRefDate] = useState(getRefDate(referenceValue, language));
+    const [displayedMonth, setDisplayedMonth] = useState(
+        DateTime.fromISO((date ?? refDate).toFormat("yyyyMM")).setLocale(language)
+    );
 
     useEffect(() => {
-        const newRefDate = getRefDate(referenceValue);
+        const newRefDate = getRefDate(referenceValue, language);
         setRefDate(newRefDate);
         if (!date) {
-            setDisplayedMonth(DateTime.fromISO(newRefDate.toFormat("yyyyMM")));
+            setDisplayedMonth(DateTime.fromISO(newRefDate.toFormat("yyyyMM")).setLocale(language));
         }
-    }, [date, referenceValue]);
+    }, [date, language, referenceValue]);
 
-    const [maxDate, setMaxDate] = useState(handleValue(max, format));
-    useEffect(() => setMaxDate(handleValue(max, format)), [format, max]);
+    const [maxDate, setMaxDate] = useState(handleValue(max, format, language));
+    useEffect(() => setMaxDate(handleValue(max, format, language)), [format, language, max]);
 
-    const [minDate, setMinDate] = useState(handleValue(min, format));
-    useEffect(() => setMinDate(handleValue(min, format)), [format, min]);
+    const [minDate, setMinDate] = useState(handleValue(min, format, language));
+    useEffect(() => setMinDate(handleValue(min, format, language)), [format, language, min]);
 
     const isDisabled = useCallback(
         function isDisabled(d: DateTime) {
@@ -102,7 +109,7 @@ export function Calendar({
     const view = viewChange === "months-to-days" ? "days" : viewChange === "months-to-years" ? "years" : "months";
     const viewFormat = view === "days" ? "yyyy-MM-dd" : view === "months" ? "yyyy-MM" : "yyyy";
 
-    const lines = useMemo(() => getLines(displayedMonth, view), [displayedMonth, view]);
+    const lines = useMemo(() => getLines(displayedMonth, view, language), [displayedMonth, language, view]);
 
     const [transitionLines, setTransitionLines] = useState<
         {
@@ -127,10 +134,10 @@ export function Calendar({
             const d = displayedMonth[direction === "up" ? "minus" : "plus"](change);
             setDisplayedMonth(d);
             if (displayed.current) {
-                const oldLines = getLines(displayedMonth, view);
-                const linesAbove = getLines(displayedMonth.minus(change), view);
+                const oldLines = getLines(displayedMonth, view, language);
+                const linesAbove = getLines(displayedMonth.minus(change), view, language);
                 const newLinesAbove = differenceBy(linesAbove, oldLines, l => l.line);
-                const linesBelow = getLines(displayedMonth.plus(change), view);
+                const linesBelow = getLines(displayedMonth.plus(change), view, language);
                 const newLinesBelow = differenceBy(linesBelow, oldLines, l => l.line);
                 const newTransitionLines = differenceBy(
                     [...oldLines, ...(direction === "up" ? newLinesBelow : newLinesAbove)],
@@ -167,14 +174,14 @@ export function Calendar({
                 }
             }
         },
-        [displayedMonth, view]
+        [displayedMonth, language, view]
     );
 
     useEffect(() => {
-        const newDate = handleValue(value, format);
+        const newDate = handleValue(value, format, language);
         setDate(newDate);
         if (newDate) {
-            const newDisplayedMonth = DateTime.fromISO(newDate.toFormat("yyyyMM"));
+            const newDisplayedMonth = DateTime.fromISO(newDate.toFormat("yyyyMM")).setLocale(language);
             let dir: "down" | "up" | undefined;
             if (view === "days") {
                 dir =
@@ -202,7 +209,7 @@ export function Calendar({
                 setDisplayedMonth(newDisplayedMonth);
             }
         }
-    }, [format, value]);
+    }, [language, format, value]);
 
     const changeView = useCallback((v: typeof viewChange) => {
         setViewChange(v);
@@ -499,7 +506,7 @@ export function Calendar({
     );
 }
 
-function handleValue(value: string | undefined, format: string) {
+function handleValue(value: string | undefined, format: string, language: string) {
     if (!value) {
         return undefined;
     }
@@ -510,10 +517,10 @@ function handleValue(value: string | undefined, format: string) {
         return undefined;
     }
 
-    return DateTime.fromISO(date.toFormat(format));
+    return DateTime.fromISO(date.toFormat(format)).setLocale(language);
 }
 
-function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
+function getLines(displayedMonth: DateTime, view: "days" | "months" | "years", language: string) {
     if (view === "days") {
         const w = Object.entries(
             groupBy(
@@ -540,7 +547,7 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
 
         return w;
     } else if (view === "months") {
-        const startMonth = DateTime.fromObject({year: displayedMonth.year, month: 1});
+        const startMonth = DateTime.fromObject({year: displayedMonth.year, month: 1}).setLocale(language);
         return Object.entries(
             groupBy(
                 range(0, 12).map(month => startMonth.plus({month})),
@@ -552,7 +559,7 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
 
         const years = Object.entries(
             groupBy(
-                range(0, 10).map(i => DateTime.fromObject({year: start + i})),
+                range(0, 10).map(i => DateTime.fromObject({year: start + i}).setLocale(language)),
                 y => y.year - (y.year % 3)
             )
         ).map(([line, items]) => ({line, items}));
@@ -569,9 +576,9 @@ function getLines(displayedMonth: DateTime, view: "days" | "months" | "years") {
     }
 }
 
-function getRefDate(referenceValue?: string) {
-    const refDate = referenceValue ? DateTime.fromISO(referenceValue) : undefined;
-    return (refDate?.isValid ? refDate : DateTime.now()).set({
+function getRefDate(referenceValue: string | undefined, language: string) {
+    const refDate = referenceValue ? DateTime.fromISO(referenceValue).setLocale(language) : undefined;
+    return (refDate?.isValid ? refDate : DateTime.now().setLocale(language)).set({
         hour: 0,
         minute: 0,
         second: 0,

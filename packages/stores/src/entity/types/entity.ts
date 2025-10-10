@@ -30,8 +30,12 @@ export interface Domain<
 > extends FieldComponents<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
     /** Classe CSS pour le champ. */
     className?: string;
-    /** Formatteur pour l'affichage du champ en consulation. */
-    displayFormatter?: (value: output<S> | undefined) => string;
+    /**
+     * Formatteur pour l'affichage du champ en consulation.
+     *
+     * Peut être une fonction de la valeur, ou une clé i18n qui sera appelée avec la variable `value`.
+     */
+    displayFormatter?: ((value: output<S> | undefined) => string) | string;
     /** Schéma Zod d'un champ du domaine. */
     schema: S;
     /**
