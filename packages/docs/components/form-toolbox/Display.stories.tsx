@@ -21,8 +21,8 @@ export const Showcase: StoryObj<typeof Display> = {
                 <Display {...props} schema={z.array(z.string())} value={["Valeur 1", "Valeur 2"]} />
                 <Display
                     {...props}
-                    formatter={v => (v ? DateTime.fromISO(v).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS) : "")}
-                    schema={z.string()}
+                    formatter="focus.datetime"
+                    schema={z.iso.datetime()}
                     value={DateTime.now().toISO()}
                 />
             </div>

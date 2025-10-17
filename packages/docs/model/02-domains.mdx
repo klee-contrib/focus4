@@ -6,55 +6,24 @@ import {Meta} from "@storybook/addon-docs/blocks";
 
 Le **domaine** d'un champ représente le **type de donnée métier** qui lui est associé (par exemple : une date, un numéro de téléphone, un montant...).
 
-## Type de champ
+## Schéma
 
-Un domaine se définit au minimum avec un **type de champ**, qui peut être :
+Un domaine se définit à partir d'un **schéma**, qui permet de définir précisément le **type** d'un champ associé, ainsi que ses règles de **validation**.
 
-- Soit un type primitif : `"string"` / `"number"` / `"boolean"`
-- Soit un type array : `"string-array"` / `"number-array"` / `"boolean-array"`
-- Soit un type objet autre : `"object"`
+Focus utilise **[Zod](https://zod.dev/api)** pour définir ces schémas, qui est la librairie de référence pour définir des schémas de validation en Typescript. En plus de pouvoir gérer les types primitifs de base Javascript tel que `string`, `number` ou `boolean`, Zod dispose aussi de types natifs pour les emails, les uuids, les dates (au format ISO), les entiers... qui sont aussi des `string` ou des `number`, mais avec un format bien particulier.
 
-Le type de champ (sauf `"object"`) contraindra le type Typescript "réel" d'un champ de ce domaine (`string`/`number`/`boolean`, `string[]`/`number[]`/`boolean[]`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultant"` pour un domaine `"string"` )
+Ces schémas restent en revanche limités aux domaines, et donc aux champs. Les entités Focus ne peuvent pas être entièrement définies à partir d'un schéma d'objet Zod, car il n'est pas suffisant pour définir l'intégralité de ce qui les constitue. En revanche, un champ peut tout à fait être défini à partir d'un schéma d'objet ou d'array, rien ne force un domaine (et donc un champ) à contenir un type de donnée primitif. Les schémas d'arrays de types primitifs (`string[]`, `number[]` et `boolean[]`) sont d'ailleurs gérés nativement par les composants d'affichage et de saisie multiple de Focus.
 
-Le type de champ sera nécessaire pour d'autres fonctionnalités (puisqu'on ne peut pas se baser sur le type Typescript 😉)
+Le schéma contraindra le type Typescript "réel" d'un champ de ce domaine (par exemple `z.string()` forcera un champ de type `string`), mais il pourra être **plus précis** (par exemple avec un type `"admin" | "gestionnaire" | "consultant"`).
 
-Un domaine se définit avec la fonction **`domain`**, et au moins le type de champ associé :
+Un domaine se définit avec la fonction **`domain`**, à partir du schéma associé :
 
 ```ts
+import z from "zod";
+
 import {domain} from "@focus4/form-toolbox";
 
-const DO_LIBELLE = domain({type: "string"});
-```
-
-## Validation
-
-Un domaine peut définir **un ou plusieurs validateurs**, qui permettront de vérifier que la valeur d'un champ de ce domaine correspond bien à ce que l'on veut.
-
-Il existe quelques validateurs par défaut :
-
-- Type de champ `"string"` :
-    - `"string"` : avec `minLength` et `maxLength`, permet de valider une longueur minimale ou maximale.
-    - `"date"` : permet de valider que le string est une date ISO valide. (`2024-01-01T00:00:00Z` par exemple).
-    - `"email"` : permet de valider que le string est un email valide (via une regex intégrée).
-    - `"regex"` : permet de valider que le string est conforme à une regex donnée (dans `regex`).
-- Type de champ `"number"` :
-    - `"number"` : permet de valider que le nombre est compris entre `min` et `max`, et de spécifier un nombre maximum de décimales (`maxDecimals`).
-
-Tous ces validateurs prennent également une propriété `errorMessage`, pour surcharger le message d'erreur par défaut en cas d'erreur de validation.
-
-Si ces validateurs ne vous conviennent par, vous pouvez toujours définir un validateur comme une **fonction qui retourne un message d'erreur** (ou `undefined` si le champ est valide).
-
-Par exemple :
-
-```ts
-// `validator` peut aussi être un array
-const DO_LIBELLE = domain({type: "string", validator: {type: "string", maxLength: 100}});
-const DO_DATE = domain({type: "string", validator: {type: "date"}});
-const DO_ENTIER = domain({type: "number", validator: {type: "number", maxDecimals: 0}});
-const DO_IBAN = domain({
-    type: "string",
-    validator: input => (!ibanChecker.isValid(input) ? "IBAN invalide" : undefined)
-});
+const DO_LIBELLE = domain(z.string());
 ```
 
 ## Composants
@@ -95,4 +64,34 @@ const DO_BOOLEEN = domain({
     displayFormatter: value => (value ? "Oui" : "Non"),
     InputComponent: BooleanRadio
 });
+```
+
+## Validation (legacy)
+
+**/!\ Ces validateurs sont dépréciés. La validation est désormais intégrée au schéma du domaine et Zod propose des APIs beaucoup plus avancées que celles-ci. Ils seront (probablement) retirés dans la prochaine version majeure de Focus, vous devriez donc migrer si vous les utilisez encore. /!\\**
+
+Un domaine peut définir **un ou plusieurs validateurs**, qui permettront de vérifier que la valeur d'un champ de ce domaine correspond bien à ce que l'on veut.
+
+Il existe quelques validateurs par défaut :
+
+- Schéma de type `string` :
+    - `"string"` : avec `minLength` et `maxLength`, permet de valider une longueur minimale ou maximale.
+    - `"date"` : permet de valider que le string est une date ISO valide. (`2024-01-01T00:00:00Z` par exemple).
+    - `"email"` : permet de valider que le string est un email valide (via une regex intégrée).
+    - `"regex"` : permet de valider que le string est conforme à une regex donnée (dans `regex`).
+- Schéma de type `number` :
+    - `"number"` : permet de valider que le nombre est compris entre `min` et `max`, et de spécifier un nombre maximum de décimales (`maxDecimals`).
+
+Tous ces validateurs prennent également une propriété `errorMessage`, pour surcharger le message d'erreur par défaut en cas d'erreur de validation.
+
+Si ces validateurs ne vous conviennent pas, vous pouvez toujours définir un validateur comme une **fonction qui retourne un message d'erreur** (ou `undefined` si le champ est valide).
+
+Par exemple :
+
+```ts
+// `validator` peut aussi être un array
+const DO_LIBELLE = domain(z.string(), {validator: {type: "string", maxLength: 100}});
+const DO_DATE = domain(z.string(), {validator: {type: "date"}});
+const DO_ENTIER = domain(z.number(), {validator: {type: "number", maxDecimals: 0}});
+const DO_IBAN = domain(z.string(), {validator: input => (!ibanChecker.isValid(input) ? "IBAN invalide" : undefined)});
 ```

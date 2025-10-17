@@ -12,18 +12,18 @@ export default {
     title: "Composants/@focus4∕form-toolbox/SelectCheckbox",
     tags: ["autodocs"],
     args: {
-        schema: z.array(z.string()),
+        schema: z.array(z.int()),
         values: makeReferenceList([
-            {code: "1", label: "Valeur 1"},
-            {code: "2", label: "Valeur 2"},
-            {code: "3", label: "Valeur 3"}
+            {code: 1, label: "Valeur 1"},
+            {code: 2, label: "Valeur 2"},
+            {code: 3, label: "Valeur 3"}
         ])
     }
 } as Meta<typeof SelectCheckbox>;
 
-export const Showcase: StoryObj<typeof SelectCheckbox<z.ZodArray<z.ZodString>>> = {
+export const Showcase: StoryObj<typeof SelectCheckbox<z.ZodArray<z.ZodInt>>> = {
     render(props) {
-        const [value, setValue] = useState<string[]>();
+        const [value, setValue] = useState<number[]>();
         return <SelectCheckbox {...props} onChange={setValue} value={value} />;
     }
 };

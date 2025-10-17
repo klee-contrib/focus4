@@ -9,8 +9,7 @@ import {InputDateMeta} from "./metas/input-date";
 export default {
     ...InputDateMeta,
     title: "Composants/@focus4∕form-toolbox/InputDate",
-    tags: ["autodocs"],
-    args: {inputFormat: "dd/MM/yyyy"}
+    tags: ["autodocs"]
 } as Meta<typeof InputDate>;
 
 export const Showcase: StoryObj<typeof InputDate> = {
