@@ -78,7 +78,7 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
 /**
  * Un [`Select`](/docs/composants-focus4∕form-toolbox-select--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
  *
- * Il s'agit du composant par défaut de tous les domaines listes (`"boolean-array"`,`"number-array"` et `"string-array"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `array` de primitives](/docs/docs/composants-composants-par-défaut--docs) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function SelectChips<const S extends ZodTypeMultiple>({
     autocomplete = false,

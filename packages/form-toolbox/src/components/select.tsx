@@ -31,7 +31,7 @@ export interface SelectProps<S extends ZodTypeSingle>
 /**
  * Surcharge du [`Dropdown`](/docs/composants-focus4∕toolbox-dropdown--docs) de `@focus4/toolbox` pour fonctionner avec une liste de référence.
  *
- * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `string`, `number` et `boolean`](/docs/docs/composants-composants-par-défaut--docs) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
 export function Select<const S extends ZodTypeSingle>({
     disabled,

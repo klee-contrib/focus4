@@ -16,10 +16,11 @@ Ces composants cherchent à couvrir les besoins les plus standards d'une applica
 
 **Un composant de saisie d'un domaine pour un champ doit venir du module `@focus4/form-toolbox`**, car il doit respecter le contrat d'interface correspondant du domaine (`BaseInputProps` / `BaseSelectProps` / `BaseAutocompleteProps`). Si vous voulez construire votre propre composant de saisie, vous pouvez reproduire ce que font les composants de `@focus4/form-toolbox`, en particulier la gestion du `type`, du `onChange`, de l'`error` et du `supportingText`. Ils utilisent pour cela quelques utilitaires exportés par le module `@focus4/forms`. Ce mécanisme a vocation à être amélioré dans le futur, et est suivi par l'[issue #192](https://github.com/klee-contrib/focus4/issues/192) sur Github.
 
-La plupart des composants de saisies du module `@focus4/form-toolbox` sont utilisables avec plusieurs types de domaines (souvent `"string"` et `"number"` par exemple). Lorsque vous les utiliser pour patcher un composant de champ dans un formulaire, il est nécessaire de respécifier ce type en tant que type générique. Dans le cas contraire, vous aurez une erreur pas forcément compréhensible...
+La plupart des composants de saisies du module `@focus4/form-toolbox` sont utilisables avec des domaines de plusieurs types de schéma (souvent `string` et `number` par exemple). Lorsque vous les utiliser pour patcher un composant de champ dans un formulaire, il est nécessaire de respécifier ce type en tant que type générique. Dans le cas contraire, vous aurez une erreur pas forcément compréhensible...
 
-Par exemple, pour un `SelectRadio` sur un champ de domaine type `"string"`, il faut écrire :
+Par exemple, pour un `SelectRadio` sur un champ de domaine d'un schéma `string`, il faut écrire :
 
 ```tsx
-.patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<"string">}))
+.patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<ZodType<string>>}))
+// Vous pouvez aussi utiliser le type Zod précis correspondant au domaine, comme ZodString ou ZodEmail par exemple.
 ```

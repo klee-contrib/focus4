@@ -71,7 +71,7 @@ Cette fonction permet de (re)définir le domaine d'un champ. A l'inverse des aut
 
 Le reste des propriétés du domaine pourront être modifiées par la suite (et rendues dynamiques) par la fonction `metadata`.
 
-_Remarque : vous serez très souvent obligés de poser un domaine afin de pouvoir soit changer le type par défaut du champ (`"string"`, soit pour spécifier des composants d'affichage ou de saisie)._
+_Remarque : Si vous ajoutez un nouveau champ, vous serez obligés de définir un domaine afin de pouvoir initialiser le type du champ. Il sera à `never` dans le cas contraire, et n'aura aucun composant d'affichage ou de saisie._
 
 ### `value(initialValue)` / `value(get, set?)`
 
@@ -90,9 +90,17 @@ Le type de `value()` est contraint par le [type de champ du domaine](/docs/modè
 
 La fonction `metadata` permet de re(définir) les métadonnées d'un champ. Elle prend un seul paramètre, `$metadata`, qui contient toutes les métadonnées à remplacer. Cela peut être :
 
-- Tout ce qui est définit dans le [domaine](/docs/modèle-métier-domaines--docs) (formatteur, validateurs, composants... mais pas le type de champ).
+- Tout ce qui est définit dans le [domaine](/docs/modèle-métier-domaines--docs) (formatteur, composants... mais pas le schéma directement).
 - Tout ce qui est définit sur le [champ](/docs/modèle-métier-champs-et-entités--docs#définition-dun-champ) (libellé, commentaire, caractère obligatoire).
+
+De plus, il est possible de **compléter le schéma du domaine**, en spécifiant la propriété `schema`, qui est une **fonction appelée avec le schéma**. Par exemple :
+
+```ts
+.metadata({schema: s => s.max(50)}) // Ajoute une contrainte sur le schéma du domaine.
+// (Par ailleurs, vous ne pouvez pas augmenter la valeur de `max` par rapport à celle du domaine ici
+// parce que Zod prendra la valeur minimum de `max` définie sur le schéma ;) )
+```
 
 **Dans un formulaire uniquement**, `$metadata` peut être une fonction qui renvoie ces mêmes métadonnées, afin de pouvoir les rendre dynamiques (pour dépendre d'un **état observable** et construire une dérivation, par exemple d'autres champs du même formulaire).
 
-Les validateurs définis dans `metadata()` vont **s'ajouter** à ceux déjà définis dans les domaines. Il n'est **pas possible** de retirer un validateur sur un champ.
+_Remarque : Si vous définissez des validateurs "legacy" dans `metadata()`, ils vont **s'ajouter** à ceux déjà définis dans les domaines. Il n'est **pas possible** de retirer un validateur sur un champ._

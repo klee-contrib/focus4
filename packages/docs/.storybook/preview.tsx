@@ -79,7 +79,7 @@ export default {
                     "Les bases",
                     "Modèle métier",
                     "Composants",
-                    ["Composants de base", "@focus4∕toolbox", "@focus4∕form-toolbox"],
+                    ["Composants de base", "Composants par défaut", "@focus4∕toolbox", "@focus4∕form-toolbox"],
                     "Listes",
                     "Routage",
                     "Mise en page",

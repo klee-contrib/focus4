@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from "@storybook/react";
-import {DateTime} from "luxon";
+import z from "zod";
 
 import {LineProps, Timeline} from "@focus4/collections";
 import {domain} from "@focus4/form-toolbox";
@@ -14,15 +14,7 @@ export default {
     argTypes,
     title: "Listes/Composants de listes/timelineFor",
     args: {
-        dateSelector: item =>
-            makeField(
-                item.date,
-                domain({
-                    type: "string",
-                    displayFormatter: v =>
-                        v ? DateTime.fromISO(v).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) : ""
-                })
-            )
+        dateSelector: item => makeField(item.date, domain(z.iso.datetime()))
     }
 } as Meta<typeof Timeline<{id: number; label: string; date: string}>>;
 

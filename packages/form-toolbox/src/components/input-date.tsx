@@ -108,6 +108,8 @@ export interface InputDateProps {
  * - Peut gérer un fuseau horaire séparé.
  *
  * La locale du composant est synchronisée avec celle configurée dans i18next.
+ *
+ * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function InputDate({
     calendarFormat = "yyyy-MM-dd",

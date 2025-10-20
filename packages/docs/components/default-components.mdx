@@ -1,0 +1,63 @@
+import {Meta} from "@storybook/addon-docs/blocks";
+
+<Meta title="Composants/Composants par défaut" />
+
+# Composants par défaut
+
+La fonction `domain()` permet d'initialiser un [domaine](/docs/modèle-métier-domaines--docs) à partir de composants par défaut issu du module `form-toolbox`. Vous pouvez tout à fait redéfinir votre propre fonction `domain()` si vous voulez modifier les composants par défaut, pour utiliser une autre librairie ou vos propres composants. Pour référence, la fonction existante est [implémentée ici](https://github.com/klee-contrib/focus4/blob/master/packages/form-toolbox/src/domain.ts).
+
+Selon le schéma, cette fonction va non seulement renseigner des composants, mais aussi des props et un formatter dans certains cas.
+
+## Pour tous les schémas
+
+- [`Display`](/docs/composants-focus4∕form-toolbox-display--docs) comme `DisplayComponent`.
+- [`Label`](/docs/composants-focus4∕form-toolbox-label--docs) comme `LabelComponent`.
+
+## Pour les schémas `string` et `number` et `boolean`
+
+- [`Select`](/docs/composants-focus4∕form-toolbox-select--docs) comme `SelectComponent`.
+- [`AutocompleteSearch`](/docs/composants-focus4∕form-toolbox-autocompletesearch--docs) comme `AutocompleteComponent`.
+
+## Pour les schémas `string`
+
+- [`Input`](/docs/composants-focus4∕form-toolbox-input--docs) comme `InputComponent`.
+- Si l'`InputComponent` n'est pas surchargé dans le domaine, alors la prop `maxLength` de l'`Input` sera prérenseignée avec la valeur de `max()` du schéma, s'il y en a une.
+
+## Pour les schémas `number`
+
+- [`Input`](/docs/composants-focus4∕form-toolbox-input--docs) comme `InputComponent`.
+- Si l'`InputComponent` n'est pas surchargé dans le domaine, alors la prop `noNegativeNumbers` de l'`Input` sera prérenseignée avec `true` si `nonnegative()` ou `min(>= 0)` a été renseigné .
+
+## Pour les schémas `boolean`
+
+- [`BooleanRadio`](/docs/composants-focus4∕form-toolbox-booleanradio--docs) comme `InputComponent`.
+- Le `displayFormatter` sera prérenseigné avec `"focus.boolean"`, qui affiche `"focus.bool.true"` ou `"focus.bool.false"` selon la valeur du booléen.
+
+## Pour les schémas de date (`z.iso.date()`)
+
+- [`InputDate`](/docs/composants-focus4∕form-toolbox-inputdate--docs) comme `InputComponent`.
+- Le `displayFormatter` sera prérenseigné avec `"focus.date"`, qui affichera la date au format court dans la locale de l'utilisateur (`dd/MM/yyyy` en français par exemple).
+- Si l'`InputComponent` n'est pas surchargé dans le domaine, alors la prop `ISOStringFormat` de l'`InputDate` sera prérenseignée avec `"date-only"`.
+
+_Remarque : étant un schéma de type `string`, `z.iso.date()` récupère aussi son `SelectComponent` et son `AutocompleteComponent`._
+
+## Pour les schémas de date/heure (`z.iso.datetime()`)
+
+- Le `displayFormatter` sera prérenseigné avec `"focus.datetime"`, qui affichera la date et l'heure au format court dans la locale de l'utilisateur (`dd/MM/yyyy HH:mm:ss` en français par exemple).
+
+_Remarque : étant un schéma de type `string`, `z.iso.datetime()` récupère aussi son `SelectComponent` et son `AutocompleteComponent`._
+
+## Pour les schémas d'entier (`z.int()` / `z.int32()`)
+
+_Remarque : étant un schéma de type `number`, `z.int()` / `z.int32()` récupère tous ses composants par défaut._
+
+_Remarque 2 : `z.int64()` n'est pas de type `number` mais `bigint`, et n'est **pas** supporté par Focus._
+
+- Si l'`InputComponent` n'est pas surchargé dans le domaine, alors la prop `maxDecimals` de l'`Input` est sera prérenseignée avec `0`.
+
+## Pour les schémas de liste de primitives (`z.array()`)
+
+(Uniquement pour les listes de `string`, `number` et `boolean` donc)
+
+- [`SelectChips`](/docs/composants-focus4∕form-toolbox-selectchips--docs) comme `SelectComponent`.
+- [`AutocompleteChips`](/docs/composants-focus4∕form-toolbox-autocompletechips--docs) comme `AutocompleteComponent`.

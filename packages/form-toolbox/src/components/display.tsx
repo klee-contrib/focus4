@@ -38,6 +38,8 @@ export interface DisplayProps<S extends ZodType> {
     values?: ReferenceList;
 }
 
+const defaultFormatter = (x: any) => `${x}`;
+
 /**
  * Un `Display` permet d'afficher la valeur d'un champ.
  *
@@ -46,10 +48,10 @@ export interface DisplayProps<S extends ZodType> {
  * - Résout les traductions i18n.
  * - Peut afficher des listes de valeurs.
  *
- * Il s'agit du composant d'affichage par défaut de tous les domaines (`DisplayComponent`).
+ * Il s'agit du [composant d'affichage par défaut de tous les domaines](/docs/docs/composants-composants-par-défaut--docs)  (`DisplayComponent`).
  */
 export function Display<S extends ZodType>({
-    formatter = x => `${x}`,
+    formatter = defaultFormatter,
     listChunkSize,
     keyResolver,
     multiValueDisplay = "lists-if-multiple",

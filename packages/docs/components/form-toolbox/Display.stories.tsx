@@ -10,7 +10,7 @@ export default {
     ...DisplayMeta,
     title: "Composants/@focus4∕form-toolbox/Display",
     tags: ["autodocs"],
-    args: {type: "string", value: "Valeur"}
+    args: {value: "Valeur"}
 } as Meta<typeof Display>;
 
 export const Showcase: StoryObj<typeof Display> = {

@@ -15,7 +15,7 @@ export interface InputProps<S extends ZodTypeSingle>
  * -   La gestion de masques de saisie
  * -   Une gestion propre de saisie de nombre (avec formattage, restrictions de décimales, et un `onChange` qui renvoie bien un nombre)
  *
- * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `string` ou `number`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function Input<const S extends ZodTypeSingle>({
     error,

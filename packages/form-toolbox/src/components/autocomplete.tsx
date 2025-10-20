@@ -54,7 +54,7 @@ const defaultGetKey = (x: any) => x.key;
  * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui récupère ses suggestions à partir **d'un service de recherche** au lieu d'une liste pré-chargée.
  * Aucun filtre supplémentaire ne sera réalisé dans le composant.
  *
- * Il s'agit du composant par défaut de tous les domaines simples (`"boolean"`,`"number"` et `"string"`) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `string`, `number` et `boolean`](/docs/docs/composants-composants-par-défaut--docs) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  *
  * L'`AutocompleteSearch` peut également être utilisé dans un mode alternatif pour **fournir des suggestions sur un champ de saisie libre**. Pour cet usage, il faut utiliser `allowUnmatched`, avec `query` et `onQueryChange` à la place de `value` et de `onChange` (`onChange` peut néanmoints toujours être utilisé lorsqu'on sélectionne une valeur existante). **Il doit être utilisé comme un `InputComponent` pour cet usage.**
  *

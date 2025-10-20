@@ -9,10 +9,10 @@ import {MaskDefinition, useMask} from "./mask";
 import {getInputSelection, setInputSelection} from "./selection";
 
 export interface UseInputProps<S extends ZodTypeSingle> {
-    /** Pour un input de type "number", affiche les séparateurs de milliers. */
+    /** Pour un input de schéma `number`, affiche les séparateurs de milliers. */
     hasThousandsSeparator?: boolean;
     /**
-     * Pour un input de type "string", paramètre un masque de saisie.
+     * Pour un input de schéma `string`, paramètre un masque de saisie.
      *
      * Le masque se renseigne dans `pattern`. Il doit définir au moins un caractère éditable, qui se représentent par défaut avec les caractères suivants :
      *
@@ -31,9 +31,9 @@ export interface UseInputProps<S extends ZodTypeSingle> {
      * (ce qui implique que si un caractère est effacé au milieu de la saisie, tous les caractères après le seront également).
      */
     mask?: MaskDefinition;
-    /** Pour un input de type "number", le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
+    /** Pour un input de schéma `number`, le nombre maximal de décimales qu'il est possible de saisir. Par défaut : 10. */
     maxDecimals?: number;
-    /** Pour un input de type "number", interdit la saisie de nombres négatifs. */
+    /** Pour un input de schéma `number` interdit la saisie de nombres négatifs. */
     noNegativeNumbers?: boolean;
     /** Handler appelé à chaque saisie. Retourne la valeur dans le type de l'input. */
     onChange: (value?: output<S>) => void;
@@ -48,7 +48,7 @@ export interface UseInputProps<S extends ZodTypeSingle> {
 }
 
 /**
- * Gère la saisie d'une valeur d'un type "number" (parsing, décimales...) ou "string" (avec masque) dans un champ texte.
+ * Gère la saisie d'une valeur de schéma `number` (parsing, décimales...) ou `string` (avec masque) dans un champ texte.
  *
  * Utilisé par `Input`.
  */

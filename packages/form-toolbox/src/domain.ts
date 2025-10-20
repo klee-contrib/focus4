@@ -80,13 +80,25 @@ export function domain<
             ? "focus.datetime"
             : undefined;
 
-    const inputProps = !options?.InputComponent
-        ? isString(schema) && (schema.maxLength ?? 0) > 0
-            ? {maxLength: schema.maxLength}
-            : isDate(schema)
-              ? {ISOStringFormat: "date-only"}
-              : {}
-        : {};
+    const inputProps: any = {};
+
+    if (!options?.InputComponent) {
+        if (isString(schema) && (schema.maxLength ?? 0) > 0) {
+            (inputProps as InputProps<typeof schema>).maxLength = schema.maxLength ?? 0;
+        }
+
+        if (isNumber(schema) && schema.minValue !== null && schema.minValue !== undefined && schema.minValue >= 0) {
+            (inputProps as InputProps<typeof schema>).noNegativeNumbers = true;
+        }
+
+        if (isInt(schema)) {
+            (inputProps as InputProps<typeof schema>).maxDecimals = 0;
+        }
+
+        if (isDate(schema)) {
+            (inputProps as InputDateProps).ISOStringFormat = "date-only";
+        }
+    }
 
     return {
         schema,
@@ -131,6 +143,11 @@ function isDate(schema: z.ZodType): schema is z.ZodISODate {
 
 function isDateTime(schema: z.ZodType): schema is z.ZodISODateTime {
     return (schema as z.ZodString).format === "datetime";
+}
+
+function isInt(schema: z.ZodType): schema is z.ZodInt32 | z.ZodInt {
+    const {format} = schema as z.ZodNumber;
+    return format === "int32" || format === "safeint";
 }
 
 function isNumber(schema: z.ZodType): schema is z.ZodNumber {

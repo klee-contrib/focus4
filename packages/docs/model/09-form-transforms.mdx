@@ -135,9 +135,9 @@ La fonction `items` permet de modifier les items de la liste (qui sont, pour rap
 const entity = useFormNode(utilisateurStore.utilisateur, e =>
     e
         .remove("id", "dateCreation", "dateModification")
-        // Les composants de saisie qui fonctionnent avec plusieurs types (par exemple "string" ou "number")
+        // Les composants de saisie qui fonctionnent avec plusieurs types (par exemple 'ZodString' ou 'ZodNumber')
         // doivent être renseignés avec le type générique correspondant.
-        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<"string">}))
+        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<ZodString>}))
         .add(
             // Ce champ ajouté ne sera pas transmis au serveur lors de la sauvegarde
             "nombreUtilisateursMax",
@@ -148,8 +148,8 @@ const entity = useFormNode(utilisateurStore.utilisateur, e =>
                         label: "Nombre maximal d'utilisateurs",
                         InputComponent: Slider,
                         inputProps: {labeled: true, ticks: true, max: 20},
-                        // Ce validateur S'AJOUTE à celui du domaine.
-                        validator: {type: "number", max: 20}
+                        // Le schéma du domaine est modifié pour y ajouter une valeur max.
+                        schema: s => s.max(20)
                     })
                     .value(8) // Valeur initiale.
         )
@@ -181,7 +181,7 @@ type PatchedUtilisateurEntityType = Patch<
     UtilisateurEntityType,
     {
         nombreUtilisateursMax: FieldEntry2<typeof DO_ENTIER>; // Champ ajouté.
-        typeUtilisateurCode: FieldEntry<"string", TypeUtilisateurCode>; // Champ préexistant modifié.
+        typeUtilisateurCode: FieldEntry<ZodString, TypeUtilisateurCode>; // Champ préexistant modifié.
         liste: ListEntry<
             Patch<
                 MySubEntity,
@@ -231,21 +231,24 @@ Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière gé
 Les différentes possibilités (par ordre de précision croissante) sont :
 
 - `FieldEntry` => N'importe quel champ
-- `FieldEntry<"string">` => Un champ avec un domaine de type `"string"`.
-- `FieldEntry<"string", TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+- `FieldEntry<ZodString>` => Un champ avec un domaine de schéma `ZodString`.
+- `FieldEntry<ZodString, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
 - `FieldEntry2<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
-- `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `"string"` plus précis.
+- `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
 - `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
 
 Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
 
-Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<"string", TypeUtilisateurCode>` dans le `Patch` afin qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que **avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à `selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
+Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<ZodString, TypeUtilisateurCode>` dans le `Patch` afin qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que **avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à `selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
 
 Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`, `PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
 
 ```ts
 // Par conséquent, la manière la plus précise de définir le type du champ `typeUtilisateurCode` patché serait ce type-là :
-type PatchedTypeUtilisateurCode = PatchSelect<UtilisateurEntityType["typeUtilisateurCode"], SelectRadioProps<"string">>;
+type PatchedTypeUtilisateurCode = PatchSelect<
+    UtilisateurEntityType["typeUtilisateurCode"],
+    SelectRadioProps<ZodString>
+>;
 
 // Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
 type NouveauChamp = PatchAutocomplete<FieldEntry2<typeof DO_CODE>, MyCustomAutocompleteProps>;

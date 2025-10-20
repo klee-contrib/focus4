@@ -41,7 +41,7 @@ export interface LabelProps {
  * - Résout les traductions i18n.
  * - Peut afficher le commentaire du champ en tooltip.
  *
- * Il s'agit du composant de libellé par défaut de tous les domaines (`LabelComponent`).
+ * Il s'agit du [composant de libellé par défaut de tous les domaines](/docs/docs/composants-composants-par-défaut--docs) (`LabelComponent`).
  */
 export function Label({
     comment,

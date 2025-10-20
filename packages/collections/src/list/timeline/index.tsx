@@ -34,6 +34,8 @@ export type TimelineProps<T extends object> = ListBaseProps<T> & {
         | {
               /** Les données. */
               data: T[];
+              /** Affiche un indicateur de chargement après le tableau. */
+              isLoading?: boolean;
           }
         | {
               /** Store de liste ou de recherche. */

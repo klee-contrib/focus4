@@ -36,33 +36,32 @@ Un domaine définit **5 composants** pour gérer l'affichage des champs associé
 - Le composant de saisie via service d'autocomplétion **`AutocompleteComponent`**.
 - Le composant pour le libellé, **`LabelComponent`**
 
-Il existe des composants par défaut pour les 5. Dans la grande majorité des cas :
+Chacun de ces composants seront appelés avec des props prédéfinies par Focus. Il existe des interfaces de base (`BaseInputProps<S>`, `BaseDisplayProps<S>`...) pour les représenter. Vous pouvez aussi renseigner des props supplémentaires avec les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` (ces props ne peuvent pas surcharger celles renseignées par défaut, en revanche). De plus, la propriété `fieldProps` permettra de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres composants.
+
+En plus de ces composants, un domaine peut définir un `displayFormatter`, pour contrôler la façon dont un champ de ce domaine doit être affiché, dans le cas où ce n'est pas juste la valeur. Il peut être :
+
+- Une fonction de la valeur qui renvoie le texte à afficher
+- Une clé de traduction i18n, dans laquelle vous pouvez utiliser la variable `{{value}}` pour référencer la valeur.
+
+Focus inclus des composants par défaut pour tous les usages standards. Le rôle principal de la fonction `domain()` vue précédemment est de renseigner des composants par défaut pour les domaines que vous créez, en fonction de leur schéma. Une définition de domaine à partir du seul schéma devrait être suffisante en première approche pour avoir un fonctionnement correct, puis si ce n'est pas assez, vous pouvez commencer à le personnaliser. De plus, dans la grande majorité des cas :
 
 - Le `DisplayComponent` et le `LabelComponent` par défaut répondent au besoin.
-- Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé.
+- Un champ n'utilise pas plusieurs types de saisie, donc un seul des 3 composants doit être personnalisé si nécessaire.
 
-Les propriétés `inputProps` / `selectProps` / `autocompleteProps` / `displayProps` / `labelProps` permettent de passer des props par défaut aux composants. La propriété `fieldProps` permettra en plus de passer des props au composant global d'affichage de champ, qui utilisera les 5 autres composants.
+Le détail de ce que fait la fonction `domain()` est [décrit par ici](/docs/docs/composants-composants-par-défaut--docs).
 
-La propriété `displayFormatter` est une fonction qui permet de contrôler comme un champ soit être affiché (en texte) et est en général la seule personnalisation à faire pour l'affichage.
-
-Par exemple :
+## Exemples de domaines personnalisés
 
 ```ts
-const DO_DATE = domain({
-    type: "string",
-    validator: {type: "date"},
-    displayFormatter: date => (date ? DateTime.fromISO(date, {zone: "utc"}).toFormat("dd/MM/yyyy") : ""),
-    InputComponent: InputDate,
-    inputProps: {
-        inputFormat: "dd/MM/yyyy",
-        inputProps: {icon: "calendar_month"}
+const DO_IBAN = domain(
+    z.string().refine(value => iban.isValid(value), {error: "app.iban.invalid"}),
+    {
+        displayFormatter: value => iban.format(value)
     }
-});
-const DO_EMAIL = domain({type: "string", validator: {type: "email"}, inputProps: {icon: "email"}});
-const DO_BOOLEEN = domain({
-    type: "boolean",
-    displayFormatter: value => (value ? "Oui" : "Non"),
-    InputComponent: BooleanRadio
+);
+const DO_EMAIL = domain(z.email("focus.validation.email"), {inputProps: {icon: "email"}});
+const DO_BOOLEEN = domain(z.boolean(), {
+    InputComponent: FormSwitch
 });
 ```
 
