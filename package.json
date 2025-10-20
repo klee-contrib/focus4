@@ -36,13 +36,13 @@
     "test-ci": "vitest run --reporter=default --reporter=junit --outputFile=test-report.xml"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "16.0.2",
+    "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-typescript": "12.1.4",
     "css-tree": "3.1.0",
     "lerna": "9.0.0",
     "postcss": "8.5.6",
     "react-docgen-typescript": "2.4.0",
-    "rollup": "4.52.4",
+    "rollup": "4.52.5",
     "rollup-plugin-copy-glob": "0.4.1",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-preserve-shebang": "1.0.1",

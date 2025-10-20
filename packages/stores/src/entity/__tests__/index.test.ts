@@ -6,6 +6,7 @@ import {FormNodeBuilder} from "../form";
 import {makeEntityStore, toFlatValues} from "../store";
 import {clearNode, defaultLoad, replaceNode, setNode} from "../store/store";
 
+import {stringDomain} from "./domains";
 import {LigneEntity} from "./ligne";
 import {OperationEntity} from "./operation";
 import {ProjetEntity} from "./projet";
@@ -33,9 +34,9 @@ function getFormNodes() {
     const formNode = new FormNodeBuilder(entry).patch("montant", f => f.metadata({label: "montant"})).build();
     const setter = vi.fn();
     const formNode2 = new FormNodeBuilder(entry2)
-        .add("test", f => f)
-        .add("test2", f => f.value(() => "2", setter))
-        .patch("ligneList", l => l.items(i => i.add("label", f => f.value<string>("label"))))
+        .add("test", f => f.domain(stringDomain))
+        .add("test2", f => f.domain(stringDomain).value(() => "2", setter))
+        .patch("ligneList", l => l.items(i => i.add("label", f => f.domain(stringDomain).value<string>("label"))))
         .build();
     return {entry, entry2, formNode, formNode2, setter};
 }
