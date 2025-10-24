@@ -1,6 +1,6 @@
 import {IObservableArray} from "mobx";
 
-import {EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E> = {
@@ -74,4 +74,13 @@ export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
     setNodes(data: EntityToType<E>[]): StoreListNode<E>;
+}
+
+/** Définition de champ dans un store. */
+export interface EntityField<F extends FieldEntry = FieldEntry> {
+    /** Métadonnées. */
+    readonly $field: F;
+
+    /** Valeur. */
+    value: F["fieldType"];
 }

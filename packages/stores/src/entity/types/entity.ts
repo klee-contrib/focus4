@@ -158,11 +158,5 @@ export type EntityToType<E> = {
               : never;
 };
 
-/** Définition de champ dans un store. */
-export interface EntityField<F extends FieldEntry = FieldEntry> {
-    /** Métadonnées. */
-    readonly $field: F;
-
-    /** Valeur. */
-    value: F["fieldType"];
-}
+/** Définition d'une entité. */
+export type Entity = Record<string, FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry>;

@@ -1,3 +1,4 @@
+export {e, entity} from "./builders";
 export {cloneField, fromField, makeField, UndefinedComponent} from "./field";
 export {FormActions, FormActionsBuilder, FormListNodeBuilder, FormNodeBuilder} from "./form";
 export {buildNode, LoadRegistration, makeEntityStore, NodeLoadBuilder, toFlatValues} from "./store";
@@ -25,6 +26,7 @@ export type {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
+    Entity,
     EntityField,
     EntityToType,
     FieldComponents,

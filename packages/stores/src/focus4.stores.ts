@@ -2,6 +2,8 @@ export {CollectionStore} from "./collection";
 export {
     buildNode,
     cloneField,
+    e,
+    entity,
     FormActions,
     FormActionsBuilder,
     FormListNodeBuilder,
@@ -39,6 +41,7 @@ export type {
     BaseLabelProps,
     BaseSelectProps,
     Domain,
+    Entity,
     EntityField,
     EntityToType,
     FieldComponents,

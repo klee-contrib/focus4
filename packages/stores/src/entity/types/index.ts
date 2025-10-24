@@ -23,7 +23,7 @@ export type {
 } from "./components";
 export type {
     Domain,
-    EntityField,
+    Entity,
     EntityToType,
     FieldEntry,
     FieldEntry2,
@@ -45,7 +45,7 @@ export type {
     PatchLabel,
     PatchSelect
 } from "./patch";
-export type {StoreListNode, StoreNode} from "./store";
+export type {EntityField, StoreListNode, StoreNode} from "./store";
 export type {NodeToType, SourceNodeType} from "./utils";
 export type {
     DateValidator,

@@ -1,8 +1,8 @@
 import {isObservableArray} from "mobx";
 
-import {EntityField, EntityToType} from "./entity";
+import {EntityToType} from "./entity";
 import {FormEntityField, FormListNode, FormNode} from "./form";
-import {StoreListNode, StoreNode} from "./store";
+import {EntityField, StoreListNode, StoreNode} from "./store";
 
 /** Génère l'objet JS "normal" équivalent à un noeud de store. */
 export type NodeToType<SN> =

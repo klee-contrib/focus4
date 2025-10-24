@@ -1,7 +1,7 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {EntityField, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
-import {StoreListNode, StoreNode} from "./store";
+import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityField, StoreListNode, StoreNode} from "./store";
 
 /** Génère les entrées de noeud de formulaire équivalent à une entité. */
 export type EntityToForm<E, E0 = E> = {
