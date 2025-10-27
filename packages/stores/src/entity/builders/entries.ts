@@ -1,17 +1,6 @@
-import {output, ZodType} from "zod";
+import {output} from "zod";
 
-import {
-    BaseAutocompleteProps,
-    BaseDisplayProps,
-    BaseInputProps,
-    BaseLabelProps,
-    BaseSelectProps,
-    Domain,
-    Entity,
-    FieldEntry,
-    ListEntry,
-    ObjectEntry
-} from "../types";
+import {Domain, Entity, FieldEntry, ListEntry, ObjectEntry} from "../types";
 
 import {FieldEntryBuilder, ListEntryBuilder, ObjectEntryBuilder, RecursiveListEntryBuilder} from "./entry-builders";
 
@@ -21,17 +10,7 @@ import {FieldEntryBuilder, ListEntryBuilder, ObjectEntryBuilder, RecursiveListEn
  * (Le champ sera obligatoire par défaut)
  * @param domain Le domaine du champ.
  */
-export function field<
-    S extends ZodType,
-    ICProps extends BaseInputProps<S> = BaseInputProps<S>,
-    SCProps extends BaseSelectProps<S> = BaseSelectProps<S>,
-    ACProps extends BaseAutocompleteProps<S> = BaseAutocompleteProps<S>,
-    DCProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
-    LCProps extends BaseLabelProps = BaseLabelProps,
-    FProps extends {theme?: object} = {theme?: object}
->(
-    domain: Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
-): FieldEntry<S, output<S>, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
+export function field<D extends Domain>(domain: D): FieldEntry<D>;
 /**
  * Crée un champ pour une entité.
  *
@@ -39,19 +18,10 @@ export function field<
  * @param domain Le domaine du champ.
  * @param builder Le configurateur du champ.
  */
-export function field<
-    S extends ZodType,
-    T extends output<S> = output<S>,
-    ICProps extends BaseInputProps<S> = BaseInputProps<S>,
-    SCProps extends BaseSelectProps<S> = BaseSelectProps<S>,
-    ACProps extends BaseAutocompleteProps<S> = BaseAutocompleteProps<S>,
-    DCProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
-    LCProps extends BaseLabelProps = BaseLabelProps,
-    FProps extends {theme?: object} = {theme?: object}
->(
-    domain: Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>,
-    builder: (f: FieldEntryBuilder<output<S>>) => FieldEntryBuilder<T>
-): FieldEntry<S, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
+export function field<D extends Domain, T extends output<D["schema"]> = output<D["schema"]>>(
+    domain: D,
+    builder: (f: FieldEntryBuilder<output<Domain["schema"]>>) => FieldEntryBuilder<T>
+): FieldEntry<D, T>;
 export function field(domain: Domain, builder: (f: FieldEntryBuilder) => FieldEntryBuilder = f => f) {
     return builder(new FieldEntryBuilder(domain)).entry;
 }

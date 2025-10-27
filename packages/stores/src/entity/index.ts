@@ -31,7 +31,6 @@ export type {
     EntityToType,
     FieldComponents,
     FieldEntry,
-    FieldEntry2,
     FormEntityField,
     FormListNode,
     FormNode,

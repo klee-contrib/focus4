@@ -5,6 +5,7 @@ import z from "zod";
 
 import {
     DateValidator,
+    Domain,
     EmailValidator,
     EntityField,
     FieldEntry,
@@ -19,7 +20,7 @@ const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-export function validateField(entityField: EntityField<FieldEntry<z.ZodType>>): string | undefined {
+export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodType>>>): string | undefined {
     const {
         $field: {
             domain: {schema, validator},

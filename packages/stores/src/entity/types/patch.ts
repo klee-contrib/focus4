@@ -56,7 +56,7 @@ export type PatchInput<F extends FieldEntry, ICProps extends BaseInputProps<F["d
         infer LCProps,
         infer FCProps
     >
-        ? FieldEntry<S, NonNullable<F["fieldType"]>, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>
+        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
         : never;
 
 /**
@@ -74,7 +74,7 @@ export type PatchSelect<F extends FieldEntry, SCProps extends BaseSelectProps<F[
         infer LCProps,
         infer FCProps
     >
-        ? FieldEntry<S, NonNullable<F["fieldType"]>, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>
+        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
         : never;
 
 /**
@@ -92,7 +92,7 @@ export type PatchAutocomplete<F extends FieldEntry, ACProps extends BaseAutocomp
         infer LCProps,
         infer FCProps
     >
-        ? FieldEntry<S, NonNullable<F["fieldType"]>, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>
+        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
         : never;
 
 /**
@@ -110,7 +110,7 @@ export type PatchDisplay<F extends FieldEntry, DCProps extends BaseDisplayProps<
         infer LCProps,
         infer FCProps
     >
-        ? FieldEntry<S, NonNullable<F["fieldType"]>, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>
+        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
         : never;
 
 /**
@@ -128,5 +128,5 @@ export type PatchLabel<F extends FieldEntry, LCProps extends BaseLabelProps> =
         infer _,
         infer FCProps
     >
-        ? FieldEntry<S, NonNullable<F["fieldType"]>, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>
+        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
         : never;

@@ -146,20 +146,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * Modifie le domaine du champ.
      * @param domain Le domaine.
      */
-    domain<D extends Domain>(
-        domain: D
-    ): EntityFieldBuilder<
-        FieldEntry<
-            D["schema"],
-            z.output<D["schema"]>,
-            DomainInputProps<D>,
-            DomainSelectProps<D>,
-            DomainAutocompleteProps<D>,
-            DomainDisplayProps<D>,
-            DomainLabelProps<D>,
-            DomainFieldProps<D>
-        >
-    > {
+    domain<D extends Domain>(domain: D): EntityFieldBuilder<FieldEntry<D>> {
         this.field._domain = domain;
         return this;
     }
@@ -213,14 +200,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
               >)
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["schema"],
-            NonNullable<F["fieldType"]>,
-            ICProps,
-            SCProps,
-            ACProps,
-            DCProps,
-            LCProps,
-            DomainFieldProps<F["domain"]>
+            Domain<F["domain"]["schema"], ICProps, SCProps, ACProps, DCProps, LCProps, DomainFieldProps<F["domain"]>>,
+            NonNullable<F["fieldType"]>
         >
     > {
         this.field._metadatas.push($field);
@@ -235,14 +216,16 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         value?: T
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["schema"],
-            T,
-            DomainInputProps<F["domain"]>,
-            DomainSelectProps<F["domain"]>,
-            DomainAutocompleteProps<F["domain"]>,
-            DomainDisplayProps<F["domain"]>,
-            DomainLabelProps<F["domain"]>,
-            DomainFieldProps<F["domain"]>
+            Domain<
+                F["domain"]["schema"],
+                DomainInputProps<F["domain"]>,
+                DomainSelectProps<F["domain"]>,
+                DomainAutocompleteProps<F["domain"]>,
+                DomainDisplayProps<F["domain"]>,
+                DomainLabelProps<F["domain"]>,
+                DomainFieldProps<F["domain"]>
+            >,
+            T
         >
     >;
     /**
@@ -255,14 +238,16 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         set?: (value: T | undefined) => void
     ): EntityFieldBuilder<
         FieldEntry<
-            F["domain"]["schema"],
-            T,
-            DomainInputProps<F["domain"]>,
-            DomainSelectProps<F["domain"]>,
-            DomainAutocompleteProps<F["domain"]>,
-            DomainDisplayProps<F["domain"]>,
-            DomainLabelProps<F["domain"]>,
-            DomainFieldProps<F["domain"]>
+            Domain<
+                F["domain"]["schema"],
+                DomainInputProps<F["domain"]>,
+                DomainSelectProps<F["domain"]>,
+                DomainAutocompleteProps<F["domain"]>,
+                DomainDisplayProps<F["domain"]>,
+                DomainLabelProps<F["domain"]>,
+                DomainFieldProps<F["domain"]>
+            >,
+            T
         >
     >;
     value<T extends z.output<F["domain"]["schema"]>>(

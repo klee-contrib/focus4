@@ -10,6 +10,7 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
+    Domain,
     FieldEntry,
     FormNode,
     isEntityField,
@@ -57,13 +58,14 @@ export class FormNodeBuilder<E, E0 = E> {
         builder: (
             b: EntityFieldBuilder<
                 FieldEntry<
-                    ZodNever,
-                    never,
-                    BaseInputProps<ZodNever>,
-                    BaseSelectProps<ZodNever>,
-                    BaseAutocompleteProps<ZodNever>,
-                    BaseDisplayProps<ZodNever>,
-                    BaseLabelProps
+                    Domain<
+                        ZodNever,
+                        BaseInputProps<ZodNever>,
+                        BaseSelectProps<ZodNever>,
+                        BaseAutocompleteProps<ZodNever>,
+                        BaseDisplayProps<ZodNever>,
+                        BaseLabelProps
+                    >
                 >
             >,
             node: StoreNode<E>

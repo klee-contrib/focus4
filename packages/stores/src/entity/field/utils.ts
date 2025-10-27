@@ -70,7 +70,7 @@ export function fromField<
     LCProps extends BaseLabelProps = LCDProps,
     FProps extends {theme?: object} = {theme?: object}
 >(
-    field: EntityField<FieldEntry<S, T, any, any, any, DCDProps, LCDProps, FProps>>,
+    field: EntityField<FieldEntry<Domain<S, any, any, any, DCDProps, LCDProps, FProps>, T>>,
     options: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
 ) {
     const {
@@ -116,7 +116,7 @@ export function makeField<
 >(
     value: T | undefined,
     options?: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> & {name?: string}
-): EntityField<FieldEntry<S, T, any, any, any, DCProps, LCProps, FProps>>;
+): EntityField<FieldEntry<Domain<S, any, any, any, DCProps, LCProps, FProps>, T>>;
 /**
  * Crée un champ éditable.
  * @param name Nom du champ
@@ -127,14 +127,15 @@ export function makeField<F extends FieldEntry>(
     builder: (
         f: EntityFieldBuilder<
             FieldEntry<
-                z.ZodNever,
-                never,
-                BaseInputProps<z.ZodNever>,
-                BaseSelectProps<z.ZodNever>,
-                BaseAutocompleteProps<z.ZodNever>,
-                BaseDisplayProps<z.ZodNever>,
-                BaseLabelProps,
-                {theme?: object}
+                Domain<
+                    z.ZodNever,
+                    BaseInputProps<z.ZodNever>,
+                    BaseSelectProps<z.ZodNever>,
+                    BaseAutocompleteProps<z.ZodNever>,
+                    BaseDisplayProps<z.ZodNever>,
+                    BaseLabelProps,
+                    {theme?: object}
+                >
             >
         >
     ) => EntityFieldBuilder<F>

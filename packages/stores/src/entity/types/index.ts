@@ -26,7 +26,6 @@ export type {
     Entity,
     EntityToType,
     FieldEntry,
-    FieldEntry2,
     ListEntry,
     ObjectEntry,
     RecursiveListEntry,

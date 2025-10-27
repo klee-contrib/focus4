@@ -1,7 +1,7 @@
 import {ComponentType} from "react";
 import {ZodType} from "zod";
 
-import {EntityField, FieldEntry, stringFor} from "@focus4/stores";
+import {Domain, EntityField, FieldEntry, stringFor} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
 
 import {TimelineCss} from "../__style__/timeline.css";
@@ -17,7 +17,7 @@ export function TimelineLine<T>({
     /** Données. */
     data: T;
     /** Le sélecteur pour le champ date, pour une ligne timeline. */
-    dateSelector: (data: T) => EntityField<FieldEntry<ZodType<string>>>;
+    dateSelector: (data: T) => EntityField<FieldEntry<Domain<ZodType<string>>>>;
     /** Ref vers l'élement DOM racine de la ligne. */
     domRef?: (element: HTMLElement | null) => void;
     /** Composant de ligne. */

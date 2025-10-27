@@ -58,23 +58,14 @@ export interface Domain<
 }
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */
-export interface FieldEntry<
-    S extends ZodType = any,
-    T extends output<S> = output<S>,
-    ICProps extends BaseInputProps<S> = any,
-    SCProps extends BaseSelectProps<S> = any,
-    ACProps extends BaseAutocompleteProps<S> = any,
-    DCProps extends BaseDisplayProps<S> = any,
-    LCProps extends BaseLabelProps = any,
-    FProps extends {theme?: object} = any
-> {
+export interface FieldEntry<D extends Domain = any, T extends output<D["schema"]> = output<D["schema"]>> {
     readonly type: "field";
 
     /** Type du champ, s'il est plus précis que celui du domaine. */
     readonly fieldType?: T;
 
     /** Domaine du champ. */
-    readonly domain: Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>;
+    readonly domain: D;
 
     /** Champ obligatoire. */
     readonly isRequired: boolean;
@@ -91,11 +82,6 @@ export interface FieldEntry<
     /** Valeur par défaut du champ dans un formulaire. */
     readonly defaultValue?: T;
 }
-
-export type FieldEntry2<D extends Domain, T extends output<D["schema"]> = output<D["schema"]>> =
-    D extends Domain<infer S, infer ICProps, infer SCProps, infer ACProps, infer DCProps, infer LCProps, infer FProps>
-        ? FieldEntry<S, T, ICProps, SCProps, ACProps, DCProps, LCProps, FProps>
-        : never;
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
 export interface ObjectEntry<E = any> {
