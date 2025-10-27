@@ -1,6 +1,6 @@
 import z from "zod";
 
-import {e, entity} from "../builders";
+import {e, entity} from "@focus4/entities";
 
 export const DO_NUMBER = {
     schema: z.number(),
