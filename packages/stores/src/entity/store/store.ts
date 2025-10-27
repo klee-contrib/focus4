@@ -1,18 +1,15 @@
 import {mapValues} from "es-toolkit";
 import {action, extendObservable, isObservableArray, observable, runInAction} from "mobx";
 
+import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+
 import {FormNodeBuilder} from "../form";
 import {
-    EntityToType,
-    FieldEntry,
     isAnyStoreNode,
     isEntityField,
     isFormListNode,
     isStoreListNode,
     isStoreNode,
-    ListEntry,
-    ObjectEntry,
-    RecursiveListEntry,
     StoreListNode,
     StoreNode
 } from "../types";

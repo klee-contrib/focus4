@@ -15,6 +15,7 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
+        "@focus4/entities": "12.5.1",
         "@focus4/stores": "12.5.1",
         "@focus4/styling": "12.5.1",
         "classnames": "~2.5.1",

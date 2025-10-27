@@ -2,7 +2,8 @@ import {useObserver} from "mobx-react";
 import {ComponentType} from "react";
 import {ZodType} from "zod";
 
-import {CollectionStore, Domain, EntityField, FieldEntry} from "@focus4/stores";
+import {FieldEntry} from "@focus4/entities";
+import {CollectionStore, EntityField} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import {BottomRow, ListBaseProps, usePagination} from "../base";

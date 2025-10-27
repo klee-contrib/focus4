@@ -2,8 +2,8 @@ import {useObserver} from "mobx-react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
-import {stringToSchemaOutput} from "@focus4/forms";
-import {ReferenceList, ZodTypeSingle} from "@focus4/stores";
+import {stringToSchemaOutput, ZodTypeSingle} from "@focus4/entities";
+import {ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 /** Props du Select. */

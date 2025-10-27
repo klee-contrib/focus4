@@ -1,4 +1,6 @@
-import {EntityToType, FormNodeBuilder} from "../entity";
+import {EntityToType} from "@focus4/entities";
+
+import {FormNodeBuilder} from "../entity";
 
 /** Définition d'un service de recherche. */
 export type SearchService<T = any, C = {}> = (query: QueryInput<C>, options?: RequestInit) => Promise<QueryOutput<T>>;

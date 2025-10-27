@@ -5,7 +5,8 @@ import {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output, ZodType} from "zod";
 
-import {ReferenceList, SingleZodType} from "@focus4/stores";
+import {SingleZodType} from "@focus4/entities";
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import displayCss, {DisplayCss} from "./__style__/display.css";

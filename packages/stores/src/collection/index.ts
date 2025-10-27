@@ -13,16 +13,9 @@ import {
 } from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
+import {EntityToType} from "@focus4/entities";
 
-import {
-    buildNode,
-    EntityToType,
-    FormEntityField,
-    FormNode,
-    FormNodeBuilder,
-    isEntityField,
-    toFlatValues
-} from "../entity";
+import {buildNode, FormEntityField, FormNode, FormNodeBuilder, isEntityField, toFlatValues} from "../entity";
 
 import {
     CollectionStoreInitProperties,

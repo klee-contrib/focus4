@@ -1,5 +1,6 @@
+import {FieldEntry, ListEntry, ObjectEntry} from "@focus4/entities";
+
 import {BaseAutocompleteProps, BaseDisplayProps, BaseInputProps, BaseLabelProps, BaseSelectProps} from "./components";
-import {Domain, FieldEntry, ListEntry, ObjectEntry} from "./entity";
 import {FormListNode, FormNode} from "./form";
 
 /**

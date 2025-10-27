@@ -4,7 +4,7 @@ import {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
-import {SingleZodType, ZodTypeMultiple} from "@focus4/stores";
+import {SingleZodType, ZodTypeMultiple} from "@focus4/entities";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {AutocompleteCss, Chip, ChipCss, Icon, SupportingText, SupportingTextCss, TextFieldCss} from "@focus4/toolbox";
 

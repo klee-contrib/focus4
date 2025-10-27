@@ -3,8 +3,8 @@ import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
-import {stringToSchemaOutput} from "@focus4/forms";
-import {ReferenceList, ZodTypeSingle} from "@focus4/stores";
+import {stringToSchemaOutput, ZodTypeSingle} from "@focus4/entities";
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 

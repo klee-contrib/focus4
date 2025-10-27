@@ -1,7 +1,8 @@
 import {ComponentType} from "react";
 import {ZodType} from "zod";
 
-import {Domain, EntityField, FieldEntry, stringFor} from "@focus4/stores";
+import {FieldEntry} from "@focus4/entities";
+import {EntityField, stringFor} from "@focus4/stores";
 import {ToBem} from "@focus4/styling";
 
 import {TimelineCss} from "../__style__/timeline.css";

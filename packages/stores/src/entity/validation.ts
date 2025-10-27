@@ -3,12 +3,12 @@ import i18next from "i18next";
 import {DateTime} from "luxon";
 import z from "zod";
 
+import {FieldEntry} from "@focus4/entities";
+
 import {
     DateValidator,
-    Domain,
     EmailValidator,
     EntityField,
-    FieldEntry,
     FunctionValidator,
     NumberValidator,
     RegexValidator,

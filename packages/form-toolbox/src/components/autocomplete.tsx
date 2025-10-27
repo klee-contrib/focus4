@@ -4,8 +4,7 @@ import {FocusEvent, useCallback, useEffect, useId, useRef, useState} from "react
 import {output} from "zod";
 
 import {isAbortError, requestStore} from "@focus4/core";
-import {stringToSchemaOutput} from "@focus4/forms";
-import {ZodTypeSingle} from "@focus4/stores";
+import {stringToSchemaOutput, ZodTypeSingle} from "@focus4/entities";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
 export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key: string; label: string}>

@@ -1,17 +1,15 @@
 import {merge} from "es-toolkit";
 import z from "zod";
 
+import {ZodTypeMultiple, ZodTypeSingle} from "@focus4/entities";
 import {FieldOptions} from "@focus4/forms";
 import {
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Domain,
     ReferenceList,
-    UndefinedComponent,
-    ZodTypeMultiple,
-    ZodTypeSingle
+    UndefinedComponent
 } from "@focus4/stores";
 
 import {

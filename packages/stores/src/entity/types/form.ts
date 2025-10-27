@@ -1,6 +1,7 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+
 import {EntityField, StoreListNode, StoreNode} from "./store";
 
 /** Génère les entrées de noeud de formulaire équivalent à une entité. */

@@ -1,8 +1,10 @@
 import i18next from "i18next";
 
+import {FieldEntry} from "@focus4/entities";
+
 import {ReferenceList} from "../reference";
 
-import {EntityField, FieldEntry} from "./types";
+import {EntityField} from "./types";
 
 /**
  * Formatte un champ et récupère la représentation textuelle associée.

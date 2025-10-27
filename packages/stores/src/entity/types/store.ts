@@ -1,6 +1,6 @@
 import {IObservableArray} from "mobx";
 
-import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "./entity";
+import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E> = {

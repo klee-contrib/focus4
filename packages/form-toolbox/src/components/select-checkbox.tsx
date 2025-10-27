@@ -2,7 +2,8 @@ import {useObserver} from "mobx-react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
-import {ReferenceList, ZodTypeMultiple} from "@focus4/stores";
+import {ZodTypeMultiple} from "@focus4/entities";
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 

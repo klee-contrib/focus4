@@ -1,9 +1,9 @@
 import {isFunction} from "es-toolkit";
 import {useEffect, useId, useRef, useState} from "react";
 
+import {EntityToType} from "@focus4/entities";
 import {
     buildNode,
-    EntityToType,
     FormActions,
     FormActionsBuilder,
     FormListNode,

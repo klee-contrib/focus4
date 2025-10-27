@@ -1,6 +1,6 @@
 export {autocompleteFor, Field, fieldCss, fieldFor, Form, FormContext, formCss, selectFor} from "./fields";
 export {useFormActions, useFormNode, useLoad, useReferenceTracking} from "./stores";
-export {stringToSchemaOutput, useInput} from "./utils";
+export {useInput} from "./utils";
 
 export type {
     AutocompleteForOptions,

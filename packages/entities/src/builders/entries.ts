@@ -1,6 +1,6 @@
 import {output} from "zod";
 
-import {Domain, Entity, FieldEntry, ListEntry, ObjectEntry} from "../types";
+import {Entity, FieldEntry, ListEntry, ObjectEntry} from "../types";
 
 import {FieldEntryBuilder, ListEntryBuilder, ObjectEntryBuilder, RecursiveListEntryBuilder} from "./entry-builders";
 

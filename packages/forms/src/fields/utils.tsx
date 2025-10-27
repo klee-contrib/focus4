@@ -2,6 +2,7 @@ import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
 import {output} from "zod";
 
+import {FieldEntry, SingleZodType} from "@focus4/entities";
 import {
     AutocompleteComponents,
     BaseAutocompleteProps,
@@ -9,11 +10,9 @@ import {
     BaseInputProps,
     BaseSelectProps,
     EntityField,
-    FieldEntry,
     InputComponents,
     ReferenceList,
-    SelectComponents,
-    SingleZodType
+    SelectComponents
 } from "@focus4/stores";
 
 import {Field, FieldOptions} from "./field";

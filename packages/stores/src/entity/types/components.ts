@@ -1,9 +1,9 @@
 import {ReactNode} from "react";
 import {output, ZodType} from "zod";
 
-import {ReferenceList} from "../../reference";
+import {SingleZodType} from "@focus4/entities";
 
-import {SingleZodType} from "./entity";
+import {ReferenceList} from "../../reference";
 
 export interface BaseComponentProps {
     comment?: ReactNode;

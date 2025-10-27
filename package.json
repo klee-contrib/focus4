@@ -9,6 +9,7 @@
     "packages/core",
     "packages/styling",
     "packages/toolbox",
+    "packages/entities",
     "packages/stores",
     "packages/forms",
     "packages/form-toolbox",

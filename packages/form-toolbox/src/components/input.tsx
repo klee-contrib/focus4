@@ -1,5 +1,5 @@
+import {ZodTypeSingle} from "@focus4/entities";
 import {useInput, UseInputProps} from "@focus4/forms";
-import {ZodTypeSingle} from "@focus4/stores";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 export interface InputProps<S extends ZodTypeSingle>

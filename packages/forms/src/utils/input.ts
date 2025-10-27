@@ -3,7 +3,7 @@ import numberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
 import {output} from "zod";
 
-import {ZodTypeSingle} from "@focus4/stores";
+import {ZodTypeSingle} from "@focus4/entities";
 
 import {MaskDefinition, useMask} from "./mask";
 import {getInputSelection, setInputSelection} from "./selection";

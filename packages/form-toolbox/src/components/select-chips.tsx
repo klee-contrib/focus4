@@ -3,7 +3,8 @@ import {useCallback, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
-import {ReferenceList, SingleZodType, ZodTypeMultiple} from "@focus4/stores";
+import {SingleZodType, ZodTypeMultiple} from "@focus4/entities";
+import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {
     Chip,

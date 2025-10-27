@@ -2,6 +2,8 @@ import {isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
 import {ZodNever} from "zod";
 
+import {FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+
 import {EntityFieldBuilder} from "../field";
 import {nodeToFormNode} from "../store";
 import {
@@ -10,16 +12,11 @@ import {
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Domain,
-    FieldEntry,
     FormNode,
     isEntityField,
     isStoreListNode,
     isStoreNode,
-    ListEntry,
-    ObjectEntry,
     Patch,
-    RecursiveListEntry,
     StoreListNode,
     StoreNode
 } from "../types";

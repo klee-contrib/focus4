@@ -3,14 +3,8 @@ import {useObserver} from "mobx-react";
 import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {
-    BaseInputProps,
-    EntityField,
-    FieldComponents,
-    FieldEntry,
-    FormEntityField,
-    UndefinedComponent
-} from "@focus4/stores";
+import {FieldEntry} from "@focus4/entities";
+import {BaseInputProps, EntityField, FieldComponents, FormEntityField, UndefinedComponent} from "@focus4/stores";
 import {CSSProp, themeable, useTheme} from "@focus4/styling";
 
 import {FormContext} from "./form";

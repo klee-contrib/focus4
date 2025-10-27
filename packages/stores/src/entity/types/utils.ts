@@ -1,6 +1,7 @@
 import {isObservableArray} from "mobx";
 
-import {EntityToType} from "./entity";
+import {EntityToType} from "@focus4/entities";
+
 import {FormEntityField, FormListNode, FormNode} from "./form";
 import {EntityField, StoreListNode, StoreNode} from "./store";
 

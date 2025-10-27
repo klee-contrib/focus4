@@ -1,60 +1,21 @@
-import {ComponentType, ReactNode} from "react";
+import {ReactNode} from "react";
 import {output, ZodArray, ZodType} from "zod";
 
-import {
-    BaseAutocompleteProps,
-    BaseDisplayProps,
-    BaseInputProps,
-    BaseLabelProps,
-    BaseSelectProps,
-    FieldComponents
-} from "./components";
-import {Validator} from "./validation";
-
+/** Correspond à un type de schéma pour un type primitif. */
 export type ZodTypeSingle = ZodType<boolean> | ZodType<number> | ZodType<string>;
 
+/** Correspond à un type de schéma pour un type d'array de primitives. */
 export type ZodTypeMultiple = ZodArray<ZodType<boolean>> | ZodArray<ZodType<number>> | ZodArray<ZodType<string>>;
 
 /** Récupère le type de domaine simple d'un type de domaine multiple. */
 export type SingleZodType<S> = S extends ZodArray<infer ES> ? ES : S;
 
 /** Définition d'un domaine. */
-export interface Domain<
-    S extends ZodType = any,
-    ICProps extends BaseInputProps<S> = any,
-    SCProps extends BaseSelectProps<S> = any,
-    ACProps extends BaseAutocompleteProps<S> = any,
-    DCProps extends BaseDisplayProps<S> = any,
-    LCProps extends BaseLabelProps = any,
-    FProps extends {theme?: object} = any
-> extends FieldComponents<S, ICProps, SCProps, ACProps, DCProps, LCProps, FProps> {
-    /** Classe CSS pour le champ. */
-    className?: string;
-    /**
-     * Formatteur pour l'affichage du champ en consulation.
-     *
-     * Peut être une fonction de la valeur, ou une clé i18n qui sera appelée avec la variable `value`.
-     */
-    displayFormatter?: ((value: output<S> | undefined) => string) | string;
-    /** Schéma Zod d'un champ du domaine. */
-    schema: S;
-    /**
-     * Liste des validateurs.
-     *
-     * @deprecated Vous n'avez plus besoin de validateurs dédiés, ils peuvent être intégrés au schéma.
-     */
-    validator?: Validator<output<S>> | Validator<output<S>>[];
-
-    /** Composant personnalisé pour l'autocomplete. */
-    AutocompleteComponent: ComponentType<ACProps>;
-    /** Composant personnalisé pour l'affichage. */
-    DisplayComponent: ComponentType<DCProps>;
-    /** Composant personnalisé pour le libellé. */
-    LabelComponent: ComponentType<LCProps>;
-    /** Composant personnalisé pour l'entrée utilisateur. */
-    InputComponent: ComponentType<ICProps>;
-    /** Composant personnalisé pour le select. */
-    SelectComponent: ComponentType<SCProps>;
+declare global {
+    interface Domain<S extends ZodType = any> {
+        /** Schéma Zod d'un champ du domaine. */
+        schema: S;
+    }
 }
 
 /** Métadonnées d'une entrée de type "field" pour une entité. */

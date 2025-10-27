@@ -1,4 +1,4 @@
-import {Domain, Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "../types";
+import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "../types";
 
 import {entity} from "./entity";
 

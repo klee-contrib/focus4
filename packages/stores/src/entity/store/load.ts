@@ -2,10 +2,10 @@ import {isFunction} from "es-toolkit";
 import {action, computed, observable, reaction, runInAction} from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
+import {EntityToType} from "@focus4/entities";
 
 import {CollectionStore} from "../../collection";
 import {
-    EntityToType,
     isAnyFormNode,
     isAnyStoreNode,
     isStoreListNode,
@@ -293,4 +293,3 @@ export class NodeLoadBuilder<SN extends StoreListNode | StoreNode | CollectionSt
         return this;
     }
 }
-

@@ -3,15 +3,15 @@ import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 import z from "zod";
 
+import {FieldEntry} from "@focus4/entities";
+
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,
     BaseSelectProps,
-    Domain,
-    EntityField,
-    FieldEntry
+    EntityField
 } from "../types";
 import {BaseComponents} from "../types/components";
 
