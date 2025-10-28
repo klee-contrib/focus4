@@ -20,7 +20,7 @@ export function field<D extends Domain>(domain: D): FieldEntry<D>;
  */
 export function field<D extends Domain, T extends output<D["schema"]> = output<D["schema"]>>(
     domain: D,
-    builder: (f: FieldEntryBuilder<D["schema"]>) => FieldEntryBuilder<T>
+    builder: (f: FieldEntryBuilder<output<D["schema"]>>) => FieldEntryBuilder<T>
 ): FieldEntry<D, T>;
 export function field(domain: Domain, builder: (f: FieldEntryBuilder) => FieldEntryBuilder = f => f) {
     return builder(new FieldEntryBuilder(domain)).entry;
