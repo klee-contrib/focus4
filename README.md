@@ -32,13 +32,13 @@ Le framework lui-même est aujourd'hui dans sa version majeure **12** (`focus4 v
 
 Focus essaie de simplifier le développement d'une application front en proposant des modules qui adressent les principaux besoins d'une telle application :
 
--   Gestion des requêtes et des messages
--   Mise en page
--   Navigation
--   Affichage et gestion de listes (avec recherche avancée)
--   Composants de saisie basiques
--   Gestion des données métiers et formulaires
--   Gestion du CSS
+- Gestion des requêtes et des messages
+- Mise en page
+- Navigation
+- Affichage et gestion de listes (avec recherche avancée)
+- Composants de saisie basiques
+- Gestion des données métiers et formulaires
+- Gestion du CSS
 
 L'usage de toutes ces fonctionnalités est toujours **optionnel**. Vous ferez toujours des composants React et vous aurez toujours MobX sous la main, donc si Focus ne peut pas vous aider à faire ce que vous voulez, vous pouvez toujours revenir vers des choses plus classiques.
 
@@ -50,24 +50,25 @@ L'usage de toutes ces fonctionnalités est toujours **optionnel**. Vous ferez to
 
 Ces modules contiennent les éléments de base d'une application Focus, et servent de fondations aux modules plus avancés.
 
--   **`@focus4/core`** : fonctionnalités de base, utilisées dans les autres modules.
--   **`@focus4/styling`** : système de CSS utilisé par les composants de Focus.
--   **`@focus4/toolbox`** : composants de base implémentant [Material Design 3](https://m3.material.io/components), utilisé par les autres composants plus avancés.
+- **`@focus4/core`** : fonctionnalités de base, utilisées dans les autres modules.
+- **`@focus4/styling`** : système de CSS utilisé par les composants de Focus.
+- **`@focus4/toolbox`** : composants de base implémentant [Material Design 3](https://m3.material.io/components), utilisé par les autres composants plus avancés.
 
 ### Modules de formulaires
 
-Ces deux modules permettent de construire des formulaires, et représentent donc le coeur d'une application Focus. C'est avec ces deux modules-là que vous passerez le plus de temps.
+Ces quatre modules permettent de construire des formulaires, et représentent donc le coeur d'une application Focus. C'est avec ces quatre modules-là que vous passerez le plus de temps.
 
--   **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
--   **`@focus4/forms`** : champs de formulaires.
--   **`@focus4/form-toolbox`** : composants de formulaires par défaut, basés sur le module `toolbox`.
+- **`@focus4/entities`** : définition d'entités métier
+- **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
+- **`@focus4/forms`** : champs de formulaires.
+- **`@focus4/form-toolbox`** : composants de formulaires par défaut, basés sur le module `toolbox`.
 
 ### Modules de présentation
 
 Ces deux modules proposent des composants graphiques de haut niveau qui permettent de structurer la mise en page d'une application Focus, ainsi que l'affichage des listes et de la recherche avancée.
 
--   **`@focus4/layout`**: composants de mise en page.
--   **`@focus4/collections`** : composants de listes et de recherche avancée.
+- **`@focus4/layout`**: composants de mise en page.
+- **`@focus4/collections`** : composants de listes et de recherche avancée.
 
 ### `@focus4/tooling`
 

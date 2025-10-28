@@ -6,6 +6,8 @@ import {Meta} from "@storybook/addon-docs/blocks";
 
 Le **domaine** d'un champ représente le **type de donnée métier** qui lui est associé (par exemple : une date, un numéro de téléphone, un montant...).
 
+_Remarque : le module `@focus4/entities` définit le domaine via le type global `Domain<S>`, qui ne contient qu'un champ unique pour le schéma. C'est le module `@focus4/stores` qui complète cette définition avec les définitions de composants. Si vous utilisez le module `@focus4/entities` en dehors de Focus, vous pourrez donc faire de même._
+
 ## Schéma
 
 Un domaine se définit à partir d'un **schéma**, qui permet de définir précisément le **type** d'un champ associé, ainsi que ses règles de **validation**.

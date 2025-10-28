@@ -180,14 +180,14 @@ Par exemple :
 type PatchedUtilisateurEntityType = Patch<
     UtilisateurEntityType,
     {
-        nombreUtilisateursMax: FieldEntry2<typeof DO_ENTIER>; // Champ ajouté.
-        typeUtilisateurCode: FieldEntry<ZodString, TypeUtilisateurCode>; // Champ préexistant modifié.
+        nombreUtilisateursMax: FieldEntry<typeof DO_ENTIER>; // Champ ajouté.
+        typeUtilisateurCode: FieldEntry<Domain<ZodString>, TypeUtilisateurCode>; // Champ préexistant modifié.
         liste: ListEntry<
             Patch<
                 MySubEntity,
                 {
                     // Champ ajouté dans `liste` (non existant dans l'exemple précédent...).
-                    nouveauChamp: FieldEntry2<typeof DO_ENTIER>;
+                    nouveauChamp: FieldEntry<typeof DO_ENTIER>;
                 }
             >
         >;
@@ -224,17 +224,15 @@ type UtilisateurWithoutNameEntity = Patch<UtilisateurEntity, {}, "nom" | "prenom
 
 ### Description d'un champ (et comment le patcher avec `PatchInput`/`PatchSelect`...)
 
-Dans l'exemple précédent, on voit qu'on utilise aussi bien `FieldEntry` que `FieldEntry2`, qui sont [décrits en intégralité ici](/docs/modèle-métier-champs-et-entités--docs#type-typescript-fieldentryfieldentry2).
-
 Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin. Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
 
 Les différentes possibilités (par ordre de précision croissante) sont :
 
 - `FieldEntry` => N'importe quel champ
-- `FieldEntry<ZodString>` => Un champ avec un domaine de schéma `ZodString`.
-- `FieldEntry<ZodString, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
-- `FieldEntry2<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
-- `FieldEntry2<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
+- `FieldEntry<Domain<ZodString>>` => Un champ avec un domaine de schéma `ZodString`.
+- `FieldEntry<Domain<ZodString>, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
+- `FieldEntry<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
+- `FieldEntry<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
 - `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
 
 Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
@@ -251,7 +249,7 @@ type PatchedTypeUtilisateurCode = PatchSelect<
 >;
 
 // Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
-type NouveauChamp = PatchAutocomplete<FieldEntry2<typeof DO_CODE>, MyCustomAutocompleteProps>;
+type NouveauChamp = PatchAutocomplete<FieldEntry<typeof DO_CODE>, MyCustomAutocompleteProps>;
 ```
 
 ## Personnalisation dynamique

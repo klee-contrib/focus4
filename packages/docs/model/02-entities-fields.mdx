@@ -1,0 +1,64 @@
+import {Meta} from "@storybook/addon-docs/blocks";
+
+<Meta title="Modèle métier/Entités et champs" />
+
+# Entités et champs
+
+_Remarque : La modélisation de Focus est entièrement disponible dans le module `@focus4/entities`, qui ne contient aucune dépendance aux autres modules de Focus. Vous pouvez donc librement réutiliser ce module et la manière de définir les entités dans d'autres frameworks JS, peu importe qu'ils utilisent React ou non d'ailleurs._
+
+## Définition d'une entité
+
+Une entité se définit via le builder d'entité `entity()`, qui peut contenir :
+
+- Des champs (`e.field(domain)`), qui se définit à partir d'un **[domaine](/docs/modèle-métier-domaines--docs)**. Son type Typescript est `FieldEntry`.
+- Une autre **entité** (`e.object(Entity)`). Son type Typescript est `ObjectEntry`.
+- Une liste d'une autre **entité** (`e.list(Entity)`). Son type Typescript est `ListEntry`.
+- Une liste d'elle-même (`e.recursiveList()`). Son type Typescript est `RecursiveListEntry`.
+
+_Remarque : une entité ne peut pas se référencer elle-même (en dehors de la liste récursive), y compris via une référence dans une autre entité référencée._
+
+Une définition d'entité pourrait ressembler à ceci par exemple :
+
+```ts
+const ProfilReadEntity = entity({
+    id: e.field(DO_ID, f => f.optional().label("securite.profil.id")),
+    libelle: e.field(DO_LIBELLE, f => f.label("securite.profil.libelle")),
+    utilisateurs: e.list(UtilisateurItemEntity)
+});
+```
+
+## Options de configuration communes
+
+Les 4 méthodes de définition d'entrée d'entité peuvent chacune prendre un builder qui permet de les configurer. Elles peuvent toute utiliser :
+
+### `.optional()`
+
+Par défaut, une entrée est obligatoire. Cette méthode permet de la rendre facultative.
+
+### `.label()`
+
+Pour renseigner un libellé (de préférence une clé de traduction).
+
+### `.comment()`
+
+Pour renseigner un commentaire (de préférence une clé de traduction).
+
+## Options de configuration pour les champs
+
+En plus des options communes, les champs peuvent aussi définir :
+
+### `.type<T>()`
+
+Permet de spécialiser le type du champ au delà du type induit par le schéma de son domaine. Par exemple, pour un schéma `ZodString`, le type pourrait être spécialisé en `TypeUtilisateurCode`, un type du genre `"ADMIN" | "GEST" | "CONSULT"`.
+
+### `.defaultValue(value)`
+
+Permet de renseigner une valeur par défaut à cette entité (lorsqu'elle sera utilisée plus tard dans un formulaire).
+
+### `.name(name)`
+
+Permet de définir le nom du champ. La fonction `entity()` renseignera déjà le nom du champ par le nom de la propriété, donc cette méthode ne serait utile qu'en dehors.
+
+## Génération des entités
+
+Même si la définition d'une entité peut paraître simple, il reste néanmoins recommander d utiliser un outil de modélisation externe pour les générer, ne serait-ce que pour assurer la cohérence du modèle de données avec le serveur. Il parait que [TopModel](https://klee-contrib.github.io/topmodel) est un outil idéal pour ça, et il dispose d'un [générateur](https://klee-contrib.github.io/topmodel/#/generator/js) dédié pour ces entités Focus 😉.

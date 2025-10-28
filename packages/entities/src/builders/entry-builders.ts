@@ -9,7 +9,7 @@ class EntryBuilder {
     entry: PartialNonReadonly<ObjectEntry | FieldEntry | ListEntry | RecursiveListEntry>;
 
     constructor(type: "field" | "object" | "list" | "recursive-list") {
-        this.entry = {type, isRequired: true};
+        this.entry = {type, label: "", isRequired: true};
     }
 
     /** Rend l'entrée d'entité non-obligatoire. */
