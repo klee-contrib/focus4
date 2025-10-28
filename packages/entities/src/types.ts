@@ -1,4 +1,3 @@
-import {ReactNode} from "react";
 import {output, ZodArray, ZodType} from "zod";
 
 /** Correspond à un type de schéma pour un type primitif. */
@@ -38,7 +37,7 @@ export interface FieldEntry<D extends Domain = any, T extends output<D["schema"]
     readonly label: string;
 
     /** Commentaire de l'entrée */
-    readonly comment?: ReactNode;
+    readonly comment?: string;
 
     /** Valeur par défaut du champ dans un formulaire. */
     readonly defaultValue?: T;
@@ -58,7 +57,7 @@ export interface ObjectEntry<E = any> {
     readonly label?: string;
 
     /** Commentaire de l'entrée (non utilisé). */
-    readonly comment?: ReactNode;
+    readonly comment?: string;
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
@@ -75,7 +74,7 @@ export interface ListEntry<E = any> {
     readonly label?: string;
 
     /** Commentaire de l'entrée (non utilisé). */
-    readonly comment?: ReactNode;
+    readonly comment?: string;
 }
 
 /** Métadonnées d'une entrée de type "recursive-list" pour une entité. */
@@ -89,7 +88,7 @@ export interface RecursiveListEntry {
     readonly label?: string;
 
     /** Commentaire de l'entrée (non utilisé). */
-    readonly comment?: ReactNode;
+    readonly comment?: string;
 }
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
