@@ -19,11 +19,11 @@
     },
     "dependencies": {
         "@trivago/prettier-plugin-sort-imports": "~5.2.2",
-        "@types/node": "~24.9.0",
+        "@types/node": "~24.9.1",
         "@types/postcss-modules-extract-imports": "~3.0.5",
         "@types/postcss-modules-local-by-default": "~4.0.2",
         "@types/postcss-modules-scope": "~3.0.4",
-        "es-toolkit": "~1.40.0",
+        "es-toolkit": "~1.41.0",
         "glob": "~11.0.3",
         "package-json": "~10.0.1",
         "postcss": "~8.5.6",
