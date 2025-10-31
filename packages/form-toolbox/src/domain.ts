@@ -4,6 +4,7 @@ import z from "zod";
 import {ZodTypeMultiple, ZodTypeSingle} from "@focus4/entities";
 import {FieldOptions} from "@focus4/forms";
 import {
+    BaseAutocompleteProps,
     BaseDisplayProps,
     BaseInputProps,
     BaseLabelProps,
