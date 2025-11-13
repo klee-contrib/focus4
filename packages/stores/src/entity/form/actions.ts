@@ -1,6 +1,6 @@
 import {merge} from "es-toolkit";
 import i18next from "i18next";
-import {action, autorun, computed, observable, runInAction} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
@@ -169,50 +169,53 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                 };
             }
 
-            const data = await requestStore.track<object>([this.trackingId, ...this.builder.trackingIds], () => {
-                const d = toFlatValues(this.formNode);
-                if (this.builder.saveService) {
-                    return this.builder.saveService(d);
-                } else if (this.params && this.builder.updateService) {
-                    return this.builder.updateService(...this.params, d);
-                } else {
-                    return this.builder.createService!(d);
-                }
-            });
-            runInAction(() => {
-                this.formNode.form.isEdit = false;
+            const data = await requestStore.track<object>(
+                [this.trackingId, ...this.builder.trackingIds],
+                () => {
+                    const d = toFlatValues(this.formNode);
+                    if (this.builder.saveService) {
+                        return this.builder.saveService(d);
+                    } else if (this.params && this.builder.updateService) {
+                        return this.builder.updateService(...this.params, d);
+                    } else {
+                        return this.builder.createService!(d);
+                    }
+                },
+                data => {
+                    this.formNode.form.isEdit = false;
 
-                // On met à jour le _initialData avec les valeurs qu'on avait à la sauvegarde.
-                function updateInitialData(source: unknown, target: unknown) {
-                    if (isFormNode(source) && target && typeof target === "object") {
-                        for (const key in source) {
-                            const item: any = source[key];
-                            if (key in target) {
-                                if (isFormEntityField(item)) {
-                                    (target as any)[key] = item.value;
-                                } else if (isFormNode(item)) {
-                                    updateInitialData(item, (target as any)[key]);
+                    // On met à jour le _initialData avec les valeurs qu'on avait à la sauvegarde.
+                    function updateInitialData(source: unknown, target: unknown) {
+                        if (isFormNode(source) && target && typeof target === "object") {
+                            for (const key in source) {
+                                const item: any = source[key];
+                                if (key in target) {
+                                    if (isFormEntityField(item)) {
+                                        (target as any)[key] = item.value;
+                                    } else if (isFormNode(item)) {
+                                        updateInitialData(item, (target as any)[key]);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                updateInitialData(this.formNode, this.formNode.form._initialData);
+                    updateInitialData(this.formNode, this.formNode.form._initialData);
 
-                if (data && typeof data === "object" && !(data instanceof Response)) {
-                    // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                    if (isStoreNode(this.formNode.sourceNode)) {
-                        this.formNode.sourceNode.replace(data);
+                    if (data && typeof data === "object" && !(data instanceof Response)) {
+                        // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
+                        if (isStoreNode(this.formNode.sourceNode)) {
+                            this.formNode.sourceNode.replace(data);
+                        } else {
+                            this.formNode.sourceNode.replaceNodes(data as any);
+                        }
+                        // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
+                    } else if (isFormNode(this.formNode)) {
+                        this.formNode.sourceNode.replace(this.formNode);
                     } else {
-                        this.formNode.sourceNode.replaceNodes(data as any);
+                        this.formNode.sourceNode.replaceNodes(this.formNode);
                     }
-                    // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
-                } else if (isFormNode(this.formNode)) {
-                    this.formNode.sourceNode.replace(this.formNode);
-                } else {
-                    this.formNode.sourceNode.replaceNodes(this.formNode);
                 }
-            });
+            );
 
             if (this.builder.message) {
                 messageStore.addSuccessMessage(i18next.t(this.builder.message));

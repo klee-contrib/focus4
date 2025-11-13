@@ -1,16 +1,5 @@
 import {debounce, flatten, isFunction, isString, orderBy} from "es-toolkit";
-import {
-    action,
-    computed,
-    IObservableArray,
-    isObservableArray,
-    observable,
-    reaction,
-    remove,
-    runInAction,
-    set,
-    toJS
-} from "mobx";
+import {action, computed, IObservableArray, isObservableArray, observable, reaction, remove, set, toJS} from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
 import {EntityToType} from "@focus4/entities";
@@ -481,26 +470,28 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
         };
 
         try {
-            const response = await requestStore.track(this.trackingId, () => this.service!(data, {signal}));
+            const response = await requestStore.track(
+                this.trackingId,
+                () => this.service!(data, {signal}),
+                response => {
+                    // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
+                    if (isScroll) {
+                        this.innerList.push(...(response.list ?? []));
+                    } else {
+                        this.innerList.replace(response.list ?? []);
+                    }
 
-            runInAction(() => {
-                // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
-                if (isScroll) {
-                    this.innerList.push(...(response.list ?? []));
-                } else {
-                    this.innerList.replace(response.list ?? []);
+                    this.innerFacets.replace(response.facets);
+                    this.innerGroups.replace(response.groups ?? []);
+                    this.availableSearchFields = response.searchFields ?? [];
+
+                    if (!this.skipToken) {
+                        this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
+                    }
+
+                    this.skipToken = response.skipToken;
                 }
-
-                this.innerFacets.replace(response.facets);
-                this.innerGroups.replace(response.groups ?? []);
-                this.availableSearchFields = response.searchFields ?? [];
-
-                if (!this.skipToken) {
-                    this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
-                }
-
-                this.skipToken = response.skipToken;
-            });
+            );
 
             this.abortController = undefined;
             return response;

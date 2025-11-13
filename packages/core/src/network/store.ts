@@ -1,5 +1,5 @@
 import {uniq} from "es-toolkit";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, runInAction} from "mobx";
 import {computedFn} from "mobx-utils";
 
 export type HttpMethod = "CONNECT" | "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT" | "TRACE";
@@ -60,15 +60,25 @@ export class RequestStore {
      * La méthode `requestStore.isLoading(trackingId)` permettra de savoir s'il y a au moins une requête suivie avec cet id qui est en cours.
      * @param trackingId Id(s) de suivi.
      * @param fetch Service à suivre.
+     * @param callback Un callback à appeler en cas de succès, pour l'inclure dans la même action que la mise à jour de l'état de chargement.
      * @returns La Promise de `fetch`.
      */
-    async track<T>(trackingId: string[] | string, fetch: () => Promise<T>) {
+    async track<T>(trackingId: string[] | string, fetch: () => Promise<T>, callback?: (value: T) => void) {
         const id = Math.random().toString();
         await setTimeout0(() =>
             this.trackedRequests.set(id, uniq(Array.isArray(trackingId) ? trackingId : [trackingId]))
         );
         try {
-            return await fetch();
+            const value = await fetch();
+
+            if (callback) {
+                runInAction(() => {
+                    this.trackedRequests.delete(id);
+                    callback(value);
+                });
+            }
+
+            return value;
         } finally {
             this.trackedRequests.delete(id);
         }

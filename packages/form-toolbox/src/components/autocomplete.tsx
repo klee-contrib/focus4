@@ -98,18 +98,20 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
 
     useEffect(() => {
         if ((!!value || value === 0) && (!!keyResolver || !!pQuery)) {
-            requestStore.track(trackingId, () =>
-                (keyResolver
-                    ? keyResolver(value)
-                    : new Promise<string>(r => {
-                          r(pQuery);
-                      })
-                ).then(async label => {
+            requestStore.track(
+                trackingId,
+                () =>
+                    keyResolver
+                        ? keyResolver(value)
+                        : new Promise<string>(r => {
+                              r(pQuery);
+                          }),
+                async label => {
                     setQuery(label ?? `${value}`);
                     if (!values.some(v => getKey(v) === value) && label && querySearcher) {
                         setValues(await querySearcher(label));
                     }
-                })
+                }
             );
         }
     }, [value]);

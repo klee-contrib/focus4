@@ -1,5 +1,4 @@
-import {upperFirst} from "es-toolkit";
-import {action, extendObservable, observable, when} from "mobx";
+import {extendObservable, observable, when} from "mobx";
 
 import {coreConfig, requestStore} from "@focus4/core";
 
@@ -49,18 +48,15 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
                     referenceStore[`_${ref}_loading`] = true;
 
                     // On effectue l'appel et on met à jour la liste.
-                    requestStore
-                        .track(
-                            [referenceTrackingId, ...[...referenceStore[`_${ref}_trackingIds`].values()].flat()],
-                            () => referenceLoader(ref)
-                        )
-                        .then(
-                            action(`set${upperFirst(ref)}List`, (refList: {}[]) => {
-                                referenceStore[`_${ref}_cache`] = Date.now();
-                                referenceStore[`_${ref}`].replace(refList);
-                                delete referenceStore[`_${ref}_loading`];
-                            })
-                        );
+                    requestStore.track(
+                        [referenceTrackingId, ...[...referenceStore[`_${ref}_trackingIds`].values()].flat()],
+                        () => referenceLoader(ref),
+                        refList => {
+                            referenceStore[`_${ref}_cache`] = Date.now();
+                            referenceStore[`_${ref}`].replace(refList);
+                            delete referenceStore[`_${ref}_loading`];
+                        }
+                    );
                 }
 
                 // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.

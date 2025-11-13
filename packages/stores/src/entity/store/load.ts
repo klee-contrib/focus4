@@ -1,5 +1,5 @@
 import {isFunction} from "es-toolkit";
-import {action, computed, observable, reaction, runInAction} from "mobx";
+import {action, computed, observable, reaction} from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
 import {EntityToType} from "@focus4/entities";
@@ -102,27 +102,28 @@ export class LoadRegistration<A extends readonly any[] = never> {
                 this.abortController = new AbortController();
                 const {signal} = this.abortController;
 
-                const data = await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
-                    this.builder.loadService!(...this.params!, {signal})
-                );
-                runInAction(() => {
-                    if (data) {
-                        if (isStoreNode(this.store)) {
-                            this.store.replace(data as EntityToType<any>);
-                        } else if (isStoreListNode(this.store)) {
-                            this.store.replaceNodes(data as EntityToType<any>[]);
-                        } else {
-                            this.store.selectedItems.clear();
-                            this.store.list = data as EntityToType<any>[];
+                await requestStore.track(
+                    [this.trackingId, ...this.builder.trackingIds],
+                    () => this.builder.loadService!(...this.params!, {signal}),
+                    data => {
+                        if (data) {
+                            if (isStoreNode(this.store)) {
+                                this.store.replace(data as EntityToType<any>);
+                            } else if (isStoreListNode(this.store)) {
+                                this.store.replaceNodes(data as EntityToType<any>[]);
+                            } else {
+                                this.store.selectedItems.clear();
+                                this.store.list = data as EntityToType<any>[];
+                            }
+                        }
+
+                        for (const handler of this.builder.handlers.load ?? []) {
+                            handler("load", data);
                         }
                     }
+                );
 
-                    for (const handler of this.builder.handlers.load ?? []) {
-                        handler("load", data);
-                    }
-
-                    this.abortController = undefined;
-                });
+                this.abortController = undefined;
             } catch (error) {
                 if (isAbortError(error)) {
                     return;

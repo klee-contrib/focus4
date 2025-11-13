@@ -71,3 +71,5 @@ requestStore.isLoading(id); // La requête est-elle en cours ?
 **Plusieurs services peuvent être enregistré sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la fois.
 
 Ce suivi est automatiquement intégré à [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload) et `useFormActions`, qui génèrent un ID de suivi pour leurs services et peuvent y associer d'autres IDs.
+
+_Remarque : Vous pouvez aussi passer un callback en troisième paramètre de `requestStore.track`, appelé avec le résultat de l'appel, pour effectuer des modifications d'état dans la même action que celle qui met à jour l'état de chargement._
