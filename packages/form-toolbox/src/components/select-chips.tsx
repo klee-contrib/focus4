@@ -56,6 +56,8 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
     schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
+    /** Précise le mode de correspondance utilisé entre la query et le libellé en mode autocomplete. Par défaut : "start". */
+    suggestionMatch?: "anywhere" | "disabled" | "start" | "word";
     /**
      * Contrôle la mise en forme du Dropdown :
      * - `fit-to-field-and-wrap` va forcer la largeur du menu sur la largeur du champ, et faire des retours à la ligne si nécessaire. (par défaut).
@@ -98,6 +100,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
     schema,
     showSupportingText = "always",
     sizing,
+    suggestionMatch = "start",
     theme: pTheme,
     undeletable,
     unselectable,
@@ -220,6 +223,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     schema={schema.element}
                     showSupportingText="never"
                     sizing={sizing === "no-fit-single-line" ? sizing : "fit-to-field-single-line"}
+                    suggestionMatch={suggestionMatch}
                     theme={theme}
                     trailing={trailing}
                     values={finalValues}
