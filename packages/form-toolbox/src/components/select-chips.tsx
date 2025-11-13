@@ -14,7 +14,8 @@ import {
     Icon,
     SupportingText,
     SupportingTextCss,
-    TextFieldCss
+    TextFieldCss,
+    TrailingIcon
 } from "@focus4/toolbox";
 
 import {Select} from "./select";
@@ -68,6 +69,8 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
     theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
+    /** Définition des icônes à poser après le texte dans le champ de sélection. */
+    trailing?: TrailingIcon | TrailingIcon[];
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
     undeletable?: (value: output<SingleZodType<S>>) => boolean;
     /** Retire les valeurs qui correspondent à ce filtre des valeurs sélectionnables dans le Select. */
@@ -102,6 +105,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
     sizing,
     suggestionMatch = "start",
     theme: pTheme,
+    trailing: pTrailing,
     undeletable,
     unselectable,
     value,
@@ -154,12 +158,15 @@ export function SelectChips<const S extends ZodTypeMultiple>({
     );
 
     const trailing = useMemo(() => {
-        const clear = {
-            icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
-            onClick: handleRemoveAll,
-            tooltip: t(`${i18nPrefix}.select.unselectAll`),
-            noFocusOnClick: true
-        };
+        const base = [
+            {
+                icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
+                onClick: handleRemoveAll,
+                tooltip: t(`${i18nPrefix}.select.unselectAll`),
+                noFocusOnClick: true
+            },
+            ...(Array.isArray(pTrailing) ? pTrailing : pTrailing ? [pTrailing] : [])
+        ];
 
         if (hasSelectAll) {
             return [
@@ -169,10 +176,10 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     tooltip: t(`${i18nPrefix}.select.selectAll`),
                     noFocusOnClick: true
                 },
-                clear
+                ...base
             ];
         } else {
-            return clear;
+            return base;
         }
     }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix]);
 

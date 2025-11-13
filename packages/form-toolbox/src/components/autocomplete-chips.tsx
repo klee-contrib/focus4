@@ -6,7 +6,16 @@ import {output} from "zod";
 
 import {SingleZodType, ZodTypeMultiple} from "@focus4/entities";
 import {CSSProp, useTheme} from "@focus4/styling";
-import {AutocompleteCss, Chip, ChipCss, Icon, SupportingText, SupportingTextCss, TextFieldCss} from "@focus4/toolbox";
+import {
+    AutocompleteCss,
+    Chip,
+    ChipCss,
+    Icon,
+    SupportingText,
+    SupportingTextCss,
+    TextFieldCss,
+    TrailingIcon
+} from "@focus4/toolbox";
 
 import {AutocompleteSearch} from "./autocomplete";
 import {SelectChipsCss, selectChipsCss} from "./select-chips";
@@ -57,6 +66,8 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     showSupportingText?: "always" | "auto" | "never";
     /** Schéma du champ (celui du domaine). */
     schema: S;
+    /** Définition des icônes à poser après le texte dans le champ de recherche. */
+    trailing?: TrailingIcon | TrailingIcon[];
     /** CSS. */
     theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
@@ -93,6 +104,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
     searchOnEmptyQuery = false,
     showSupportingText = "always",
     theme: pTheme,
+    trailing,
     undeletable,
     value
 }: AutocompleteChipsProps<S, TSource>) {
@@ -170,12 +182,15 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                 searchOnEmptyQuery={searchOnEmptyQuery}
                 showSupportingText="never"
                 theme={theme}
-                trailing={{
-                    icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
-                    onClick: handleRemoveAll,
-                    tooltip: t(`${i18nPrefix}.select.unselectAll`),
-                    noFocusOnClick: true
-                }}
+                trailing={[
+                    {
+                        icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},
+                        onClick: handleRemoveAll,
+                        tooltip: t(`${i18nPrefix}.select.unselectAll`),
+                        noFocusOnClick: true
+                    },
+                    ...(Array.isArray(trailing) ? trailing : trailing ? [trailing] : [])
+                ]}
             />
             {value?.length ? (
                 <div className={theme.chips()}>
