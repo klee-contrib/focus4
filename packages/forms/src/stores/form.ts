@@ -24,12 +24,12 @@ import {
  * Toute mise à jour du StoreListNode réinitialise le FormListNode.
  * @param node Le noeud de base
  * @param builder Le configurateur
- * @param initialData Les données initiales du formulaire
+ * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
  */
 export function useFormNode<E, NE = E>(
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+    initialData?: EntityToType<E>[] | (() => EntityToType<E>[]) | true
 ): FormListNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
@@ -37,18 +37,18 @@ export function useFormNode<E, NE = E>(
  * Toute mise à jour du StoreNode réinitialise le FormListNode.
  * @param node Le noeud de base
  * @param builder Le configurateur
- * @param initialData Les données initiales du formulaire
+ * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
  */
 export function useFormNode<E, NE = E>(
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToType<E> | (() => EntityToType<E>)
+    initialData?: EntityToType<E> | (() => EntityToType<E>) | true
 ): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'une définition d'entité.
  * @param entity La définition d'entité, dans un array.
  * @param builder Le configurateur
- * @param initialData Les données initiales du formulaire
+ * @param initialData Les données initiales du formulaire.
  */
 export function useFormNode<E, NE = E>(
     entity: [E],
@@ -59,7 +59,7 @@ export function useFormNode<E, NE = E>(
  * Construit un FormNode à partir d'un StoreNode.
  * @param entity La définition d'entité.
  * @param builder Le configurateur
- * @param initialData Les données initiales du formulaire
+ * @param initialData Les données initiales du formulaire.
  */
 export function useFormNode<E, NE = E>(
     entity: E,
@@ -73,12 +73,16 @@ export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: an
         if (isStoreListNode(node)) {
             fn = builder(new FormListNodeBuilder(node)).build();
             if (initialData) {
-                fn.setNodes(isFunction(initialData) ? initialData() : initialData);
+                fn.setNodes(
+                    initialData === true ? toFlatValues(node) : isFunction(initialData) ? initialData() : initialData
+                );
             }
         } else {
             fn = builder(new FormNodeBuilder(node)).build();
             if (initialData) {
-                fn.set(isFunction(initialData) ? initialData() : initialData);
+                fn.set(
+                    initialData === true ? toFlatValues(node) : isFunction(initialData) ? initialData() : initialData
+                );
             }
         }
         fn.form._initialData = toFlatValues(fn, true);

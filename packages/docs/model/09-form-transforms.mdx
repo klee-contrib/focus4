@@ -286,10 +286,15 @@ useFormNode(utilisateurStore.utilisateur, f =>
 
 ## Valeurs initiales
 
-A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé. Il est cependant possible de renseigner des valeurs initiales :
+A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé par défaut. Il est cependant possible de renseigner des valeurs initiales :
 
 - En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
-- En renseignant le troisième paramètre de `useFormNode` avec un objet contenant les valeurs initiales du formulaire (elles s'appliqueront après celles définies dans les `value()`). Vous pouvez d'ailleurs utiliser ce paramètre pour passer `toFlatValues(node)` pour recopier le contenu du store original.
+- En renseignant **le troisième paramètre de `useFormNode`** avec :
+    - Un objet contenant les valeurs initiales du formulaire.
+    - Une fonction retournant les valeurs initiales du formulaire (comme pour `useState` dans React).
+    - `true` pour récupérer le contenu du store original.
+
+    _Remarque : Ces valeurs s'appliqueront après celles définies dans les `value()`._
 
 L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelques soient les modifications effectuées sur le store.
 
