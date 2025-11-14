@@ -325,6 +325,7 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                     </div>
                     {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                         <ActionBar
+                            additionalFacets={additionalFacets}
                             defaultFoldedFacets={defaultFoldedFacets}
                             groupableFacets={groupableFacets}
                             hasFacetBox={facetBoxPosition === "action-bar"}

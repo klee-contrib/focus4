@@ -197,9 +197,10 @@ export function ActionBar<T extends object>({
 
                     {/** Bouton permettant d'afficher le panneau dépliant contenant la FacetBox (si demandé). */}
                     {hasFacetBox &&
-                    store.facets.some(facet =>
+                    (store.facets.some(facet =>
                         shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount)
-                    ) ? (
+                    ) ||
+                        additionalFacets) ? (
                         <div style={{position: "relative"}}>
                             <Button
                                 icon={{
@@ -209,7 +210,6 @@ export function ActionBar<T extends object>({
                                 label={t(`${i18nPrefix}.search.action.filter`)}
                                 onClick={() => setDisplayFacetBox(!displayFacetBox)}
                             />
-                            {displayFacetBox ? <div className={theme.triangle()} /> : null}
                         </div>
                     ) : null}
 
