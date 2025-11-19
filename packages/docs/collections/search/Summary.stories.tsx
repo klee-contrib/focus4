@@ -15,24 +15,15 @@ export default {
             {label: "Id décroissant", sort: [{fieldName: "id", sortDesc: true}]},
             {
                 label: "Type 1 croissant, Type 2 croissant",
-                sort: [
-                    {fieldName: "type1", sortDesc: false},
-                    {fieldName: "type2", sortDesc: false}
-                ]
+                sort: [{fieldName: "type1"}, {fieldName: "type2"}]
             },
             {
                 label: "Type 1 croissant, Type 2 décroissant",
-                sort: [
-                    {fieldName: "type1", sortDesc: false},
-                    {fieldName: "type2", sortDesc: true}
-                ]
+                sort: [{fieldName: "type1"}, {fieldName: "type2", sortDesc: true}]
             },
             {
                 label: "Type 1 décroissant, Type 2 croissant",
-                sort: [
-                    {fieldName: "type1", sortDesc: true},
-                    {fieldName: "type2", sortDesc: false}
-                ]
+                sort: [{fieldName: "type1", sortDesc: true}, {fieldName: "type2"}]
             },
             {
                 label: "Type 1 décroissant, Type 2 décroissant",

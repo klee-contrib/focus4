@@ -1,4 +1,3 @@
-import {isEqual} from "es-toolkit";
 import {observable} from "mobx";
 import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
@@ -179,8 +178,22 @@ export function Summary<T extends object>({
 
         /** Récupère le tri courant pour afficher le chip correspondant. */
         get currentSort() {
-            if (props.orderableColumnList && props.store.sort.length > 0) {
-                return props.orderableColumnList.find(o => isEqual(o.sort, props.store.sort)) ?? null;
+            const {
+                orderableColumnList,
+                store: {sort}
+            } = props;
+            if (orderableColumnList && sort.length > 0) {
+                return (
+                    orderableColumnList.find(
+                        o =>
+                            o.sort.length === sort.length &&
+                            o.sort.every(
+                                (s, i) =>
+                                    s.fieldName === sort[i].fieldName &&
+                                    (s.sortDesc ?? false) === (sort[i].sortDesc ?? false)
+                            )
+                    ) ?? null
+                );
             } else {
                 return null;
             }
