@@ -75,7 +75,7 @@ router.is(a => a("operation")("ofaId")("echeance")("echId")("reglement")("regId"
 
 ## `get(url?)`
 
-La fonction `get` prend **une section d'URL** comme `is`, et renvoie **la section de route suivante** dans l'URL active. Si la section d'URL demandée n'est pas active, où bien si l'URL active est exactement égale à la section, alors `get` renvoie naturellement `undefined`.
+La fonction `get` prend **une section d'URL** comme `is`, et renvoie **la section de route suivante** dans l'URL active. Si la section d'URL demandée n'est pas active, ou bien si l'URL active est exactement égale à la section, alors `get` renvoie naturellement `undefined`.
 
 Par exemple, `router.get(x => x("operation")("ofaId"))` peut renvoyer :
 
@@ -85,7 +85,7 @@ Par exemple, `router.get(x => x("operation")("ofaId"))` peut renvoyer :
 - `"echeance"`-> si l'URL active commence par `/operation/:ofaId/echeance`
 - `undefined` -> sinon
 
-`get` peut être utilisé dans un switch, pour afficher un composant différent par valeur par exemple, où bien plus directement pour récupérer la valeur pour l'utiliser dans un libellé ou une classe CSS.
+`get` peut être utilisé dans un switch, pour afficher un composant différent par valeur par exemple, ou bien plus directement pour récupérer la valeur pour l'utiliser dans un libellé ou une classe CSS.
 
 Comme `is`, `get` est une fonction "computed".
 

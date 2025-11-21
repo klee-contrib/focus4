@@ -23,7 +23,7 @@ Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
 Le store peut être utilisé dans **2 modes** :
 
 - le mode **`local`** : il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Dans ce mode-là, tout est géré côté client (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des volumes de données faibles et des recherches simples.
-- le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là,tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
+- le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là, tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
 
 ## Usage
 
@@ -78,7 +78,7 @@ Un `CollectionStore` s'instancie avec son constructeur. Il dispose de plusieurs 
 
 Le `CollectionStore` prend un seul paramètre facultatif `localStoreConfig`, qui peut contenir :
 
-- `filterFields`, la liste des champs sur lequels `query` va pouvoir filtrer.
+- `filterFields`, la liste des champs sur lesquels `query` va pouvoir filtrer.
 - `facetDefinitions`, les définitions de facettes.
 
 Une définition de facette comprend, comme si elle était définie côté serveur :
@@ -103,7 +103,7 @@ _(Note : l'ordre des deux derniers paramètres sont interchangeables)_
 ## Limitations du mode `local`
 
 - L'objet de critère `criteria` n'est pas supporté (on ne saurait pas comment traiter ces critères).
-- Le fitrage par `query` sur les champs de `filterFields` ne fait qu'un simple `includes` (en minuscule).
+- Le filtrage par `query` sur les champs de `filterFields` ne fait qu'un simple `includes` (en minuscule).
 - Le filtrage par facette, en dehors des nombres et de booléens, se fait avec un simple `==` (sachant que toutes les valeurs dans `inputFacets` sont des strings).
 
 ## Intégration avec les composants de listes et de recherche
