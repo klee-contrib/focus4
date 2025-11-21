@@ -5,7 +5,7 @@ La documentation complète est disponible [ici](https://klee-contrib.github.io/f
 
 # Présentation
 
-**`Focus`** est un framework **[React](https://react.dev/)** modulaire conçu pour accélérer le développement d'application clientes en mettant à disposition un ensemble de
+**`Focus`** est un framework **[React](https://react.dev/)** modulaire conçu pour accélérer le développement d'applications clientes en mettant à disposition un ensemble de
 fonctionnalités évoluées conçues pour fonctionner ensemble. Il essaie de fournir une alternative intégrée crédible aux projets React classiques qui accumulent
 un très grand nombre de librairies tierces et essaient tant bien que mal de les faire cohabiter.
 
@@ -56,7 +56,7 @@ Ces modules contiennent les éléments de base d'une application Focus, et serve
 
 ### Modules de formulaires
 
-Ces quatre modules permettent de construire des formulaires, et représentent donc le coeur d'une application Focus. C'est avec ces quatre modules-là que vous passerez le plus de temps.
+Ces quatre modules permettent de construire des formulaires, et représentent donc le cœur d'une application Focus. C'est avec ces quatre modules-là que vous passerez le plus de temps.
 
 - **`@focus4/entities`** : définition d'entités métier
 - **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
@@ -77,7 +77,7 @@ En particulier, il inclut [Vite](https://vitejs.dev) et [Oxlint](https://oxc.rs/
 
 De plus, il contient l'outil de génération de types CSS ainsi qu'un utilitaire pour faciliter l'installation et les montées de versions des modules de Focus.
 Cet outil s'utilise via la commande `npx focus4 install` ou `npx focus4 update` (les deux commandes sont identiques), et parcourera votre
-`package.json` pour récupérer la version la plus récente de chaque module Focus et de ses peer dependancies (React et MobX).
+`package.json` pour récupérer la version la plus récente de chaque module Focus et de ses peer dependencies (React et MobX).
 
 ## Starter Kit
 
