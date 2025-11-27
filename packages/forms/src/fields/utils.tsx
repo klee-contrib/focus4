@@ -5,10 +5,6 @@ import {output} from "zod";
 import {FieldEntry, SingleZodType} from "@focus4/entities";
 import {
     AutocompleteComponents,
-    BaseAutocompleteProps,
-    BaseDisplayProps,
-    BaseInputProps,
-    BaseSelectProps,
     EntityField,
     InputComponents,
     ReferenceList,
@@ -24,8 +20,8 @@ function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
 /** Options pour `autocompleteFor` */
 export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponents<
     F["domain"]["schema"],
-    BaseAutocompleteProps<F["domain"]["schema"]> & NonNullable<F["domain"]["autocompleteProps"]>,
-    BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
+    NonNullable<F["domain"]["autocompleteProps"]>,
+    NonNullable<F["domain"]["displayProps"]>,
     NonNullable<F["domain"]["labelProps"]>
 > &
     Partial<FieldOptions<F>> & {
@@ -38,8 +34,8 @@ export type AutocompleteForOptions<F extends FieldEntry> = AutocompleteComponent
 /** Options pour `fieldFor` */
 export type FieldForOptions<F extends FieldEntry> = InputComponents<
     F["domain"]["schema"],
-    BaseInputProps<F["domain"]["schema"]> & NonNullable<F["domain"]["inputProps"]>,
-    BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
+    NonNullable<F["domain"]["inputProps"]>,
+    NonNullable<F["domain"]["displayProps"]>,
     NonNullable<F["domain"]["labelProps"]>
 > &
     Partial<FieldOptions<F>>;
@@ -47,10 +43,10 @@ export type FieldForOptions<F extends FieldEntry> = InputComponents<
 /** Options pour `selectFor`. */
 export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     SelectComponents<
-        F["domain"]["schema"],
-        BaseSelectProps<F["domain"]["schema"]> & NonNullable<F["domain"]["selectProps"]>,
-        BaseDisplayProps<F["domain"]["schema"]> & NonNullable<F["domain"]["displayProps"]>,
-        NonNullable<F["domain"]["labelProps"]>
+       F["domain"]["schema"],
+       NonNullable<F["domain"]["selectProps"]>,
+       NonNullable<F["domain"]["displayProps"]>,
+       NonNullable<F["domain"]["labelProps"]>
     >;
 
 /**

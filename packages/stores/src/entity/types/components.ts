@@ -31,6 +31,7 @@ export interface BaseSelectProps<S extends ZodType> extends BaseInputProps<S> {
 
 export interface BaseAutocompleteProps<S extends ZodType> extends BaseInputProps<S> {
     keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
+    querySearcher?: (text: string, options?: RequestInit) => Promise<any[]>;
 }
 
 export interface BaseDisplayProps<S extends ZodType> extends BaseComponentProps {
