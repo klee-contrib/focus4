@@ -18,7 +18,7 @@
         "@focus4/core": "12.6.1",
         "@focus4/entities": "12.6.0",
         "@types/luxon": "~3.7.1",
-        "es-toolkit": "~1.41.0",
+        "es-toolkit": "~1.42.0",
         "luxon": "~3.7.2",
         "tslib": "~2.8.1"
     },

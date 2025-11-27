@@ -15,7 +15,7 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "es-toolkit": "~1.41.0",
+        "es-toolkit": "~1.42.0",
         "history": "~5.3.0",
         "luxon": "~3.7.2",
         "mobx-utils": "~6.1.1",

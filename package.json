@@ -40,15 +40,15 @@
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-typescript": "12.3.0",
     "css-tree": "3.1.0",
-    "lerna": "9.0.0",
+    "lerna": "9.0.1",
     "postcss": "8.5.6",
     "react-docgen-typescript": "2.4.0",
-    "rollup": "4.53.2",
+    "rollup": "4.53.3",
     "rollup-plugin-copy-glob": "0.4.1",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-preserve-shebang": "1.0.1",
     "tslib": "2.8.1",
     "typescript": "5.9.3",
-    "vitest": "4.0.8"
+    "vitest": "4.0.14"
   }
 }
