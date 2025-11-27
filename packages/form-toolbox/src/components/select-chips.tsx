@@ -241,7 +241,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     disableArrowSelectionWhenClosed
                     disabled={disabled as any}
                     error={error}
-                    hideUndefined
+                    hasUndefined={false}
                     icon={icon}
                     id={id}
                     LineComponent={LineComponent}

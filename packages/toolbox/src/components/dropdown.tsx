@@ -44,10 +44,8 @@ export interface DropdownProps<TSource = {key: string; label: string}>
      * Par défaut : `item => item.label`
      */
     getLabel?: (item: TSource) => string;
-    /** Autorise la non-sélection en ajoutant une option vide. Par défaut : "true". */
+    /** Ajoute `undefined` dans la liste des options sélectionnables. Par défaut : "true". */
     hasUndefined?: boolean;
-    /** Masque l'option vide dans la liste des options (si la non-sélection est autorisée). */
-    hideUndefined?: boolean;
     /** Composant personnalisé pour afficher les valeurs. */
     LineComponent?: (props: {item: TSource}) => ReactElement;
     /** Ne ferme pas le menu de la Dropdown lors de la sélection d'un item. */
@@ -64,7 +62,7 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
     /** CSS. */
     theme?: CSSProp<DropdownCss & TextFieldCss & SupportingTextCss>;
-    /** Libellé de l'option vide. */
+    /** Libellé de l'option `undefined`. Sera affichée comme un `hint` si elle est désactivée par `hasUndefined: false`. */
     undefinedLabel?: string;
     /** Valeurs disponibles pour la sélection. */
     values: TSource[];
@@ -91,7 +89,6 @@ export function Dropdown<TSource = {key: string; label: string}>({
     getKey = defaultGetKey,
     getLabel = defaultGetLabel,
     hasUndefined = true,
-    hideUndefined = false,
     icon,
     id,
     label,
@@ -312,7 +309,7 @@ export function Dropdown<TSource = {key: string; label: string}>({
                             getLabel(selectedValue)
                         )
                     ) : (
-                        <span className={hideUndefined ? theme.hint() : undefined}>{undefinedLabel}</span>
+                        <span className={!hasUndefined ? theme.hint() : undefined}>{undefinedLabel}</span>
                     ) as any
                 }
             />
@@ -342,7 +339,7 @@ export function Dropdown<TSource = {key: string; label: string}>({
                 }
                 selected={selected}
             >
-                {hasUndefined && !hideUndefined ? (
+                {hasUndefined ? (
                     <Ripple key={undefinedKey}>
                         <span
                             aria-label=""
