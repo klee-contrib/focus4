@@ -3,13 +3,7 @@ import {action} from "mobx";
 import {output} from "zod";
 
 import {FieldEntry, SingleZodType} from "@focus4/entities";
-import {
-    AutocompleteComponents,
-    EntityField,
-    InputComponents,
-    ReferenceList,
-    SelectComponents
-} from "@focus4/stores";
+import {AutocompleteComponents, EntityField, InputComponents, ReferenceList, SelectComponents} from "@focus4/stores";
 
 import {Field, FieldOptions} from "./field";
 
@@ -43,10 +37,10 @@ export type FieldForOptions<F extends FieldEntry> = InputComponents<
 /** Options pour `selectFor`. */
 export type SelectForOptions<F extends FieldEntry> = Partial<FieldOptions<F>> &
     SelectComponents<
-       F["domain"]["schema"],
-       NonNullable<F["domain"]["selectProps"]>,
-       NonNullable<F["domain"]["displayProps"]>,
-       NonNullable<F["domain"]["labelProps"]>
+        F["domain"]["schema"],
+        NonNullable<F["domain"]["selectProps"]>,
+        NonNullable<F["domain"]["displayProps"]>,
+        NonNullable<F["domain"]["labelProps"]>
     >;
 
 /**

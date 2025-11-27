@@ -39,6 +39,8 @@ export interface FieldOptions<F extends FieldEntry> {
     labelWidth?: string;
     /** Handler de modification de la valeur. */
     onChange?: (value: F["fieldType"]) => void;
+    /** Ne masque pas l'erreur du champ quand il a le focus. */
+    showErrorWhenFocused?: boolean;
     /** CSS. */
     theme?: CSSProp<FieldCss>;
     /** Surcharge la valeur de la variable CSS `--field-value-width` pour ce champ. */
@@ -70,6 +72,7 @@ export function Field<F extends FieldEntry>(
             inputType = "input",
             onChange,
             selectProps = {},
+            showErrorWhenFocused = false,
             valueWidth = fieldProps?.valueWidth
         } = props;
 
@@ -139,10 +142,10 @@ export function Field<F extends FieldEntry>(
         // Détermine si on affiche l'erreur du champ ou non.
         const showError = useMemo(
             () =>
-                !hasFocus &&
+                (!hasFocus || showErrorWhenFocused) &&
                 errorDisplay !== "never" &&
                 (errorDisplay === "always" || (errorDisplay === "after-focus" && hasHadFocus)),
-            [errorDisplay, hasFocus, hasHadFocus]
+            [errorDisplay, hasFocus, hasHadFocus, showErrorWhenFocused]
         );
 
         const {
