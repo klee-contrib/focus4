@@ -62,3 +62,7 @@
         text-overflow: ellipsis;
     }
 }
+
+.hint {
+    color: var(--input-disabled-color);
+}

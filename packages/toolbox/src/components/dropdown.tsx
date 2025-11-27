@@ -2,7 +2,6 @@ import classNames from "classnames";
 import {
     FocusEventHandler,
     ReactElement,
-    ReactNode,
     useCallback,
     useEffect,
     useImperativeHandle,
@@ -27,7 +26,7 @@ export type {DropdownCss};
 export interface DropdownProps<TSource = {key: string; label: string}>
     extends Omit<
         TextFieldProps,
-        "autoComplete" | "disabled" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
+        "autoComplete" | "disabled" | "hint" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
     > {
     /** Précise dans quel sens les valeurs doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
@@ -66,7 +65,7 @@ export interface DropdownProps<TSource = {key: string; label: string}>
     /** CSS. */
     theme?: CSSProp<DropdownCss & TextFieldCss & SupportingTextCss>;
     /** Libellé de l'option vide. */
-    undefinedLabel?: ReactNode;
+    undefinedLabel?: string;
     /** Valeurs disponibles pour la sélection. */
     values: TSource[];
 }
@@ -93,7 +92,6 @@ export function Dropdown<TSource = {key: string; label: string}>({
     getLabel = defaultGetLabel,
     hasUndefined = true,
     hideUndefined = false,
-    hint,
     icon,
     id,
     label,
@@ -266,7 +264,6 @@ export function Dropdown<TSource = {key: string; label: string}>({
                 disabled={disabled === true}
                 error={error}
                 fieldRef={menu.anchor}
-                hint={hint}
                 icon={icon}
                 id={id}
                 label={label}
@@ -315,8 +312,8 @@ export function Dropdown<TSource = {key: string; label: string}>({
                             getLabel(selectedValue)
                         )
                     ) : (
-                        (undefinedLabel as any)
-                    )
+                        <span className={hideUndefined ? theme.hint() : undefined}>{undefinedLabel}</span>
+                    ) as any
                 }
             />
             <Menu
