@@ -181,7 +181,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
         } else {
             return base;
         }
-    }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix]);
+    }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix, pTrailing]);
 
     const LineComponent = useMemo(() => {
         if (!keepSelectedValuesInSelect) {
