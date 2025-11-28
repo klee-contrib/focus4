@@ -46,7 +46,7 @@ export interface ScrollableProps {
  *
  * Le `Scrollable` permet de :
  *
- * - Savoir si un élément est visible à l'écran (via un [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)), ce qui permet de gérer le scroll infini des listes, où bien afficher l'élement en cours dans le [`ScrollspyContainer`](/docs/mise-en-page-scrollspycontainer--docs)
+ * - Savoir si un élément est visible à l'écran (via un [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)), ce qui permet de gérer le scroll infini des listes, ou bien afficher l'élément en cours dans le [`ScrollspyContainer`](/docs/mise-en-page-scrollspycontainer--docs)
  * - Gérer un "portal" vers l'élément racine, pour poser des popins par exemple.
  * - Poser un bouton de retour vers le haut une fois qu'on a scrollé un peu.
  *

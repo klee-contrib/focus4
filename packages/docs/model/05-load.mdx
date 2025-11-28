@@ -14,7 +14,7 @@ En revanche, le besoin lié au chargement des données n'est en général pas si
 - Recharger les données quand les paramètres changent (par exemple : un id différent)
 - Recharger les données quand elles ont été rendues obsolètes par une action utilisateur, par exemple une sauvegarde.
 
-Les deux premiers points peuvent être facilement résolus via une combinaison de `useEffect` et/ou `autorun`, qui permettra de relancer un `node.replace(await loadService(id))` à chaque fois que `id` change. Pour le deuxième, il faudra de toute façon recharger manuellement les données aux bons endroits, ce que l'on peut faire en rappelant `node.replace(await loadService(id))` la ou il faut (en s'assurant que l'id est le même).
+Les deux premiers points peuvent être facilement résolus via une combinaison de `useEffect` et/ou `autorun`, qui permettra de relancer un `node.replace(await loadService(id))` à chaque fois que `id` change. Pour le deuxième, il faudra de toute façon recharger manuellement les données aux bons endroits, ce que l'on peut faire en rappelant `node.replace(await loadService(id))` là où il faut (en s'assurant que l'id est le même).
 
 Cela ressemblerait à ça :
 

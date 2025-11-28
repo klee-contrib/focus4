@@ -17,7 +17,7 @@ const actions = useFormActions(
             .params(() => router.state.id)
             .load(getUtilisateur)
             .create(addUtilisateur)
-            .update(updateUtisateur)
+            .update(updateUtilisateur)
             .on(["create", "update"], () => utilisateurStore.load()) // Appelé après la sauvegarde
 );
 ```
@@ -59,12 +59,12 @@ _Remarque 2 : En dehors d'un composant fonction React, il est possible d'utilise
 
 ## Services de sauvegarde
 
-Pour définir la sauvegarde d'un formulaire, il existe deux possibiités :
+Pour définir la sauvegarde d'un formulaire, il existe deux possibilités :
 
 - Vous pouvez définir un **service de sauvegarde unique**, via `builder.save()`, qui sera appelé avec le contenu du noeud de formulaire à la sauvegarde.
 - Vous pouvez définir un **service de création** (`builder.create()`) et/ou un **service de mise à jour** (`builder.update()`). `create` sera appelé à la sauvegarde **si les `params` ne sont pas définis**, et `update` s'ils le sont. `update` sera appelé avec les params, puis le contenu du noeud de formulaire.
 
-Les deux possibiités sont mutuellement exclusives, vous ne pouvez pas définir `save` en même temps que `create` ou `update`.
+Les deux possibilités sont mutuellement exclusives, vous ne pouvez pas définir `save` en même temps que `create` ou `update`.
 
 Les services peuvent retourner au choix :
 
