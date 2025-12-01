@@ -1,2 +1,2 @@
 export {makeFormActions, makeFormNode} from "./form";
-export {classReaction, classWhen} from "./reactions";
+export {classAutorun, classReaction, classWhen} from "./reactions";
