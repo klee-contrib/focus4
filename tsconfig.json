@@ -19,8 +19,7 @@
         "sourceMap": true,
         "inlineSources": true,
         "stripInternal": true,
-        "noEmitOnError": true,
-        "types": ["vite/client"]
+        "noEmitOnError": true
     },
     "exclude": ["**/lib/**", "**/__tests__/**", "node_modules"]
 }
