@@ -1,5 +1,6 @@
 [![.github/workflows/docs-and-tests.yaml](https://github.com/klee-contrib/focus4/actions/workflows/docs-and-tests.yaml/badge.svg)](https://github.com/klee-contrib/focus4/actions/workflows/docs-and-tests.yaml)
 [![npm version](https://badge.fury.io/js/focus4.svg)](https://www.npmjs.com/package/focus4)
+[![codecov](https://codecov.io/github/klee-contrib/focus4/graph/badge.svg?token=1osfXl9XNw)](https://codecov.io/github/klee-contrib/focus4)
 
 La documentation complète est disponible [ici](https://klee-contrib.github.io/focus4).
 
