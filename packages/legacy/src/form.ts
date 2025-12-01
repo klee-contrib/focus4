@@ -23,7 +23,7 @@ import {
  * Construit un FormListNode à partir d'un StoreListNode.
  * Le FormListNode est un clone d'un StoreListNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreListNode réinitialise le FormListNode.
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage. Vous aurez proabablement besoin mettre un `as any` derrière...
  * @param node Le noeud de base
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
@@ -38,7 +38,7 @@ export function makeFormNode<E, NE = E>(
  * Construit un FormNode à partir d'un StoreNode.
  * Le FormNode est un clone d'un StoreNode qui peut être librement modifié sans l'impacter, et propose des méthodes pour se synchroniser.
  * Toute mise à jour du StoreNode réinitialise le FormNode.
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage. Vous aurez proabablement besoin mettre un `as any` derrière...
  * @param node Le noeud de base
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
@@ -51,7 +51,7 @@ export function makeFormNode<E, NE = E>(
 ): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'une définition d'entité
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage. Vous aurez proabablement besoin mettre un `as any` derrière...
  * @param entity La définition d'entité, dans un array.
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
@@ -64,7 +64,7 @@ export function makeFormNode<E, NE = E>(
 ): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'une définition d'entité.
- * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage.
+ * @param componentClass Le composant (classe) lié au FormNode, pour disposer la réaction de chargement à son démontage. Vous aurez proabablement besoin mettre un `as any` derrière...
  * @param entity La définition d'entité
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
