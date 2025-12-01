@@ -1,0 +1,27 @@
+{
+    "name": "@focus4/legacy",
+    "version": "12.6.3",
+    "description": "Focus v4, legacy module",
+    "main": "lib/focus4.legacy.js",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/klee-contrib/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/legacy",
+    "scripts": {
+        "build": "rollup -cm --bundleConfigAsCjs"
+    },
+    "dependencies": {
+        "@focus4/entities": "12.6.0",
+        "@focus4/stores": "12.6.3",
+        "es-toolkit": "~1.42.0"
+    },
+    "peerDependencies": {
+        "mobx": ">= 6.13 < 7",
+        "mobx-react": ">= 9.2 < 10",
+        "react": ">= 19.0 < 20"
+    }
+}
