@@ -17,10 +17,12 @@ export default (async () => {
         plugins: [
             postcss({extract: true, modules: true}),
             typescript(),
-            copy([
-                {src: "src/list/**/*.css.d.ts", dest: "lib/list"},
-                {src: "src/search/**/*.css.d.ts", dest: "lib/search"}
-            ])
+            copy({
+                targets: [
+                    {src: "src/list/**/*.css.d.ts", dest: "lib/list"},
+                    {src: "src/search/**/*.css.d.ts", dest: "lib/search"}
+                ]
+            })
         ],
         treeshake: {
             moduleSideEffects: false
