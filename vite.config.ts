@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import {defineConfig} from "vitest/config";
 
 export default defineConfig({
@@ -5,6 +6,7 @@ export default defineConfig({
         environment: "jsdom",
         coverage: {
             reporter: ["text", "lcov"]
-        }
+        },
+        projects: ["packages/*"]
     }
 });
