@@ -1,0 +1,38 @@
+name: Frontend workflow
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test JS frontend
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: install
+        run: npm ci
+
+      - name: install playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: build
+        run: npm run build
+
+      - name: oxlint
+        run: npm run oxlint
+
+      - name: docgen
+        run: npm run docgen
+
+      - name: test
+        run: npm run test-ci
+
+      - name: Upload coverage reports to Codecov with GitHub Action
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
