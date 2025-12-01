@@ -1,6 +1,6 @@
 // @ts-check
 import typescript from "@rollup/plugin-typescript";
-import copy from "rollup-plugin-copy-glob";
+import copy from "rollup-plugin-copy";
 import postcss from "rollup-plugin-postcss";
 
 import {generateCSSTypings} from "@focus4/tooling";
@@ -17,10 +17,10 @@ export default (async () => {
             postcss({extract: true, modules: true}),
             typescript(),
             copy([
-                {files: "src/header/**/*.css.d.ts", dest: "lib/header"},
-                {files: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
-                {files: "src/panels/**/*.css.d.ts", dest: "lib/panels"},
-                {files: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"}
+                {src: "src/header/**/*.css.d.ts", dest: "lib/header"},
+                {src: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
+                {src: "src/panels/**/*.css.d.ts", dest: "lib/panels"},
+                {src: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"}
             ])
         ],
         treeshake: {

@@ -1,7 +1,7 @@
 // @ts-check
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import copy from "rollup-plugin-copy-glob";
+import copy from "rollup-plugin-copy";
 import postcss from "rollup-plugin-postcss";
 
 import {generateCSSTypings} from "@focus4/tooling";
@@ -18,7 +18,7 @@ export default (async () => {
             postcss({extract: true, modules: true}),
             resolve(),
             typescript(),
-            copy([{files: "src/components/**/*.css.d.ts", dest: "lib/components"}])
+            copy([{src: "src/components/**/*.css.d.ts", dest: "lib/components"}])
         ],
         treeshake: {
             moduleSideEffects: false
