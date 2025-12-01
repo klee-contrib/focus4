@@ -16,7 +16,7 @@ export default (async () => {
         plugins: [
             postcss({extract: true, modules: true}),
             typescript(),
-            copy([{src: "src/components/**/*.css.d.ts", dest: "lib/components"}])
+            copy({targets: [{src: "src/components/**/*.css.d.ts", dest: "lib/components"}]})
         ],
         treeshake: {
             moduleSideEffects: false

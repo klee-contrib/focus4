@@ -16,12 +16,14 @@ export default (async () => {
         plugins: [
             postcss({extract: true, modules: true}),
             typescript(),
-            copy([
-                {src: "src/header/**/*.css.d.ts", dest: "lib/header"},
-                {src: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
-                {src: "src/panels/**/*.css.d.ts", dest: "lib/panels"},
-                {src: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"}
-            ])
+            copy({
+                targets: [
+                    {src: "src/header/**/*.css.d.ts", dest: "lib/header"},
+                    {src: "src/menu/**/*.css.d.ts", dest: "lib/menu"},
+                    {src: "src/panels/**/*.css.d.ts", dest: "lib/panels"},
+                    {src: "src/presentation/**/*.css.d.ts", dest: "lib/presentation"}
+                ]
+            })
         ],
         treeshake: {
             moduleSideEffects: ["intersection-observer"]
