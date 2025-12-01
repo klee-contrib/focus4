@@ -33,14 +33,10 @@ jobs:
 
       - name: test
         run: npm run test-ci
-
-      - name: publish test results
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          name: Tests
-          path: test-report.xml
-          reporter: jest-junit
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   docs:
     runs-on: ubuntu-latest

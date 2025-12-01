@@ -1,54 +1,54 @@
 {
-  "name": "focus4-packages",
-  "version": "12.0.0",
-  "description": "Focus v4 (Typescript + MobX)",
-  "main": "",
-  "type": "module",
-  "workspaces": [
-    "packages/tooling",
-    "packages/core",
-    "packages/styling",
-    "packages/toolbox",
-    "packages/entities",
-    "packages/stores",
-    "packages/forms",
-    "packages/form-toolbox",
-    "packages/layout",
-    "packages/collections",
-    "packages/focus4",
-    "packages/docs"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/klee-contrib/focus4.git"
-  },
-  "author": "damien.frikha@kleegroup.com",
-  "license": "MIT",
-  "homepage": "https://github.com/klee-contrib/focus4",
-  "scripts": {
-    "build": "npm run build --workspaces --if-present",
-    "clean": "node scripts/clean.js",
-    "docgen": "node scripts/docgen.mjs",
-    "docs": "storybook dev --docs -p 6006 -c packages/docs/.storybook",
-    "docs-build": "storybook build --docs -c packages/docs/.storybook -o docs",
-    "oxlint": "oxlint packages",
-    "publish": "lerna publish --exact",
-    "test": "vitest run",
-    "test-ci": "vitest run --reporter=default --reporter=junit --outputFile=test-report.xml"
-  },
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "16.0.3",
-    "@rollup/plugin-typescript": "12.3.0",
-    "css-tree": "3.1.0",
-    "lerna": "9.0.3",
-    "postcss": "8.5.6",
-    "react-docgen-typescript": "2.4.0",
-    "rollup": "4.53.3",
-    "rollup-plugin-copy": "3.5.0",
-    "rollup-plugin-postcss": "4.0.2",
-    "rollup-plugin-preserve-shebang": "1.0.1",
-    "tslib": "2.8.1",
-    "typescript": "5.9.3",
-    "vitest": "4.0.14"
-  }
+    "name": "focus4-packages",
+    "version": "12.0.0",
+    "description": "Focus v4 (Typescript + MobX)",
+    "main": "",
+    "type": "module",
+    "workspaces": [
+        "packages/tooling",
+        "packages/core",
+        "packages/styling",
+        "packages/toolbox",
+        "packages/entities",
+        "packages/stores",
+        "packages/forms",
+        "packages/form-toolbox",
+        "packages/layout",
+        "packages/collections",
+        "packages/focus4",
+        "packages/docs"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/klee-contrib/focus4.git"
+    },
+    "author": "damien.frikha@kleegroup.com",
+    "license": "MIT",
+    "homepage": "https://github.com/klee-contrib/focus4",
+    "scripts": {
+        "build": "npm run build --workspaces --if-present",
+        "clean": "node scripts/clean.js",
+        "docgen": "node scripts/docgen.mjs",
+        "docs": "storybook dev --docs -p 6006 -c packages/docs/.storybook",
+        "docs-build": "storybook build --docs -c packages/docs/.storybook -o docs",
+        "oxlint": "oxlint packages",
+        "publish": "lerna publish --exact",
+        "test": "vitest run",
+        "test-ci": "vitest run --coverage"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "16.0.3",
+        "@rollup/plugin-typescript": "12.3.0",
+        "css-tree": "3.1.0",
+        "lerna": "9.0.3",
+        "postcss": "8.5.6",
+        "react-docgen-typescript": "2.4.0",
+        "rollup": "4.53.3",
+        "rollup-plugin-copy": "3.5.0",
+        "rollup-plugin-postcss": "4.0.2",
+        "rollup-plugin-preserve-shebang": "1.0.1",
+        "tslib": "2.8.1",
+        "typescript": "5.9.3",
+        "vitest": "4.0.14"
+    }
 }
