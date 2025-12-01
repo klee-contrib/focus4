@@ -3,7 +3,12 @@ import {mergeConfig} from "vite";
 
 export default {
     stories: ["../**/*.@(stories.tsx|mdx)"],
-    addons: ["@storybook/addon-docs", "@vueless/storybook-dark-mode", "storybook-react-i18next"],
+    addons: [
+        "@storybook/addon-docs",
+        "@vueless/storybook-dark-mode",
+        "storybook-react-i18next",
+        "@storybook/addon-vitest"
+    ],
     staticDirs: ["./public"],
 
     framework: {

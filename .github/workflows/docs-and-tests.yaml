@@ -25,14 +25,21 @@ jobs:
       - name: install
         run: npm ci
 
+      - name: install
+        run: npx playwright install chromium --with-deps
+
       - name: build
         run: npm run build
 
       - name: oxlint
         run: npm run oxlint
 
+      - name: docgen
+        run: npm run docgen
+
       - name: test
         run: npm run test-ci
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
