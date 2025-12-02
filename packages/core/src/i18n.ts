@@ -59,7 +59,7 @@ export function baseI18nextConfig(
             format: (value, format, lng) => {
                 switch (format) {
                     case "boolean":
-                        return i18next.t(`focus.bool.${value}`);
+                        return value !== undefined ? i18next.t(`focus.bool.${value}`) : "";
                     case "date":
                         return value ? DateTime.fromISO(value).setLocale(lng!).toLocaleString(DateTime.DATE_SHORT) : "";
                     case "datetime":
