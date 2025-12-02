@@ -1,18 +1,20 @@
 import type {StorybookConfig} from "@storybook/react-vite";
+import {dirname} from "node:path";
+import {fileURLToPath} from "node:url";
 import {mergeConfig} from "vite";
 
 export default {
     stories: ["../**/*.@(stories.tsx|mdx)"],
     addons: [
-        "@storybook/addon-docs",
-        "@vueless/storybook-dark-mode",
-        "storybook-react-i18next",
-        "@storybook/addon-vitest"
+        getAbsolutePath("@storybook/addon-docs"),
+        getAbsolutePath("@vueless/storybook-dark-mode"),
+        getAbsolutePath("storybook-react-i18next"),
+        getAbsolutePath("@storybook/addon-vitest")
     ],
     staticDirs: ["./public"],
 
     framework: {
-        name: "@storybook/react-vite",
+        name: getAbsolutePath("@storybook/react-vite"),
         options: {}
     },
 
@@ -22,3 +24,7 @@ export default {
 
     viteFinal: config => mergeConfig(config, {esbuild: {minifyIdentifiers: false}})
 } satisfies StorybookConfig;
+
+function getAbsolutePath(value: string): any {
+    return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
+}

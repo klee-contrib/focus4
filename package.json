@@ -39,7 +39,7 @@
     "devDependencies": {
         "@rollup/plugin-node-resolve": "16.0.3",
         "@rollup/plugin-typescript": "12.3.0",
-        "@vitest/coverage-v8": "^4.0.14",
+        "@vitest/coverage-v8": "4.0.14",
         "css-tree": "3.1.0",
         "lerna": "9.0.3",
         "postcss": "8.5.6",
@@ -53,3 +53,4 @@
         "vitest": "4.0.14"
     }
 }
+
