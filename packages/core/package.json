@@ -24,5 +24,9 @@
     "peerDependencies": {
         "i18next": ">= 25 < 26",
         "mobx": ">= 6.13 < 7"
+    },
+    "devDependencies": {
+        "jsdom": "27.2.0"
     }
 }
+
