@@ -1,0 +1,50 @@
+codecov:
+    branch: master
+comment:
+    layout: "header, diff, flags, components"
+component_management:
+    individual_components:
+        - component_id: collections
+          name: Collections
+          paths:
+              - packages/collections/**
+        - component_id: core
+          name: Core
+          paths:
+              - packages/core/**
+        - component_id: docs
+          name: Docs
+          paths:
+              - packages/docs/**
+        - component_id: entities
+          name: Entities
+          paths:
+              - packages/entities/**
+        - component_id: form-toolbox
+          name: Form toolbox
+          paths:
+              - packages/form-toolbox/**
+        - component_id: forms
+          name: Forms
+          paths:
+              - packages/forms/**
+        - component_id: layout
+          name: Layout
+          paths:
+              - packages/layout/**
+        - component_id: stores
+          name: Stores
+          paths:
+              - packages/stores/**
+        - component_id: styling
+          name: Styling
+          paths:
+              - packages/styling/**
+        - component_id: toolbox
+          name: Toolbox
+          paths:
+              - packages/toolbox/**
+        - component_id: tooling
+          name: Tooling
+          paths:
+              - packages/tooling/**
