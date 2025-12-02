@@ -1,5 +1,4 @@
 [![.github/workflows/tests.yaml](https://github.com/klee-contrib/focus4/actions/workflows/tests.yaml/badge.svg)](https://github.com/klee-contrib/focus4/actions/workflows/tests.yaml)
-[![npm version](https://badge.fury.io/js/@focus4%2Fcore.svg)](https://badge.fury.io/js/@focus4%2Fcore)
 [![codecov](https://codecov.io/github/klee-contrib/focus4/graph/badge.svg?token=1osfXl9XNw)](https://codecov.io/github/klee-contrib/focus4)
 
 La documentation complète est disponible [ici](https://klee-contrib.github.io/focus4).
@@ -45,33 +44,85 @@ L'usage de toutes ces fonctionnalités est toujours **optionnel**. Vous ferez to
 
 ## Les différents modules
 
-`Focus` est divisé en **7 (+2) modules** NPM, que l'on peut regrouper dans les catégories suivantes :
+`Focus` est divisé en **9 (+2) modules** NPM, que l'on peut regrouper dans les catégories suivantes :
 
 ### Modules de base
 
 Ces modules contiennent les éléments de base d'une application Focus, et servent de fondations aux modules plus avancés.
 
-- **`@focus4/core`** : fonctionnalités de base, utilisées dans les autres modules.
-- **`@focus4/styling`** : système de CSS utilisé par les composants de Focus.
-- **`@focus4/toolbox`** : composants de base implémentant [Material Design 3](https://m3.material.io/components), utilisé par les autres composants plus avancés.
+#### `@focus4/core`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fcore.svg)](https://badge.fury.io/js/@focus4%2Fcore)
+
+Module contenant les fonctionnalités de base de Focus :
+
+- Gestion des requêtes
+- Gestion des traductions
+- Router
+
+#### `@focus4/styling`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fstyling.svg)](https://badge.fury.io/js/@focus4%2Fstyling)
+
+Module contenant le système de CSS utilisé par les composants de Focus.
+
+#### `@focus4/toolbox`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Ftoolbox.svg)](https://badge.fury.io/js/@focus4%2Ftoolbox)
+
+Module contenant des composants de base implémentant [Material Design 3](https://m3.material.io/components).
+
+Il est utilisé par d'autres composants plus avancés dans les autres modules.
 
 ### Modules de formulaires
 
 Ces quatre modules permettent de construire des formulaires, et représentent donc le cœur d'une application Focus. C'est avec ces quatre modules-là que vous passerez le plus de temps.
 
-- **`@focus4/entities`** : définition d'entités métier
-- **`@focus4/stores`** : gestion des stores de formulaires, collections et de référence.
-- **`@focus4/forms`** : champs de formulaires.
-- **`@focus4/form-toolbox`** : composants de formulaires par défaut, basés sur le module `toolbox`.
+#### `@focus4/entities`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fentities.svg)](https://badge.fury.io/js/@focus4%2Fentities)
+
+Module contenant les utilitaires pour définir des entités métier. Ne contient pas de dépendances au reste de Focus
+
+#### `@focus4/stores`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fstores.svg)](https://badge.fury.io/js/@focus4%2Fstores)
+
+Module contenant la gestion des stores de formulaires, de collections et de référence.
+
+#### `@focus4/forms`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fforms.svg)](https://badge.fury.io/js/@focus4%2Fforms)
+
+Module contenant les composants et utilitaires de base pour créer des forumlaires React, basées sur les stores du module `store`.
+
+#### `@focus4/form-toolbox`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fform-toolbox.svg)](https://badge.fury.io/js/@focus4%2Fform-toolbox)
+
+Module contenant les composants de formulaires par défaut, basés sur le module `toolbox`.
 
 ### Modules de présentation
 
 Ces deux modules proposent des composants graphiques de haut niveau qui permettent de structurer la mise en page d'une application Focus, ainsi que l'affichage des listes et de la recherche avancée.
 
-- **`@focus4/layout`**: composants de mise en page.
-- **`@focus4/collections`** : composants de listes et de recherche avancée.
+#### `@focus4/layout`
 
-### `@focus4/tooling`
+[![npm version](https://badge.fury.io/js/@focus4%2Flayout.svg)](https://badge.fury.io/js/@focus4%2Flayout)
+
+Module contenant les composants de mise en page.
+
+#### `@focus4/collections`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Fcollections.svg)](https://badge.fury.io/js/@focus4%2Fcollections)
+
+Module contenant les composants de listes et de recherche avancée, potentiellement basés sur les stores du module `store`.
+
+### Modules complémentaires
+
+#### `@focus4/tooling`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Ftooling.svg)](https://badge.fury.io/js/@focus4%2Ftooling)
 
 Le module `@focus4/tooling` est lui aussi un méta-package qui contient l'ensemble des outils nécessaires pour packager une application Focus.
 En particulier, il inclut [Vite](https://vitejs.dev) et [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) et des configs par défaut à étendre pour ces outils.
@@ -79,6 +130,12 @@ En particulier, il inclut [Vite](https://vitejs.dev) et [Oxlint](https://oxc.rs/
 De plus, il contient l'outil de génération de types CSS ainsi qu'un utilitaire pour faciliter l'installation et les montées de versions des modules de Focus.
 Cet outil s'utilise via la commande `npx focus4 install` ou `npx focus4 update` (les deux commandes sont identiques), et parcourera votre
 `package.json` pour récupérer la version la plus récente de chaque module Focus et de ses peer dependencies (React et MobX).
+
+#### `@focus4/legacy`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Flegacy.svg)](https://badge.fury.io/js/@focus4%2Flegacy)
+
+Ce module contient des utilitaires pour continuer à utiliser des composants classes avec Focus v12+.
 
 ## Starter Kit
 

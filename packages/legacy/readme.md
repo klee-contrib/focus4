@@ -1,4 +1,6 @@
-# Module `legacy`
+# `@focus4/legacy`
+
+[![npm version](https://badge.fury.io/js/@focus4%2Flegacy.svg)](https://badge.fury.io/js/@focus4%2Flegacy)
 
 Le module `legacy` contient les anciens utilitaires pour utiliser Focus avec des composants classe de React, comme c'était encore possible avec les versions < 12 :
 
