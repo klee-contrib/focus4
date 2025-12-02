@@ -3,7 +3,10 @@ import {defineConfig} from "vitest/config";
 
 export default defineConfig({
     test: {
-        environment: "jsdom",
+        reporters: ["junit"],
+        outputFile: {
+            junit: "test-report.junit.xml"
+        },
         coverage: {
             reporter: ["text", "lcov"]
         },

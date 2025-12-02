@@ -7,3 +7,4 @@ metas
 lerna-debug.log
 test-report.xml
 coverage
+test-report.junit.xml
