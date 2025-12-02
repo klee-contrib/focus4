@@ -3,20 +3,18 @@ import {z} from "zod";
 
 import {e, entity, stringToSchemaOutput} from "../focus4.entities";
 
-// Domain objects for testing - using 'as any' to satisfy the extended Domain interface
-// that may be defined in other modules, while we only need the schema property here
 const LIBELLE = {
     schema: z.string()
-};
+} as Domain;
 const CODE = {
     schema: z.string().max(3).min(3)
-};
+} as Domain;
 const NUMBER = {
     schema: z.number()
-};
+} as Domain;
 const BOOLEAN = {
     schema: z.boolean()
-};
+} as Domain;
 
 describe("entity", () => {
     test("devrait auto-assigner le nom des champs field à partir de la clé de l'objet", () => {
@@ -389,7 +387,7 @@ describe("Entités complexes", () => {
 
         expect(topEntity.topField.type).toBe("field");
         expect(topEntity.middle.type).toBe("object");
-        expect((topEntity.middle as any).entity.middleField.type).toBe("field");
-        expect((topEntity.middle as any).entity.deep.type).toBe("object");
+        expect(topEntity.middle.entity.middleField.type).toBe("field");
+        expect(topEntity.middle.entity.deep.type).toBe("object");
     });
 });
