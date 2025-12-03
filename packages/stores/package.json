@@ -1,6 +1,6 @@
 {
     "name": "@focus4/stores",
-    "version": "12.6.5",
+    "version": "12.7.0",
     "description": "Focus v4, stores module",
     "main": "lib/focus4.stores.js",
     "type": "module",
@@ -15,8 +15,8 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/core": "12.6.5",
-        "@focus4/entities": "12.6.5",
+        "@focus4/core": "12.7.0",
+        "@focus4/entities": "12.7.0",
         "@types/luxon": "~3.7.1",
         "es-toolkit": "~1.42.0",
         "luxon": "~3.7.2",
