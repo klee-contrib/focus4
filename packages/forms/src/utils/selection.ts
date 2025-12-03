@@ -19,16 +19,16 @@ export function setInputSelection(el: HTMLInputElement | HTMLTextAreaElement, se
 
     pendingAnimationFrame = true;
 
-    window.requestAnimationFrame(() => {
+    globalThis.requestAnimationFrame(() => {
         try {
-            if (el.selectionStart !== undefined) {
-                el.setSelectionRange(selection.start, selection.end);
-            } else {
+            if (el.selectionStart === undefined) {
                 const rangeEl = (el as any).createTextRange();
                 rangeEl.collapse(true);
                 rangeEl.moveStart("character", selection.start);
                 rangeEl.moveEnd("character", selection.end - selection.start);
                 rangeEl.select();
+            } else {
+                el.setSelectionRange(selection.start, selection.end);
             }
         } catch {
             /* Not focused or not visible */
