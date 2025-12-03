@@ -22,12 +22,12 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.6.5",
-        "@storybook/addon-docs": "10.1.2",
-        "@storybook/react-vite": "10.1.2",
-        "@storybook/addon-vitest": "10.1.2",
+        "@storybook/addon-docs": "10.1.4",
+        "@storybook/react-vite": "10.1.4",
+        "@storybook/addon-vitest": "10.1.4",
+        "@vitest/browser-playwright": "4.0.15",
         "@vueless/storybook-dark-mode": "10.0.4",
-        "storybook": "10.1.2",
+        "storybook": "10.1.4",
         "storybook-react-i18next": "10.0.1"
     }
 }
-

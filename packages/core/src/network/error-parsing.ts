@@ -1,3 +1,5 @@
+import {HTTPError} from "ky";
+
 import {messageStore} from "../stores/message";
 
 /**
@@ -60,11 +62,20 @@ export interface ProblemDetails {
 }
 
 /**
- * ProblemDetails traité par Focus, avec les messages qui ont été ajoutés dans le MessageStore.
+ * HTTPError de `ky`, avec les ProblemDetails traités par Focus et les messages qui ont été ajoutés dans le MessageStore.
  */
-export interface HandledProblemDetails extends ProblemDetails {
+export class HTTPDetailedError extends HTTPError {
+    /** Détails de l'erreur. */
+    details: ProblemDetails;
     /** Messages enregistrés dans le MessageStore, dans l'ordre. */
     $messages: {type: string; message: string}[];
+
+    constructor(error: HTTPError, details: ProblemDetails, $messages: {type: string; message: string}[]) {
+        super(error.response, error.request, error.options);
+        this.message = error.message;
+        this.details = details;
+        this.$messages = $messages;
+    }
 }
 
 export function createProblemDetails(status: number, jsonResponse: object): ProblemDetails {
@@ -75,7 +86,7 @@ export function createProblemDetails(status: number, jsonResponse: object): Prob
     };
 }
 
-export function handleProblemDetails(problemDetails: ProblemDetails): HandledProblemDetails {
+export function handleProblemDetails(error: HTTPError, problemDetails: ProblemDetails): HTTPDetailedError {
     const messages: Record<string, string[]> = {};
 
     function add(type: string, ...newMessages: string[]) {
@@ -132,15 +143,7 @@ export function handleProblemDetails(problemDetails: ProblemDetails): HandledPro
         $messages.push({type: "error", message: problemDetails.title});
     }
 
-    return {...problemDetails, $messages};
-}
-
-/**
- * Vérifie si l'erreur retournée par un appel a bien été traitée et est donc bien au format attendu.
- * @param error L'erreur.
- */
-export function isHandledError(error: unknown): error is HandledProblemDetails {
-    return typeof error === "object" && !!error && "$messages" in error;
+    return new HTTPDetailedError(error, problemDetails, $messages);
 }
 
 /**

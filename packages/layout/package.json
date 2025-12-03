@@ -22,7 +22,7 @@
         "es-toolkit": "~1.42.0",
         "focus-trap-react": "~11.0.4",
         "luxon": "~3.7.2",
-        "motion": "~12.23.24",
+        "motion": "~12.23.25",
         "react-transition-state": "~2.3.1",
         "tabbable": "~6.3.0",
         "tslib": "~2.8.1"
