@@ -1,7 +1,8 @@
 import {describe, expect, test} from "vitest";
 import {z} from "zod";
 
-import {e, entity, stringToSchemaOutput} from "@focus4/entities";
+import {e, entity} from "../builders";
+import {stringToSchemaOutput} from "../utils";
 
 const LIBELLE = {
     schema: z.string()

@@ -1,8 +1,8 @@
 import {runInAction} from "mobx";
-import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
+import {describe, expect, test, vi} from "vitest";
 
 import {CollectionStore} from "../index";
-import {LocalStoreConfig, QueryInput, QueryOutput, SearchService} from "../types";
+import {LocalStoreConfig, QueryInput, SearchService} from "../types";
 
 // Type de test pour les items
 interface TestItem {
