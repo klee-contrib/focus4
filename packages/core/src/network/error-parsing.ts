@@ -81,7 +81,7 @@ export class HTTPDetailedError extends HTTPError {
 export function createProblemDetails(status: number, jsonResponse: object): ProblemDetails {
     return {
         ...jsonResponse,
-        type: "about:blank",
+        type: (jsonResponse as any).type ?? "about:blank",
         status
     };
 }
