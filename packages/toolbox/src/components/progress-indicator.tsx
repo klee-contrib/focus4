@@ -3,7 +3,7 @@ import {useEffect, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {PointerEvents} from "../focus4.toolbox";
+import {PointerEvents} from "../utils/pointer-events";
 
 import progressIndicatorCss, {ProgressIndicatorCss} from "./__style__/progress-indicator.css";
 
