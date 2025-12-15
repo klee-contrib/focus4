@@ -7,7 +7,9 @@ import {useInput} from "../input";
 describe("useInput", () => {
     describe("string schema", () => {
         test("retourne la valeur string", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.string(),
@@ -20,7 +22,9 @@ describe("useInput", () => {
         });
 
         test("retourne chaîne vide si valeur undefined", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.string(),
@@ -58,7 +62,9 @@ describe("useInput", () => {
 
     describe("number schema", () => {
         test("formate un nombre", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.number(),
@@ -72,7 +78,9 @@ describe("useInput", () => {
         });
 
         test("retourne chaîne vide si valeur undefined", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.number(),
@@ -108,7 +116,9 @@ describe("useInput", () => {
         });
 
         test("gère les séparateurs de milliers", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.number(),
@@ -122,7 +132,9 @@ describe("useInput", () => {
         });
 
         test("gère maxDecimals", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.number(),
@@ -162,7 +174,9 @@ describe("useInput", () => {
 
     describe("avec masque", () => {
         test("utilise le masque pour string", () => {
-            const onChange = () => {};
+            const onChange = () => {
+                /** */
+            };
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.string(),

@@ -8,7 +8,9 @@ describe("useMask", () => {
         const {result} = renderHook(() =>
             useMask({
                 value: "test",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -20,7 +22,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "111",
                 value: "123",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -32,7 +36,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "111",
                 value: "1",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -44,7 +50,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "(111)",
                 value: "123",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -57,7 +65,9 @@ describe("useMask", () => {
                 pattern: "111",
                 value: "12",
                 isRevealingMask: true,
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -69,7 +79,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "AAA",
                 value: "abc",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -81,7 +93,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "###",
                 value: "a1b",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -93,7 +107,9 @@ describe("useMask", () => {
             useMask({
                 pattern: "\\111",
                 value: "123",
-                onChange: () => {}
+                onChange: () => {
+                    /** */
+                }
             })
         );
 
@@ -106,7 +122,9 @@ describe("useMask", () => {
                 useMask({
                     pattern: "111",
                     placeholderChar: "ab",
-                    onChange: () => {}
+                    onChange: () => {
+                        /** */
+                    }
                 })
             );
         }).toThrow();
@@ -117,7 +135,9 @@ describe("useMask", () => {
             renderHook(() =>
                 useMask({
                     pattern: "---",
-                    onChange: () => {}
+                    onChange: () => {
+                        /** */
+                    }
                 })
             );
         }).toThrow();

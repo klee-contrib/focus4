@@ -1,5 +1,11 @@
 {
-    "plugins": ["eslint", "jsx-a11y", "oxc", "react", "unicorn"],
+    "plugins": [
+        "eslint",
+        "jsx-a11y",
+        "oxc",
+        "react",
+        "unicorn"
+    ],
     "categories": {
         "correctness": "warn",
         "pedantic": "warn",
@@ -19,9 +25,20 @@
         "eslint/max-nested-callbacks": "off",
         "eslint/max-params": "off",
         "eslint/no-bitwise": "off",
-        "eslint/no-console": ["warn", {"allow": ["info", "warn", "error"]}],
+        "eslint/no-console": [
+            "warn",
+            {
+                "allow": [
+                    "info",
+                    "warn",
+                    "error"
+                ]
+            }
+        ],
         "eslint/no-continue": "off",
         "eslint/no-else-return": "off",
+        "eslint/no-loop-func": "off",
+        "eslint/no-implicit-coercion": "off",
         "eslint/no-inner-declarations": "off",
         "eslint/no-magic-numbers": "off",
         "eslint/no-negated-condition": "off",
@@ -29,36 +46,57 @@
         "eslint/no-param-reassign": "off",
         "eslint/no-plusplus": "off",
         "eslint/no-prototype-builtins": "off",
+        "eslint/no-useless-return": "off",
         "eslint/no-ternary": "off",
         "eslint/no-undefined": "off",
         "eslint/no-unexpected-multiline": "off",
         "eslint/prefer-destructuring": [
             "warn",
             {
-                "VariableDeclarator": {"array": false, "object": true},
-                "AssignmentExpression": {"array": false, "object": false}
+                "VariableDeclarator": {
+                    "array": false,
+                    "object": true
+                },
+                "AssignmentExpression": {
+                    "array": false,
+                    "object": false
+                }
             }
         ],
         "eslint/radix": "off",
         "eslint/require-await": "off",
-        "eslint/sort-imports": ["warn", {"ignoreDeclarationSort": true, "ignoreCase": true}],
+        "eslint/sort-imports": [
+            "warn",
+            {
+                "ignoreDeclarationSort": true,
+                "ignoreCase": true
+            }
+        ],
         "eslint/sort-keys": "off",
         "eslint/yoda": "off",
         "jsx_a11y/aria-activedescendant-has-tabindex": "off",
         "oxc/no-async-await": "off",
         "oxc/no-optional-chaining": "off",
         "oxc/no-rest-spread-properties": "off",
+        "oxc/no-this-in-exported-function": "off",
         "react/exhaustive-deps": "off",
         "react/only-export-components": "off",
         "react/jsx-filename-extension": "off",
         "react/jsx-handler-names": "off",
         "react/jsx-no-target-blank": "off",
+        "react/jsx-props-no-spreading": "off",
         "react/no-unescaped-entities": "off",
         "react/react-in-jsx-scope": "off",
         "react/rules-of-hooks": "off",
         "unicorn/consistent-function-scoping": "off",
         "unicorn/explicit-length-check": "off",
-        "unicorn/filename-case": ["warn", {"case": "kebabCase", "ignore": ".stories.tsx"}],
+        "unicorn/filename-case": [
+            "warn",
+            {
+                "case": "kebabCase",
+                "ignore": ".stories.tsx"
+            }
+        ],
         "unicorn/no-array-callback-reference": "off",
         "unicorn/no-array-method-this-argument": "off",
         "unicorn/no-array-reduce": "off",
@@ -73,6 +111,9 @@
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/prefer-native-coercion-functions": "off",
         "unicorn/prefer-top-level-await": "off",
-        "unicorn/switch-case-braces": ["warn", "avoid"]
+        "unicorn/switch-case-braces": [
+            "warn",
+            "avoid"
+        ]
     }
 }

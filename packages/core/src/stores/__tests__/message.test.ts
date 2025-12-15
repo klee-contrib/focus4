@@ -24,7 +24,9 @@ describe("MessageStore", () => {
                 label: "Message avec action",
                 action: {
                     label: "Action",
-                    onClick: () => {}
+                    onClick: () => {
+                        /** */
+                    }
                 }
             };
             store.addMessage("success", messageObj);
@@ -57,7 +59,9 @@ describe("MessageStore", () => {
                 label: "Avertissement",
                 action: {
                     label: "OK",
-                    onClick: () => {}
+                    onClick: () => {
+                        /** */
+                    }
                 }
             };
             store.addWarningMessage(messageObj);

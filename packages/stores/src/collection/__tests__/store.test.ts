@@ -245,7 +245,7 @@ describe("CollectionStore", () => {
                 {id: 3, name: "Item 3", category: "B", status: "active"}
             ];
 
-            const facets = store.facets;
+            const {facets} = store;
             expect(facets).toHaveLength(1);
             expect(facets[0].code).toBe("category");
             expect(facets[0].values).toHaveLength(2);
@@ -582,7 +582,7 @@ describe("CollectionStore", () => {
             ];
             store.groupingKey = "category";
 
-            const groups = store.groups;
+            const {groups} = store;
             expect(groups).toHaveLength(2);
             expect(groups.find(g => g.code === "A")?.totalCount).toBe(2);
             expect(groups.find(g => g.code === "B")?.totalCount).toBe(1);
@@ -646,7 +646,7 @@ describe("CollectionStore", () => {
                 {id: 3, category: "B"}
             ];
 
-            const facets = store.facets;
+            const {facets} = store;
             const nullFacet = facets[0].values.find(v => v.code === "<null>");
             expect(nullFacet).toBeDefined();
             expect(nullFacet?.count).toBe(1);
@@ -669,7 +669,7 @@ describe("CollectionStore", () => {
                 {id: 2, name: "Item 2", category: "B", status: "inactive", tags: ["tag1"]}
             ];
 
-            const facets = store.facets;
+            const {facets} = store;
             expect(facets[0].values.find(v => v.code === "tag1")?.count).toBe(2);
             expect(facets[0].values.find(v => v.code === "tag2")?.count).toBe(1);
         });

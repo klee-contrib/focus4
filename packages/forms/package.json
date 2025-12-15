@@ -19,7 +19,7 @@
         "@focus4/stores": "12.7.0",
         "@focus4/styling": "12.7.0",
         "classnames": "~2.5.1",
-        "es-toolkit": "~1.42.0",
+        "es-toolkit": "~1.43.0",
         "intl-number-parser": "~1.0.6",
         "tslib": "~2.8.1"
     },
@@ -32,7 +32,7 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.7.0",
-        "@testing-library/react": "16.3.0",
-        "jsdom": "27.2.0"
+        "@testing-library/react": "16.3.1",
+        "jsdom": "27.3.0"
     }
 }

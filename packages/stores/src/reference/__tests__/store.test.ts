@@ -47,7 +47,9 @@ describe("makeReferenceStore", () => {
         expect(Array.isArray(statusList)).toBe(true);
 
         // Attendre que les données soient chargées
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => {
+            setTimeout(resolve, 10);
+        });
 
         expect(statusList.length).toBe(2);
         expect(statusList).toContainEqual({code: "A", label: "Alpha"});

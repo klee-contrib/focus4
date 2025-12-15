@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/entities": "12.7.0",
         "@focus4/stores": "12.7.0",
-        "es-toolkit": "~1.42.0"
+        "es-toolkit": "~1.43.0"
     },
     "peerDependencies": {
         "mobx": ">= 6.13 < 7",

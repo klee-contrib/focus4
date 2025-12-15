@@ -14,18 +14,24 @@ import {
  * Crée un HTTPError réel pour les tests sans mocks.
  */
 function createHTTPError(status: number, url: string = "https://example.com/api"): HTTPError {
-    const response = new Response(JSON.stringify({error: "test"}), {
-        status,
-        statusText: "Error",
-        headers: {"Content-Type": "application/json"}
-    });
+    const response = Response.json(
+        {error: "test"},
+        {
+            status,
+            statusText: "Error"
+        }
+    );
     const request = new Request(url);
     const options: NormalizedOptions = {
         method: "GET",
         retry: {},
         prefixUrl: "",
-        onDownloadProgress: () => {},
-        onUploadProgress: () => {},
+        onDownloadProgress: () => {
+            /** */
+        },
+        onUploadProgress: () => {
+            /** */
+        },
         context: {}
     };
 
