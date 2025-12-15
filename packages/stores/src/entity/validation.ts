@@ -44,7 +44,14 @@ export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodTy
         const errors = validate(value, schema, Array.isArray(validator) ? validator : validator ? [validator] : []);
         if (errors.length) {
             return errors
-                .map(e => i18next.t(e, {...entityField.$field, interpolation: {skipOnVariables: false}}))
+                .map(e =>
+                    i18next.t(e, {
+                        comment: entityField.$field.comment,
+                        label: entityField.$field.label,
+                        name: entityField.$field.name,
+                        interpolation: {skipOnVariables: false}
+                    })
+                )
                 .join(", ");
         }
     }
@@ -80,7 +87,7 @@ function validate<T>(value: T, domainSchema: z.ZodType, validators: Validator<T>
                 ? (validator.errorMessage ?? "focus.validation.date")
                 : false;
         } else if (isNumberValidator(validator)) {
-            const val = +value;
+            const val = Number(value);
 
             const {min, max, errorMessage, maxDecimals} = validator;
             const isMin = min !== undefined && val < min;
@@ -103,7 +110,7 @@ function isFunctionValidator<T>(validator: Validator<T>): validator is FunctionV
 }
 
 function isRegexValidator(validator: Validator<any>): validator is RegexValidator {
-    return !!(validator as RegexValidator).regex;
+    return Boolean((validator as RegexValidator).regex);
 }
 
 function isStringValidator(validator: Validator<any>): validator is StringValidator {
