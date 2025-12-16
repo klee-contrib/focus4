@@ -1,293 +1,287 @@
-import classNames from "classnames";
-import {useObserver} from "mobx-react";
+import {upperFirst} from "es-toolkit";
+import {action} from "mobx";
 import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 
 import {FieldEntry} from "@focus4/entities";
-import {BaseInputProps, EntityField, FieldComponents, FormEntityField, UndefinedComponent} from "@focus4/stores";
-import {CSSProp, themeable, useTheme} from "@focus4/styling";
+import {
+    BaseInputProps,
+    EntityField,
+    FieldComponents,
+    FormEntityField,
+    themeable,
+    UndefinedComponent
+} from "@focus4/stores";
 
 import {FormContext} from "./form";
 
-import fieldCss, {FieldCss} from "./__style__/field.css";
+declare global {
+    /** Options pour un champ défini à partir de `fieldFor` et consorts. */
+    interface FieldOptions<F extends FieldEntry> {
+        /**
+         * Contrôle l'affichage de l'erreur dans le champ :
+         *
+         * - `"never"` : L'erreur n'est jamais affichée.
+         * - `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
+         * - `"always"` : L'erreur est toujours affichée.
+         *
+         * Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus.
+         *
+         * @default "after-focus"
+         */
+        errorDisplay?: "after-focus" | "always" | "never";
+        /** Affiche le label. */
+        hasLabel?: boolean;
+        /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
+        inputRef?: Ref<any>;
+        /** Handler de modification de la valeur. */
+        onChange?: (value: F["fieldType"]) => void;
+        /** Ne masque pas l'erreur du champ quand il a le focus. */
+        showErrorWhenFocused?: boolean;
+    }
+}
 
-export {fieldCss};
-export type {FieldCss};
-
-/** Options pour un champ défini à partir de `fieldFor` et consorts. */
-export interface FieldOptions<F extends FieldEntry> {
-    /**
-     * Contrôle l'affichage de l'erreur dans le champ :
-     *
-     * - `"never"` : L'erreur n'est jamais affichée.
-     * - `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
-     * - `"always"` : L'erreur est toujours affichée.
-     *
-     * Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus.
-     *
-     * @default "after-focus"
-     */
-    errorDisplay?: "after-focus" | "always" | "never";
-    /** Affiche le label. */
-    hasLabel?: boolean;
-    /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
-    inputRef?: Ref<any>;
-    /** @internal */
+/** Options pour `useField`. */
+export interface UseFieldProps<F extends FieldEntry>
+    extends FieldOptions<F>, Omit<FieldComponents<F["domain"]["schema"]>, "fieldProps"> {
+    /** Le champ. */
+    field: EntityField<F>;
     /** L'input à utiliser. */
     inputType?: "autocomplete" | "input" | "select";
-    /** Surcharge la valeur de la variable CSS `--field-label-width` pour ce champ. */
-    labelWidth?: string;
-    /** Handler de modification de la valeur. */
-    onChange?: (value: F["fieldType"]) => void;
-    /** Ne masque pas l'erreur du champ quand il a le focus. */
-    showErrorWhenFocused?: boolean;
-    /** CSS. */
-    theme?: CSSProp<FieldCss>;
-    /** Surcharge la valeur de la variable CSS `--field-value-width` pour ce champ. */
-    valueWidth?: string;
+    /** Classe CSS à ajouter au label. */
+    labelClassName?: string;
 }
 
 /* Garde en mémoire tous les champs affichés avec le nom du field associé. */
 let nameMap: [string, string][] = [];
 
-/** Composant de champ, gérant des composants de libellé, d'affichage et/ou d'entrée utilisateur. */
-export function Field<F extends FieldEntry>(
-    props: FieldOptions<F> & Omit<FieldComponents<F["domain"]["schema"]>, "fieldProps"> & {field: EntityField<F>}
-) {
-    return useObserver(() => {
-        const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
-        const context = useContext(FormContext);
-        const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
+/** Initialise les composants de libellé et d'affichage/saisie pour un champ. */
+export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
+    const fieldProps = props.field.$field.domain.fieldProps as FieldOptions<F> | undefined;
+    const context = useContext(FormContext);
 
-        const {
-            autocompleteProps = {},
-            displayProps = {},
-            errorDisplay = fieldProps?.errorDisplay ?? context.errorDisplay ?? "after-focus",
-            field,
-            inputRef,
-            hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
-            labelProps = {},
-            labelWidth = fieldProps?.labelWidth,
-            inputProps = {},
-            inputType = "input",
-            onChange,
-            selectProps = {},
-            showErrorWhenFocused = false,
-            valueWidth = fieldProps?.valueWidth
-        } = props;
+    const {
+        autocompleteProps = {},
+        displayProps = {},
+        errorDisplay = fieldProps?.errorDisplay ?? context.errorDisplay ?? "after-focus",
+        field,
+        inputRef,
+        hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
+        labelProps = {},
+        labelClassName,
+        inputProps = {},
+        inputType = "input",
+        selectProps = {},
+        showErrorWhenFocused = false
+    } = props;
 
-        const {t} = useTranslation();
+    const onChange = useCallback(
+        props.onChange ??
+            action(`on${upperFirst(field.$field.name)}Change`, (value: F["fieldType"]) => (field.value = value)),
+        [field, props.onChange]
+    );
 
-        /** Formatter par défaut en consulation. */
-        const defaultFormatter = useCallback(
-            function defaultFormatter(input: any) {
-                if (typeof input === "string") {
-                    return t(input);
-                } else {
-                    return input;
-                }
-            },
-            [t]
-        );
+    const {t} = useTranslation();
 
-        const fieldId = useId();
-
-        /**
-         * Au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
-         * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
-         * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
-         */
-        const id = useMemo(() => {
-            const {name} = field.$field;
-            const count = nameMap.filter(([_, n]) => n === name).length;
-            nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
-            if (count > 0) {
-                return `${name}_${count + 1}`;
+    /** Formatter par défaut en consulation. */
+    const defaultFormatter = useCallback(
+        function defaultFormatter(input: any) {
+            if (typeof input === "string") {
+                return t(input);
+            } else {
+                return input;
             }
+        },
+        [t]
+    );
 
-            return name;
-        }, []);
+    const fieldId = useId();
 
-        /* On enlève le field de la map des fields de la page quand on le démonte. */
-        useLayoutEffect(
-            () => () => {
-                nameMap = nameMap.filter(([fid]) => fieldId !== fid);
-            },
-            []
-        );
+    /**
+     * Au premier rendu, on détermine l'id que l'on va mettre sur le label et l'input.
+     * On se base sur le `name` du champ, et on va regarder si on a pas déjà posé un champ avec le même `name`.
+     * Si oui, on suffixera le `name` par un numéro pour garder un id unique.
+     */
+    const id = useMemo(() => {
+        const {name} = field.$field;
+        const count = nameMap.filter(([_, n]) => n === name).length;
+        nameMap.push([fieldId, name]); // On s'ajoute dans la map ici.
+        if (count > 0) {
+            return `${name}_${count + 1}`;
+        }
 
-        // Détermine si le champ a (eu) le focus ou non.
-        const valueRef = useRef<HTMLDivElement>(null);
-        const [hasFocus, setHasFocus] = useState(false);
-        const [hasHadFocus, setHasHadFocus] = useState(false);
-        useEffect(() => setHasHadFocus(false), [errorDisplay]);
-        useLayoutEffect(() => {
-            function focusin() {
-                setHasFocus(true);
-                setHasHadFocus(true);
-            }
+        return name;
+    }, []);
 
-            function focusout() {
-                setHasFocus(false);
-            }
+    /* On enlève le field de la map des fields de la page quand on le démonte. */
+    useLayoutEffect(
+        () => () => {
+            nameMap = nameMap.filter(([fid]) => fieldId !== fid);
+        },
+        []
+    );
 
-            valueRef.current?.addEventListener("focusin", focusin);
-            valueRef.current?.addEventListener("focusout", focusout);
-            return () => {
-                valueRef.current?.removeEventListener("focusin", focusin);
-                valueRef.current?.removeEventListener("focusout", focusout);
-            };
-        }, []);
+    // Détermine si le champ a (eu) le focus ou non.
+    const valueRef = useRef<HTMLDivElement>(null);
+    const [hasFocus, setHasFocus] = useState(false);
+    const [hasHadFocus, setHasHadFocus] = useState(false);
+    useEffect(() => setHasHadFocus(false), [errorDisplay]);
+    useLayoutEffect(() => {
+        function focusin() {
+            setHasFocus(true);
+            setHasHadFocus(true);
+        }
 
-        // Détermine si on affiche l'erreur du champ ou non.
-        const showError = useMemo(
-            () =>
-                (!hasFocus || showErrorWhenFocused) &&
-                errorDisplay !== "never" &&
-                (errorDisplay === "always" || (errorDisplay === "after-focus" && hasHadFocus)),
-            [errorDisplay, hasFocus, hasHadFocus, showErrorWhenFocused]
-        );
+        function focusout() {
+            setHasFocus(false);
+        }
 
-        const {
-            error,
-            isEdit,
-            value,
-            $field: {
-                comment,
-                label,
-                name,
-                isRequired: required,
-                domain: {
-                    AutocompleteComponent = UndefinedComponent,
-                    autocompleteProps: domainACP = {},
-                    className = "",
-                    DisplayComponent = UndefinedComponent,
-                    displayFormatter = defaultFormatter,
-                    displayProps: domainDCP = {},
-                    LabelComponent = UndefinedComponent,
-                    labelProps: domainLCP = {},
-                    InputComponent = UndefinedComponent,
-                    inputProps: domainICP = {},
-                    SelectComponent = UndefinedComponent,
-                    selectProps: domainSCP = {},
-                    schema
-                }
-            }
-        } = field as FormEntityField<F>;
+        valueRef.current?.addEventListener("focusin", focusin);
+        valueRef.current?.addEventListener("focusout", focusout);
+        return () => {
+            valueRef.current?.removeEventListener("focusin", focusin);
+            valueRef.current?.removeEventListener("focusout", focusout);
+        };
+    }, []);
 
-        useEffect(() => {
-            setHasHadFocus(false);
-        }, [isEdit]);
+    // Détermine si on affiche l'erreur du champ ou non.
+    const showError = useMemo(
+        () =>
+            (!hasFocus || showErrorWhenFocused) &&
+            errorDisplay !== "never" &&
+            (errorDisplay === "always" || (errorDisplay === "after-focus" && hasHadFocus)),
+        [errorDisplay, hasFocus, hasHadFocus, showErrorWhenFocused]
+    );
 
-        const baseProps = {
+    const {
+        error,
+        isEdit,
+        value,
+        $field: {
             comment,
-            error: showError ? error : undefined,
             label,
             name,
-            id,
-            required
-        };
-
-        const iProps: BaseInputProps<F["domain"]["schema"]> & {ref?: Ref<any>} = {
-            ...baseProps,
-            schema,
-            value,
-            onChange:
-                onChange ??
-                (() => {
-                    /** */
-                }),
-            ref: inputRef
-        };
-
-        const style: Record<string, string> = {};
-        if (labelWidth) {
-            style["--field-label-width"] = labelWidth;
+            isRequired: required,
+            domain: {
+                AutocompleteComponent = UndefinedComponent,
+                autocompleteProps: domainACP = {},
+                className = "",
+                DisplayComponent = UndefinedComponent,
+                displayFormatter = defaultFormatter,
+                displayProps: domainDCP = {},
+                LabelComponent = UndefinedComponent,
+                labelProps: domainLCP = {},
+                InputComponent = UndefinedComponent,
+                inputProps: domainICP = {},
+                SelectComponent = UndefinedComponent,
+                selectProps: domainSCP = {},
+                schema
+            }
         }
-        if (valueWidth) {
-            style["--field-value-width"] = valueWidth;
+    } = field as FormEntityField<F>;
+
+    useEffect(() => {
+        setHasHadFocus(false);
+    }, [isEdit]);
+
+    const baseProps = {
+        comment,
+        error: showError ? error : undefined,
+        label,
+        name,
+        id,
+        required
+    };
+
+    const iProps: BaseInputProps<F["domain"]["schema"]> & {ref?: Ref<any>} = {
+        ...baseProps,
+        schema,
+        value,
+        onChange:
+            onChange ??
+            (() => {
+                /** */
+            }),
+        ref: inputRef
+    };
+
+    useEffect(() => {
+        if (hasLabel && LabelComponent === UndefinedComponent) {
+            console.warn(`Le champ '${name}' essaie d'afficher un 'LabelComponent' qui n'a pas été défini.`);
         }
+    }, [hasLabel, LabelComponent, name]);
 
-        useEffect(() => {
-            if (hasLabel && LabelComponent === UndefinedComponent) {
-                console.warn(`Le champ '${name}' essaie d'afficher un 'LabelComponent' qui n'a pas été défini.`);
-            }
-        }, [hasLabel, LabelComponent, name]);
+    useEffect(() => {
+        if (isEdit && inputType === "select" && SelectComponent === UndefinedComponent) {
+            console.warn(`Le champ '${name}' essaie d'afficher un 'SelectComponent' qui n'a pas été défini.`);
+        }
+    }, [inputType, isEdit, SelectComponent, name]);
 
-        useEffect(() => {
-            if (isEdit && inputType === "select" && SelectComponent === UndefinedComponent) {
-                console.warn(`Le champ '${name}' essaie d'afficher un 'SelectComponent' qui n'a pas été défini.`);
-            }
-        }, [inputType, isEdit, SelectComponent, name]);
+    useEffect(() => {
+        if (isEdit && inputType === "input" && InputComponent === UndefinedComponent) {
+            console.warn(`Le champ '${name}' essaie d'afficher un 'InputComponent' qui n'a pas été défini.`);
+        }
+    }, [inputType, isEdit, InputComponent, name]);
 
-        useEffect(() => {
-            if (isEdit && inputType === "input" && InputComponent === UndefinedComponent) {
-                console.warn(`Le champ '${name}' essaie d'afficher un 'InputComponent' qui n'a pas été défini.`);
-            }
-        }, [inputType, isEdit, InputComponent, name]);
+    useEffect(() => {
+        if (isEdit && inputType === "autocomplete" && AutocompleteComponent === UndefinedComponent) {
+            console.warn(`Le champ '${name}' essaie d'afficher un 'AutocompleteComponent' qui n'a pas été défini.`);
+        }
+    }, [inputType, isEdit, AutocompleteComponent, name]);
 
-        useEffect(() => {
-            if (isEdit && inputType === "autocomplete" && AutocompleteComponent === UndefinedComponent) {
-                console.warn(`Le champ '${name}' essaie d'afficher un 'AutocompleteComponent' qui n'a pas été défini.`);
-            }
-        }, [inputType, isEdit, AutocompleteComponent, name]);
+    useEffect(() => {
+        if (!isEdit && DisplayComponent === UndefinedComponent) {
+            console.warn(`Le champ '${name}' essaie d'afficher un 'DisplayComponent' qui n'a pas été défini.`);
+        }
+    }, [isEdit, DisplayComponent, name]);
 
-        useEffect(() => {
-            if (!isEdit && DisplayComponent === UndefinedComponent) {
-                console.warn(`Le champ '${name}' essaie d'afficher un 'DisplayComponent' qui n'a pas été défini.`);
-            }
-        }, [isEdit, DisplayComponent, name]);
-
-        return (
-            <div className={classNames(theme.field(), className)} style={style}>
-                {hasLabel ? (
-                    <LabelComponent
-                        {...domainLCP}
-                        {...labelProps}
-                        {...baseProps}
-                        edit={isEdit}
-                        theme={themeable({label: theme.label()}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
-                    />
-                ) : null}
-                <div ref={valueRef} className={classNames(theme.value(), className)}>
-                    {isEdit ? (
-                        inputType === "select" ? (
-                            <SelectComponent
-                                {...domainSCP}
-                                {...selectProps}
-                                {...iProps}
-                                theme={themeable(domainSCP.theme ?? {}, selectProps.theme ?? {})}
-                            />
-                        ) : inputType === "autocomplete" ? (
-                            <AutocompleteComponent
-                                {...domainACP}
-                                {...autocompleteProps}
-                                {...iProps}
-                                theme={themeable(domainACP.theme ?? {}, autocompleteProps.theme ?? {})}
-                            />
-                        ) : (
-                            <InputComponent
-                                {...domainICP}
-                                {...inputProps}
-                                {...iProps}
-                                theme={themeable(domainICP.theme ?? {}, inputProps.theme ?? {})}
-                            />
-                        )
-                    ) : (
-                        <DisplayComponent
-                            {...domainDCP}
-                            {...displayProps}
-                            {...baseProps}
-                            formatter={displayFormatter}
-                            keyResolver={autocompleteProps.keyResolver}
-                            schema={schema}
-                            theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
-                            value={value}
-                            values={selectProps.values}
-                        />
-                    )}
-                </div>
-            </div>
-        );
-    });
+    return {
+        className,
+        label: hasLabel ? (
+            <LabelComponent
+                {...domainLCP}
+                {...labelProps}
+                {...baseProps}
+                edit={isEdit}
+                theme={themeable({label: labelClassName}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
+            />
+        ) : null,
+        value: isEdit ? (
+            inputType === "select" ? (
+                <SelectComponent
+                    {...domainSCP}
+                    {...selectProps}
+                    {...iProps}
+                    theme={themeable(domainSCP.theme ?? {}, selectProps.theme ?? {})}
+                />
+            ) : inputType === "autocomplete" ? (
+                <AutocompleteComponent
+                    {...domainACP}
+                    {...autocompleteProps}
+                    {...iProps}
+                    theme={themeable(domainACP.theme ?? {}, autocompleteProps.theme ?? {})}
+                />
+            ) : (
+                <InputComponent
+                    {...domainICP}
+                    {...inputProps}
+                    {...iProps}
+                    theme={themeable(domainICP.theme ?? {}, inputProps.theme ?? {})}
+                />
+            )
+        ) : (
+            <DisplayComponent
+                {...domainDCP}
+                {...displayProps}
+                {...baseProps}
+                formatter={displayFormatter}
+                keyResolver={autocompleteProps.keyResolver}
+                schema={schema}
+                theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
+                value={value}
+                values={selectProps.values}
+            />
+        ),
+        valueRef
+    };
 }

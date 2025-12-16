@@ -20,6 +20,7 @@ export {
     makeField,
     NodeLoadBuilder,
     stringFor,
+    themeable,
     toFlatValues,
     UndefinedComponent,
     validateField

@@ -1,14 +1,16 @@
-import {upperFirst} from "es-toolkit";
-import {action} from "mobx";
+import {ComponentType} from "react";
 import {output} from "zod";
 
 import {FieldEntry, SingleZodType} from "@focus4/entities";
 import {AutocompleteComponents, EntityField, InputComponents, ReferenceList, SelectComponents} from "@focus4/stores";
 
-import {Field, FieldOptions} from "./field";
+import {UseFieldProps} from "./field";
 
-function getOnChange<F extends FieldEntry>(field: EntityField<F>) {
-    return action(`on${upperFirst(field.$field.name)}Change`, (value: F["fieldType"]) => (field.value = value));
+let Field: ComponentType<UseFieldProps<any>> = () => null;
+
+/** Enregistre le composant de `Field` pour `fieldFor` et consorts. */
+export function registerFieldComponent(FieldComponent: ComponentType<UseFieldProps<any>>) {
+    Field = FieldComponent;
 }
 
 /** Options pour `autocompleteFor` */
@@ -54,7 +56,6 @@ export function autocompleteFor<F extends FieldEntry>(field: EntityField<F>, opt
     return (
         <Field
             field={field}
-            onChange={getOnChange(field)}
             {...otherOptions}
             autocompleteProps={{...options.autocompleteProps, keyResolver, querySearcher}}
             inputType="autocomplete"
@@ -68,7 +69,7 @@ export function autocompleteFor<F extends FieldEntry>(field: EntityField<F>, opt
  * @param options Les options du champ.
  */
 export function fieldFor<F extends FieldEntry>(field: EntityField<F>, options: FieldForOptions<F> = {}) {
-    return <Field field={field} onChange={getOnChange(field)} {...options} inputType="input" />;
+    return <Field field={field} {...options} inputType="input" />;
 }
 
 /**
@@ -85,7 +86,6 @@ export function selectFor<F extends FieldEntry>(
     return (
         <Field
             field={field}
-            onChange={getOnChange(field)}
             {...options}
             inputType="select"
             selectProps={{

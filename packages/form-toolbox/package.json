@@ -21,6 +21,7 @@
         "@focus4/stores": "12.7.0",
         "@focus4/styling": "12.7.0",
         "@focus4/toolbox": "12.7.0",
+        "classnames": "~2.5.1",
         "es-toolkit": "~1.43.0",
         "file-type": "~21.1.1",
         "luxon": "~3.7.2",

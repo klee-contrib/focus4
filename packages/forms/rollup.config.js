@@ -1,7 +1,5 @@
 // @ts-check
 import typescript from "@rollup/plugin-typescript";
-import copy from "rollup-plugin-copy";
-import postcss from "rollup-plugin-postcss";
 
 import {generateCSSTypings} from "@focus4/tooling";
 
@@ -13,11 +11,7 @@ export default (async () => {
     /** @type {import("rollup").RollupOptions} */
     const config = {
         input: "src/focus4.forms.ts",
-        plugins: [
-            postcss({extract: true, modules: true}),
-            typescript(),
-            copy([{src: "src/fields/**/*.css.d.ts", dest: "lib/fields"}])
-        ],
+        plugins: [typescript()],
         treeshake: {
             moduleSideEffects: false
         },

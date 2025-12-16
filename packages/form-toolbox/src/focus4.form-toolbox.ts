@@ -1,3 +1,10 @@
+import {registerFieldComponent, registerFormComponent} from "@focus4/forms";
+
+import {Field, fieldCss, Form, formCss} from "./field";
+
+registerFieldComponent(Field);
+registerFormComponent(Form);
+
 export {
     AutocompleteChips,
     AutocompleteSearch,
@@ -25,6 +32,7 @@ export {
 } from "./components";
 export {domain} from "./domain";
 export {i18nFormToolbox} from "./translation";
+export {Field, fieldCss, Form, formCss};
 
 export {
     AutocompleteChipsProps,
@@ -50,3 +58,4 @@ export {
     SelectRadioCss,
     SelectRadioProps
 } from "./components";
+export type {FieldCss, FormCss} from "./field";
