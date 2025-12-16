@@ -1,7 +1,7 @@
 // Libs
 import {render} from "@testing-library/react";
-import React from "react";
 import {describe, expect, it} from "vitest";
+import z from "zod";
 
 import {InputDate} from "../input-date";
 
@@ -22,6 +22,7 @@ describe("InputDate component", () => {
                     /* */
                 }}
                 value={undefined}
+                schema={z.iso.date()}
                 {...props}
             />
         );
@@ -41,6 +42,7 @@ describe("Some date formation", () => {
                 }}
                 value="10/11/2016"
                 inputFormat="dd/MM/yy"
+                schema={z.iso.date()}
                 {...props}
             />
         );
@@ -58,6 +60,7 @@ describe("Some date formation", () => {
                 }}
                 value="df/11/2016"
                 inputFormat="dd/MM/yyyy"
+                schema={z.iso.date()}
                 {...props}
             />
         );
@@ -92,6 +95,7 @@ describe("Some date formation", () => {
                 }}
                 value="sddqsdqsdq"
                 inputFormat="dd/MM/yyyy"
+                schema={z.iso.date()}
                 {...props}
             />
         );
