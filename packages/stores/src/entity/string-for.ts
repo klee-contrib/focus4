@@ -4,6 +4,7 @@ import {FieldEntry} from "@focus4/entities";
 
 import {ReferenceList} from "../reference";
 
+import {getDefaultFormatter} from "./field";
 import {EntityField} from "./types";
 
 /**
@@ -18,12 +19,12 @@ export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: R
     const {
         value,
         $field: {
-            domain: {displayFormatter = (t: string) => i18next.t(t)}
+            domain: {schema, displayFormatter = getDefaultFormatter(schema)}
         }
     } = field;
     const found = values.find(val => val[values.$valueKey] === value);
     const processedValue = found?.[values.$labelKey] ?? value;
-    return typeof displayFormatter === "string"
-        ? i18next.t(displayFormatter, {value: processedValue})
-        : displayFormatter(processedValue);
+    return i18next.t(typeof displayFormatter === "string" ? displayFormatter : displayFormatter(processedValue), {
+        value: processedValue
+    });
 }

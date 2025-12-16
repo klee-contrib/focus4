@@ -1,10 +1,9 @@
-import {ZodTypeSingle} from "@focus4/entities";
+import {isStringSchema, ZodTypeSingle} from "@focus4/entities";
 import {useInput, UseInputProps} from "@focus4/forms";
 import {TextField, TextFieldProps} from "@focus4/toolbox";
 
 export interface InputProps<S extends ZodTypeSingle>
-    extends Omit<TextFieldProps, "error" | "label" | "onChange" | "type" | "value">,
-        UseInputProps<S> {
+    extends Omit<TextFieldProps, "error" | "label" | "onChange" | "type" | "value">, UseInputProps<S> {
     /** Erreur à afficher sous le champ. */
     error?: string;
 }
@@ -18,15 +17,16 @@ export interface InputProps<S extends ZodTypeSingle>
  * Il s'agit du [composant par défaut de tous les domaines de type `string` ou `number`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function Input<const S extends ZodTypeSingle>({
+    schema,
     error,
     mask,
     hasThousandsSeparator = false,
-    noNegativeNumbers = false,
-    maxDecimals = 10,
+    maxDecimals,
+    maxLength = isStringSchema(schema) && (schema.maxLength ?? 0) > 0 ? (schema.maxLength ?? 0) : undefined,
+    noNegativeNumbers,
     onChange,
     onKeyDown,
     onPaste,
-    schema,
     showSupportingText = "always",
     supportingText,
     value,
@@ -49,6 +49,7 @@ export function Input<const S extends ZodTypeSingle>({
             {...props}
             error={!!error}
             label={undefined}
+            maxLength={maxLength}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}

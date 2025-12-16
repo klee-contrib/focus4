@@ -3,7 +3,7 @@ import numberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
 import {output} from "zod";
 
-import {ZodTypeSingle} from "@focus4/entities";
+import {isIntSchema, isNumberSchema, ZodTypeSingle} from "@focus4/entities";
 
 import {MaskDefinition, useMask} from "./mask";
 import {getInputSelection, setInputSelection} from "./selection";
@@ -53,14 +53,17 @@ export interface UseInputProps<S extends ZodTypeSingle> {
  * Utilisé par `Input`.
  */
 export function useInput<const S extends ZodTypeSingle>({
-    noNegativeNumbers = false,
+    schema,
     hasThousandsSeparator = false,
-    maxDecimals = 10,
+    noNegativeNumbers = isNumberSchema(schema) &&
+        schema.minValue !== null &&
+        schema.minValue !== undefined &&
+        schema.minValue >= 0,
+    maxDecimals = isIntSchema(schema) ? 0 : 10,
     mask,
     onChange,
     onKeyDown,
     onPaste,
-    schema,
     value
 }: UseInputProps<S>) {
     const numberFormat = useMemo(

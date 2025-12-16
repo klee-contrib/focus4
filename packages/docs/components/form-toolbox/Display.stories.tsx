@@ -9,15 +9,14 @@ import {DisplayMeta} from "./metas/display";
 export default {
     ...DisplayMeta,
     title: "Composants/@focus4∕form-toolbox/Display",
-    tags: ["autodocs"],
-    args: {value: "Valeur"}
+    tags: ["autodocs"]
 } as Meta<typeof Display>;
 
 export const Showcase: StoryObj<typeof Display> = {
     render(props) {
         return (
             <div className="stack">
-                <Display {...props} />
+                <Display {...props} schema={z.string()} value="Valeur" />
                 <Display {...props} schema={z.array(z.string())} value={["Valeur 1", "Valeur 2"]} />
                 <Display
                     {...props}

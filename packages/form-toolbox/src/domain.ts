@@ -1,7 +1,14 @@
-import {merge} from "es-toolkit";
 import z from "zod";
 
-import {ZodTypeMultiple, ZodTypeSingle} from "@focus4/entities";
+import {
+    isArraySchema,
+    isBooleanSchema,
+    isDateSchema,
+    isNumberSchema,
+    isStringSchema,
+    ZodTypeMultiple,
+    ZodTypeSingle
+} from "@focus4/entities";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -50,7 +57,7 @@ type DefaultACProps<S extends z.ZodType> = S extends ZodTypeSingle
     : S extends ZodTypeMultiple
       ? AutocompleteChipsProps<S>
       : {};
-type FCProps = Omit<FieldOptions<any>, "inputType" | "onChange" | "type">;
+type FCProps = Omit<FieldOptions<any>, "onChange">;
 
 /**
  * Crée un domaine avec les composants par défaut du module `form-toolbox`.
@@ -70,88 +77,35 @@ export function domain<
     schema: S = z.unknown() as unknown as S,
     options?: Omit<Partial<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>>, "schema">
 ) {
-    const displayFormatter = isBoolean(schema)
-        ? "focus.boolean"
-        : isDate(schema)
-          ? "focus.date"
-          : isDateTime(schema)
-            ? "focus.datetime"
-            : undefined;
-
-    const inputProps: any = {};
-
-    if (!options?.InputComponent) {
-        if (isString(schema) && (schema.maxLength ?? 0) > 0) {
-            (inputProps as InputProps<typeof schema>).maxLength = schema.maxLength ?? 0;
-        }
-
-        if (isNumber(schema) && schema.minValue !== null && schema.minValue !== undefined && schema.minValue >= 0) {
-            (inputProps as InputProps<typeof schema>).noNegativeNumbers = true;
-        }
-
-        if (isInt(schema)) {
-            (inputProps as InputProps<typeof schema>).maxDecimals = 0;
-        }
-
-        if (isDate(schema)) {
-            (inputProps as InputDateProps).ISOStringFormat = "date-only";
-        }
-    }
-
     return {
         schema,
-        displayFormatter,
         DisplayComponent: Display,
         LabelComponent: Label,
         AutocompleteComponent:
-            isBoolean(schema) || isNumber(schema) || isString(schema)
+            isBooleanSchema(schema) || isNumberSchema(schema) || isStringSchema(schema)
                 ? AutocompleteSearch
-                : isArray(schema) && (isBoolean(schema.element) || isNumber(schema.element) || isString(schema.element))
+                : isArraySchema(schema) &&
+                    (isBooleanSchema(schema.element) ||
+                        isNumberSchema(schema.element) ||
+                        isStringSchema(schema.element))
                   ? AutocompleteChips
                   : UndefinedComponent,
         SelectComponent:
-            isBoolean(schema) || isNumber(schema) || isString(schema)
+            isBooleanSchema(schema) || isNumberSchema(schema) || isStringSchema(schema)
                 ? Select
-                : isArray(schema) && (isBoolean(schema.element) || isNumber(schema.element) || isString(schema.element))
+                : isArraySchema(schema) &&
+                    (isBooleanSchema(schema.element) ||
+                        isNumberSchema(schema.element) ||
+                        isStringSchema(schema.element))
                   ? SelectChips
                   : UndefinedComponent,
-        InputComponent: isBoolean(schema)
+        InputComponent: isBooleanSchema(schema)
             ? BooleanRadio
-            : isDate(schema)
+            : isDateSchema(schema)
               ? InputDate
-              : isString(schema) || isNumber(schema)
+              : isStringSchema(schema) || isNumberSchema(schema)
                 ? Input
                 : UndefinedComponent,
-        ...options,
-        inputProps: merge(inputProps, options?.inputProps ?? {})
+        ...options
     } as Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>;
-}
-
-function isArray(schema: z.ZodType): schema is z.ZodArray<z.ZodType> {
-    return schema.type === "array";
-}
-
-function isBoolean(schema: z.ZodType): schema is z.ZodBoolean {
-    return schema.type === "boolean";
-}
-
-function isDate(schema: z.ZodType): schema is z.ZodISODate {
-    return (schema as z.ZodString).format === "date";
-}
-
-function isDateTime(schema: z.ZodType): schema is z.ZodISODateTime {
-    return (schema as z.ZodString).format === "datetime";
-}
-
-function isInt(schema: z.ZodType): schema is z.ZodInt32 | z.ZodInt {
-    const {format} = schema as z.ZodNumber;
-    return format === "int32" || format === "safeint";
-}
-
-function isNumber(schema: z.ZodType): schema is z.ZodNumber {
-    return schema.type === "number";
-}
-
-function isString(schema: z.ZodType): schema is z.ZodString {
-    return schema.type === "string";
 }

@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import {DateTime} from "luxon";
 import {useState} from "react";
+import z from "zod";
 
 import {InputDate} from "@focus4/form-toolbox";
 
@@ -14,9 +15,7 @@ export default {
 
 export const Showcase: StoryObj<typeof InputDate> = {
     render(props) {
-        const [date, setDate] = useState<string | undefined>(
-            DateTime.utc().startOf("second").toISO({suppressMilliseconds: true})
-        );
-        return <InputDate {...props} onChange={setDate} value={date} />;
+        const [date, setDate] = useState<string | undefined>(DateTime.utc().toISODate());
+        return <InputDate {...props} onChange={setDate} schema={z.iso.date()} value={date} />;
     }
 };

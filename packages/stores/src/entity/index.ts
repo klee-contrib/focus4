@@ -1,4 +1,4 @@
-export {cloneField, fromField, makeField, themeable, UndefinedComponent} from "./field";
+export {cloneField, fromField, getDefaultFormatter, makeField, themeable, UndefinedComponent} from "./field";
 export {FormActions, FormActionsBuilder, FormListNodeBuilder, FormNodeBuilder} from "./form";
 export {buildNode, LoadRegistration, makeEntityStore, NodeLoadBuilder, toFlatValues} from "./store";
 export {stringFor} from "./string-for";

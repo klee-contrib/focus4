@@ -11,9 +11,7 @@ export default {
     title: "Composants/@focus4∕form-toolbox/Input",
     tags: ["autodocs"],
     args: {
-        hasThousandsSeparator: true,
-        maxDecimals: 2,
-        noNegativeNumbers: true
+        hasThousandsSeparator: true
     }
 } as Meta<typeof Input>;
 
@@ -28,10 +26,17 @@ export const Showcase: StoryObj<Partial<typeof Input>> = {
                     hint="1111-1111-1111-1111"
                     mask={{pattern: "1111-1111-1111-1111"}}
                     onChange={setV1}
-                    schema={z.string()}
+                    schema={z.string().max(19)}
                     value={v1}
                 />
-                <Input {...props} onChange={setV2} schema={z.number()} value={v2} supportingText={v2?.toString()} />
+                <Input
+                    {...props}
+                    maxDecimals={2}
+                    onChange={setV2}
+                    schema={z.number().min(0)}
+                    supportingText={v2?.toString()}
+                    value={v2}
+                />
             </div>
         );
     }

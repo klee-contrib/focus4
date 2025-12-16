@@ -1,12 +1,8 @@
 import {chunk} from "es-toolkit";
-import {autorun} from "mobx";
 import {useObserver} from "mobx-react";
-import {useCallback, useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {output, ZodType} from "zod";
+import {ZodType} from "zod";
 
-import {SingleZodType} from "@focus4/entities";
-import {ReferenceList} from "@focus4/stores";
+import {useDisplay, UseDisplayProps} from "@focus4/forms";
 import {CSSProp, useTheme} from "@focus4/styling";
 
 import displayCss, {DisplayCss} from "./__style__/display.css";
@@ -15,11 +11,7 @@ export {displayCss};
 export type {DisplayCss};
 
 /** Props du composant d'affichage. */
-export interface DisplayProps<S extends ZodType> {
-    /** Formatteur. */
-    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string;
-    /** Service de résolution de code. */
-    keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
+export interface DisplayProps<S extends ZodType> extends UseDisplayProps<S> {
     /** Si renseigné pour un affichage multiple en mode `list`, découpe les listes en plusieurs morceaux pour pouvoir les afficher en colonnes par exemple. */
     listChunkSize?: number;
     /**
@@ -29,17 +21,9 @@ export interface DisplayProps<S extends ZodType> {
     multiValueDisplay?: "inline" | "lists-if-multiple" | "lists";
     /** Nom du champ. */
     name?: string;
-    /** Schéma du champ (celui du domaine). */
-    schema: S;
     /** CSS. */
     theme?: CSSProp<DisplayCss>;
-    /** Valeur à afficher. */
-    value?: output<S>;
-    /** Liste des valeurs de référence. */
-    values?: ReferenceList;
 }
-
-const defaultFormatter = (x: any) => `${x}`;
 
 /**
  * Un `Display` permet d'afficher la valeur d'un champ.
@@ -52,60 +36,15 @@ const defaultFormatter = (x: any) => `${x}`;
  * Il s'agit du [composant d'affichage par défaut de tous les domaines](/docs/docs/composants-composants-par-défaut--docs)  (`DisplayComponent`).
  */
 export function Display<S extends ZodType>({
-    formatter = defaultFormatter,
     listChunkSize,
-    keyResolver,
     multiValueDisplay = "lists-if-multiple",
     name,
     theme: pTheme,
-    value,
-    values
+    ...props
 }: DisplayProps<S>) {
-    const {t} = useTranslation();
-
     const theme = useTheme("display", displayCss, pTheme);
 
-    const format = useCallback(
-        function format(v?: output<SingleZodType<S>>) {
-            if (typeof formatter === "string") {
-                return t(formatter, {value: v});
-            } else {
-                return formatter(v);
-            }
-        },
-        [formatter, t]
-    );
-
-    const [label, setLabel] = useState<string[] | string>();
-    useEffect(
-        () =>
-            autorun(() => {
-                if (keyResolver) {
-                    if (Array.isArray(value)) {
-                        Promise.all(
-                            value.map((v: output<SingleZodType<S>>) => keyResolver(v).then(res => res ?? `${v}`))
-                        ).then(setLabel);
-                    } else if (value) {
-                        keyResolver(value as output<SingleZodType<S>>).then(res => setLabel(res ?? `${value}`));
-                    } else {
-                        setLabel(undefined);
-                    }
-                } else if (Array.isArray(value)) {
-                    if (values) {
-                        setLabel(
-                            values
-                                ?.filter(v => value.find((v2: output<SingleZodType<S>>) => v[values.$valueKey] === v2))
-                                .map(v => format(v[values.$labelKey] ?? `${v[values.$valueKey]}`))
-                        );
-                    } else {
-                        setLabel(value.map((v: output<SingleZodType<S>>) => format(v)));
-                    }
-                } else {
-                    setLabel(format(values?.getLabel(value) ?? value));
-                }
-            }),
-        [format, keyResolver, value, values]
-    );
+    const label = useDisplay(props);
 
     return useObserver(() => (
         <div className={theme.display()} data-name={name}>

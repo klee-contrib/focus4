@@ -1,7 +1,6 @@
 import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
 import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
 
 import {FieldEntry} from "@focus4/entities";
 import {
@@ -81,20 +80,6 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         [field, props.onChange]
     );
 
-    const {t} = useTranslation();
-
-    /** Formatter par défaut en consulation. */
-    const defaultFormatter = useCallback(
-        function defaultFormatter(input: any) {
-            if (typeof input === "string") {
-                return t(input);
-            } else {
-                return input;
-            }
-        },
-        [t]
-    );
-
     const fieldId = useId();
 
     /**
@@ -167,7 +152,7 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
                 autocompleteProps: domainACP = {},
                 className = "",
                 DisplayComponent = UndefinedComponent,
-                displayFormatter = defaultFormatter,
+                displayFormatter,
                 displayProps: domainDCP = {},
                 LabelComponent = UndefinedComponent,
                 labelProps: domainLCP = {},

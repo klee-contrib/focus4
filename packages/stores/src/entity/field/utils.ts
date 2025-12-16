@@ -3,7 +3,7 @@ import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 import z from "zod";
 
-import {FieldEntry} from "@focus4/entities";
+import {FieldEntry, isBooleanSchema, isDateSchema, isDateTimeSchema} from "@focus4/entities";
 
 import {
     BaseAutocompleteProps,
@@ -188,6 +188,19 @@ export function makeField(param1: any, param2: any = {}) {
 /** Composant de domaine/champ non défini (vide). */
 export function UndefinedComponent() {
     return null;
+}
+
+const toString = (x: any) => `${x}`;
+
+/** Retourne le formatter par défaut pour un schéma donné. */
+export function getDefaultFormatter(schema: z.ZodType) {
+    return isBooleanSchema(schema)
+        ? "focus.boolean"
+        : isDateSchema(schema)
+          ? "focus.date"
+          : isDateTimeSchema(schema)
+            ? "focus.datetime"
+            : toString;
 }
 
 function withIsEdit(field: BuildingFormEntityField) {

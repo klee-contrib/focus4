@@ -7,6 +7,7 @@ export {
     FormListNodeBuilder,
     FormNodeBuilder,
     fromField,
+    getDefaultFormatter,
     isAnyFormNode,
     isAnyStoreNode,
     isEntityField,

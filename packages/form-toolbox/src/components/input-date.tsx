@@ -1,8 +1,9 @@
 import {DateTime} from "luxon";
 import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
-import z from "zod";
+import {ZodType} from "zod";
 
+import {isDateSchema} from "@focus4/entities";
 import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
 import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
 
@@ -53,7 +54,7 @@ export interface InputDateProps {
     inputFormat?: string;
     /** Props de l'input. */
     inputProps?: Omit<
-        InputProps<z.ZodType<string>>,
+        InputProps<ZodType<string>>,
         "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "schema" | "value"
     >;
     /**
@@ -88,6 +89,8 @@ export interface InputDateProps {
      * Par défaut : la date du jour.
      */
     referenceValue?: string;
+    /** Schéma du champ. */
+    schema: ZodType<string>;
     /**
      * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)
      * Incompatible avec l'usage de ISOStringFormat
@@ -112,6 +115,7 @@ export interface InputDateProps {
  * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function InputDate({
+    schema,
     calendarFormat = "yyyy-MM-dd",
     calendarPosition = "left",
     error,
@@ -119,7 +123,7 @@ export function InputDate({
     id,
     inputFormat,
     inputProps = {},
-    ISOStringFormat = "utc-midnight",
+    ISOStringFormat = isDateSchema(schema) ? "date-only" : "utc-midnight",
     max,
     min,
     name,
@@ -308,7 +312,7 @@ export function InputDate({
                 onChange={onInputChange}
                 onFocus={menu.open}
                 onKeyDown={onKeyDown}
-                schema={z.string()}
+                schema={schema}
                 value={dateText ?? ""}
             />
             <Menu
