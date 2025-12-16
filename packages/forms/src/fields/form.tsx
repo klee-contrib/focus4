@@ -12,11 +12,11 @@ declare global {
     interface FormProps extends Partial<ActionsFormProps> {}
 }
 
-let FormC: ComponentType<FormProps> = () => null;
+let FormCore: ComponentType<FormProps> = () => null;
 
 /** Enregistre le composant `Form`. */
 export function registerFormComponent(FormComponent: ComponentType<FormProps>) {
-    FormC = FormComponent;
+    FormCore = FormComponent;
 }
 
 /** Composant de formulaire. */
@@ -24,7 +24,7 @@ export function Form(props: FormProps) {
     const context = useMemo(() => ({errorDisplay: props.errorDisplay}), [props.errorDisplay]);
     return (
         <FormContext value={context}>
-            <FormC {...props} />
+            <FormCore {...props} />
         </FormContext>
     );
 }

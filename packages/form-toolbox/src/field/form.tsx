@@ -23,7 +23,7 @@ declare global {
 }
 
 /** Composant de formulaire */
-export function Form({children, labelWidth, noForm, save, theme: pTheme, valueWidth}: FormProps) {
+export function FormCore({children, labelWidth, noForm, save, theme: pTheme, valueWidth}: FormProps) {
     const theme = useTheme("form", formCss, pTheme);
 
     const style: Record<string, string> = {};

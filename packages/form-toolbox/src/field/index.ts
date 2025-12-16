@@ -1,5 +1,5 @@
 import {Field, fieldCss, FieldCss} from "./field";
-import {Form, formCss, FormCss} from "./form";
+import {FormCore, formCss, FormCss} from "./form";
 
-export {Field, fieldCss, Form, formCss};
+export {Field, fieldCss, FormCore, formCss};
 export type {FieldCss, FormCss};
