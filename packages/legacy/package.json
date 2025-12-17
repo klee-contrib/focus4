@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "12.7.0",
+    "version": "12.8.0",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
     "type": "module",
@@ -15,8 +15,8 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@focus4/entities": "12.7.0",
-        "@focus4/stores": "12.7.0",
+        "@focus4/entities": "12.8.0",
+        "@focus4/stores": "12.8.0",
         "es-toolkit": "~1.43.0"
     },
     "peerDependencies": {
