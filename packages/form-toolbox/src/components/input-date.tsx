@@ -1,7 +1,7 @@
 import {DateTime} from "luxon";
 import {FocusEvent, KeyboardEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {ZodType} from "zod";
+import z from "zod";
 
 import {isDateSchema} from "@focus4/entities";
 import {CSSProp, uiConfig, useTheme} from "@focus4/styling";
@@ -54,7 +54,7 @@ export interface InputDateProps {
     inputFormat?: string;
     /** Props de l'input. */
     inputProps?: Omit<
-        InputProps<ZodType<string>>,
+        InputProps<z.ZodType<string>>,
         "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "schema" | "value"
     >;
     /**
@@ -80,7 +80,7 @@ export interface InputDateProps {
     /** Name pour l'input. */
     name?: string;
     /** Appelé lorsque la date change. */
-    onChange: (date: string | undefined) => void;
+    onChange?: (date: string | undefined) => void;
     /**
      * Date de référence pour le calendrier.
      *
@@ -90,7 +90,7 @@ export interface InputDateProps {
      */
     referenceValue?: string;
     /** Schéma du champ. */
-    schema: ZodType<string>;
+    schema?: z.ZodType<string>;
     /**
      * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)
      * Incompatible avec l'usage de ISOStringFormat
@@ -115,7 +115,7 @@ export interface InputDateProps {
  * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function InputDate({
-    schema,
+    schema = z.iso.date(),
     calendarFormat = "yyyy-MM-dd",
     calendarPosition = "left",
     error,
@@ -224,7 +224,7 @@ export function InputDate({
             if (ISOStringFormat === "local-utc-midnight") {
                 newDate = newDate.toUTC();
             }
-            onChange(
+            onChange?.(
                 ISOStringFormat === "date-only"
                     ? newDate.toFormat("yyyy-MM-dd")
                     : (newDate.toISO({suppressMilliseconds: true}) ?? "")
@@ -250,13 +250,13 @@ export function InputDate({
                 if (ISOStringFormat === "local-utc-midnight") {
                     newDate = newDate.toUTC();
                 }
-                onChange(
+                onChange?.(
                     ISOStringFormat === "date-only"
                         ? newDate.toFormat("yyyy-MM-dd")
                         : (newDate.toISO({suppressMilliseconds: true}) ?? "")
                 );
             } else {
-                onChange(text);
+                onChange?.(text);
             }
         },
         [date, dateText, inputFormat, ISOStringFormat, onChange, transformDate]
