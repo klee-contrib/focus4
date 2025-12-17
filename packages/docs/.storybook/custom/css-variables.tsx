@@ -20,38 +20,39 @@ export function CssVariables({cssVariables}: {cssVariables?: Record<string, Vari
             return {...obj, [lol[0].trim()]: lol[1].trim()};
         }, {}) as any
     }));
-
     const {global, common, local} = (cssVariables ?? meta.preparedMeta.parameters?.cssVariables ?? {}) as Record<
         string,
         VariableDefinitions
     >;
 
     function getTable(name: string, variables: VariableDefinitions) {
-        const rows = Object.keys(variables).reduce((obj, name) => {
-            const value = getComputedStyle(document.documentElement).getPropertyValue(name);
-            const defaultValue = (dark && variables[name].dark) || variables[name].main;
+        const rows = variables
+            ? Object.keys(variables).reduce((obj, name) => {
+                  const value = getComputedStyle(document.documentElement).getPropertyValue(name);
+                  const defaultValue = (dark && variables[name].dark) || variables[name].main;
 
-            let computedDefaultValue = "";
-            if (ref) {
-                ref.style.setProperty("--defaultValue", defaultValue);
-                computedDefaultValue = getComputedStyle(ref).getPropertyValue("--defaultValue");
-            }
+                  let computedDefaultValue = "";
+                  if (ref) {
+                      ref.style.setProperty("--defaultValue", defaultValue);
+                      computedDefaultValue = getComputedStyle(ref).getPropertyValue("--defaultValue");
+                  }
 
-            return {
-                ...obj,
-                [name]: {
-                    name,
-                    type: {
-                        required:
-                            computedDefaultValue.replaceAll(String.raw`0\.`, ".") !==
-                            value.replaceAll(String.raw`0\.`, ".")
-                    },
-                    table: {type: {summary: value}},
-                    defaultValue: {summary: defaultValue},
-                    control: {type: "text"}
-                }
-            };
-        }, {});
+                  return {
+                      ...obj,
+                      [name]: {
+                          name,
+                          type: {
+                              required:
+                                  computedDefaultValue.replaceAll(String.raw`0\.`, ".") !==
+                                  value.replaceAll(String.raw`0\.`, ".")
+                          },
+                          table: {type: {summary: value}},
+                          defaultValue: {summary: defaultValue},
+                          control: {type: "text"}
+                      }
+                  };
+              }, {})
+            : {};
 
         return Object.keys(rows).length ? (
             <>
