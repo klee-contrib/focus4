@@ -13,7 +13,7 @@ import inputDateCss, {InputDateCss} from "./__style__/input-date.css";
 
 export {inputDateCss};
 
-export interface InputDateProps {
+export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {
     /**
      * Format de la date à choisir dans le Calendar. "yyyy-MM" limite la sélection à un mois uniquement, tandis que "yyyy" la limite à une année.
      * Par défaut : "yyyy-MM-dd"
@@ -54,7 +54,7 @@ export interface InputDateProps {
     inputFormat?: string;
     /** Props de l'input. */
     inputProps?: Omit<
-        InputProps<z.ZodType<string>>,
+        InputProps<S>,
         "error" | "id" | "mask" | "name" | "onChange" | "onFocus" | "onKeyDown" | "schema" | "value"
     >;
     /**
@@ -90,7 +90,7 @@ export interface InputDateProps {
      */
     referenceValue?: string;
     /** Schéma du champ. */
-    schema?: z.ZodType<string>;
+    schema: S;
     /**
      * Code Timezone que l'on souhaite appliquer au DatePicker dans le cas d'une Timezone différente de celle du navigateur (https://moment.github.io/luxon/#/zones)
      * Incompatible avec l'usage de ISOStringFormat
@@ -114,8 +114,8 @@ export interface InputDateProps {
  *
  * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
-export function InputDate({
-    schema = z.iso.date(),
+export function InputDate<S extends z.ZodISODate | z.ZodISODateTime>({
+    schema,
     calendarFormat = "yyyy-MM-dd",
     calendarPosition = "left",
     error,
@@ -132,7 +132,7 @@ export function InputDate({
     theme: pTheme,
     timezoneCode,
     value
-}: InputDateProps) {
+}: InputDateProps<S>) {
     const {
         i18n: {language}
     } = useTranslation();
@@ -313,7 +313,7 @@ export function InputDate({
                 onFocus={menu.open}
                 onKeyDown={onKeyDown}
                 schema={schema}
-                value={dateText ?? ""}
+                value={(dateText as z.output<S>) ?? ""}
             />
             <Menu
                 {...menu}

@@ -43,7 +43,7 @@ import {
 type DefaultICProps<S extends z.ZodType> = S extends z.ZodBoolean
     ? BooleanRadioProps
     : S extends z.ZodISODate
-      ? InputDateProps
+      ? InputDateProps<S>
       : S extends ZodTypeSingle
         ? InputProps<S>
         : {};
