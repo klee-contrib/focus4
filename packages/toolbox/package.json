@@ -20,7 +20,7 @@
         "classnames": "~2.5.1",
         "es-toolkit": "~1.43.0",
         "luxon": "~3.7.2",
-        "motion": "~12.23.26",
+        "motion": "~12.24.10",
         "tslib": "~2.8.1"
     },
     "peerDependencies": {

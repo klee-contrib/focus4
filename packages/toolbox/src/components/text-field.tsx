@@ -326,7 +326,6 @@ export function TextField({
                 className
             )}
         >
-            {/* oxlint-disable-next-line click-events-have-key-events */}
             <div ref={fieldRef} className={theme.field()} onClick={handleClick} tabIndex={-1}>
                 <div ref={outlineNode} className={theme.outline()} />
                 {icon ? (

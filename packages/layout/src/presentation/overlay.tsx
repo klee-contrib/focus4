@@ -43,7 +43,6 @@ export function Overlay({
 }>) {
     const theme = useTheme("overlay", overlayCss, pTheme);
     const [displayed, tClassName] = useActiveTransition(active, theme);
-    // oxlint-disable-next-line click-events-have-key-events
     return displayed ? <div className={classNames(tClassName, theme.overlay())} onClick={close} /> : null;
 }
 

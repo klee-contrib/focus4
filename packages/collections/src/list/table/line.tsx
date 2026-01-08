@@ -97,7 +97,6 @@ export function TableLine<T extends object>({
                 </td>
             ) : null}
             {columns.map(({className: cellClassName, content}, idx) => (
-                // oxlint-disable-next-line click-events-have-key-events
                 <td
                     key={idx}
                     className={classNames(cellClassName, theme.cell())}

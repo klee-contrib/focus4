@@ -18,8 +18,8 @@
         "build": "rollup -cm --bundleConfigAsCjs"
     },
     "dependencies": {
-        "@trivago/prettier-plugin-sort-imports": "6.0.0",
-        "@types/node": "25.0.2",
+        "@trivago/prettier-plugin-sort-imports": "6.0.2",
+        "@types/node": "25.0.3",
         "@types/postcss-modules-extract-imports": "~3.0.5",
         "@types/postcss-modules-local-by-default": "~4.0.2",
         "@types/postcss-modules-scope": "~3.0.4",
