@@ -105,9 +105,7 @@ export function Facet({
                                         <div className={theme.label({excluded})} onClick={clickHandler}>
                                             {t(item.label)}
                                         </div>
-                                        {!(count === 1 && (!facet.isMultiSelectable || facet.values.length === 1)) ? (
-                                            <div className={theme.count()}>{item.count}</div>
-                                        ) : null}
+                                        <div className={theme.count()}>{item.count}</div>
                                         {facet.canExclude &&
                                         !excluded &&
                                         !selected &&
