@@ -21,6 +21,7 @@ export default {
         "node:dns",
         "node:fs",
         "node:os",
-        "node:path"
+        "node:path",
+        "node:url"
     ]
 };
