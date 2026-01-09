@@ -1,6 +1,6 @@
 {
     "name": "@focus4/toolbox",
-    "version": "12.8.0",
+    "version": "12.8.3",
     "description": "Focus v4, toolbox module",
     "main": "lib/focus4.toolbox.js",
     "type": "module",
@@ -29,6 +29,6 @@
         "react-i18next": ">= 16 < 17"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.8.0"
+        "@focus4/tooling": "12.8.3"
     }
 }
