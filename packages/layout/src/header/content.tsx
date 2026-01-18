@@ -20,7 +20,7 @@ export interface HeaderContentProps {
 export function HeaderContent(props: HeaderContentProps) {
     const theme = useTheme("header", headerCss, props.theme);
 
-    const {headerHeight, registerIntersect} = useContext(ScrollableContext);
+    const {registerIntersect} = useContext(ScrollableContext);
     const {sticky, setSticky} = useContext(HeaderContext);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export function HeaderContent(props: HeaderContentProps) {
         if (ref.current) {
             return registerIntersect(ref.current, (ratio: number) => {
                 const contentHeight = ref.current?.clientHeight ?? 0;
-                const visibleContent = ratio === 1 ? contentHeight : ratio * contentHeight - headerHeight;
+                const visibleContent = ratio * contentHeight;
                 const fixedRatio = visibleContent / contentHeight;
                 if (fixedRatio < 0.1 && !sticky) {
                     setSticky(true);
@@ -37,7 +37,7 @@ export function HeaderContent(props: HeaderContentProps) {
                 }
             });
         }
-    }, [headerHeight, sticky]);
+    }, [sticky]);
 
     return (
         <div ref={ref} className={theme.content()}>
