@@ -86,18 +86,7 @@ export function ScrollspyContainer({
             return sortBy([...state.panels.entries()], [([_, {node}]) => getOffsetTop(node)]);
         },
         get activeItem() {
-            const panels = sortBy(state.sortedPanels, [
-                ([_, {ratio, node}]) => {
-                    const rect = node.getBoundingClientRect();
-                    const headerRatio =
-                        rect.height === 0
-                            ? 1
-                            : !state.headerHeight
-                              ? 0
-                              : Math.min(1, Math.max(0, (state.headerHeight - rect.y) / rect.height));
-                    return headerRatio - (ratio >= 0.95 ? 1 : ratio);
-                }
-            ]);
+            const panels = sortBy(state.sortedPanels, [([_, {ratio}]) => -(ratio >= 0.95 ? 1 : ratio)]);
             return panels[0]?.[0];
         }
     }));

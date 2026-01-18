@@ -60,6 +60,8 @@ export const ScrollableContext = createContext<{
     portal(node: ReactElement): ReactPortal | null;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
+     *
+     * Si le Scollable contient un Header, c'est le bas de la partie sticky du header qui est considéré comme le haut du viewport.
      * @param node Le noeud DOM à observer.
      * @param onIntersect Le callback à appeler lors d'une intersection.
      * @returns Le disposer.
