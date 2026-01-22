@@ -71,10 +71,19 @@ export function Scrollable({
     const containerNode = useRef<HTMLDivElement>(null);
     const scrollableNode = useRef<HTMLDivElement>(null);
 
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    const [headerElementsHeights] = useState(() => new Map<string, number>());
+    const setHeaderElementHeight = useCallback((id: string, height: number) => {
+        headerElementsHeights.set(id, height);
+        setHeaderHeight([...headerElementsHeights.values()].reduce((a, b) => a + b, 0));
+    }, []);
+
     const intersectionObserver = useRef<IntersectionObserver>(null);
     const [onIntersects] = useState(() => new Map<Element, (ratio: number, isIntersecting: boolean) => void>());
 
     useLayoutEffect(() => {
+        intersectionObserver.current?.disconnect();
         intersectionObserver.current = new IntersectionObserver(
             entries => {
                 for (const e of entries) {
@@ -84,9 +93,14 @@ export function Scrollable({
                     }
                 }
             },
-            {root: scrollableNode.current, threshold: range(0, 1025, 25).map(t => t / 1000)}
+            {
+                root: scrollableNode.current,
+                rootMargin: `-${headerHeight}px 0px 0px 0px`,
+                threshold: range(0, 1025, 25).map(t => t / 1000)
+            }
         );
-    }, []);
+        onIntersects.forEach((_, node) => intersectionObserver.current?.observe(node));
+    }, [headerHeight]);
 
     const registerIntersect = useCallback(function registerIntersect(
         node: HTMLElement,
@@ -138,15 +152,13 @@ export function Scrollable({
         return () => scrollableNode.current?.removeEventListener("scroll", onScroll);
     }, [backToTopOffset]);
 
-    const [headerHeight, setHeaderHeight] = useState(0);
-
     return useObserver(() => (
         <ScrollableContext.Provider
             value={useMemo(
                 () => ({
                     headerHeight,
                     level,
-                    setHeaderHeight,
+                    setHeaderElementHeight,
                     portal,
                     registerIntersect,
                     scrollTo

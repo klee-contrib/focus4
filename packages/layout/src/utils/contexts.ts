@@ -48,7 +48,7 @@ export const OverlayContext = createContext<{
 
 /** Contexte d'un Scrollable, expose les méthodes associées. */
 export const ScrollableContext = createContext<{
-    /** Hauteur calculée du `HeaderTopRow` (s'il y en a un) */
+    /** Hauteur calculée de l'éventuel header présent dans le `Scrollable`. */
     headerHeight: number;
     /** Niveau d'empilement de scrollable. Celui du `Layout` sera le niveau 0, augmenté pour chaque `Scrollable` posé à l'intérieur. */
     level: number;
@@ -60,14 +60,20 @@ export const ScrollableContext = createContext<{
     portal(node: ReactElement): ReactPortal | null;
     /**
      * Enregistre un observateur d'intersection avec le viewport du Scrollable.
+     *
+     * Si le Scrollable contient un Header, c'est le bas de la partie sticky du header qui est considéré comme le haut du viewport.
      * @param node Le noeud DOM à observer.
      * @param onIntersect Le callback à appeler lors d'une intersection.
      * @returns Le disposer.
      */
     registerIntersect(node: HTMLElement, onIntersect: (ratio: number, isIntersecting: boolean) => void): () => void;
     /** @internal */
-    /** Met à jour la hauteur du `HeaderTopRow` */
-    setHeaderHeight: (height: number) => void;
+    /**
+     * Met à jour `headerHeight` en précisant la hauteur d'un élément du header.
+     * @param id Sert à distinguer l'élément d'éventuels autres éléments du header.
+     * @param height La hauteur en pixels de l'élément.
+     */
+    setHeaderElementHeight: (id: string, height: number) => void;
     /**
      * Scrolle vers la position demandée.
      * @param options Options.
@@ -80,7 +86,7 @@ export const ScrollableContext = createContext<{
     registerIntersect: () => () => {
         /** */
     },
-    setHeaderHeight() {
+    setHeaderElementHeight() {
         /** */
     },
     scrollTo() {
