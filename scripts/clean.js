@@ -1,19 +1,19 @@
 // @ts-check
-import fs from "node:fs";
 import {glob} from "glob";
+import fs from "node:fs";
 import rimraf from "rimraf";
 
 for (const f of glob.sync("packages/*/lib")) {
-  rimraf.sync(f);
+    rimraf.sync(f);
 }
 for (const f of glob.sync("packages/*/node_modules")) {
-  rimraf.sync(f);
+    rimraf.sync(f);
 }
 for (const f of glob.sync("packages/*/src/**/*.css.d.ts")) {
-  fs.unlinkSync(f);
+    fs.unlinkSync(f);
 }
 for (const f of glob.sync("packages/docs/**/metas")) {
-  rimraf.sync(f);
+    rimraf.sync(f);
 }
 rimraf.sync("docs");
 rimraf.sync("node_modules");

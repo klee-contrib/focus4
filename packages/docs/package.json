@@ -22,12 +22,12 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.8.3",
-        "@storybook/addon-docs": "10.1.11",
-        "@storybook/addon-vitest": "10.1.11",
-        "@storybook/react-vite": "10.1.11",
-        "@vitest/browser-playwright": "4.0.16",
-        "@vueless/storybook-dark-mode": "10.0.4",
-        "storybook": "10.1.11",
+        "@storybook/addon-docs": "10.2.15",
+        "@storybook/addon-vitest": "10.2.15",
+        "@storybook/react-vite": "10.2.15",
+        "@vitest/browser-playwright": "4.0.18",
+        "@vueless/storybook-dark-mode": "10.0.7",
+        "storybook": "10.2.15",
         "storybook-react-i18next": "10.0.1"
     }
 }

@@ -181,7 +181,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                         return this.builder.createService!(d);
                     }
                 },
-                data => {
+                response => {
                     this.formNode.form.isEdit = false;
 
                     // On met à jour le _initialData avec les valeurs qu'on avait à la sauvegarde.
@@ -201,12 +201,12 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                     }
                     updateInitialData(this.formNode, this.formNode.form._initialData);
 
-                    if (data && typeof data === "object" && !(data instanceof Response)) {
+                    if (response && typeof response === "object" && !(response instanceof Response)) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
                         if (isStoreNode(this.formNode.sourceNode)) {
-                            this.formNode.sourceNode.replace(data);
+                            this.formNode.sourceNode.replace(response);
                         } else {
-                            this.formNode.sourceNode.replaceNodes(data as any);
+                            this.formNode.sourceNode.replaceNodes(response as any);
                         }
                         // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
                     } else if (isFormNode(this.formNode)) {

@@ -1,10 +1,10 @@
 import {findAll, parse, walk} from "css-tree";
 import {kebabCase} from "es-toolkit";
-import fs from "fs";
 import {glob} from "glob";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import {fileURLToPath} from "node:url";
 import docgen from "react-docgen-typescript";
-import {fileURLToPath} from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -44,7 +44,7 @@ function getCssVariables(css) {
         .map(node => ({
             property: node.property,
             value: {
-                main: node.value.value?.trim().replaceAll('"', '\\"')
+                main: node.value.value?.trim().replaceAll('"', String.raw`\"`)
             }
         }));
 
@@ -60,7 +60,7 @@ function getCssVariables(css) {
             for (const n of node.block.children.toArray().flat()) {
                 const prop = variables.find(v => v.property === n.property);
                 if (prop) {
-                    prop.value.dark = n.value.value?.trim().replaceAll('"', '\\"');
+                    prop.value.dark = n.value.value?.trim().replaceAll('"', String.raw`\"`);
                 }
             }
         }
@@ -114,20 +114,20 @@ function generateDocFile(module, globPath, componentFilter) {
         const usedVariables = [];
         const localCssVariables = cssFilePaths.flatMap(cssFilePath => {
             const css = fs.readFileSync(cssFilePath).toString();
-            usedVariables.push(...Array.from(css.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1]));
+            usedVariables.push(...[...css.matchAll(/var\(([a-z0-9-]+)\)/g)].map(m => m[1]));
             return getCssVariables(css);
         });
 
         const usedCommonVariables = commonCssVariables.filter(v => usedVariables.includes(v.property));
         usedVariables.push(
             ...usedCommonVariables.flatMap(({value: {main}}) =>
-                Array.from(main.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1])
+                [...main.matchAll(/var\(([a-z0-9-]+)\)/g)].map(m => m[1])
             )
         );
         const usedGlobalVariables = globalCssVariables.filter(v => usedVariables.includes(v.property));
         usedVariables.push(
             ...usedGlobalVariables.flatMap(({value: {main}}) =>
-                Array.from(main.matchAll(/var\(([a-z0-9-]+)\)/g)).map(m => m[1])
+                [...main.matchAll(/var\(([a-z0-9-]+)\)/g)].map(m => m[1])
             )
         );
 
@@ -188,14 +188,14 @@ export const ${component.displayName}Meta = {
             type: {
                 name: "${getName(prop, component.props[prop].type.name)}",
                 required: ${component.props[prop].required}${
-                        component.props[prop].type.value
-                            ? `,
+                    component.props[prop].type.value
+                        ? `,
                 value: [${component.props[prop].type.value.map(value => value.value).join(", ")}]`
-                            : getName(prop, component.props[prop].type.name) === "other"
-                            ? `,
-                value: "${component.props[prop].type.name.replaceAll('"', '\\"')}"`
-                            : ""
-                    }
+                        : getName(prop, component.props[prop].type.name) === "other"
+                          ? `,
+                value: "${component.props[prop].type.name.replaceAll('"', String.raw`\"`)}"`
+                          : ""
+                }
             },
             table: {type: {summary: \`${getType(component.props[prop])}\`}}
         }`
@@ -243,5 +243,8 @@ generateDocFile("layout", "./packages/layout/src/**/*.tsx", [
 ]);
 
 function escape(text) {
-    return text.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("$", "\\$");
+    return text
+        .replaceAll("\\", String.raw`\\`)
+        .replaceAll("`", "\\`")
+        .replaceAll("$", String.raw`\$`);
 }

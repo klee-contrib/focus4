@@ -68,6 +68,7 @@ export function ContextualActions<T>({
 
     const {primaryActions, secondaryActions} = operationList.reduce(
         (actionLists, operation, key) => {
+            // oxlint-disable-next-line no-shadow
             const {primaryActions, secondaryActions} = actionLists;
             if (operation.type !== "secondary") {
                 const hasTooltip = (isMosaic && !!operation.label) || operation.type === "icon-tooltip";

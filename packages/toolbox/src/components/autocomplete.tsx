@@ -25,11 +25,10 @@ import autocompleteCss, {AutocompleteCss} from "./__style__/autocomplete.css";
 export {autocompleteCss};
 export type {AutocompleteCss};
 
-export interface AutocompleteProps<TSource = {key: string; label: string}>
-    extends Omit<
-        TextFieldProps,
-        "autoComplete" | "disabled" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
-    > {
+export interface AutocompleteProps<TSource = {key: string; label: string}> extends Omit<
+    TextFieldProps,
+    "autoComplete" | "disabled" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
+> {
     /** Suggestions supplémentaires à afficher en plus des suggestions issues de `values`, pour effectuer des actions différentes.  */
     additionalSuggestions?: {key: string; content: ReactNode; onClick: () => void}[];
     /** Autorise la sélection d'une valeur qui n'existe pas dans `values` (le contenu de la `query` sera retourné en tant que valeur). */

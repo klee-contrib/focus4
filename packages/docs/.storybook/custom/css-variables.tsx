@@ -26,7 +26,7 @@ export function CssVariables({cssVariables}: {cssVariables?: Record<string, Vari
         VariableDefinitions
     >;
 
-    function getTable(name: string, variables: VariableDefinitions) {
+    function getTable(section: string, variables: VariableDefinitions) {
         const rows = Object.keys(variables).reduce((obj, name) => {
             const value = getComputedStyle(document.documentElement).getPropertyValue(name);
             const defaultValue = (dark && variables[name].dark) || variables[name].main;
@@ -55,7 +55,7 @@ export function CssVariables({cssVariables}: {cssVariables?: Record<string, Vari
 
         return Object.keys(rows).length ? (
             <>
-                <h4>{name}</h4>
+                <h4>{section}</h4>
                 <PureArgsTable
                     args={toJS(state.overrides)}
                     resetArgs={() => {

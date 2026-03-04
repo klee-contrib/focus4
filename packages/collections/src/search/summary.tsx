@@ -92,113 +92,112 @@ export function Summary<T extends object>({
     const {t} = useTranslation();
     const theme = useTheme("summary", summaryCss, pTheme);
 
-    const props = useLocalObservable(() => ({hideCriteria, orderableColumnList, store}), {
-        hideCriteria: observable.ref,
-        orderableColumnList: observable.ref,
-        store: observable.ref
-    });
-    useEffect(() => {
-        props.hideCriteria = hideCriteria;
-        props.orderableColumnList = orderableColumnList;
-        props.store = store;
-    }, [hideCriteria, orderableColumnList, store]);
+    const state = useLocalObservable(
+        () => ({
+            hideCriteria,
+            orderableColumnList,
+            store,
 
-    const state = useLocalObservable(() => ({
-        /** Liste des filtres à afficher (inclusion). */
-        get includeList() {
-            const topicList: (SearchChipProps & {key: string})[] = [];
+            /** Liste des filtres à afficher (inclusion). */
+            get includeList() {
+                const topicList: (SearchChipProps & {key: string})[] = [];
 
-            // On ajoute la liste des critères.
-            if (props.hideCriteria !== true && props.store.criteria) {
-                for (const criteriaKey in props.store.flatCriteria) {
-                    const {label, domain} = (props.store.criteria[criteriaKey] as FormEntityField).$field;
-                    const value = (props.store.flatCriteria as any)[criteriaKey];
-                    if (
-                        (!props.hideCriteria || !props.hideCriteria.includes(criteriaKey)) &&
-                        value !== undefined &&
-                        (!Array.isArray(value) || value.length > 0)
-                    ) {
-                        topicList.push({
-                            type: "filter",
-                            key: `${criteriaKey}-${value as string}`,
-                            code: label,
-                            codeLabel: label,
-                            values: [
-                                {
-                                    code: value,
-                                    label:
-                                        typeof domain?.displayFormatter === "string"
-                                            ? t(domain.displayFormatter, {value})
-                                            : domain?.displayFormatter?.(value)
+                // On ajoute la liste des critères.
+                if (this.hideCriteria !== true && this.store.criteria) {
+                    for (const criteriaKey in this.store.flatCriteria) {
+                        const {label, domain} = (this.store.criteria[criteriaKey] as FormEntityField).$field;
+                        const value = (this.store.flatCriteria as any)[criteriaKey];
+                        if (
+                            (!this.hideCriteria || !this.hideCriteria.includes(criteriaKey)) &&
+                            value !== undefined &&
+                            (!Array.isArray(value) || value.length > 0)
+                        ) {
+                            topicList.push({
+                                type: "filter",
+                                key: `${criteriaKey}-${value as string}`,
+                                code: label,
+                                codeLabel: label,
+                                values: [
+                                    {
+                                        code: value,
+                                        label:
+                                            typeof domain?.displayFormatter === "string"
+                                                ? t(domain.displayFormatter, {value})
+                                                : domain?.displayFormatter?.(value)
+                                    }
+                                ],
+                                onDeleteClick: () => {
+                                    (this.store.criteria[criteriaKey] as FormEntityField).value = undefined;
                                 }
-                            ],
-                            onDeleteClick: () => {
-                                (props.store.criteria[criteriaKey] as FormEntityField).value = undefined;
-                            }
-                        });
+                            });
+                        }
                     }
                 }
-            }
 
-            // On ajoute à la liste toutes les facettes sélectionnées.
-            if (!hideFacets) {
-                for (const facetKey in props.store.inputFacets) {
-                    const inputFacet = props.store.inputFacets[facetKey];
-                    const facetOutput = props.store.facets.find(facet => facetKey === facet.code);
-                    if (facetOutput && (!!inputFacet.selected || !!inputFacet.excluded)) {
-                        topicList.push({
-                            type: "facet",
-                            key: facetKey,
-                            code: facetOutput.code,
-                            codeLabel: facetOutput.label,
-                            valueOperator:
-                                (facetOutput.isMultiValued && inputFacet.operator === "and") ||
-                                (!facetOutput.isMultiValued && inputFacet.excluded?.length)
-                                    ? "and"
-                                    : "or",
-                            values: facetOutput.values
-                                .map(value => ({
-                                    code: value.code,
-                                    label: value.label,
-                                    invert: inputFacet.selected?.find(v => v === value.code)
-                                        ? false
-                                        : inputFacet.excluded?.find(v => v === value.code)
-                                          ? true
-                                          : undefined
-                                }))
-                                .filter(({invert}) => invert !== undefined),
-                            onDeleteClick: () => props.store.removeFacetValue(facetKey)
-                        });
+                // On ajoute à la liste toutes les facettes sélectionnées.
+                if (!hideFacets) {
+                    for (const facetKey in this.store.inputFacets) {
+                        const inputFacet = this.store.inputFacets[facetKey];
+                        const facetOutput = this.store.facets.find(facet => facetKey === facet.code);
+                        if (facetOutput && (!!inputFacet.selected || !!inputFacet.excluded)) {
+                            topicList.push({
+                                type: "facet",
+                                key: facetKey,
+                                code: facetOutput.code,
+                                codeLabel: facetOutput.label,
+                                valueOperator:
+                                    (facetOutput.isMultiValued && inputFacet.operator === "and") ||
+                                    (!facetOutput.isMultiValued && inputFacet.excluded?.length)
+                                        ? "and"
+                                        : "or",
+                                values: facetOutput.values
+                                    .map(value => ({
+                                        code: value.code,
+                                        label: value.label,
+                                        invert: inputFacet.selected?.find(v => v === value.code)
+                                            ? false
+                                            : inputFacet.excluded?.find(v => v === value.code)
+                                              ? true
+                                              : undefined
+                                    }))
+                                    .filter(({invert}) => invert !== undefined),
+                                onDeleteClick: () => this.store.removeFacetValue(facetKey)
+                            });
+                        }
                     }
                 }
-            }
 
-            return topicList;
-        },
+                return topicList;
+            },
 
-        /** Récupère le tri courant pour afficher le chip correspondant. */
-        get currentSort() {
-            const {
-                orderableColumnList,
-                store: {sort}
-            } = props;
-            if (orderableColumnList && sort.length > 0) {
-                return (
-                    orderableColumnList.find(
-                        o =>
-                            o.sort.length === sort.length &&
-                            o.sort.every(
-                                (s, i) =>
-                                    s.fieldName === sort[i].fieldName &&
-                                    (s.sortDesc ?? false) === (sort[i].sortDesc ?? false)
-                            )
-                    ) ?? null
-                );
-            } else {
-                return null;
+            /** Récupère le tri courant pour afficher le chip correspondant. */
+            get currentSort() {
+                const {sort} = this.store;
+                if (this.orderableColumnList && sort.length > 0) {
+                    return (
+                        this.orderableColumnList.find(
+                            o =>
+                                o.sort.length === sort.length &&
+                                o.sort.every(
+                                    (s, i) =>
+                                        s.fieldName === sort[i].fieldName &&
+                                        (s.sortDesc ?? false) === (sort[i].sortDesc ?? false)
+                                )
+                        ) ?? null
+                    );
+                } else {
+                    return null;
+                }
             }
-        }
-    }));
+        }),
+        {hideCriteria: observable.ref, orderableColumnList: observable.ref, store: observable.ref}
+    );
+
+    useEffect(() => {
+        state.hideCriteria = hideCriteria;
+        state.orderableColumnList = orderableColumnList;
+        state.store = store;
+    }, [hideCriteria, orderableColumnList, store]);
 
     return useObserver(() => {
         const {groupingKey, totalCount, query} = store;

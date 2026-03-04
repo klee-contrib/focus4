@@ -473,23 +473,23 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             const response = await requestStore.track(
                 this.trackingId,
                 () => this.service!(data, {signal}),
-                response => {
+                res => {
                     // On ajoute les résultats à la suite des anciens si on scrolle, sachant qu'on ne peut pas scroller si on est groupé, donc c'est bien toujours la liste.
                     if (isScroll) {
-                        this.innerList.push(...(response.list ?? []));
+                        this.innerList.push(...(res.list ?? []));
                     } else {
-                        this.innerList.replace(response.list ?? []);
+                        this.innerList.replace(res.list ?? []);
                     }
 
-                    this.innerFacets.replace(response.facets);
-                    this.innerGroups.replace(response.groups ?? []);
-                    this.availableSearchFields = response.searchFields ?? [];
+                    this.innerFacets.replace(res.facets);
+                    this.innerGroups.replace(res.groups ?? []);
+                    this.availableSearchFields = res.searchFields ?? [];
 
                     if (!this.skipToken) {
-                        this.serverCount = response.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
+                        this.serverCount = res.totalCount; // Si on a utilisé un skipToken, le total serveur ne doit pas être mis à jour.
                     }
 
-                    this.skipToken = response.skipToken;
+                    this.skipToken = res.skipToken;
                 }
             );
 
@@ -742,8 +742,8 @@ function groupByFacet<T>(list: T[], fieldName: keyof T) {
                 if (value.length === 0) {
                     add();
                 } else {
-                    for (const item of value) {
-                        add(item);
+                    for (const i of value) {
+                        add(i);
                     }
                 }
             } else {

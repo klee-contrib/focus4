@@ -7,11 +7,10 @@ import {ReferenceList} from "@focus4/stores";
 import {Dropdown, DropdownProps} from "@focus4/toolbox";
 
 /** Props du Select. */
-export interface SelectProps<S extends ZodTypeSingle>
-    extends Omit<
-        DropdownProps<any>,
-        "disabled" | "error" | "getKey" | "getLabel" | "label" | "onChange" | "value" | "values"
-    > {
+export interface SelectProps<S extends ZodTypeSingle> extends Omit<
+    DropdownProps<any>,
+    "disabled" | "error" | "getKey" | "getLabel" | "label" | "onChange" | "value" | "values"
+> {
     /** Désactive la Dropdown (si true), ou une liste d'options de la Dropdown (si liste de valeurs). */
     disabled?: boolean | output<S>[];
     /** Message d'erreur à afficher. */

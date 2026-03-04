@@ -8,11 +8,10 @@ import {ReferenceList} from "@focus4/stores";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
 /** Props du Select. */
-export interface SelectAutocompleteProps<S extends ZodTypeSingle>
-    extends Omit<
-        AutocompleteProps<any>,
-        "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"
-    > {
+export interface SelectAutocompleteProps<S extends ZodTypeSingle> extends Omit<
+    AutocompleteProps<any>,
+    "disabled" | "error" | "getKey" | "getLabel" | "onChange" | "value" | "values"
+> {
     /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
     disabled?: boolean | output<S>[];
     /** Message d'erreur à afficher. */

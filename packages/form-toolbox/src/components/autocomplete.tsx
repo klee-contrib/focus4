@@ -7,19 +7,18 @@ import {isAbortError, requestStore} from "@focus4/core";
 import {stringToSchemaOutput, ZodTypeSingle} from "@focus4/entities";
 import {Autocomplete, AutocompleteProps} from "@focus4/toolbox";
 
-export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key: string; label: string}>
-    extends Omit<
-        AutocompleteProps<TSource>,
-        | "disabled"
-        | "error"
-        | "label"
-        | "loading"
-        | "noSuggestionsOnEmptyQuery"
-        | "onChange"
-        | "suggestionMatch"
-        | "value"
-        | "values"
-    > {
+export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key: string; label: string}> extends Omit<
+    AutocompleteProps<TSource>,
+    | "disabled"
+    | "error"
+    | "label"
+    | "loading"
+    | "noSuggestionsOnEmptyQuery"
+    | "onChange"
+    | "suggestionMatch"
+    | "value"
+    | "values"
+> {
     /** Désactive l'Autocomplete (si true), ou une liste d'options de l'Autocomplete (si liste de valeurs). */
     disabled?: boolean | output<S>[];
     /** Erreur à afficher sous le champ. */
@@ -109,7 +108,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
                 async label => {
                     setQuery(label ?? `${value}`);
                     if (!values.some(v => getKey(v) === value) && label && querySearcher) {
-                        setValues(await querySearcher(label));
+                        requestStore.track(trackingId, () => querySearcher(label), setValues);
                     }
                 }
             );
@@ -128,6 +127,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
                     setValues(await requestStore.track(trackingId, () => querySearcher(newQuery.trim(), {signal})));
 
                     abortController.current = undefined;
+                    // oxlint-disable-next-line no-shadow
                 } catch (error) {
                     if (isAbortError(error)) {
                         return;

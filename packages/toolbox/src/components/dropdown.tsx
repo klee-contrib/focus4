@@ -23,11 +23,10 @@ import dropdownCss, {DropdownCss} from "./__style__/dropdown.css";
 export {dropdownCss};
 export type {DropdownCss};
 
-export interface DropdownProps<TSource = {key: string; label: string}>
-    extends Omit<
-        TextFieldProps,
-        "autoComplete" | "disabled" | "hint" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
-    > {
+export interface DropdownProps<TSource = {key: string; label: string}> extends Omit<
+    TextFieldProps,
+    "autoComplete" | "disabled" | "hint" | "maxLength" | "onChange" | "readonly" | "theme" | "type"
+> {
     /** Précise dans quel sens les valeurs doivent s'afficher. Par défaut : "auto". */
     direction?: "auto" | "down" | "up";
     /** Désactive la Dropdown (si true), ou une liste d'options du Dropdown (si liste de string). */
@@ -309,8 +308,8 @@ export function Dropdown<TSource = {key: string; label: string}>({
                             getLabel(selectedValue)
                         )
                     ) : (
-                        <span className={!hasUndefined ? theme.hint() : undefined}>{undefinedLabel}</span>
-                    ) as any
+                        ((<span className={!hasUndefined ? theme.hint() : undefined}>{undefinedLabel}</span>) as any)
+                    )
                 }
             />
             <Menu

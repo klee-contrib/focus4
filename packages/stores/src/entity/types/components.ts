@@ -95,7 +95,9 @@ export interface FieldComponents<
     DCProps extends BaseDisplayProps<S> = any,
     LCProps extends BaseLabelProps = any,
     FProps extends {theme?: object} = any
-> extends InputComponents<S, ICProps, DCProps, LCProps>,
+>
+    extends
+        InputComponents<S, ICProps, DCProps, LCProps>,
         SelectComponents<S, SCProps, DCProps, LCProps>,
         AutocompleteComponents<S, ACProps, DCProps, LCProps> {
     /** Props pour le composant de champ. */
