@@ -2,9 +2,8 @@ import {isFunction} from "es-toolkit";
 import {disposeOnUnmount} from "mobx-react";
 import {Component} from "react";
 
-import {EntityToType} from "@focus4/entities";
+import {Entity, EntityToType} from "@focus4/entities";
 import {
-    buildNode,
     FormActions,
     FormActionsBuilder,
     FormListNode,
@@ -13,6 +12,7 @@ import {
     FormNodeBuilder,
     isAnyStoreNode,
     isStoreListNode,
+    makeStoreNode,
     SourceNodeType,
     StoreListNode,
     StoreNode,
@@ -28,7 +28,7 @@ import {
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E, NE = E>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
@@ -43,7 +43,7 @@ export function makeFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E, NE = E>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
@@ -56,7 +56,7 @@ export function makeFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E, NE = E>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: [E],
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
@@ -69,7 +69,7 @@ export function makeFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire
  */
-export function makeFormNode<E, NE = E>(
+export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: E,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
@@ -81,7 +81,7 @@ export function makeFormNode(
     builder: (x: any) => any = (x: any) => x,
     initialData?: any
 ): any {
-    const node = isAnyStoreNode(entityOrNode) ? entityOrNode : buildNode(entityOrNode);
+    const node = isAnyStoreNode(entityOrNode) ? entityOrNode : makeStoreNode(entityOrNode);
 
     let formNode;
     if (isStoreListNode(node)) {

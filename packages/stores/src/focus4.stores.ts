@@ -1,6 +1,5 @@
 export {CollectionStore} from "./collection";
 export {
-    buildNode,
     cloneField,
     FormActions,
     FormActionsBuilder,
@@ -17,8 +16,8 @@ export {
     isStoreListNode,
     isStoreNode,
     LoadRegistration,
-    makeEntityStore,
     makeField,
+    makeStoreNode,
     NodeLoadBuilder,
     stringFor,
     themeable,

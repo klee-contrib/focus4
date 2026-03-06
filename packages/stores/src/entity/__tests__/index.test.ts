@@ -3,7 +3,7 @@ import {isObservableArray} from "mobx";
 import {describe, expect, test, vi} from "vitest";
 
 import {FormNodeBuilder} from "../form";
-import {makeEntityStore, toFlatValues} from "../store";
+import {makeStoreNode, toFlatValues} from "../store";
 import {clearNode, defaultLoad, replaceNode, setNode} from "../store/store";
 
 import {DO_STRING, LigneEntity, OperationEntity, ProjetEntity, StructureEntity} from "./entities";
@@ -11,16 +11,14 @@ import {DO_STRING, LigneEntity, OperationEntity, ProjetEntity, StructureEntity} 
 i18next.init();
 
 function getStore() {
-    const subStore = makeEntityStore({
-        structure: StructureEntity,
-        operationList: [OperationEntity]
-    });
-
-    return makeEntityStore({
+    return makeStoreNode({
         operation: OperationEntity,
         projetTest: ProjetEntity,
         structureList: [StructureEntity],
-        subStore
+        subStore: {
+            structure: StructureEntity,
+            operationList: [OperationEntity]
+        }
     });
 }
 
@@ -72,7 +70,8 @@ describe("EntityStore: Création", () => {
             set: setNode,
             clear: clearNode,
             replace: replaceNode,
-            load: defaultLoad
+            load: defaultLoad,
+            $required: true
         }));
 
     test("L'entrée 'structureList' est bien un array", () => expect(isObservableArray(store.structureList)).toBe(true));

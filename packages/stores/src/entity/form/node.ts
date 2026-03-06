@@ -2,7 +2,7 @@ import {isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
 import {ZodNever} from "zod";
 
-import {FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
 import {EntityFieldBuilder} from "../field";
 import {nodeToFormNode} from "../store";
@@ -23,9 +23,9 @@ import {
 
 import {FormListNodeBuilder} from "./list-node";
 
-type FieldsOf<E> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
-type ObjectsOf<E> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
-type ListsOf<E> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
+type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
+type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
+type ListsOf<E extends Entity> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
 
 type EntryToEntity<E> =
     E extends ObjectEntry<infer E1>
@@ -36,7 +36,7 @@ type EntryToEntity<E> =
             ? E
             : never;
 
-export class FormNodeBuilder<E, E0 = E> {
+export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
     /** @internal */
     node: StoreNode<E>;
 
@@ -145,7 +145,7 @@ export class FormNodeBuilder<E, E0 = E> {
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<L extends ListsOf<E>, NE>(
+    patch<L extends ListsOf<E>, NE extends Entity>(
         node: L,
         builder: (
             b: FormListNodeBuilder<EntryToEntity<E[L]>>,
@@ -157,7 +157,7 @@ export class FormNodeBuilder<E, E0 = E> {
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<O extends ObjectsOf<E>, NE>(
+    patch<O extends ObjectsOf<E>, NE extends Entity>(
         node: O,
         builder: (
             b: FormNodeBuilder<EntryToEntity<E[O]>>,

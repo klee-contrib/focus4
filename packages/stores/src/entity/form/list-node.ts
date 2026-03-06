@@ -1,11 +1,13 @@
 import {isFunction} from "es-toolkit";
 
+import {Entity} from "@focus4/entities";
+
 import {nodeToFormNode} from "../store";
 import {FormListNode, StoreListNode} from "../types";
 
 import {FormNodeBuilder, initFormNode} from "./node";
 
-export class FormListNodeBuilder<E, E0 = E> {
+export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
     /** @internal */
     node: StoreListNode<E>;
 
@@ -44,7 +46,7 @@ export class FormListNodeBuilder<E, E0 = E> {
      * Modifie les items du FormListNode.
      * @param builder Configurateur de noeud.
      */
-    items<NE>(
+    items<NE extends Entity>(
         builder: (b: FormNodeBuilder<E, E0>, node: StoreListNode<E>) => FormNodeBuilder<NE, E0>
     ): FormListNodeBuilder<NE, E0> {
         // @ts-ignore

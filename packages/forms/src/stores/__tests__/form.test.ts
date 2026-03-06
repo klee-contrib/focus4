@@ -3,7 +3,7 @@ import {describe, expect, test} from "vitest";
 import z from "zod";
 
 import {e, entity} from "@focus4/entities";
-import {makeEntityStore} from "@focus4/stores";
+import {makeStoreNode} from "@focus4/stores";
 
 import {useFormActions, useFormNode} from "../form";
 
@@ -29,7 +29,7 @@ const TestListEntity = entity({
 describe("useFormNode", () => {
     describe("avec StoreNode", () => {
         test("crée un FormNode à partir d'un StoreNode", () => {
-            const store = makeEntityStore({test: TestEntity});
+            const store = makeStoreNode({test: TestEntity});
             const {result} = renderHook(() => useFormNode(store.test));
 
             expect(result.current.form).toBeDefined();
@@ -39,7 +39,7 @@ describe("useFormNode", () => {
         });
 
         test("initialise avec initialData", () => {
-            const store = makeEntityStore({test: TestEntity});
+            const store = makeStoreNode({test: TestEntity});
             const {result} = renderHook(() =>
                 useFormNode(store.test, undefined, {id: 1, name: "Test", email: "test@test.com"})
             );
@@ -51,7 +51,7 @@ describe("useFormNode", () => {
         });
 
         test("initialise avec initialData = true", () => {
-            const store = makeEntityStore({test: TestEntity});
+            const store = makeStoreNode({test: TestEntity});
             store.test.replace({id: 1, name: "Test"});
             const {result} = renderHook(() => useFormNode(store.test, undefined, true));
 
@@ -60,7 +60,7 @@ describe("useFormNode", () => {
         });
 
         test("initialise avec fonction initialData", () => {
-            const store = makeEntityStore({test: TestEntity});
+            const store = makeStoreNode({test: TestEntity});
             const {result} = renderHook(() => useFormNode(store.test, undefined, () => ({id: 2, name: "Test2"})));
 
             expect(result.current.id.value).toBe(2);
@@ -70,7 +70,7 @@ describe("useFormNode", () => {
 
     describe("avec StoreListNode", () => {
         test("crée un FormListNode à partir d'un StoreListNode", () => {
-            const store = makeEntityStore({testList: [TestListEntity]});
+            const store = makeStoreNode({testList: [TestListEntity]});
             const {result} = renderHook(() => useFormNode(store.testList));
 
             expect(result.current.form).toBeDefined();
@@ -80,7 +80,7 @@ describe("useFormNode", () => {
         });
 
         test("initialise avec initialData", () => {
-            const store = makeEntityStore({testList: [TestListEntity]});
+            const store = makeStoreNode({testList: [TestListEntity]});
             const {result} = renderHook(() =>
                 useFormNode(store.testList, undefined, [
                     {id: 1, label: "Item 1"},
@@ -129,7 +129,7 @@ describe("useFormNode", () => {
 
     describe("avec builder", () => {
         test("utilise le builder pour configurer le FormNode", () => {
-            const store = makeEntityStore({test: TestEntity});
+            const store = makeStoreNode({test: TestEntity});
             const {result} = renderHook(() =>
                 useFormNode(store.test, s => s.patch("name", f => f.metadata({label: "Nom"})))
             );
@@ -141,7 +141,7 @@ describe("useFormNode", () => {
 
 describe("useFormActions", () => {
     test("crée des FormActions", () => {
-        const store = makeEntityStore({test: TestEntity});
+        const store = makeStoreNode({test: TestEntity});
         const {result: formNodeResult} = renderHook(() => useFormNode(store.test));
         const {result} = renderHook(() => useFormActions(formNodeResult.current, s => s, []));
 
@@ -151,7 +151,7 @@ describe("useFormActions", () => {
     });
 
     test("crée des FormActions avec builder", () => {
-        const store = makeEntityStore({test: TestEntity});
+        const store = makeStoreNode({test: TestEntity});
         const {result: formNodeResult} = renderHook(() => useFormNode(store.test));
         const {result} = renderHook(() =>
             useFormActions(formNodeResult.current, s => s.save(() => Promise.resolve()), [])

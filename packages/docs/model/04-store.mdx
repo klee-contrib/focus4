@@ -6,10 +6,10 @@ import {Meta} from "@storybook/addon-docs/blocks";
 
 Une entité retournée directement depuis le serveur via une API est, naturellement, un objet JSON simple. Si parfois ce sont bien les seules données qui nous intéressent (et dans ce cas, elles peuvent être stockées dans un état React ou observable classique), la plupart du temps **on voudra pouvoir les associer à leurs définitions**, afin de pouvoir utiliser tous les métadonnées associées pour de l'affichage (formatteurs...) ou de l'édition (composants, validation...) qui ont été renseignées principalement dans les domaines.
 
-Focus met à disposition un **store d'entité**, qui est comme son nom l'indique est un store dédié au stockage d'entités, qui se construit à partir de leurs définitions, avec la méthode **`makeEntityStore`** :
+Focus met à disposition un **store d'entité**, qui est comme son nom l'indique est un store dédié au stockage d'entités, qui se construit à partir de leurs définitions, avec la méthode **`makeStoreNode`** :
 
 ```ts
-const profilStore = makeEntityStore({
+const profilStore = makeStoreNode({
     profil: ProfilReadEntity, // profilStore.profil contiendra un `ProfilRead`
     profils: [ProfilItemEntity] // profilStore.profils contiendra une liste de `ProfilItem`
 });
@@ -80,19 +80,35 @@ Contrairement à de la donnée brute sous forme de JSON, un `StoreNode` contient
 
 ## APIs globales
 
-### `makeEntityStore(config)`
+### `makeStoreNode(entity, initialData?)`
 
-La fonction `makeEntityStore` permet de créer un `StoreNode` composite à partir de plusieurs entités. Son unique paramètre est un objet de configuration, qui permet de décrire le contenu du `StoreNode` que l'on souhaite créer. Il peut donc contenir :
+La fonction `makeStoreNode` permet de créer un `StoreNode` ou un `StoreListNode` à partir d'une définition d'entité.
 
-- Des objets de définition d'entité (généralement générés sous le nom `ProfilReadEntity`), pour générer les `StoreNode` correspondants.
-- Des arrays contenants un objet d'entité (`[ProfilReadEntity]`), pour générer les `StoreListNode`s correspondants.
-- Des `StoreNode`s pré-existants. Cela permet de les rattacher aux méthodes `replace`, `set` et `clear` du store, pour associer des ensembles d'entités liées par exemple.
+Cette définition d'entité peut être :
 
-### `buildNode(entity)`
+- Un objet de définition d'entité (généralement généré sous le nom `ProfilReadEntity`), pour créer le `StoreNode` correspondant.
+- Un tuple (array de taille fixe) contenant un seul objet de définition d'entité (`[ProfilReadEntity]`), pour créer le `StoreListNode` correrspondant.
+- Un objet ad-hoc, qui contient des propriétés qui sont elles-mêmes des définitions d'entité ou des tuples de définitions d'entité, pour créer un `StoreNode` composite.
 
-La fonction `buildNode` permet de créer un `StoreNode` ou un `StoreListNode` à partir d'un objet de définition d'entité. Comme pour `makeEntityStore`, un `StoreListNode` s'obtient en passant un array.
+```ts
+const profil = makeStoreNode(ProfilReadEntity); // StoreNode<typeof ProfilReadEntity>
+const profils = makeStoreNode([ProfilReadEntity]); // StoreListNode<typeof ProfilReadEntity>
+const store = makeStoreNode({
+    profil: ProfilReadEntity,
+    profils: [ProfilReadEntity]
+}); // StoreNode d'une entité ad-hoc, dont la définition serait `entity({profil: e.object(ProfilReadEntity), profils: e.list(ProfilReadEntity)})`
+```
 
-Cette fonction est plutôt préconisée lorsqu'on a besoin de créer un noeud unique à la volée (pour des données provenant d'[un store de collection](/docs/listes-store-de-collection--docs), par exemple). `makeEntityStore` est plus adapté pour des stores stables qui seront utilisés à travers plusieurs composants.
+`makeStoreNode` peut également être appelé avec un objet contenant les données initiales, qui seront utilisées pour initialiser les champs du store.
+
+#### `useStoreNode(entity, initialData?)`
+
+Dans un composant React, la fonction `useStoreNode` peut également être utilisée : elle appelle `makeStoreNode` et stocke le store dans un `useState` du composant.
+
+Selon l'usage de votre store, les deux méthodes peuvent être adaptées :
+
+- Si vous avez besoin d'un store pour gérer un **état local** à votre composant, utilisez **`useStoreNode`**.
+- Si vous avez besoin de créer un store à partir de **données provenant d'un état externe** (depuis les props, ou depuis [un store de collection](/docs/listes-store-de-collection--docs) par exemple), utilisez directement **`makeStoreNode`** pour (re)créer le store à la volée à partir des données (on ne veut justement pas persister le store dans le composant ici).
 
 ### `toFlatValues(node, includeAddedFields?)`
 

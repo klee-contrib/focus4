@@ -1,9 +1,9 @@
 import {IObservableArray} from "mobx";
 
-import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {Entity, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
-export type EntityToNode<E> = {
+export type EntityToNode<E extends Entity> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? EntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
@@ -12,11 +12,15 @@ export type EntityToNode<E> = {
             ? StoreListNode<LE>
             : E[P] extends RecursiveListEntry
               ? StoreListNode<E>
-              : never;
+              : E[P] extends [Entity]
+                ? StoreListNode<E[P][0]>
+                : E[P] extends Entity
+                  ? StoreNode<E[P]>
+                  : never;
 };
 
 /** Noeud de store simple. */
-export type StoreNode<E = any> = EntityToNode<E> & {
+export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     /** @internal */
     /** IsEdit temporaire, traité par `nodeToFormNode`. */
     $edit?: boolean | (() => boolean);
@@ -43,7 +47,7 @@ export type StoreNode<E = any> = EntityToNode<E> & {
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
-export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
+export interface StoreListNode<E extends Entity = any> extends IObservableArray<StoreNode<E>> {
     /** @internal */
     /** IsEdit temporaire, traité par `nodeToFormNode`. */
     $edit?: boolean | (() => boolean);
@@ -61,7 +65,7 @@ export interface StoreListNode<E = any> extends IObservableArray<StoreNode<E>> {
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
-    $nodeBuilder?: <NE>(source: StoreNode<E>) => StoreNode<NE>;
+    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
 
     /** Appelle le service de chargement enregistré. */
     load(): Promise<void>;

@@ -1,4 +1,4 @@
-import {Entity} from "../types";
+import {Entity, FieldEntry} from "../types";
 
 /**
  * Crée une entité à partir d'une définition d'entrées.
@@ -7,7 +7,7 @@ import {Entity} from "../types";
  */
 export function entity<const E extends Entity>(entries: E): E {
     for (const key in entries) {
-        if (entries[key].type === "field" && !entries[key].name) {
+        if ((entries[key] as FieldEntry).type === "field" && !(entries[key] as FieldEntry).name) {
             (entries[key] as any).name = key;
         }
     }

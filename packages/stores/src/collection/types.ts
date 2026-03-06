@@ -1,4 +1,4 @@
-import {EntityToType} from "@focus4/entities";
+import {Entity, EntityToType} from "@focus4/entities";
 
 import {FormNodeBuilder} from "../entity";
 
@@ -53,7 +53,7 @@ export interface SortInput {
 }
 
 /** Critères génériques de recherche. */
-export interface SearchProperties<NC = any> {
+export interface SearchProperties<NC extends Entity = any> {
     /** Critère personnalisé. */
     criteria?: EntityToType<NoInfer<NC>>;
     /** Champ sur lequel grouper. */
@@ -71,7 +71,10 @@ export interface SearchProperties<NC = any> {
 }
 
 /** Initialisation du CollectionStore */
-export interface CollectionStoreInitProperties<C = any, NC = C> extends SearchProperties<NC> {
+export interface CollectionStoreInitProperties<
+    C extends Entity = any,
+    NC extends Entity = C
+> extends SearchProperties<NC> {
     /**
      * Mode de prise en compte de l'objet de critère :
      *

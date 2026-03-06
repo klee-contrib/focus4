@@ -1,9 +1,8 @@
 import {isFunction} from "es-toolkit";
 import {useEffect, useId, useRef, useState} from "react";
 
-import {EntityToType} from "@focus4/entities";
+import {Entity, EntityToType} from "@focus4/entities";
 import {
-    buildNode,
     FormActions,
     FormActionsBuilder,
     FormListNode,
@@ -12,6 +11,7 @@ import {
     FormNodeBuilder,
     isAnyStoreNode,
     isStoreListNode,
+    makeStoreNode,
     SourceNodeType,
     StoreListNode,
     StoreNode,
@@ -26,7 +26,7 @@ import {
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
  */
-export function useFormNode<E, NE = E>(
+export function useFormNode<E extends Entity, NE extends Entity = E>(
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[]) | true
@@ -39,7 +39,7 @@ export function useFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
  */
-export function useFormNode<E, NE = E>(
+export function useFormNode<E extends Entity, NE extends Entity = E>(
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>) | true
@@ -50,7 +50,7 @@ export function useFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire.
  */
-export function useFormNode<E, NE = E>(
+export function useFormNode<E extends Entity, NE extends Entity = E>(
     entity: [E],
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
     initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
@@ -61,13 +61,13 @@ export function useFormNode<E, NE = E>(
  * @param builder Le configurateur
  * @param initialData Les données initiales du formulaire.
  */
-export function useFormNode<E, NE = E>(
+export function useFormNode<E extends Entity, NE extends Entity = E>(
     entity: E,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
     initialData?: EntityToType<E> | (() => EntityToType<E>)
 ): FormNode<NE, E>;
 export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: any) => x, initialData: any = undefined) {
-    const [node] = useState(() => (isAnyStoreNode(entityOrNode) ? entityOrNode : buildNode(entityOrNode)));
+    const [node] = useState(() => (isAnyStoreNode(entityOrNode) ? entityOrNode : makeStoreNode(entityOrNode)));
     const [formNode] = useState(() => {
         let fn;
         if (isStoreListNode(node)) {

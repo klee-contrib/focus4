@@ -156,7 +156,7 @@ Vous pouvez néanmoins reconstruire un `StoreNode` dans votre composant de ligne
 
 ```tsx
 export function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
-    const node = buildNode(ItemEntity).replace(data);
+    const node = makeStoreNode(ItemEntity, data);
     return useObserver(() => (
         <div onClick={onClick}>
             {stringFor(node.nom)}

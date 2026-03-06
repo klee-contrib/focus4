@@ -3,7 +3,7 @@ import {describe, expect, test} from "vitest";
 import z from "zod";
 
 import {e, entity} from "@focus4/entities";
-import {makeEntityStore} from "@focus4/stores";
+import {makeStoreNode} from "@focus4/stores";
 
 import {useLoad} from "../load";
 
@@ -22,7 +22,7 @@ const TestEntity = entity({
 
 describe("useLoad", () => {
     test("retourne isLoading et trackingId", () => {
-        const store = makeEntityStore({test: TestEntity});
+        const store = makeStoreNode({test: TestEntity});
         const {result} = renderHook(() =>
             useLoad(store.test, b => b.params().load(() => Promise.resolve({id: 1, name: "Test"})))
         );
@@ -33,7 +33,7 @@ describe("useLoad", () => {
     });
 
     test("charge les données avec un service", async () => {
-        const store = makeEntityStore({test: TestEntity});
+        const store = makeStoreNode({test: TestEntity});
         const loadService = async () => ({id: 1, name: "Test"});
 
         renderHook(() => useLoad(store.test, b => b.params().load(loadService)));

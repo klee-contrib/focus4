@@ -2,9 +2,9 @@ import {debounce, flatten, isFunction, isString, orderBy} from "es-toolkit";
 import {action, computed, IObservableArray, isObservableArray, observable, reaction, remove, set, toJS} from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
-import {EntityToType} from "@focus4/entities";
+import {Entity, EntityToType} from "@focus4/entities";
 
-import {buildNode, FormEntityField, FormNode, FormNodeBuilder, isEntityField, toFlatValues} from "../entity";
+import {FormEntityField, FormNode, FormNodeBuilder, isEntityField, makeStoreNode, toFlatValues} from "../entity";
 
 import {
     CollectionStoreInitProperties,
@@ -26,7 +26,7 @@ import {
 export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput, SortInput};
 
 /** Store de recherche. Contient les critères/facettes ainsi que les résultats, et s'occupe des recherches. */
-export class CollectionStore<T extends object = any, C = any, NC = C> {
+export class CollectionStore<T extends object = any, C extends Entity = any, NC extends Entity = C> {
     /** Type de store. */
     readonly type: "local" | "server";
 
@@ -139,7 +139,7 @@ export class CollectionStore<T extends object = any, C = any, NC = C> {
             // On construit le StoreNode à partir de la définition de critère, comme dans un EntityStore.
             if (criteria) {
                 const {criteriaBuilder = (x: any) => x} = initialQuery ?? {};
-                this.criteria = criteriaBuilder(new FormNodeBuilder(buildNode(criteria as C)))
+                this.criteria = criteriaBuilder(new FormNodeBuilder(makeStoreNode(criteria as C)))
                     .edit(() => true)
                     .build();
             }

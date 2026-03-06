@@ -1,4 +1,4 @@
-import {FieldEntry, ListEntry, ObjectEntry} from "@focus4/entities";
+import {Entity, FieldEntry, ListEntry, ObjectEntry} from "@focus4/entities";
 
 import {BaseAutocompleteProps, BaseDisplayProps, BaseInputProps, BaseLabelProps, BaseSelectProps} from "./components";
 import {FormListNode, FormNode} from "./form";
@@ -11,7 +11,7 @@ import {FormListNode, FormNode} from "./form";
  * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
 export type Patch<
-    E,
+    E extends Entity,
     P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
     R extends string = never
 > = Omit<E, keyof P | R> & {[K in keyof P]: P[K]};
@@ -24,7 +24,7 @@ export type Patch<
  * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
 export type PatchedFormNode<
-    E,
+    E extends Entity,
     P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
     R extends string = never
 > = FormNode<Patch<E, P, R>, E>;
@@ -37,7 +37,7 @@ export type PatchedFormNode<
  * Le troisième paramètre peut être utilisé pour lister les champs à retirer, sous la forme `"champ1" | "champ2"`.
  */
 export type PatchedFormListNode<
-    E,
+    E extends Entity,
     P extends Record<number | string | symbol, FieldEntry | ListEntry | ObjectEntry>,
     R extends string = never
 > = FormListNode<Patch<E, P, R>, E>;

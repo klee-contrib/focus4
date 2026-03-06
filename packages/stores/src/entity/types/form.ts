@@ -1,24 +1,44 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {Entity, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
 import {EntityField, StoreListNode, StoreNode} from "./store";
 
+type SourceNode<P, T, E0> = P extends keyof E0
+    ? E0[P] extends ObjectEntry<infer OE0>
+        ? OE0
+        : E0[P] extends Entity
+          ? E0[P]
+          : T
+    : T;
+
+type SourceListNode<P, T, E0> = P extends keyof E0
+    ? E0[P] extends ListEntry<infer OE0>
+        ? OE0
+        : E0[P] extends [Entity]
+          ? E0[P][0]
+          : T
+    : T;
+
 /** Génère les entrées de noeud de formulaire équivalent à une entité. */
-export type EntityToForm<E, E0 = E> = {
+export type EntityToForm<E extends Entity, E0 extends Entity = E> = {
     readonly [P in keyof E]: E[P] extends FieldEntry
         ? FormEntityField<E[P]>
         : E[P] extends ObjectEntry<infer OE>
-          ? FormNode<OE, P extends keyof E0 ? (E0[P] extends ObjectEntry<infer OE0> ? OE0 : OE) : OE>
+          ? FormNode<OE, SourceNode<P, OE, E0>>
           : E[P] extends ListEntry<infer LE>
-            ? FormListNode<LE, P extends keyof E0 ? (E0[P] extends ListEntry<infer LE0> ? LE0 : LE) : LE>
+            ? FormListNode<LE, SourceListNode<P, LE, E0>>
             : E[P] extends RecursiveListEntry
               ? FormListNode<E, E0>
-              : never;
+              : E[P] extends [Entity]
+                ? FormListNode<E[P][0], SourceListNode<P, E[P][0], E0>>
+                : E[P] extends Entity
+                  ? FormNode<E[P], SourceNode<P, E[P], E0>>
+                  : never;
 };
 
 /** Champs additionnels pour un noeud de formulaire. */
-export type FormNode<E = any, E0 = E> = EntityToForm<E, E0> & {
+export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToForm<E, E0> & {
     /** Données liée à un FormNode. */
     readonly form: {
         /** @internal */
@@ -66,7 +86,7 @@ export type FormNode<E = any, E0 = E> = EntityToForm<E, E0> & {
     readonly sourceNode: StoreNode<E0>;
 };
 
-export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode<E, E0>> {
+export interface FormListNode<E extends Entity = any, E0 extends Entity = E> extends IObservableArray<FormNode<E, E0>> {
     /** Métadonnées. */
     readonly $entity: E;
 
@@ -97,7 +117,7 @@ export interface FormListNode<E = any, E0 = E> extends IObservableArray<FormNode
 
     /** Fonction de modification d'un objet, appelé à la création. */
     /** @internal */
-    $nodeBuilder?: <NE>(source: StoreNode<E>) => StoreNode<NE>;
+    $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
 
     /** @internal */
     /** Dispose l'observer qui suit l'ajout et la suppression d'élement dans la liste source. */

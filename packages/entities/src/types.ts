@@ -44,7 +44,7 @@ export interface FieldEntry<D extends Domain = any, T extends output<D["schema"]
 }
 
 /** Métadonnées d'une entrée de type "object" pour une entité. */
-export interface ObjectEntry<E = any> {
+export interface ObjectEntry<E extends Entity = any> {
     readonly type: "object";
 
     /** Entité de l'entrée */
@@ -61,7 +61,7 @@ export interface ObjectEntry<E = any> {
 }
 
 /** Métadonnées d'une entrée de type "list" pour une entité. */
-export interface ListEntry<E = any> {
+export interface ListEntry<E extends Entity = any> {
     readonly type: "list";
 
     /** Entité de l'entrée */
@@ -92,7 +92,7 @@ export interface RecursiveListEntry {
 }
 
 /** Génère le type associé à une entité, avec toutes ses propriétés en optionnel. */
-export type EntityToType<E> = {
+export type EntityToType<E extends Entity> = {
     -readonly [P in keyof E]?: E[P] extends FieldEntry
         ? E[P]["fieldType"]
         : E[P] extends ObjectEntry<infer OE>
@@ -101,8 +101,15 @@ export type EntityToType<E> = {
             ? EntityToType<LE>[]
             : E[P] extends RecursiveListEntry
               ? EntityToType<E>[]
-              : never;
+              : E[P] extends [Entity]
+                ? EntityToType<E[P][0]>[]
+                : E[P] extends Entity
+                  ? EntityToType<E[P]>
+                  : never;
 };
 
 /** Définition d'une entité. */
-export type Entity = Record<string, FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry>;
+export interface Entity extends Record<
+    string,
+    FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry | Entity | [Entity]
+> {}

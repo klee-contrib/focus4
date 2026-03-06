@@ -1,6 +1,6 @@
 import {isObservableArray} from "mobx";
 
-import {EntityToType} from "@focus4/entities";
+import {Entity, EntityToType} from "@focus4/entities";
 
 import {FormEntityField, FormListNode, FormNode} from "./form";
 import {EntityField, StoreListNode, StoreNode} from "./store";
@@ -24,27 +24,27 @@ export function isEntityField(data: any): data is EntityField {
     return data && typeof data === "object" && "$field" in data;
 }
 
-export function isAnyStoreNode<E = any>(data: any): data is StoreListNode<E> | StoreNode<E> {
+export function isAnyStoreNode<E extends Entity = any>(data: any): data is StoreListNode<E> | StoreNode<E> {
     return isStoreNode(data) || isStoreListNode(data);
 }
 
-export function isStoreListNode<E = any>(data: any): data is StoreListNode<E> {
+export function isStoreListNode<E extends Entity = any>(data: any): data is StoreListNode<E> {
     return data && !!(data as StoreListNode).replaceNodes && isObservableArray(data);
 }
 
-export function isStoreNode<E = any>(data: any): data is StoreNode<E> {
+export function isStoreNode<E extends Entity = any>(data: any): data is StoreNode<E> {
     return data && !!(data as StoreNode).set && !!(data as StoreNode).clear;
 }
 
-export function isAnyFormNode<E = any>(data: any): data is FormListNode<E> | FormNode<E> {
+export function isAnyFormNode<E extends Entity = any>(data: any): data is FormListNode<E> | FormNode<E> {
     return data && !!(data as FormNode).form;
 }
 
-export function isFormNode<E = any>(data: any): data is FormNode<E> {
+export function isFormNode<E extends Entity = any>(data: any): data is FormNode<E> {
     return isStoreNode(data) && isAnyFormNode(data);
 }
 
-export function isFormListNode<E = any>(data: any): data is FormListNode<E> {
+export function isFormListNode<E extends Entity = any>(data: any): data is FormListNode<E> {
     return isStoreListNode(data) && isAnyFormNode(data);
 }
 

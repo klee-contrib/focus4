@@ -1,6 +1,8 @@
 import {isBoolean, isEqual, isFunction} from "es-toolkit";
 import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
+import {Entity} from "@focus4/entities";
+
 import {BuildingFormEntityField} from "../field";
 import {
     EntityField,
@@ -25,7 +27,10 @@ import {getNodeForList, replaceNode, setNode} from "./store";
  * @param node Le FormNode en cours de création.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E = any>(node: StoreListNode<E> | StoreNode<E>, parentNode?: FormListNode | FormNode) {
+export function nodeToFormNode<E extends Entity = any>(
+    node: StoreListNode<E> | StoreNode<E>,
+    parentNode?: FormListNode | FormNode
+) {
     let {$edit, $required} = node;
     if ($edit !== undefined) {
         delete node.$edit;

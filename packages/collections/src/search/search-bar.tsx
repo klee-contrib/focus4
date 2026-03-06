@@ -5,6 +5,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import z from "zod";
 
+import {Entity} from "@focus4/entities";
 import {domain, SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
 import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
@@ -17,7 +18,7 @@ export {searchBarCss};
 export type {SearchBarCss};
 
 /** Props de la SearchBar. */
-export interface SearchBarProps<T extends object, C> {
+export interface SearchBarProps<T extends object, C extends Entity> {
     /** Rendu du composant du critère. */
     criteriaComponent?: ReactElement;
     /** Active la gestion des critères dans le champ texte. */
@@ -40,7 +41,7 @@ export interface SearchBarProps<T extends object, C> {
  * Le composant agit naturellement sur le champ `query`, mais également sur les critères personnalisés `criteria`, qu'il va par défaut ajouter dans le champ texte pour une saisie manuelle (du genre `criteriaName:criteriaValue` ; ce comportement est désactivable via la prop `disableInputCriteria`).
  * Il est possible également de lui passer un composant personnalisé de saisie des critères qu'il va pouvoir afficher à la demande pour saisir de manière plus précise les différents critères.
  */
-export function SearchBar<T extends object, C>({
+export function SearchBar<T extends object, C extends Entity>({
     criteriaComponent,
     enableInputCriteria,
     i18nPrefix = "focus",

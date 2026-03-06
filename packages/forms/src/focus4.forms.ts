@@ -8,7 +8,7 @@ export {
     selectFor,
     useField
 } from "./fields";
-export {useFormActions, useFormNode, useLoad, useReferenceTracking} from "./stores";
+export {useFormActions, useFormNode, useLoad, useReferenceTracking, useStoreNode} from "./stores";
 export {useDisplay, useInput} from "./utils";
 
 export type {AutocompleteForOptions, FieldForOptions, SelectForOptions, UseFieldProps} from "./fields";
