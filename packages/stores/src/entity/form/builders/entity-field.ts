@@ -14,10 +14,8 @@ import {
     EntityField,
     FieldComponents,
     Validator
-} from "../types";
-
-import {themeable} from "./themeable";
-import {UndefinedComponent} from "./utils";
+} from "../../types";
+import {themeable, UndefinedComponent} from "../../utils";
 
 type DomainInputProps<D> = D extends Domain<infer _0, infer ICProps> ? ICProps : never;
 type DomainSelectProps<D> = D extends Domain<infer _0, infer _1, infer SCProps> ? SCProps : never;

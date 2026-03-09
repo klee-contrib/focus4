@@ -3,7 +3,7 @@ import {action, extendObservable, isObservableArray, observable, runInAction} fr
 
 import {Entity, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
-import {FormNodeBuilder} from "../form";
+import {FormNodeBuilder, nodeToFormNode} from "../form";
 import {
     isAnyStoreNode,
     isEntityField,
@@ -13,8 +13,6 @@ import {
     StoreListNode,
     StoreNode
 } from "../types";
-
-import {nodeToFormNode} from "./form";
 
 /**
  * Crée un StoreListNode à partir d'une définition d'entité.

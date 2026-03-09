@@ -1,309 +1,355 @@
-import {isFunction} from "es-toolkit";
-import {extendObservable, observable} from "mobx";
-import {ZodNever} from "zod";
+import {isBoolean, isEqual, isFunction} from "es-toolkit";
+import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
-import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {Entity} from "@focus4/entities";
 
-import {EntityFieldBuilder} from "../field";
-import {nodeToFormNode} from "../store";
+import {getNodeForList, replaceNode, setNode} from "../store";
 import {
-    BaseAutocompleteProps,
-    BaseDisplayProps,
-    BaseInputProps,
-    BaseLabelProps,
-    BaseSelectProps,
+    EntityField,
+    FormEntityField,
+    FormListNode,
     FormNode,
+    isAnyFormNode,
+    isAnyStoreNode,
     isEntityField,
-    isStoreListNode,
-    isStoreNode,
-    Patch,
+    isFormEntityField,
+    isFormListNode,
+    isFormNode,
     StoreListNode,
     StoreNode
 } from "../types";
 
-import {FormListNodeBuilder} from "./list-node";
+import {BuildingFormEntityField} from "./builders";
+import {validateField} from "./validation";
 
-type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
-type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
-type ListsOf<E extends Entity> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
-
-type EntryToEntity<E> =
-    E extends ObjectEntry<infer E1>
-        ? E1
-        : E extends ListEntry<infer E2>
-          ? E2
-          : E extends RecursiveListEntry
-            ? E
-            : never;
-
-export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
-    /** @internal */
-    node: StoreNode<E>;
-
-    constructor(node: StoreNode<E>) {
-        this.node = node.$form ? node : initFormNode(node);
+/**
+ * Transforme un Store(List)Node en Form(List)Node.
+ * @param node Le FormNode en cours de création.
+ * @param parentNode Le node parent.
+ */
+export function nodeToFormNode<E extends Entity = any>(
+    node: StoreListNode<E> | StoreNode<E>,
+    parentNode?: FormListNode | FormNode
+) {
+    let {$edit, $required} = node;
+    if ($edit !== undefined) {
+        delete node.$edit;
+    } else {
+        $edit = true;
+    }
+    if ($required !== undefined) {
+        delete node.$required;
+    } else {
+        $required = true;
     }
 
-    /**
-     * Ajoute un champ calculé dans le FormNode.
-     * @param name Nom du champ.
-     * @param get Getter du champ.
-     * @param set Setter du champ.
-     */
-    add<FE extends string, NFE extends FieldEntry>(
-        name: FE,
-        builder: (
-            b: EntityFieldBuilder<
-                FieldEntry<
-                    Domain<
-                        ZodNever,
-                        BaseInputProps<ZodNever>,
-                        BaseSelectProps<ZodNever>,
-                        BaseAutocompleteProps<ZodNever>,
-                        BaseDisplayProps<ZodNever>,
-                        BaseLabelProps
-                    >
-                >
-            >,
-            node: StoreNode<E>
-        ) => EntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E & {[P in FE]: NFE}, E0> {
-        // @ts-ignore
-        this.node[name] = builder(new EntityFieldBuilder(name), this.node).collect();
-        // @ts-ignore
-        return this;
-    }
+    delete node.$form;
 
-    /**
-     * Construit le FormNode à partir de la configuration renseignée.
-     */
-    build(): FormNode<E, E0> {
-        this.node.$edit ??= false;
+    const {sourceNode} = node as any;
 
-        nodeToFormNode(this.node);
+    node.load = () => sourceNode.load();
+    (node as any).reset = action("formNode.reset", () => {
+        if ((node as any).form._initialData) {
+            replaceNode.call(node as any, (node as any).form._initialData);
+        }
+        setNode.call(node as any, sourceNode);
+        return node;
+    });
 
-        // @ts-ignore
-        return this.node;
-    }
+    (node as any).form = observable(
+        {
+            _isEdit: isBoolean($edit) ? $edit : true,
+            get isEdit() {
+                return (parentNode ? parentNode.form.isEdit : true) && (isFunction($edit) ? $edit() : this._isEdit);
+            },
+            set isEdit(edit) {
+                this._isEdit = edit;
+            },
+            get isRequired() {
+                if (parentNode && parentNode.form.isEmpty && !parentNode.form.isRequired) {
+                    return false;
+                }
+                return isFunction($required) ? $required() : ($required ?? true);
+            }
+        },
+        {},
+        {proxy: false}
+    );
 
-    /**
-     * Initialise l'état d'édition du FormNode.
-     * @param value Etat d'édition initial.
-     */
-    edit(value: boolean): FormNodeBuilder<E, E0>;
-    /**
-     * Force l'état d'édition du FormNode.
-     * @param value Condition d'édition.
-     */
-    edit(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0>;
-    /**
-     * Initialise l'état d'édition de plusieurs champs/noeuds du FormNode.
-     * @param value Etat d'édition initial.
-     * @param params Les champs.
-     */
-    edit(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    /**
-     * Force l'état d'édition de plusieurs champs/noeuds du FormNode.
-     * @param value Condition d'édition.
-     * @param params Les champs.
-     */
-    edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
-        const isEdit = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
-        if (!params.length) {
-            this.node.$edit = isEdit;
+    (node as any).dispose = function dispose() {
+        if (isFormListNode<E>(node)) {
+            for (const item of node) {
+                item.dispose();
+            }
+            node._dispose();
         } else {
-            for (const key of params) {
-                const child = this.node[key];
-                if (isStoreListNode(child)) {
-                    // @ts-ignore
-                    this.node[key] = new FormListNodeBuilder(child).edit(isEdit).collect();
-                } else if (isStoreNode(child)) {
-                    // @ts-ignore
-                    this.node[key] = new FormNodeBuilder(child).edit(isEdit).collect();
-                } else if (isEntityField(child)) {
-                    // @ts-ignore
-                    this.node[key] = new EntityFieldBuilder(child).edit(isEdit).collect();
+            for (const entry in node as StoreNode<E>) {
+                if (entry === "sourceNode") {
+                    continue;
+                }
+                const child: {} = (node as any)[entry];
+                if (isFormEntityField(child)) {
+                    child._dispose?.();
+                } else if (isAnyFormNode(child)) {
+                    child.dispose();
                 }
             }
         }
-        return this;
-    }
+    };
 
-    /**
-     * Modifie un champ du FormNode.
-     * @param field Nom du champ.
-     * @param builder Configurateur de champ.
-     */
-    patch<F extends FieldsOf<E>, NFE extends FieldEntry>(
-        field: F,
-        // @ts-ignore
-        builder: (b: EntityFieldBuilder<E[F]>, node: StoreNode<E>) => EntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E[F] extends NFE ? E : Patch<E, {[_ in F]: NFE}>, E0>;
-    /**
-     * Modifie un noeud du FormNode.
-     * @param node Nom du noeud.
-     * @param builder Configurateur de noeud.
-     */
-    patch<L extends ListsOf<E>, NE extends Entity>(
-        node: L,
-        builder: (
-            b: FormListNodeBuilder<EntryToEntity<E[L]>>,
-            node: StoreNode<E>
-        ) => FormListNodeBuilder<NE, EntryToEntity<E[L]>>
-    ): FormNodeBuilder<E[L] extends ListEntry<NE> ? E : Patch<E, {[_ in L]: ListEntry<NE>}>, E0>;
-    /**
-     * Modifie un noeud du FormNode.
-     * @param node Nom du noeud.
-     * @param builder Configurateur de noeud.
-     */
-    patch<O extends ObjectsOf<E>, NE extends Entity>(
-        node: O,
-        builder: (
-            b: FormNodeBuilder<EntryToEntity<E[O]>>,
-            node: StoreNode<E>
-        ) => FormNodeBuilder<NE, EntryToEntity<E[O]>>
-    ): FormNodeBuilder<E[O] extends ObjectEntry<NE> ? E : Patch<E, {[_ in O]: ObjectEntry<NE>}>, E0>;
-    patch(node: keyof E, builder: (builder: any, node: any) => any): any {
-        const child = this.node[node];
-        if (isStoreListNode(child)) {
-            this.node[node] = builder(new FormListNodeBuilder(child), this.node).collect();
-        } else if (isStoreNode(child)) {
-            this.node[node] = builder(new FormNodeBuilder(child), this.node).collect();
-        } else if (isEntityField(child)) {
-            this.node[node] = builder(new EntityFieldBuilder(child), this.node).collect();
+    if (isFormListNode(node)) {
+        for (const item of node) {
+            nodeToFormNode(item, node);
         }
-        return this;
-    }
 
-    /**
-     * Supprime les champs demandés du FormNode.
-     * @param fields Les champs à supprimer.
-     */
-    remove<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
-        for (const field of fields) {
-            delete this.node[field];
-        }
-        // @ts-ignore
-        return this;
-    }
-
-    /**
-     * Supprime tous les champs du FormNode, sauf ceux demandés.
-     * @param fields Les champs à garder.
-     */
-    removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
-        for (const key in this.node) {
-            if (
-                !fields.includes(key as F) &&
-                !["clear", "replace", "set", "sourceNode", "$edit", "$form", "$required"].includes(key)
-            ) {
-                delete this.node[key as F];
+        extendObservable(node.form, {
+            get hasChanged() {
+                return node.some(item => item.form.hasChanged);
+            },
+            get isEmpty() {
+                return node.length === 0;
+            },
+            get isValid() {
+                return isFormListNode(node) && node.every(item => item.form.isValid);
+            },
+            get errors() {
+                return (isFormListNode(node) && node.map(item => item.form.errors)) || [];
             }
-        }
-        // @ts-ignore
-        return this;
-    }
+        });
 
-    /**
-     * Surcharge le caractère obligatoire du noeud.
-     * @param value Valeur fixe.
-     */
-    required(value: boolean): FormNodeBuilder<E, E0>;
-    /**
-     * Surcharge le caractère obligatoire du noeud.
-     * @param value Valeur calculée.
-     */
-    required(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0>;
-    /**
-     * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
-     * @param value Valeur fixe.
-     * @param params Les champs.
-     */
-    required(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    /**
-     * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
-     * @param value Valeur fixe.
-     * @param params Les champs.
-     */
-    required(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    required(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
-        const isRequired = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
-        if (!params.length) {
-            this.node.$required = isRequired;
-        } else {
-            for (const key of params) {
-                const child = this.node[key];
-                if (isStoreListNode(child)) {
-                    // @ts-ignore
-                    this.node[key] = new FormListNodeBuilder(child).required(isRequired).collect();
-                } else if (isStoreNode(child)) {
-                    // @ts-ignore
-                    this.node[key] = new FormNodeBuilder(child).required(isRequired).collect();
-                } else if (isEntityField(child)) {
-                    // @ts-ignore
-                    this.node[key] = new EntityFieldBuilder(child)
-                        .metadata(isFunction(isRequired) ? () => ({isRequired: isRequired()}) : {isRequired})
-                        .collect();
+        // On va chercher à mettre à jour le FormListNode suite aux ajouts et suppressions depuis la souce.
+        const onSourceSplice = observe(
+            sourceNode as StoreListNode,
+            action((change: IArrayDidChange) => {
+                if (sourceNode === (node as any)) {
+                    return;
+                }
+
+                if (change.type === "splice") {
+                    const isReplace = change.addedCount === change.removedCount;
+
+                    // Si on a exactement autant d'élément sources non existants dans la source et d'éléments cibles non liés à un élément de la source, alors on les lies (dans le même ordre).
+                    const unmatchedItems = node.sourceNode.filter(item => !node.some(ni => ni.sourceNode === item));
+                    const unlinkedItems = node.filter(item => !node.sourceNode.some(ni => ni === item.sourceNode));
+
+                    if (!isReplace && unmatchedItems.length >= unlinkedItems.length) {
+                        for (let i = 0; i < unlinkedItems.length; i++) {
+                            setNode.call(unlinkedItems[i] as any, unmatchedItems[i] as any);
+                            setSourceNode(unlinkedItems[i], unmatchedItems[i]);
+                            change.added = change.added.filter(a => a !== unmatchedItems[i]);
+                            change.index++;
+                        }
+                    }
+
+                    // On construit les nouveaux noeuds à ajouter au FormListNode.
+                    const newNodes = change.added.map(item => getNodeForList(node, item));
+
+                    // Cas particulier du replace : on remplace tout comme attendu.
+                    if (isReplace) {
+                        node.replace(newNodes as any);
+                        return;
+                    }
+
+                    /*
+                     * On cherche les noeuds correspondants aux noeuds supprimés de la source.
+                     * Ils ne sont potentiellement ni à la même place, ni même présents.
+                     */
+                    const nodesToRemove = node.filter(item =>
+                        change.removed.find(changed => changed === item.sourceNode)
+                    );
+
+                    // On va toujours chercher à ajouter les noeuds de la source avant les éventuels noeuds ajoutés dans la cible.
+                    if (!change.index) {
+                        // Ici c'est le cas facile : les éléments ajoutés sont au début de la source : ils sont donc au début de la cible.
+                        node.splice(0, 0, ...(newNodes as any));
+                    } else {
+                        /*
+                         * On doit chercher l'index auquel il faut ajouter les éléments, qui au mieux est le même.
+                         * La pire chose qu'il puisse arriver est d'avoir supprimé des éléments de la source dans la cible.
+                         */
+                        let previousIndex;
+                        let changeIndex = change.index;
+                        do {
+                            // On va donc chercher le premier item de la cible précédent l'index de la source qui est inclus dans la source.
+                            changeIndex--;
+                            previousIndex = node.findIndex(item =>
+                                isEqual(change.object[changeIndex], item.sourceNode)
+                            );
+                        } while (previousIndex === -1 && changeIndex > 0);
+                        /*
+                         * Si aucune suppression, on a fait (-1 +1) donc on retombe au bon endroit.
+                         * S'il y a eu n suppressions, on a fait (-1 -n +1), et on est aussi au bon endroit.
+                         * L'index minimal final est bien toujours 0, donc au pire on ajoutera au début, c'est qui est aussi le bon endroit.
+                         */
+                        node.splice(previousIndex + 1, 0, ...(newNodes as any));
+                    }
+
+                    // Et on supprime les noeuds à supprimer.
+                    for (const toRemove of nodesToRemove) {
+                        node.remove(toRemove);
+                    }
+                }
+            })
+        );
+
+        // En plus de monitorer les ajouts et les suppressions, il faut aussi disposer tous les noeuds supprimés de la liste.
+        const onRemove = observe(node, change => {
+            if (change.type === "splice") {
+                for (const deleted of change.removed) {
+                    deleted.dispose();
                 }
             }
-        }
-        return this;
-    }
+        });
 
-    /** @internal */
-    collect() {
-        this.node.$edit ??= true;
-        return this.node;
+        // Le disposer final d'un FormListNode est donc composer des deux observers ci-dessus.
+        node._dispose = function _dispose() {
+            onSourceSplice();
+            onRemove();
+        };
+    } else if (isFormNode<E>(node)) {
+        for (const entry in node) {
+            if (entry === "sourceNode") {
+                continue;
+            }
+            const child: {} = (node as any)[entry];
+            if (isEntityField(child)) {
+                addFormFieldProperties(child as BuildingFormEntityField, node);
+            } else if (isAnyStoreNode(child)) {
+                nodeToFormNode(child, node);
+            }
+        }
+        extendObservable(node.form, {
+            get hasChanged() {
+                return Object.values(node).some(item => {
+                    if (isFormEntityField(item)) {
+                        return item.hasChanged;
+                    } else if (isAnyFormNode(item) && item !== node) {
+                        return item.form.hasChanged;
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            get isEmpty() {
+                return Object.values(node).every(item => {
+                    if (isFormEntityField(item)) {
+                        return (
+                            !!item._added ||
+                            item.value === undefined ||
+                            item.value === null ||
+                            (typeof item.value === "string" && item.value.trim() === "") ||
+                            (Array.isArray(item.value) && item.value.length === 0)
+                        );
+                    } else if (isAnyFormNode(item) && node !== item) {
+                        return item.form.isEmpty;
+                    } else {
+                        return true;
+                    }
+                });
+            },
+            get isValid() {
+                return !Object.keys(this.errors).length;
+            },
+            get errors() {
+                return (
+                    (isFormNode(node) &&
+                        Object.entries(node).reduce((errors, [key, item]) => {
+                            if (isFormEntityField(item)) {
+                                if (!item.isValid) {
+                                    return {...errors, [key]: item.error};
+                                }
+                            } else if (isAnyFormNode(item) && item !== (node as any)) {
+                                if (!item.form.isValid) {
+                                    return {...errors, [key]: item.form.errors};
+                                }
+                            }
+                            return errors;
+                        }, {})) ||
+                    {}
+                );
+            }
+        });
     }
 }
 
-export function initFormNode(source: any): any {
-    if (isStoreListNode(source)) {
-        const res = observable.array<{}>([], {deep: false}) as StoreListNode;
-
-        res.$form = true;
-        res.$required = source.$required ?? true;
-
+/** Ajoute les champs erreurs et d'édition sur un EntityField. */
+function addFormFieldProperties(field: BuildingFormEntityField, parentNode: FormNode) {
+    if ("_metadatas" in field) {
+        field._metadatas.push(metadata => ({
+            isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : (metadata?.isRequired ?? false)
+        }));
+    } else {
+        const {$field} = field as FormEntityField;
         // @ts-ignore
-        res.$entity = source.$entity;
-        res.load = source.load;
-        res.pushNode = source.pushNode;
-        res.replaceNodes = source.replaceNodes;
-        res.setNodes = source.setNodes;
-
-        // @ts-ignore
-        res.sourceNode = source;
-
-        return res;
-    } else if (isStoreNode(source)) {
-        const res: typeof source = {} as any;
-        for (const key in source) {
-            // @ts-ignore
-            res[key] = initFormNode((source as any)[key]);
-        }
-
-        res.$form = true;
-        res.$required = source.$required ?? true;
-
-        // @ts-ignore
-        res.sourceNode = source;
-
-        return res;
-    } else if (isEntityField(source)) {
-        return extendObservable(
-            {
-                $field: source.$field
-            },
-            {
-                _isEdit: true,
-                value: source.$field.defaultValue
-            },
-            {
-                value: observable.ref
+        delete field.$field;
+        extendObservable(field, {
+            get $field() {
+                return {
+                    ...$field,
+                    isRequired: parentNode.form.isEmpty && !parentNode.form.isRequired ? false : $field.isRequired
+                };
             }
-        );
+        });
     }
 
-    return source;
+    if (!("_isEdit" in field)) {
+        extendObservable(field, {_isEdit: true});
+    }
+
+    extendObservable(field, {
+        get error() {
+            return validateField(field);
+        },
+        get hasChanged() {
+            const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+            if (sourceField === field) {
+                return true; // Le champ est dans un item de liste ajouté => forcément changé.
+            } else if (!sourceField) {
+                return false; // Le champ est ajouté => forcément inchangé.
+            } else {
+                return !isEqual(sourceField.value, field.value);
+            }
+        },
+        get isEdit() {
+            return parentNode.form.isEdit && (isFunction(field._isEdit) ? field._isEdit() : field._isEdit);
+        },
+        set isEdit(edit) {
+            if (!isFunction(field._isEdit)) {
+                field._isEdit = edit;
+            }
+        },
+        get isValid() {
+            return !this.isEdit || !this.error;
+        }
+    });
+
+    if (parentNode !== parentNode.sourceNode) {
+        const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+        if (sourceField) {
+            (field as any)._dispose = intercept(sourceField, "value", change => {
+                if (parentNode !== parentNode.sourceNode) {
+                    field.value = change.newValue;
+                }
+                return change;
+            });
+        }
+    }
+}
+
+function setSourceNode(node: FormListNode | FormNode, sourceNode: StoreListNode | StoreNode) {
+    if (sourceNode && node !== sourceNode) {
+        (node as any).sourceNode = sourceNode;
+        for (const key in node as FormNode) {
+            const item = (node as any)[key];
+            const sourceItem = (sourceNode as any)[key];
+            if (isAnyFormNode(item) && isAnyStoreNode(item)) {
+                setSourceNode(item, sourceItem);
+            } else if (isFormEntityField(item) && isEntityField(sourceItem)) {
+                item._dispose = intercept(sourceItem, "value", change => {
+                    item.value = change.newValue;
+                    return change;
+                });
+            }
+        }
+    }
 }

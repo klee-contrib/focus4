@@ -2,10 +2,10 @@ import {isFunction} from "es-toolkit";
 
 import {Entity} from "@focus4/entities";
 
-import {nodeToFormNode} from "../store";
-import {FormListNode, StoreListNode} from "../types";
+import {FormListNode, StoreListNode} from "../../types";
+import {nodeToFormNode} from "../node";
 
-import {FormNodeBuilder, initFormNode} from "./node";
+import {FormNodeBuilder, initFormNode} from "./form-node";
 
 export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
     /** @internal */

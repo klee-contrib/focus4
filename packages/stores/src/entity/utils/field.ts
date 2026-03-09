@@ -3,8 +3,9 @@ import {extendObservable} from "mobx";
 import {ComponentType, ReactNode} from "react";
 import z from "zod";
 
-import {FieldEntry, isBooleanSchema, isDateSchema, isDateTimeSchema} from "@focus4/entities";
+import {FieldEntry} from "@focus4/entities";
 
+import {BuildingFormEntityField, EntityFieldBuilder} from "../form";
 import {
     BaseAutocompleteProps,
     BaseDisplayProps,
@@ -15,7 +16,7 @@ import {
 } from "../types";
 import {BaseComponents} from "../types/components";
 
-import {BuildingFormEntityField, EntityFieldBuilder} from "./builder";
+import {UndefinedComponent} from "./defaults";
 
 interface ReadonlyFieldOptions<
     S extends z.ZodType = z.ZodNever,
@@ -34,70 +35,6 @@ interface ReadonlyFieldOptions<
     label?: string;
     LabelComponent?: ComponentType<LCProps>;
     fieldProps?: FProps;
-}
-
-/**
- * Clone un `EntityField` pour y ajouter ou remplacer un état d'édition. Le champ cloné utilise l'état (getter/setter) du champ source.
- * @param field Le champ.
- * @param isEdit L'état d'édition du champ ainsi cloné.
- */
-export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: boolean) {
-    const {domain, name, ...metadata} = field.$field;
-    return withIsEdit(
-        new EntityFieldBuilder(name)
-            .value(
-                () => field.value,
-                value => (field.value = value)
-            )
-            .domain(domain)
-            .metadata(metadata)
-            .edit(isEdit)
-            .collect()
-    );
-}
-
-/**
- * Crée un nouvel `EntityField` en lecture seule à partir d'un existant, pour modifier ses métadonnées.
- * @param field Le champ.
- * @param builder Builder pour spécifier le domaine et les métadonnées.
- */
-export function fromField<
-    S extends z.ZodType = z.ZodNever,
-    T extends z.output<S> = z.output<S>,
-    DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
-    LCDProps extends BaseLabelProps = BaseLabelProps,
-    DCProps extends BaseDisplayProps<S> = DCDProps,
-    LCProps extends BaseLabelProps = LCDProps,
-    FProps extends {theme?: object} = {theme?: object}
->(
-    field: EntityField<FieldEntry<Domain<S, any, any, any, DCDProps, LCDProps, FProps>, T>>,
-    options: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
-) {
-    const {
-        className = field.$field.domain.className,
-        comment = field.$field.comment,
-        domain = field.$field.domain,
-        DisplayComponent = field.$field.domain.DisplayComponent as unknown as ComponentType<DCProps>,
-        displayFormatter = field.$field.domain.displayFormatter,
-        displayProps = {},
-        label = field.$field.label,
-        LabelComponent = field.$field.domain.LabelComponent as unknown as ComponentType<LCProps>,
-        labelProps = {},
-        fieldProps = {}
-    } = options;
-    return makeField(field.value, {
-        className,
-        comment,
-        domain,
-        DisplayComponent,
-        displayFormatter,
-        displayProps,
-        fieldProps,
-        label,
-        LabelComponent,
-        labelProps,
-        name: field.$field.name
-    });
 }
 
 /**
@@ -185,22 +122,68 @@ export function makeField(param1: any, param2: any = {}) {
     }
 }
 
-/** Composant de domaine/champ non défini (vide). */
-export function UndefinedComponent() {
-    return null;
+/**
+ * Clone un `EntityField` pour y ajouter ou remplacer un état d'édition. Le champ cloné utilise l'état (getter/setter) du champ source.
+ * @param field Le champ.
+ * @param isEdit L'état d'édition du champ ainsi cloné.
+ */
+export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: boolean) {
+    const {domain, name, ...metadata} = field.$field;
+    return withIsEdit(
+        new EntityFieldBuilder(name)
+            .value(
+                () => field.value,
+                value => (field.value = value)
+            )
+            .domain(domain)
+            .metadata(metadata)
+            .edit(isEdit)
+            .collect()
+    );
 }
 
-const toString = (x: any) => `${x}`;
-
-/** Retourne le formatter par défaut pour un schéma donné. */
-export function getDefaultFormatter(schema: z.ZodType) {
-    return isBooleanSchema(schema)
-        ? "focus.boolean"
-        : isDateSchema(schema)
-          ? "focus.date"
-          : isDateTimeSchema(schema)
-            ? "focus.datetime"
-            : toString;
+/**
+ * Crée un nouvel `EntityField` en lecture seule à partir d'un existant, pour modifier ses métadonnées.
+ * @param field Le champ.
+ * @param builder Builder pour spécifier le domaine et les métadonnées.
+ */
+export function fromField<
+    S extends z.ZodType = z.ZodNever,
+    T extends z.output<S> = z.output<S>,
+    DCDProps extends BaseDisplayProps<S> = BaseDisplayProps<S>,
+    LCDProps extends BaseLabelProps = BaseLabelProps,
+    DCProps extends BaseDisplayProps<S> = DCDProps,
+    LCProps extends BaseLabelProps = LCDProps,
+    FProps extends {theme?: object} = {theme?: object}
+>(
+    field: EntityField<FieldEntry<Domain<S, any, any, any, DCDProps, LCDProps, FProps>, T>>,
+    options: ReadonlyFieldOptions<S, T, DCDProps, LCDProps, DCProps, LCProps, FProps> = {}
+) {
+    const {
+        className = field.$field.domain.className,
+        comment = field.$field.comment,
+        domain = field.$field.domain,
+        DisplayComponent = field.$field.domain.DisplayComponent as unknown as ComponentType<DCProps>,
+        displayFormatter = field.$field.domain.displayFormatter,
+        displayProps = {},
+        label = field.$field.label,
+        LabelComponent = field.$field.domain.LabelComponent as unknown as ComponentType<LCProps>,
+        labelProps = {},
+        fieldProps = {}
+    } = options;
+    return makeField(field.value, {
+        className,
+        comment,
+        domain,
+        DisplayComponent,
+        displayFormatter,
+        displayProps,
+        fieldProps,
+        label,
+        LabelComponent,
+        labelProps,
+        name: field.$field.name
+    });
 }
 
 function withIsEdit(field: BuildingFormEntityField) {

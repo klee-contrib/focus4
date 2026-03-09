@@ -3,8 +3,8 @@ import {isObservableArray} from "mobx";
 import {describe, expect, test, vi} from "vitest";
 
 import {FormNodeBuilder} from "../form";
-import {makeStoreNode, toFlatValues} from "../store";
-import {clearNode, defaultLoad, replaceNode, setNode} from "../store/store";
+import {clearNode, defaultLoad, makeStoreNode, replaceNode, setNode} from "../store";
+import {toFlatValues} from "../utils";
 
 import {DO_STRING, LigneEntity, OperationEntity, ProjetEntity, StructureEntity} from "./entities";
 

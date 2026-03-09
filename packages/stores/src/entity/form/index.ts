@@ -1,5 +1,6 @@
-export {FormActionsBuilder, FormActions} from "./actions";
-export {FormListNodeBuilder} from "./list-node";
-export {FormNodeBuilder} from "./node";
+export {FormActions} from "./actions";
+export {EntityFieldBuilder, FormActionsBuilder, FormListNodeBuilder, FormNodeBuilder} from "./builders";
+export {nodeToFormNode} from "./node";
 
 export type {ActionsFormProps, ActionsPanelProps} from "./actions";
+export type {BuildingFormEntityField, Metadata} from "./builders";

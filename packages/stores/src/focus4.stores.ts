@@ -28,8 +28,7 @@ export {
     stringFor,
     themeable,
     toFlatValues,
-    UndefinedComponent,
-    validateField
+    UndefinedComponent
 } from "./entity";
 export {emptyReferenceList, makeReferenceList, makeReferenceStore, referenceTrackingId} from "./reference";
 export {i18nStores} from "./translation";

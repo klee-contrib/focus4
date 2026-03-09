@@ -1,7 +1,5 @@
-export {cloneField, fromField, getDefaultFormatter, makeField, themeable, UndefinedComponent} from "./field";
 export {FormActions, FormActionsBuilder, FormListNodeBuilder, FormNodeBuilder} from "./form";
-export {LoadRegistration, makeStoreNode, NodeLoadBuilder, toFlatValues} from "./store";
-export {stringFor} from "./string-for";
+export {LoadRegistration, makeStoreNode, NodeLoadBuilder} from "./store";
 export {
     isAnyFormNode,
     isAnyStoreNode,
@@ -12,10 +10,18 @@ export {
     isStoreListNode,
     isStoreNode
 } from "./types";
-export {validateField} from "./validation";
+export {
+    cloneField,
+    fromField,
+    getDefaultFormatter,
+    makeField,
+    stringFor,
+    themeable,
+    toFlatValues,
+    UndefinedComponent
+} from "./utils";
 
-export type {Metadata} from "./field";
-export type {ActionsFormProps, ActionsPanelProps} from "./form";
+export type {ActionsFormProps, ActionsPanelProps, Metadata} from "./form";
 export type {
     AutocompleteComponents,
     BaseAutocompleteProps,
