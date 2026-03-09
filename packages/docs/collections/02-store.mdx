@@ -10,7 +10,7 @@ Il est indispensable dès lors qu'on a besoin de fonctionnalités avancées avec
 
 ## Fonctionnalités
 
-Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
+Un `CollectionStore` permet, en plus de stocker une liste, de gérer :
 
 - Des compteurs d'éléments
 - De la pagination côté serveur
@@ -20,20 +20,48 @@ Le `CollectionStore` permet, en plus de stocker une liste, de gérer :
 - Du **filtrage** par critère
 - Une répartition en **groupes**
 
-Le store peut être utilisé dans **2 modes** :
+Il existe **2 implémentations** de `CollectionStore` :
 
-- le mode **`local`** : il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Dans ce mode-là, tout est géré côté client (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des volumes de données faibles et des recherches simples.
-- le mode **`server`** : il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch. Dans ce mode là, tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du mode local.
+- le store **local** (`LocalCollectionStore`): il gère toutes les fonctionnalité du store à partir d'une liste _complète_ préchargée qu'on lui fournit. Pour cette implémentation-là, tout est géré côté client (facettes, tri, filtrage...). Les possibilités y sont donc limitées (en particulier pour filtrer via un champ texte), mais devraient tout de même convenir pour des volumes de données faibles et des recherches simples.
+- le store **serveur** (`ServerCollectionStore`): il est prévu pour être associé à un service de recherche, la plupart du temps connecté à un serveur type ElasticSearch/OpenSearch. Pour cette implémentation-là, tout est géré côté serveur via l'API, et le store ne fait qu'exposer cette API et récupérer ses résultats. Il est indispensable dès que les volumes de données sont importants ou que les critères de recherches sont trop compliqués pour l'implémentation simpliste du store local.
+
+## Initialisation
+
+### Store local
+
+Un store local s'instancie avec la méthode **`makeLocalCollectionStore(config?)`**. Son paramètre facultatif peut contenir les propriétés suivantes :
+
+- `filterFields`, la liste des champs sur lesquels `query` va pouvoir filtrer.
+- `facetDefinitions`, les définitions de facettes.
+
+Une définition de facette comprend, comme si elle était définie côté serveur :
+
+- Un `code`, un `libelle`, et le nom du champ `fieldName` sur lequel facetter.
+- Un `ordering`, pour savoir comment trier les résultats (par valeur ou par nombre de résultats, dans les deux sens).
+- Un `displayFormatter`, pour mettre en forme les valeurs de facettes.
+- Les `isMultiSelectable` et `canExclude`, qui précisent si on peut sélectionner plusieurs valeurs dans le filtre, ou exclure certaines valeurs.
+
+### Store serveur
+
+Un store serveur s'instancie avec la méthode **`makeServerCollectionStore`**, qui peut prendre jusqu'à 3 paramètres :
+
+- `searchService` (obligatoire) : le service de recherche, qui doit respecter impérativement l'API de recherche prévue :
+  `(query: QueryInput) => Promise<QueryOutput<T>>`
+- `initialProperties` (facultatif) : les valeurs des critères par défaut à la création du store, ainsi que `criteriaMode` et `criteriaBuilder` pour
+  personnaliser le critère.
+- `criteria` (facultatif) : la définition d'entité pour le critère (voir plus bas).
+
+_(Note : l'ordre des deux derniers paramètres sont interchangeables)_
 
 ## Usage
 
 Son usage standard est très simple puisqu'il sera intégralement piloté et affiché par les composants de recherche.
 
-En mode `local`, il vous suffira de renseigner la propriété `store.list` du store avec la liste en question pour remplir le store.
+Pour un store local, il vous suffira de renseigner la propriété `store.list` du store avec la liste en question pour remplir le store.
 
 Vous êtes encouragés, comme pour les stores d'entité, à utiliser le hook [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload) pour gérer le chargement des données. Il permettra de gérer automatiquement l'état de chargement (qui sera aussi accessible via `store.isLoading`), et de permettre l'utilisation de `store.search()` pour recharger les données. Son usage est strictement identique à celui d'un store d'entité, et n'est bien **utilisable qu'en local**.
 
-En mode `server`, le service de chargement étant fourni au store, `store.isLoading` et `store.search()` sont directement implémentés avec et vous n'avez rien de plus à configurer. La propriété `store.list` n'est pas renseignable manuellement dans ce cas.
+Pour un store, le service de chargement étant fourni au store, `store.isLoading` et `store.search()` sont directement implémentés avec et vous n'avez rien de plus à configurer. La propriété `store.list` n'est pas renseignable manuellement dans ce cas.
 
 Le store expose les différents critères suivants, qui seront utilisés pour filtrer les résultats du store :
 
@@ -41,14 +69,16 @@ Le store expose les différents critères suivants, qui seront utilisés pour fi
 - `sort`: les champs sur lesquels trier (dans l'ordre)
 - `inputFacets` : les facettes sélectionnées.
 - `groupingKey` : le champ sur lequel grouper.
-- `top` : le nombre de résultats à retourner par requête (utilisé en mode `server` uniquement)
 
-A ces critères-là, **avec un store en mode `server` uniquement**, on peut ajouter un objet de critère `criteria` personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à partir d'une définition d'entité.
+Pour un store serveur, les critères suivants sont aussi disponibles :
+
+- `top` : le nombre de résultats à retourner par requête
+- `criteria`, un objet de critère personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à partir d'une définition d'entité.
 
 **Toute modification d'une de ces propriétés va immédiatement déclencher la mise à jour des données du store** :
 
-- En mode `local`, les filtres seront appliqués localement sur la liste préalablement chargée, de manière synchrone.
-- En mode `server`, le service de recherche sera appelé avec tous les critères, et la liste sera mise à jour avec la réponse du serveur.
+- Pour un store local, les filtres seront appliqués localement sur la liste préalablement chargée, de manière synchrone.
+- Pour un store serveur, le service de recherche sera appelé avec tous les critères, et la liste sera mise à jour avec la réponse du serveur.
 
 _Remarque : Pour `query`, "immédiatement" est en réalité après un petit délai, une fois que l'utilisateur a fini de faire sa saisie._
 
@@ -70,37 +100,7 @@ Il est également possible de contrôler les éléments sélectionnables en rens
 
 _Remarque : **Seuls les éléments chargés dans le store peuvent être sélectionnés**. C'est important en mode `server`, où il peut rester des éléments encore à charger depuis le serveur. Dans ce cas, le status de sélection sera bien `selected` dès que tous les éléments chargés sont sélectionnés, et `toggleAll()` ne sélectionnera que les éléments chargés. Si vous avez besoin d'agir sur plus d'éléments que ceux déjà chargés, vous pouvez soit charger les éléments manquants, soit faire complètement autrement. De manière générale, c'est une bonne pratique de mettre une limite sur le nombre d'éléments sélectionnés en même temps, afin de pouvoir contrôler le temps de traitement de l'action en masse réalisée sur ces éléments._
 
-## Initialisation
-
-Un `CollectionStore` s'instancie avec son constructeur. Il dispose de plusieurs signatures selon le mode :
-
-### `local`
-
-Le `CollectionStore` prend un seul paramètre facultatif `localStoreConfig`, qui peut contenir :
-
-- `filterFields`, la liste des champs sur lesquels `query` va pouvoir filtrer.
-- `facetDefinitions`, les définitions de facettes.
-
-Une définition de facette comprend, comme si elle était définie côté serveur :
-
-- Un `code`, un `libelle`, et le nom du champ `fieldName` sur lequel facetter.
-- Un `ordering`, pour savoir comment trier les résultats (par valeur ou par nombre de résultats, dans les deux sens).
-- Un `displayFormatter`, pour mettre en forme les valeurs de facettes.
-- Les `isMultiSelectable` et `canExclude`, qui précisent si on peut sélectionner plusieurs valeurs dans le filtre, ou exclure certaines valeurs.
-
-### `server`
-
-Le constructeur, en mode `server` prend jusqu'à 3 paramètres :
-
-- `searchService` (obligatoire) : le service de recherche, qui doit respecter impérativement l'API de recherche prévue :
-  `(query: QueryInput) => Promise<QueryOutput<T>>`
-- `initialProperties` (facultatif) : les valeurs des critères par défaut à la création du store, ainsi que `criteriaMode` et `criteriaBuilder` pour
-  personnaliser le critère.
-- `criteria` (facultatif) : la définition d'entité pour le critère.
-
-_(Note : l'ordre des deux derniers paramètres sont interchangeables)_
-
-## Limitations du mode `local`
+## Limitations du store local (par rapport au store serveur)
 
 - L'objet de critère `criteria` n'est pas supporté (on ne saurait pas comment traiter ces critères).
 - Le filtrage par `query` sur les champs de `filterFields` ne fait qu'un simple `includes` (en minuscule).
@@ -150,7 +150,7 @@ Le composant [`ActionBar`](/docs/listes-composants-de-recherche-actionbar--docs)
 
 ## Lien avec les stores d'entité
 
-En mode local, puisque la propriété `list` est directement renseignée, il est possible d'y passer une liste de `StoreNode` ou de `FormNode`. **En revanche, il n'est pas possible de combiner un `CollectionStore` serveur avec un store d'entité**. Si vous avez par exemple une recherche avancée, votre composant de liste devra nécessairement prendre en entrée un objet "JS natif" en entrée.
+Pour un store local, puisque la propriété `list` est directement renseignée, il est possible d'y passer une liste de `StoreNode` ou de `FormNode`. **En revanche, il n'est pas possible de combiner un `CollectionStore` serveur avec un store d'entité**. Si vous avez par exemple une recherche avancée, votre composant de liste devra nécessairement prendre en entrée un objet "JS natif" en entrée.
 
 Vous pouvez néanmoins reconstruire un `StoreNode` dans votre composant de ligne si cela simplifie l'affichage de vos champs, par exemple :
 

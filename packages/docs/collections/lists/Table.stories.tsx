@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from "@storybook/react";
 
 import {Table} from "@focus4/collections";
-import {CollectionStore} from "@focus4/stores";
+import {makeLocalCollectionStore} from "@focus4/stores";
 
 import {TableMeta} from "../metas/table";
 
@@ -55,7 +55,7 @@ Cet exemple est assez minimaliste, mais montre quand même l'usage de \`onLineCl
     }
 };
 
-const collectionStore = new CollectionStore<{id: number; label: string; count: number}>();
+const collectionStore = makeLocalCollectionStore<{id: number; label: string; count: number}>();
 collectionStore.list = list;
 collectionStore.sort = [{fieldName: "id"}];
 

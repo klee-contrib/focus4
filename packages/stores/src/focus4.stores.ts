@@ -1,4 +1,10 @@
-export {CollectionStore} from "./collection";
+export {
+    CollectionStore,
+    LocalCollectionStore,
+    makeLocalCollectionStore,
+    makeServerCollectionStore,
+    ServerCollectionStore
+} from "./collection";
 export {
     cloneField,
     FormActions,

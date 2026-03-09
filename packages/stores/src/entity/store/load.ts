@@ -4,7 +4,7 @@ import {action, computed, observable, reaction} from "mobx";
 import {isAbortError, requestStore} from "@focus4/core";
 import {EntityToType} from "@focus4/entities";
 
-import {CollectionStore} from "../../collection";
+import {LocalCollectionStore} from "../../collection";
 import {
     isAnyFormNode,
     isAnyStoreNode,
@@ -17,11 +17,11 @@ import {
 
 import {defaultLoad} from "./store";
 
-type LoadData<SN extends StoreNode | StoreListNode | CollectionStore> = SN extends CollectionStore
+type LoadData<SN extends StoreNode | StoreListNode | LocalCollectionStore> = SN extends LocalCollectionStore
     ? SN["list"]
     : NodeToType<SN>;
 
-interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode | CollectionStore> {
+interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode | LocalCollectionStore> {
     load?: ((event: "load", data: LoadData<SN>) => void)[];
     error?: ((event: "error", data: "load", error: unknown) => void)[];
 }
@@ -35,9 +35,9 @@ export class LoadRegistration<A extends readonly any[] = never> {
      */
     trackingId: string;
 
-    @observable.ref protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>;
+    @observable.ref protected accessor builder: NodeLoadBuilder<StoreNode | StoreListNode | LocalCollectionStore, A>;
 
-    @observable.ref private accessor store: StoreNode | StoreListNode | CollectionStore;
+    @observable.ref private accessor store: StoreNode | StoreListNode | LocalCollectionStore;
 
     protected abortController?: AbortController;
 
@@ -48,22 +48,18 @@ export class LoadRegistration<A extends readonly any[] = never> {
      * @param trackingId Id de suivi de requête pour ce load.
      */
     constructor(
-        store: StoreNode | StoreListNode | CollectionStore,
-        builder: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>,
+        store: StoreNode | StoreListNode | LocalCollectionStore,
+        builder: NodeLoadBuilder<StoreNode | StoreListNode | LocalCollectionStore, A>,
         trackingId?: string
     ) {
         if (isAnyFormNode(store) && !!builder.loadService) {
             throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
         }
 
-        if (store instanceof CollectionStore && store.type !== "local") {
-            throw new Error("Impossible d'enregistrer un `load` sur un `CollectionStore` défini avec un service.");
-        }
-
         this.store = store;
         this.builder = builder;
         this.trackingId =
-            trackingId ?? (store instanceof CollectionStore ? store.trackingId : Math.random().toString());
+            trackingId ?? (store instanceof LocalCollectionStore ? store.trackingId : Math.random().toString());
     }
 
     /** Retourne `true` si le service de chargement (ou un autre service avec le même id de suivi) est en cours de chargement. */
@@ -156,21 +152,17 @@ export class LoadRegistration<A extends readonly any[] = never> {
      */
     @action.bound
     register(
-        store?: StoreNode | StoreListNode | CollectionStore,
-        builder?: NodeLoadBuilder<StoreNode | StoreListNode | CollectionStore, A>
+        store?: StoreNode | StoreListNode | LocalCollectionStore,
+        builder?: NodeLoadBuilder<StoreNode | StoreListNode | LocalCollectionStore, A>
     ) {
         if (store) {
             if (isAnyFormNode(store) && !!builder?.loadService) {
                 throw new Error("Impossible d'enregistrer 'load' sur un `FormNode`");
             }
 
-            if (store instanceof CollectionStore && store.type !== "local") {
-                throw new Error("Impossible d'enregistrer un `load` sur un `CollectionStore` défini avec un service.");
-            }
-
             this.store = store;
 
-            if (store instanceof CollectionStore) {
+            if (store instanceof LocalCollectionStore) {
                 this.trackingId = store.trackingId;
             }
         }
@@ -203,7 +195,10 @@ export class LoadRegistration<A extends readonly any[] = never> {
 }
 
 /** Objet de configuration pour un enregistrement de chargement. */
-export class NodeLoadBuilder<SN extends StoreListNode | StoreNode | CollectionStore, P extends readonly any[] = never> {
+export class NodeLoadBuilder<
+    SN extends StoreListNode | StoreNode | LocalCollectionStore,
+    P extends readonly any[] = never
+> {
     /** @internal */
     readonly handlers: LoadRegistrationHandlers<SN> = {};
 

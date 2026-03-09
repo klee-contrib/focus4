@@ -4,11 +4,11 @@ import {action, autorun, computed, observable} from "mobx";
 
 import {messageStore, requestStore, Router, RouterConfirmation} from "@focus4/core";
 
-import {CollectionStore} from "../../collection";
+import {LocalCollectionStore} from "../../collection";
 import {LoadRegistration, NodeLoadBuilder, toFlatValues} from "../store";
 import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodeType} from "../types";
 
-type LoadData<FN extends FormNode | FormListNode | CollectionStore> = FN extends CollectionStore
+type LoadData<FN extends FormNode | FormListNode | LocalCollectionStore> = FN extends LocalCollectionStore
     ? FN["list"]
     : // @ts-ignore
       SourceNodeType<FN>;

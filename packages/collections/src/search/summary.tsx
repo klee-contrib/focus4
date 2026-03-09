@@ -3,7 +3,7 @@ import {useLocalObservable, useObserver} from "mobx-react";
 import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
-import {CollectionStore, FormEntityField, SortInput} from "@focus4/stores";
+import {CollectionStore, FormEntityField, ServerCollectionStore, SortInput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, ChipCss} from "@focus4/toolbox";
 
@@ -103,7 +103,7 @@ export function Summary<T extends object>({
                 const topicList: (SearchChipProps & {key: string})[] = [];
 
                 // On ajoute la liste des critères.
-                if (this.hideCriteria !== true && this.store.criteria) {
+                if (this.hideCriteria !== true && this.store instanceof ServerCollectionStore) {
                     for (const criteriaKey in this.store.flatCriteria) {
                         const {label, domain} = (this.store.criteria[criteriaKey] as FormEntityField).$field;
                         const value = (this.store.flatCriteria as any)[criteriaKey];
@@ -127,7 +127,9 @@ export function Summary<T extends object>({
                                     }
                                 ],
                                 onDeleteClick: () => {
-                                    (this.store.criteria[criteriaKey] as FormEntityField).value = undefined;
+                                    (
+                                        (this.store as ServerCollectionStore).criteria[criteriaKey] as FormEntityField
+                                    ).value = undefined;
                                 }
                             });
                         }

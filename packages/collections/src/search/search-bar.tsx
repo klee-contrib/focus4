@@ -5,10 +5,16 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import z from "zod";
 
-import {Entity} from "@focus4/entities";
 import {domain, SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
-import {CollectionStore, FormEntityField, makeField, makeReferenceList, toFlatValues} from "@focus4/stores";
+import {
+    CollectionStore,
+    FormEntityField,
+    makeField,
+    makeReferenceList,
+    ServerCollectionStore,
+    toFlatValues
+} from "@focus4/stores";
 import {CSSProp, getSpringTransition, uiConfig, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
@@ -18,7 +24,7 @@ export {searchBarCss};
 export type {SearchBarCss};
 
 /** Props de la SearchBar. */
-export interface SearchBarProps<T extends object, C extends Entity> {
+export interface SearchBarProps<T extends object> {
     /** Rendu du composant du critère. */
     criteriaComponent?: ReactElement;
     /** Active la gestion des critères dans le champ texte. */
@@ -30,7 +36,7 @@ export interface SearchBarProps<T extends object, C extends Entity> {
     /** Libellés des noms de champs de recherche. */
     searchFieldNames?: Record<string, string>;
     /** Store associé. */
-    store: CollectionStore<T, C>;
+    store: CollectionStore<T>;
     /** CSS. */
     theme?: CSSProp<SearchBarCss>;
 }
@@ -41,7 +47,7 @@ export interface SearchBarProps<T extends object, C extends Entity> {
  * Le composant agit naturellement sur le champ `query`, mais également sur les critères personnalisés `criteria`, qu'il va par défaut ajouter dans le champ texte pour une saisie manuelle (du genre `criteriaName:criteriaValue` ; ce comportement est désactivable via la prop `disableInputCriteria`).
  * Il est possible également de lui passer un composant personnalisé de saisie des critères qu'il va pouvoir afficher à la demande pour saisir de manière plus précise les différents critères.
  */
-export function SearchBar<T extends object, C extends Entity>({
+export function SearchBar<T extends object>({
     criteriaComponent,
     enableInputCriteria,
     i18nPrefix = "focus",
@@ -49,7 +55,7 @@ export function SearchBar<T extends object, C extends Entity>({
     searchFieldNames = {},
     store,
     theme: pTheme
-}: SearchBarProps<T, C>) {
+}: SearchBarProps<T>) {
     const {t} = useTranslation();
 
     /** L'input HTML. */
@@ -64,9 +70,8 @@ export function SearchBar<T extends object, C extends Entity>({
 
         /** Paires clés/valeurs des différents critères. */
         get flatCriteria() {
-            const {criteria} = store;
-            if (criteria) {
-                return Object.entries(toFlatValues(criteria));
+            if (store instanceof ServerCollectionStore) {
+                return Object.entries(toFlatValues(store.criteria));
             } else {
                 return [];
             }
@@ -105,6 +110,9 @@ export function SearchBar<T extends object, C extends Entity>({
 
         /** Récupère la liste des erreurs de critère à afficher sous la barre de recherche. */
         get error() {
+            if (!(store instanceof ServerCollectionStore)) {
+                return undefined;
+            }
             const error = Object.entries(store.criteriaErrors)
                 .filter(([_, isError]) => isError)
                 .map(([crit]) => crit)
@@ -130,9 +138,9 @@ export function SearchBar<T extends object, C extends Entity>({
 
         /** Le onChange de l'input */
         onInputChange({currentTarget}: {currentTarget: HTMLInputElement}) {
-            if (!enableInputCriteria || !store.criteria) {
+            if (!enableInputCriteria || !(store instanceof ServerCollectionStore)) {
                 store.query = currentTarget.value; // Encore une fois, si pas de critères, c'est facile.
-            } else if (store.criteria) {
+            } else if (store instanceof ServerCollectionStore) {
                 // On tokenise ce qu'à écrit l'utilisateur en divisant à tous les espaces.
                 const tokens = currentTarget.value.trim().split(" ");
                 let token = tokens[0];
@@ -167,7 +175,7 @@ export function SearchBar<T extends object, C extends Entity>({
         /** Vide la barre. */
         clear() {
             store.query = "";
-            if (store.criteria && enableInputCriteria) {
+            if (enableInputCriteria && store instanceof ServerCollectionStore) {
                 // On vide les critères que s'ils sont affichés.
                 store.criteria.clear();
             }

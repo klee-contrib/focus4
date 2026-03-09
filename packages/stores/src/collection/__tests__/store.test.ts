@@ -1,8 +1,9 @@
 import {runInAction} from "mobx";
 import {describe, expect, test, vi} from "vitest";
 
-import {CollectionStore} from "../index";
-import {LocalStoreConfig, QueryInput, SearchService} from "../types";
+import {makeLocalCollectionStore} from "../local";
+import {makeServerCollectionStore} from "../server";
+import {QueryInput, SearchService} from "../types";
 
 // Type de test pour les items
 interface TestItem {
@@ -16,12 +17,10 @@ interface TestItem {
 describe("CollectionStore", () => {
     describe("Constructeur - Mode local", () => {
         test("Crée un store local avec la configuration de base", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore({
                 searchFields: ["name", "category"]
-            };
-            const store = new CollectionStore(config);
+            });
 
-            expect(store.type).toBe("local");
             expect(store.availableSearchFields).toEqual(["name", "category"]);
             expect(store.query).toBe("");
             expect(store.list).toEqual([]);
@@ -29,7 +28,7 @@ describe("CollectionStore", () => {
         });
 
         test("Crée un store local avec des définitions de facettes", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -38,17 +37,14 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
 
-            expect(store.type).toBe("local");
             expect(store.availableSearchFields).toEqual(["name"]);
         });
 
         test("Crée un store local sans configuration", () => {
-            const store = new CollectionStore();
+            const store = makeLocalCollectionStore();
 
-            expect(store.type).toBe("local");
             expect(store.availableSearchFields).toEqual([]);
         });
     });
@@ -61,9 +57,8 @@ describe("CollectionStore", () => {
                 totalCount: 0
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
 
-            expect(store.type).toBe("server");
             expect(store.query).toBe("");
             expect(store.list).toEqual([]);
         });
@@ -75,7 +70,7 @@ describe("CollectionStore", () => {
                 totalCount: 0
             });
 
-            const store = new CollectionStore(service, {
+            const store = makeServerCollectionStore(service, {
                 query: "test",
                 top: 100
             });
@@ -87,10 +82,9 @@ describe("CollectionStore", () => {
 
     describe("Propriétés de base", () => {
         test("Les propriétés initiales sont correctes", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
 
             expect(store.query).toBe("");
-            expect(store.top).toBe(50);
             expect(store.sort).toEqual([]);
             expect(store.groupingKey).toBeUndefined();
             expect(store.selectedItems.size).toBe(0);
@@ -98,7 +92,7 @@ describe("CollectionStore", () => {
         });
 
         test("currentCount retourne la longueur de la liste", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"}
@@ -113,7 +107,7 @@ describe("CollectionStore", () => {
                 facets: [],
                 totalCount: 100
             });
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
 
             runInAction(() => {
                 (store as any).serverCount = 100;
@@ -123,7 +117,7 @@ describe("CollectionStore", () => {
         });
 
         test("totalCount retourne currentCount en mode local", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [{id: 1, name: "Item 1", category: "A", status: "active"}];
 
             expect(store.totalCount).toBe(1);
@@ -132,7 +126,7 @@ describe("CollectionStore", () => {
 
     describe("Liste et filtrage - Mode local", () => {
         test("La liste peut être assignée directement", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             const items: TestItem[] = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"}
@@ -144,10 +138,9 @@ describe("CollectionStore", () => {
         });
 
         test("Le filtrage par texte fonctionne", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Alpha", category: "A", status: "active"},
                 {id: 2, name: "Beta", category: "B", status: "inactive"},
@@ -161,10 +154,9 @@ describe("CollectionStore", () => {
         });
 
         test("Le filtrage par texte est insensible à la casse", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Alpha", category: "A", status: "active"},
                 {id: 2, name: "Beta", category: "B", status: "inactive"}
@@ -177,7 +169,7 @@ describe("CollectionStore", () => {
         });
 
         test("Le tri fonctionne", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [
                 {id: 3, name: "Charlie", category: "C", status: "active"},
                 {id: 1, name: "Alpha", category: "A", status: "active"},
@@ -192,7 +184,7 @@ describe("CollectionStore", () => {
         });
 
         test("Le tri descendant fonctionne", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [
                 {id: 1, name: "Alpha", category: "A", status: "active"},
                 {id: 2, name: "Beta", category: "B", status: "inactive"},
@@ -207,7 +199,7 @@ describe("CollectionStore", () => {
         });
 
         test("Le tri multiple fonctionne", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [
                 {id: 1, name: "Alpha", category: "B", status: "active"},
                 {id: 2, name: "Beta", category: "A", status: "active"},
@@ -228,7 +220,7 @@ describe("CollectionStore", () => {
 
     describe("Facettes - Mode local", () => {
         test("Les facettes sont calculées à partir des données", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -237,8 +229,7 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "A", status: "inactive"},
@@ -254,7 +245,7 @@ describe("CollectionStore", () => {
         });
 
         test("Les facettes filtrent la liste", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -263,8 +254,7 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"},
@@ -278,7 +268,7 @@ describe("CollectionStore", () => {
         });
 
         test("Les facettes avec exclusion fonctionnent", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -288,8 +278,7 @@ describe("CollectionStore", () => {
                         canExclude: true
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"},
@@ -303,7 +292,7 @@ describe("CollectionStore", () => {
         });
 
         test("removeFacetValue retire une valeur de facette", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -312,8 +301,7 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"}
@@ -327,7 +315,7 @@ describe("CollectionStore", () => {
         });
 
         test("toggleFacetOperator change l'opérateur", () => {
-            const store = new CollectionStore<TestItem>({
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -358,7 +346,7 @@ describe("CollectionStore", () => {
                 totalCount: 1
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
             store.query = "test";
             store.top = 25;
 
@@ -381,7 +369,7 @@ describe("CollectionStore", () => {
                 totalCount: 2
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
 
             await store.search();
 
@@ -408,7 +396,7 @@ describe("CollectionStore", () => {
                 totalCount: 0
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
 
             await store.search();
 
@@ -432,7 +420,7 @@ describe("CollectionStore", () => {
                 totalCount: 1
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
             store.groupingKey = "category";
 
             await store.search();
@@ -456,7 +444,7 @@ describe("CollectionStore", () => {
                     totalCount: 2
                 });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
 
             await store.search();
             expect(store.list).toHaveLength(1);
@@ -472,7 +460,7 @@ describe("CollectionStore", () => {
                 totalCount: 1
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
             const item: TestItem = {id: 0, name: "Old", category: "X", status: "active"};
             store.selectedItems.add(item);
 
@@ -480,25 +468,42 @@ describe("CollectionStore", () => {
 
             expect(store.selectedItems.size).toBe(0);
         });
+
+        test("clear vide tout", async () => {
+            const item: TestItem = {id: 0, name: "Old", category: "X", status: "active"};
+            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+                list: [item],
+                facets: [],
+                totalCount: 1
+            });
+
+            const store = makeServerCollectionStore(service);
+
+            await store.search();
+            store.selectedItems.add(item);
+            store.clear();
+
+            expect(store.list).toHaveLength(0);
+            expect(store.totalCount).toBe(0);
+            expect(store.selectedItems.size).toBe(0);
+        });
     });
 
     describe("setProperties", () => {
         test("Met à jour plusieurs propriétés à la fois", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
 
             store.setProperties({
                 query: "test",
-                top: 100,
                 groupingKey: "category"
             });
 
             expect(store.query).toBe("test");
-            expect(store.top).toBe(100);
             expect(store.groupingKey).toBe("category");
         });
 
         test("Met à jour le tri", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
 
             store.setProperties({
                 sort: [{fieldName: "name", sortDesc: true}]
@@ -510,7 +515,7 @@ describe("CollectionStore", () => {
         });
 
         test("Met à jour les facettes d'entrée", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
 
             store.setProperties({
                 inputFacets: {
@@ -526,7 +531,7 @@ describe("CollectionStore", () => {
 
     describe("clear", () => {
         test("Vide tous les résultats et la sélection", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.list = [{id: 1, name: "Item 1", category: "A", status: "active"}];
             store.selectedItems.add(store.list[0]);
 
@@ -554,7 +559,7 @@ describe("CollectionStore", () => {
                 totalCount: 1
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
             store.groupingKey = "category";
 
             await store.search();
@@ -564,7 +569,7 @@ describe("CollectionStore", () => {
         });
 
         test("groups retourne les groupes en mode local", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: ["name"],
                 facetDefinitions: [
                     {
@@ -573,8 +578,7 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "A", status: "inactive"},
@@ -603,7 +607,7 @@ describe("CollectionStore", () => {
                 totalCount: 1
             });
 
-            const store = new CollectionStore(service);
+            const store = makeServerCollectionStore(service);
             store.groupingKey = "category";
 
             await store.search();
@@ -616,7 +620,7 @@ describe("CollectionStore", () => {
 
     describe("Cas limites", () => {
         test("Fonctionne avec une liste vide", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
 
             expect(store.list).toEqual([]);
             expect(store.facets).toEqual([]);
@@ -628,8 +632,7 @@ describe("CollectionStore", () => {
                 id: number;
                 category: string | null;
             }
-
-            const config: LocalStoreConfig<ItemWithNull> = {
+            const store = makeLocalCollectionStore<ItemWithNull>({
                 searchFields: [],
                 facetDefinitions: [
                     {
@@ -638,8 +641,7 @@ describe("CollectionStore", () => {
                         fieldName: "category"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, category: "A"},
                 {id: 2, category: null},
@@ -653,7 +655,7 @@ describe("CollectionStore", () => {
         });
 
         test("Fonctionne avec des tableaux dans les facettes", () => {
-            const config: LocalStoreConfig<TestItem> = {
+            const store = makeLocalCollectionStore<TestItem>({
                 searchFields: [],
                 facetDefinitions: [
                     {
@@ -662,8 +664,7 @@ describe("CollectionStore", () => {
                         fieldName: "tags"
                     }
                 ]
-            };
-            const store = new CollectionStore(config);
+            });
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active", tags: ["tag1", "tag2"]},
                 {id: 2, name: "Item 2", category: "B", status: "inactive", tags: ["tag1"]}
@@ -675,7 +676,7 @@ describe("CollectionStore", () => {
         });
 
         test("isItemSelectionnable filtre les items sélectionnables", () => {
-            const store = new CollectionStore<TestItem>();
+            const store = makeLocalCollectionStore<TestItem>();
             store.isItemSelectionnable = item => item.status === "active";
             store.list = [
                 {id: 1, name: "Item 1", category: "A", status: "active"},

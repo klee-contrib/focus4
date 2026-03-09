@@ -1,6 +1,6 @@
-import {CollectionStore} from "@focus4/stores";
+import {makeLocalCollectionStore} from "@focus4/stores";
 
-export const collectionStore = new CollectionStore<{id: number; label: string; type1: string; type2: string}>({
+export const collectionStore = makeLocalCollectionStore<{id: number; label: string; type1: string; type2: string}>({
     facetDefinitions: [
         {code: "type1", label: "Type 1", fieldName: "type1"},
         {code: "type2", label: "Type 2", fieldName: "type2"}

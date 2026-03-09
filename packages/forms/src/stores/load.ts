@@ -2,8 +2,8 @@ import {autorun} from "mobx";
 import {useEffect, useId, useRef, useState} from "react";
 
 import {
-    CollectionStore,
     LoadRegistration,
+    LocalCollectionStore,
     NodeLoadBuilder,
     ReferenceDefinition,
     ReferenceStore,
@@ -21,7 +21,7 @@ import {
  * @param deps Liste de dépendances (React) pour le service. Le builder sera redéfini à tout changement d'une valeur de cette liste, et le service de chargement sera rappelé.
  * @returns Etat de chargement et ID de suivi.
  */
-export function useLoad<SN extends StoreListNode | StoreNode | CollectionStore>(
+export function useLoad<SN extends StoreListNode | StoreNode | LocalCollectionStore>(
     node: SN,
     builder: (builder: NodeLoadBuilder<SN>) => NodeLoadBuilder<SN>,
     deps: any[] = []

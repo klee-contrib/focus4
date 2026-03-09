@@ -24,11 +24,11 @@ export interface LocalFacetDefinition<T> {
 }
 
 /** Config pour un store de collection local. */
-export interface LocalStoreConfig<T> {
+export interface LocalCollectionStoreConfig<T> {
     /** Liste des champs disponibles pour le filtrage par champ texte. */
-    searchFields?: (string & keyof T)[];
+    searchFields: (string & keyof T)[];
     /** Définitions de facettes. */
-    facetDefinitions?: LocalFacetDefinition<T>[];
+    facetDefinitions: LocalFacetDefinition<T>[];
 }
 
 /** Statut de la séléection */
@@ -53,9 +53,7 @@ export interface SortInput {
 }
 
 /** Critères génériques de recherche. */
-export interface SearchProperties<NC extends Entity = any> {
-    /** Critère personnalisé. */
-    criteria?: EntityToType<NoInfer<NC>>;
+export interface CollectionStoreProperties {
     /** Champ sur lequel grouper. */
     groupingKey?: string;
     /** Champ texte. */
@@ -66,15 +64,21 @@ export interface SearchProperties<NC extends Entity = any> {
     inputFacets?: {[facet: string]: FacetInput};
     /** Définitions de tri, par ordre d'application. */
     sort?: SortInput[];
+}
+
+/** Critères génériques de recherche. */
+export interface ServerCollectionStoreProperties<NC extends Entity = any> extends CollectionStoreProperties {
+    /** Critère personnalisé. */
+    criteria?: EntityToType<NoInfer<NC>>;
     /** Nombre de résultats à retourner par requête. */
     top?: number;
 }
 
 /** Initialisation du CollectionStore */
-export interface CollectionStoreInitProperties<
+export interface ServerCollectionStoreInitProperties<
     C extends Entity = any,
     NC extends Entity = C
-> extends SearchProperties<NC> {
+> extends ServerCollectionStoreProperties<NC> {
     /**
      * Mode de prise en compte de l'objet de critère :
      *

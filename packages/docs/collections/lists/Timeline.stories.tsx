@@ -3,7 +3,7 @@ import z from "zod";
 
 import {LineProps, Timeline} from "@focus4/collections";
 import {domain} from "@focus4/form-toolbox";
-import {CollectionStore, makeField} from "@focus4/stores";
+import {makeField, makeLocalCollectionStore} from "@focus4/stores";
 
 import {TimelineMeta} from "../metas/timeline";
 
@@ -64,7 +64,7 @@ Il faudra construire un \`TimelineComponent\` adapté au contenu que vous voulez
     }
 };
 
-const collectionStore = new CollectionStore<{id: number; label: string; date: string}>();
+const collectionStore = makeLocalCollectionStore<{id: number; label: string; date: string}>();
 collectionStore.list = list;
 collectionStore.sort = [{fieldName: "date", sortDesc: true}];
 
