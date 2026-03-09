@@ -93,6 +93,10 @@ Permet de surcharger le handler appelé lors de la modification du champ par le 
 
 _Remarque : Si vous souhaitez conserver le comportement par défaut de `onChange` qui met à jour le champ, **vous devez réimplémenter l'affectation dans votre `onChange` personnalisé**. N'oubliez donc pas de faire `field.value = value` à l'intérieur._
 
+### `label`
+
+Vous pouvez surcharger le libellé du champ ici. Vous devriez néanmoins privilégier d'avoir directement la bonne valeur dans la définition d'entité, si possible.
+
 ### `autocompleteProps` / `displayProps` / `labelProps` / `inputProps` / `selectProps`
 
 Vous pouvez surcharger les props des composants de domaine ici. Elles s'ajouteront aux props déjà définies dans le domaine et aux surcharges existantes dans la définition du formulaire.

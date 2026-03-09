@@ -103,6 +103,7 @@ export function makeField(param1: any, param2: any = {}) {
         } = param2 as ReadonlyFieldOptions & {name?: string};
         return withIsEdit(
             new EntityFieldBuilder(name)
+                .edit(false)
                 .domain(domain)
                 .metadata({
                     className,
@@ -116,7 +117,6 @@ export function makeField(param1: any, param2: any = {}) {
                     fieldProps: {...domain.fieldProps, ...fieldProps}
                 })
                 .value(() => param1)
-                .edit(false)
                 .collect()
         );
     }
@@ -131,13 +131,13 @@ export function cloneField<F extends FieldEntry>(field: EntityField<F>, isEdit: 
     const {domain, name, ...metadata} = field.$field;
     return withIsEdit(
         new EntityFieldBuilder(name)
+            .edit(isEdit)
+            .domain(domain)
+            .metadata(metadata)
             .value(
                 () => field.value,
                 value => (field.value = value)
             )
-            .domain(domain)
-            .metadata(metadata)
-            .edit(isEdit)
             .collect()
     );
 }

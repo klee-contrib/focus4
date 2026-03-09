@@ -33,6 +33,8 @@ declare global {
         hasLabel?: boolean;
         /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
         inputRef?: Ref<any>;
+        /** Surcharge du libellé du champ (il devrait à priori déjà être défini dans l'entité). */
+        label?: string;
         /** Handler de modification de la valeur. */
         onChange?: (value: F["fieldType"]) => void;
         /** Ne masque pas l'erreur du champ quand il a le focus. */
@@ -66,6 +68,7 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         field,
         inputRef,
         hasLabel = fieldProps?.hasLabel ?? !!field.$field.label,
+        label = props.field.$field.label,
         labelProps = {},
         labelClassName,
         inputProps = {},
@@ -144,7 +147,6 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         value,
         $field: {
             comment,
-            label,
             name,
             isRequired: required,
             domain: {
