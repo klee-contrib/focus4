@@ -101,7 +101,14 @@ export function makeStoreNode<E extends Entity>(
 export function getNodeForList<E extends Entity>(list: StoreListNode<E>, item: EntityToType<E> | StoreNode<E>) {
     let node: StoreNode<E>;
     if (isFormListNode<E>(list)) {
-        const sourceNode = isStoreNode<E>(item) ? item : makeStoreNode<E>(list.$entity);
+        let sourceNode;
+        if (isStoreNode<E>(item)) {
+            sourceNode = item;
+        } else {
+            sourceNode = makeStoreNode<E>(list.$entity);
+            sourceNode.$addedListItem = true;
+        }
+
         node = list.$nodeBuilder ? list.$nodeBuilder(sourceNode) : new FormNodeBuilder(sourceNode).collect();
         nodeToFormNode(node, list);
     } else {

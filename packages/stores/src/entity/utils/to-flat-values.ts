@@ -32,8 +32,11 @@ export function toFlatValues<SN extends FormListNode | FormNode | StoreListNode 
                 if (entry === "sourceNode") {
                     // On ne récupère pas le `sourceNode` d'un FormNode.
                     return undefined;
-                } else if (isAnyFormNode(item) && item.form.isEmpty && !item.form.isRequired) {
-                    // Cas entrée de formulaire vide non obligatoire -> on ne renvoie rien.
+                } else if (
+                    isAnyFormNode(item) &&
+                    ((item.form.isEmpty && !item.form.isRequired) || (item.form._added && !includeAddedFields))
+                ) {
+                    // Cas entrée de formulaire vide non obligatoire, ou un noeud ajouté -> on ne renvoie rien.
                     return undefined;
                 } else if (isStoreListNode(item)) {
                     // Cas entrée liste -> `toFlatValues` sur chaque élément.

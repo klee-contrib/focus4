@@ -31,7 +31,17 @@ export function nodeToFormNode<E extends Entity = any>(
     node: StoreListNode<E> | StoreNode<E>,
     parentNode?: FormListNode | FormNode
 ) {
-    let {$edit, $required} = node;
+    let {$added, $addedListItem, $edit, $required} = node as StoreNode;
+    if ($added !== undefined) {
+        delete node.$added;
+    } else {
+        $added = false;
+    }
+    if ($addedListItem !== undefined) {
+        delete (node as StoreNode).$addedListItem;
+    } else {
+        $addedListItem = false;
+    }
     if ($edit !== undefined) {
         delete node.$edit;
     } else {
@@ -70,6 +80,12 @@ export function nodeToFormNode<E extends Entity = any>(
                     return false;
                 }
                 return isFunction($required) ? $required() : ($required ?? true);
+            },
+            get _added() {
+                return $added || parentNode?.form._added;
+            },
+            get _addedListItem() {
+                return $addedListItem || parentNode?.form._addedListItem;
             }
         },
         {},
@@ -104,6 +120,12 @@ export function nodeToFormNode<E extends Entity = any>(
 
         extendObservable(node.form, {
             get hasChanged() {
+                if (node.form._added) {
+                    return false; // Le noeud est ajouté => forcément inchangé.
+                }
+                if (node.form._addedListItem) {
+                    return true; // Le noeud est dans un item de liste ajouté dans le formulaire => compte comme modifié.
+                }
                 return node.some(item => item.form.hasChanged);
             },
             get isEmpty() {
@@ -121,10 +143,6 @@ export function nodeToFormNode<E extends Entity = any>(
         const onSourceSplice = observe(
             sourceNode as StoreListNode,
             action((change: IArrayDidChange) => {
-                if (sourceNode === (node as any)) {
-                    return;
-                }
-
                 if (change.type === "splice") {
                     const isReplace = change.addedCount === change.removedCount;
 
@@ -220,6 +238,12 @@ export function nodeToFormNode<E extends Entity = any>(
         }
         extendObservable(node.form, {
             get hasChanged() {
+                if (node.form._added) {
+                    return false; // Le noeud est ajouté => forcément inchangé.
+                }
+                if (node.form._addedListItem) {
+                    return true; // Le noeud est dans un item de liste ajouté dans le formulaire => compte comme modifié.
+                }
                 return Object.values(node).some(item => {
                     if (isFormEntityField(item)) {
                         return item.hasChanged;
@@ -240,7 +264,7 @@ export function nodeToFormNode<E extends Entity = any>(
                             (typeof item.value === "string" && item.value.trim() === "") ||
                             (Array.isArray(item.value) && item.value.length === 0)
                         );
-                    } else if (isAnyFormNode(item) && node !== item) {
+                    } else if (isAnyFormNode(item) && !node.form._added) {
                         return item.form.isEmpty;
                     } else {
                         return true;
@@ -301,11 +325,15 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
             return validateField(field);
         },
         get hasChanged() {
-            const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
-            if (sourceField === field) {
-                return true; // Le champ est dans un item de liste ajouté => forcément changé.
-            } else if (!sourceField) {
+            if (field._added || parentNode.form._added) {
                 return false; // Le champ est ajouté => forcément inchangé.
+            }
+            if (parentNode.form._addedListItem) {
+                return true; // Le champ est dans un item de liste ajouté dans le formulaire => compte comme modifié.
+            }
+            const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+            if (!sourceField) {
+                return false; // Le champ n'existe pas dans le parent => forcément inchangé.
             } else {
                 return !isEqual(sourceField.value, field.value);
             }
@@ -323,16 +351,14 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
         }
     });
 
-    if (parentNode !== parentNode.sourceNode) {
-        const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
-        if (sourceField) {
-            (field as any)._dispose = intercept(sourceField, "value", change => {
-                if (parentNode !== parentNode.sourceNode) {
-                    field.value = change.newValue;
-                }
-                return change;
-            });
-        }
+    const sourceField = parentNode.sourceNode[field.$field.name] as EntityField;
+    if (sourceField) {
+        (field as any)._dispose = intercept(sourceField, "value", change => {
+            if (parentNode !== parentNode.sourceNode) {
+                field.value = change.newValue;
+            }
+            return change;
+        });
     }
 }
 

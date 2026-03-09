@@ -65,16 +65,28 @@ s.required(false) // noeud en entier
 
 Pour des sous-noeuds, `required()` appellera le `required()` du builder du sous-noeud, tandis que pour un champ, il posera un [`metadata({isRequired})`](/docs/modèle-métier-makefield--docs#metadatametadata) ou un [`metadata(() => ({isRequired}))`](/docs/modèle-métier-makefield--docs#metadatametadata), selon le type de `value`.
 
-### `add(name, fieldBuilder)`
+### `add(name, entryBuilder)`
 
-La fonction `add` permet d'ajouter un nouveau champ au `FormNode`. Son API est identique à celle de [`makeField`](/docs/modèle-métier-makefield--docs#makefieldname-builder) :
+La fonction `add` permet d'ajouter un nouveau membre au `FormNode`, qui n'existe pas dans le noeud source. Cela peut donc être :
 
-- Le premier paramètre est le nom du champ.
-- Le deuxième paramètre est un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder).
+- Un nouveau champ (en renseignant un domain avec `.domain()`, ou une définition de champ avec `.field()`, en premier dans le builder, qui deviendra un [`EntityFieldBuilder`](/docs/modèle-métier-makefield--docs#entityfieldbuilder) comme [`makeField`](/docs/modèle-métier-makefield--docs#makefieldname-builder))
+- Un nouveau sous-noeud (en renseignant une entité dans `.object()` en premier dans le builder, qui deviendra un `FormNodeBuilder`)
+- Un nouveau sous-noeud liste (en renseignant une entité liste dans `.list()` en premier dans le builder, qui deviendra un `FormListNodeBuilder`)
 
-Un champ ajouté dans un noeud de formulaire se comportera comme un champ classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un champ correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce champ.
+```ts
+const formNode = useFormNode(
+    {},
+    e =>
+        e
+            .add("field", f => f.domain(DO_NUMBER)) // Ajoute un champ "field", qui pourra ensuite être personnalisé comme n'importe quel champ existant.
+            .add("subObject", f => f.object(SubObjectEntity)) // Ajoute un sous-noeud "subObject"
+            .add("subList", f => f.list(SubObjectEntity)) // Ajoute un sous-noeud list "subList"
+);
+```
 
-De plus, un champ ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `toFlatValues` à `true`.
+Un membre ajouté dans un noeud de formulaire se comportera comme un membre classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un membre correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce membre.
+
+De plus, un membre ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `toFlatValues` à `true`.
 
 Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud parent, et la valeur de son `hasChanged` sera toujours `false`.
 
@@ -87,9 +99,9 @@ La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un 
 
 ### `remove(...fields)`
 
-La fonction `remove` permet de supprimer les champs passés en paramètres du `FormNode`. Les champs supprimés existeront toujours sur le noeud source.
+La fonction `remove` permet de supprimer les membres passés en paramètres du `FormNode`. Les membres supprimés existeront toujours sur le noeud source.
 
-La suppression de champs permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au service de sauvegarde**. Vous pouvez toujours retrouver les champs origniaux supprimés du formulaire dans le `sourceNode`.
+La suppression de membres permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au service de sauvegarde**. Vous pouvez toujours retrouver les membres origniaux supprimés du formulaire dans le `sourceNode`.
 
 Par exemple :
 
@@ -109,7 +121,7 @@ De cette façon, n'aurez même pas besoin de définir les champs supprimés comm
 
 ### `removeAllBut(...fields)`
 
-La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les champs du `FormNode`, à l'exception de ceux passés en paramètres.
+La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les membres du `FormNode`, à l'exception de ceux passés en paramètres.
 
 ## `FormListNodeBuilder`
 

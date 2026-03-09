@@ -1,26 +1,13 @@
 import {isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
-import {ZodNever} from "zod";
 
 import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
 
-import {
-    BaseAutocompleteProps,
-    BaseDisplayProps,
-    BaseInputProps,
-    BaseLabelProps,
-    BaseSelectProps,
-    FormNode,
-    isEntityField,
-    isStoreListNode,
-    isStoreNode,
-    Patch,
-    StoreListNode,
-    StoreNode
-} from "../../types";
+import {FormNode, isEntityField, isStoreListNode, isStoreNode, Patch, StoreListNode, StoreNode} from "../../types";
 import {nodeToFormNode} from "../node";
 
 import {EntityFieldBuilder} from "./entity-field";
+import {FormEntryBuilder} from "./entry";
 import {FormListNodeBuilder} from "./form-list-node";
 
 type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
@@ -45,31 +32,32 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
     }
 
     /**
-     * Ajoute un champ calculé dans le FormNode.
+     * Ajoute un nouveau champ dans le FormNode.
      * @param name Nom du champ.
-     * @param get Getter du champ.
-     * @param set Setter du champ.
      */
     add<FE extends string, NFE extends FieldEntry>(
         name: FE,
-        builder: (
-            b: EntityFieldBuilder<
-                FieldEntry<
-                    Domain<
-                        ZodNever,
-                        BaseInputProps<ZodNever>,
-                        BaseSelectProps<ZodNever>,
-                        BaseAutocompleteProps<ZodNever>,
-                        BaseDisplayProps<ZodNever>,
-                        BaseLabelProps
-                    >
-                >
-            >,
-            node: StoreNode<E>
-        ) => EntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E & {[P in FE]: NFE}, E0> {
+        builder: (b: FormEntryBuilder, node: StoreNode<E>) => EntityFieldBuilder<NFE>
+    ): FormNodeBuilder<E & {[P in FE]: NFE}, E0>;
+    /**
+     * Ajoute un nouveau sous-noeud dans le FormNode.
+     * @param name Nom du sous-noeud.
+     */
+    add<FE extends string, NE extends Entity>(
+        name: FE,
+        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormNodeBuilder<NE>
+    ): FormNodeBuilder<E & {[P in FE]: ObjectEntry<NE>}, E0>;
+    /**
+     * Ajoute un nouveau sous-noeud liste dans le FormNode.
+     * @param name Nom du sous-noeud.
+     */
+    add<FE extends string, NE extends Entity>(
+        name: FE,
+        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormListNodeBuilder<NE>
+    ): FormNodeBuilder<E & {[P in FE]: ListEntry<NE>}, E0>;
+    add<FE extends string>(name: FE, builder: (b: FormEntryBuilder, node: StoreNode<E>) => any): any {
         // @ts-ignore
-        this.node[name] = builder(new EntityFieldBuilder(name), this.node).collect();
+        this.node[name] = builder(new FormEntryBuilder(name), this.node).collect();
         // @ts-ignore
         return this;
     }

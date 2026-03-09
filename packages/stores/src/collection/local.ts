@@ -26,7 +26,6 @@ export class LocalCollectionStore<T extends object = any> extends CollectionStor
         this.config = config as LocalCollectionStoreConfig<T>;
     }
 
-    // oxlint-disable-next-line class-methods-use-this
     override get type(): "local" {
         return "local";
     }

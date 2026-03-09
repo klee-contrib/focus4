@@ -22,6 +22,14 @@ export type EntityToNode<E extends Entity> = {
 /** Noeud de store simple. */
 export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     /** @internal */
+    /** Permet d'indiquer temporairement qu'il s'agit d'un FormNode ajouté, traité par `nodeToFormNode`. */
+    $added?: boolean;
+
+    /** @internal */
+    /** Permet d'indiquer temporairement qu'il s'agit d'un item de FormListNode ajouté, traité par `nodeToFormNode`. */
+    $addedListItem?: boolean;
+
+    /** @internal */
     /** IsEdit temporaire, traité par `nodeToFormNode`. */
     $edit?: boolean | (() => boolean);
 
@@ -48,6 +56,10 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
 export interface StoreListNode<E extends Entity = any> extends IObservableArray<StoreNode<E>> {
+    /** @internal */
+    /** Permet d'indiquer temporairement qu'il s'agit d'un FormListNode ajouté, traité par `nodeToFormNode`. */
+    $added?: boolean;
+
     /** @internal */
     /** IsEdit temporaire, traité par `nodeToFormNode`. */
     $edit?: boolean | (() => boolean);

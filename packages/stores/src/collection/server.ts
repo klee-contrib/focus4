@@ -113,7 +113,6 @@ export class ServerCollectionStore<
         );
     }
 
-    // oxlint-disable-next-line class-methods-use-this
     override get type(): "server" {
         return "server";
     }

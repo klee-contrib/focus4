@@ -38,7 +38,6 @@ export abstract class CollectionStore<T extends object = any> {
     @observable accessor sort: SortInput[] = [];
 
     /** Permet d'omettre certains élements de la liste de la sélection. */
-    // oxlint-disable-next-line class-methods-use-this
     @observable accessor isItemSelectionnable: (data: T) => boolean = () => true;
 
     /** Set contenant les éléments sélectionnés. */

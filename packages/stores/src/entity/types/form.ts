@@ -42,6 +42,14 @@ export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToFo
     /** Données liée à un FormNode. */
     readonly form: {
         /** @internal */
+        /** Détermine si le noeud a été ajouté dans le formulaire. */
+        readonly _added?: boolean;
+
+        /** @internal */
+        /** Détermine si le noeud a été ajouté dans un noeud de formulaire liste. */
+        readonly _addedListItem?: boolean;
+
+        /** @internal */
         /** Données initiales du formulaire. */
         _initialData?: EntityToType<E>;
 
@@ -92,6 +100,14 @@ export interface FormListNode<E extends Entity = any, E0 extends Entity = E> ext
 
     /** Données liée à un FormNode. */
     readonly form: {
+        /** @internal */
+        /** Détermine si le noeud a été ajouté dans le formulaire. */
+        _added?: boolean;
+
+        /** @internal */
+        /** Détermine si le noeud a été ajouté dans un noeud de formulaire liste. */
+        readonly _addedListItem?: boolean;
+
         /** @internal */
         /** Données initiales du formulaire. */
         _initialData?: EntityToType<E>[];
