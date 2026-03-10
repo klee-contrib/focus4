@@ -41,6 +41,8 @@ Une définition de facette comprend, comme si elle était définie côté serveu
 - Un `displayFormatter`, pour mettre en forme les valeurs de facettes.
 - Les `isMultiSelectable` et `canExclude`, qui précisent si on peut sélectionner plusieurs valeurs dans le filtre, ou exclure certaines valeurs.
 
+_Remarque : Si vous voulez un store local créé dans un composant, vous pouvez utilisez `useLocalCollectionStore` qui l'enregistre dans un `useState` pour vous._
+
 ### Store serveur
 
 Un store serveur s'instancie avec la méthode **`makeServerCollectionStore`**, qui peut prendre jusqu'à 3 paramètres :
@@ -52,6 +54,8 @@ Un store serveur s'instancie avec la méthode **`makeServerCollectionStore`**, q
 - `criteria` (facultatif) : la définition d'entité pour le critère (voir plus bas).
 
 _(Note : l'ordre des deux derniers paramètres sont interchangeables)_
+
+_Remarque : Si vous voulez un store local créé dans un composant, vous pouvez utilisez `useServerCollectionStore` qui l'enregistre dans un `useState` pour vous._
 
 ## Usage
 

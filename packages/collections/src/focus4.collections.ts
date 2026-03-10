@@ -36,6 +36,7 @@ export {
     Summary,
     summaryCss
 } from "./search";
+export {useLocalCollectionStore, useServerCollectionStore} from "./store";
 export {i18nCollections} from "./translation";
 
 export type {
