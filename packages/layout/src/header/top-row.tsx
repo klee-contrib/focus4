@@ -1,8 +1,8 @@
-import {ReactNode, useContext, useId, useLayoutEffect, useRef} from "react";
+import {ReactNode, useContext, useLayoutEffect, useRef} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import {ScrollableContext} from "../utils/contexts";
+import {HeaderContext, ScrollableContext} from "../utils/contexts";
 
 import headerCss, {HeaderCss} from "./__style__/header.css";
 
@@ -17,22 +17,12 @@ export interface HeaderTopRowProps {
  */
 export function HeaderTopRow(props: HeaderTopRowProps) {
     const theme = useTheme("header", headerCss, props.theme);
+    const {sticky} = useContext(HeaderContext);
 
     const ref = useRef<HTMLDivElement>(null);
-    const {setHeaderElementHeight} = useContext(ScrollableContext);
-    const id = useId();
+    const {registerHeaderElement} = useContext(ScrollableContext);
 
-    useLayoutEffect(() => {
-        const element = ref.current!;
-        const update = () => setHeaderElementHeight(id, element.clientHeight);
-        update();
-        const observer = new ResizeObserver(update);
-        observer.observe(element);
-        return () => {
-            observer.disconnect();
-            setHeaderElementHeight(id, 0);
-        };
-    }, []);
+    useLayoutEffect(() => (sticky ? registerHeaderElement(ref.current!) : undefined), [sticky]);
 
     return (
         <div ref={ref} className={theme.topRow()}>

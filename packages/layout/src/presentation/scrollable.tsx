@@ -1,9 +1,20 @@
 import classNames from "classnames";
 import {range} from "es-toolkit";
 import {FocusTrap} from "focus-trap-react";
-import {useObserver} from "mobx-react";
+import {autorun, observable} from "mobx";
+import {useLocalObservable, useObserver} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
-import {ReactElement, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {
+    ReactElement,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import {createPortal} from "react-dom";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -71,36 +82,59 @@ export function Scrollable({
     const containerNode = useRef<HTMLDivElement>(null);
     const scrollableNode = useRef<HTMLDivElement>(null);
 
-    const [headerHeight, setHeaderHeight] = useState(0);
+    const headerState = useLocalObservable(
+        () => ({
+            elements: new Map<HTMLElement, number>(),
+            get height() {
+                return [...this.elements.values()].reduce((s, h) => s + h, 0);
+            }
+        }),
+        {elements: observable.shallow}
+    );
 
-    const [headerElementsHeights] = useState(() => new Map<string, number>());
-    const setHeaderElementHeight = useCallback((id: string, height: number) => {
-        headerElementsHeights.set(id, height);
-        setHeaderHeight([...headerElementsHeights.values()].reduce((a, b) => a + b, 0));
+    const registerHeaderElement = useCallback((node: HTMLElement) => {
+        const update = () => headerState.elements.set(node, node.clientHeight);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(node);
+        return () => {
+            headerState.elements.delete(node);
+            observer.disconnect();
+        };
     }, []);
 
     const intersectionObserver = useRef<IntersectionObserver>(null);
     const [onIntersects] = useState(() => new Map<Element, (ratio: number, isIntersecting: boolean) => void>());
 
-    useLayoutEffect(() => {
-        intersectionObserver.current?.disconnect();
-        intersectionObserver.current = new IntersectionObserver(
-            entries => {
-                for (const e of entries) {
-                    const onIntersect = onIntersects.get(e.target);
-                    if (onIntersect) {
-                        onIntersect(Math.round(e.intersectionRatio * 100) / 100, e.isIntersecting);
+    useEffect(() => {
+        const disposer = autorun(() => {
+            intersectionObserver.current?.disconnect();
+            intersectionObserver.current = new IntersectionObserver(
+                entries => {
+                    for (const e of entries) {
+                        const onIntersect = onIntersects.get(e.target);
+                        if (onIntersect) {
+                            onIntersect(Math.round(e.intersectionRatio * 100) / 100, e.isIntersecting);
+                        }
                     }
+                },
+                {
+                    root: scrollableNode.current,
+                    rootMargin: `-${headerState.height}px 0px 0px 0px`,
+                    threshold: range(0, 1025, 25).map(t => t / 1000)
                 }
-            },
-            {
-                root: scrollableNode.current,
-                rootMargin: `-${headerHeight}px 0px 0px 0px`,
-                threshold: range(0, 1025, 25).map(t => t / 1000)
+            );
+
+            for (const [node] of onIntersects) {
+                intersectionObserver.current?.observe(node);
             }
-        );
-        onIntersects.forEach((_, node) => intersectionObserver.current?.observe(node));
-    }, [headerHeight]);
+        });
+
+        return () => {
+            disposer();
+            intersectionObserver.current?.disconnect();
+        };
+    }, []);
 
     const registerIntersect = useCallback(function registerIntersect(
         node: HTMLElement,
@@ -156,14 +190,14 @@ export function Scrollable({
         <ScrollableContext.Provider
             value={useMemo(
                 () => ({
-                    headerHeight,
+                    headerHeight: headerState.height,
                     level,
-                    setHeaderElementHeight,
+                    registerHeaderElement,
                     portal,
                     registerIntersect,
                     scrollTo
                 }),
-                [headerHeight, portal, registerIntersect, scrollTo]
+                [headerState.height, portal, registerIntersect, scrollTo]
             )}
         >
             <FocusTrap
