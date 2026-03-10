@@ -45,7 +45,6 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
     await Promise.all(
         files.map(async ({file, interfaceName}) => {
             const content = await fs.readFile(file);
-            const filePath = file.replace(root, rootDir);
             const exportTokens = await loadCSS(content.toString());
             const elements = new Set<string>();
             let hasModifier = false;
@@ -73,8 +72,7 @@ export async function generateCSSTypings(rootDir: string, regex?: RegExp) {
 ${[...elements]
     .toSorted()
     .map(
-        element =>
-            `interface ${element} { _${hashCode(filePath.replaceAll("\\", "/").replace(root, "") + element)}: void }`
+        element => `interface ${element} { _${hashCode(file.replaceAll("\\", "/").replace(root, "") + element)}: void }`
     )
     .join("\r\n")}
 
@@ -87,7 +85,7 @@ export default ${interfaceName}Css;
 `;
 
             await fs.writeFile(`${file}.d.ts`, output);
-            console.info(`${filePath}.d.ts généré.`);
+            console.info(`${file}.d.ts généré.`);
         })
     );
 }
