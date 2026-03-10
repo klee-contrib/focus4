@@ -1,4 +1,4 @@
-import {isFunction} from "es-toolkit";
+import {intersection, isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
 
 import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
@@ -22,6 +22,19 @@ type EntryToEntity<E> =
           : E extends RecursiveListEntry
             ? E
             : never;
+
+const reservedKeys = [
+    "clear",
+    "replace",
+    "set",
+    "sourceNode",
+    "$added",
+    "$addedListItem",
+    "$edit",
+    "$entity",
+    "$form",
+    "$required"
+];
 
 export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
     /** @internal */
@@ -165,6 +178,103 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
     }
 
     /**
+     * Patche le noeud courant pour correspondre à l'entité cible en ajoutant les membres qui manquent, retirant les membres en trop, et en modifiant les membres en commun.
+     *
+     * Les membres en commun ne seront patchés que s'ils sont compatibles (même type de chaque côté, et si c'est un sous-noeud, cela doit être de la même classe). Dans le cas contraire, ces membres seront supprimés et recréés (sans lien avec le noeud source donc).
+     * @param targetEntity Entité cible.
+     */
+    patchAllTo<NE extends Entity>(targetEntity: NE): FormNodeBuilder<NE, E0> {
+        // On récupère en premier lieu les noms d'entrée en commun.
+        const commonKeys = intersection(Object.keys(this.node), Object.keys(targetEntity)).filter(
+            key => !reservedKeys.includes(key)
+        );
+
+        // Puis on ne garde que celles pour lesquelles on peut faire la correspondance :
+        const realCommonKeys = commonKeys.filter(commonKey => {
+            const sourceEntry = this.node[commonKey];
+            const targetEntry = targetEntity[commonKey];
+
+            // Pour garder une entrée liste de la source, il faut une entrée liste de la même entité sur la cible.
+            if (
+                isStoreListNode(sourceEntry) &&
+                ((Array.isArray(targetEntry) && targetEntry[0] === sourceEntry.$entity) ||
+                    (!Array.isArray(targetEntry) &&
+                        targetEntry.type === "list" &&
+                        targetEntry.entity === sourceEntry.$entity))
+            ) {
+                return true;
+            }
+
+            if (Array.isArray(targetEntry)) {
+                return false;
+            }
+
+            // Pour garder une entrée objet de la source, il faut une entrée objet de la même entité sur la cible.
+            if (
+                isStoreNode(sourceEntry) &&
+                (targetEntry === sourceEntry.$entity ||
+                    (targetEntry.type === "object" && targetEntry.entity === sourceEntry.$entity))
+            ) {
+                return true;
+            }
+
+            // Pour garder une entrée champ de la source, il faut que l'entrée soit aussi un champ et qu'il n'est pas encore été patché.
+            if (isEntityField(sourceEntry) && targetEntry.type === "field" && !("_domain" in sourceEntry)) {
+                return true;
+            }
+
+            return false;
+        });
+
+        // On enlève toutes les entrées qu'on ne garde pas.
+        this.removeAllBut(realCommonKeys as unknown as FieldsOf<E> | ObjectsOf<E> | FieldsOf<E>);
+
+        // Puis on ajoute toutes celles qui manquent.
+        for (const targetEntryName in targetEntity) {
+            if (!(targetEntryName in this.node)) {
+                const targetEntry = targetEntity[targetEntryName];
+                if (Array.isArray(targetEntry)) {
+                    this.add(targetEntryName, f => f.list(targetEntry[0]));
+                } else {
+                    switch (targetEntry.type) {
+                        case "field":
+                            this.add(targetEntryName, f => f.field(targetEntry));
+                            break;
+                        case "list":
+                            this.add(targetEntryName, f => f.list(targetEntry));
+                            break;
+                        case "recursive-list":
+                            this.add(targetEntryName, f => f.list(targetEntity));
+                            break;
+                        default:
+                            this.add(targetEntryName, f => f.object(targetEntry as Entity));
+                            break;
+                    }
+                }
+            }
+        }
+
+        // Pour chacune des entrées en commun, on met à jour : pour une entrée objet/liste, on remplace le `required`, pour un champ, on écrase la définition.
+        for (const commonKey of realCommonKeys) {
+            const sourceEntry = this.node[commonKey];
+            const targetEntry = targetEntity[commonKey];
+
+            if (isStoreListNode(sourceEntry)) {
+                sourceEntry.$required = Array.isArray(targetEntry)
+                    ? true
+                    : ((targetEntry as ListEntry).isRequired ?? true);
+            } else if (isStoreNode(sourceEntry) && !Array.isArray(targetEntry)) {
+                sourceEntry.$required = targetEntry.type === "object" ? (targetEntry.isRequired ?? true) : true;
+            } else if (isEntityField(sourceEntry) && !Array.isArray(targetEntry) && targetEntry.type === "field") {
+                (sourceEntry as any).$field = targetEntry;
+            }
+        }
+
+        // @ts-ignore
+        return this;
+    }
+
+    /**
      * Supprime les champs demandés du FormNode.
      * @param fields Les champs à supprimer.
      */
@@ -182,10 +292,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      */
     removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
         for (const key in this.node) {
-            if (
-                !fields.includes(key as F) &&
-                !["clear", "replace", "set", "sourceNode", "$edit", "$form", "$required"].includes(key)
-            ) {
+            if (!fields.includes(key as F) && !reservedKeys.includes(key)) {
                 delete this.node[key as F];
             }
         }

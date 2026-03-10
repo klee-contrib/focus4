@@ -41,6 +41,9 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     /** IsRequired temporaire, traité par `nodeToFormNode`. */
     $required?: boolean | (() => boolean);
 
+    /** Métadonnées. */
+    readonly $entity: E;
+
     /** Vide l'objet (récursivement). */
     clear(): StoreNode<E>;
 

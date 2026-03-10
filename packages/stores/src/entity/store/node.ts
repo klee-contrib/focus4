@@ -53,6 +53,7 @@ export function makeStoreNode<E extends Entity>(
 
     // Cas d'un noeud simple : On parcourt tous les champs de l'entité.
     const storeNode = {
+        $entity: entity,
         ...mapValues(entity, e => {
             const entry = e as FieldEntry | ObjectEntry | RecursiveListEntry | ListEntry;
             switch (entry.type) {

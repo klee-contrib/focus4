@@ -123,6 +123,24 @@ De cette façon, n'aurez même pas besoin de définir les champs supprimés comm
 
 La fonction `removeAllBut` fonctionne comme `remove`, sauf qu'elle permet à la place de supprimer tous les membres du `FormNode`, à l'exception de ceux passés en paramètres.
 
+### `patchAllTo(entity)`
+
+La fonction `patchAllTo` permet de modifier tous les membres d'un noeud pour qu'ils correspondent à ceux d'une autre entité. Les membres manquants sur le noeud source seront ajoutés, tandis que les membres en trop seront retirés. Si un membre a le même nom dans les deux entités, il sera patché (au lieu d'être supprimé puis recréé) si :
+
+- Pour un champ, si le champ n'a pas déjà été patché avant et que le membre sur la nouvelle entité est bien un champ. Le patch remplacera entièrement la définition de l'ancien champ par celle du nouveau.
+- Pour un sous-noeud, si le membre sur la nouvelle entité est bien un sous-noeud de la même entité. Le patch mettra simplement à jour le `required`.
+- Pour un sous-noeud liste, si le membre sur la nouvelle entité est bien un sous-noeud liste de la même entité. Le patch mettra simplement à jour le `required`.
+
+Dans l'idée, vous pouvez utiliser cette fonction pour transformer votre entité de lecture (qui contient les données chargées du serveur) en votre entité d'écriture, qui est celle qui contient les données effectivement à saisir par l'utilisateur, et qui donc doit être elle de votre formulaire.
+
+Par exemple :
+
+```ts
+// Le type du formNode ici sera FormNode<ProfilWriteEntity, ProfilReadEntity>
+const formNode = useFormNode(ProfilReadEntity, e => e.patchAllTo(ProfilWriteEntity));
+// Le formNode n'aura ici no plus les champs `dateCreation` ou `dateModification` de l'entité de lecture (comme avec `remove`, mais de manière implicite).
+```
+
 ## `FormListNodeBuilder`
 
 Il s'agit du builder qui va s'appliquer sur un `StoreListNode`, via `useFormNode()` ou `patch()`.

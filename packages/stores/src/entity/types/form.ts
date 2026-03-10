@@ -39,6 +39,9 @@ export type EntityToForm<E extends Entity, E0 extends Entity = E> = {
 
 /** Champs additionnels pour un noeud de formulaire. */
 export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToForm<E, E0> & {
+    /** Métadonnées. */
+    readonly $entity: E;
+
     /** Données liée à un FormNode. */
     readonly form: {
         /** @internal */

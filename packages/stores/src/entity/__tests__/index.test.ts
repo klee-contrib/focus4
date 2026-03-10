@@ -54,10 +54,12 @@ describe("EntityStore: Création", () => {
     const {id, numero, montant} = OperationEntity;
     test("L'entrée 'operation' a bien la forme attendue", () =>
         expect(store.operation).toEqual({
+            $entity: OperationEntity,
             id: {$field: id, value: undefined},
             numero: {$field: numero, value: undefined},
             montant: {$field: montant, value: undefined},
             structure: {
+                $entity: StructureEntity,
                 $required: true,
                 id: {$field: StructureEntity.id, value: undefined},
                 nom: {$field: StructureEntity.nom, value: undefined},
