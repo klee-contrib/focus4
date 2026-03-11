@@ -140,16 +140,12 @@ export function Scrollable({
         node: HTMLElement,
         onIntersect: (ratio: number, isIntersecting: boolean) => void
     ) {
-        if (intersectionObserver.current) {
-            onIntersects.set(node, onIntersect);
-            intersectionObserver.current.observe(node);
-        }
+        onIntersects.set(node, onIntersect);
+        intersectionObserver.current?.observe(node);
 
         return () => {
-            if (intersectionObserver.current) {
-                onIntersects.delete(node);
-                intersectionObserver.current.unobserve(node);
-            }
+            onIntersects.delete(node);
+            intersectionObserver.current?.unobserve(node);
         };
     }, []);
 

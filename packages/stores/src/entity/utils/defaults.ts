@@ -7,6 +7,8 @@ export function UndefinedComponent() {
     return null;
 }
 
+const toString = (x: any) => `${x ?? ""}`;
+
 /** Retourne le formatter par défaut pour un schéma donné. */
 export function getDefaultFormatter(schema: z.ZodType) {
     return isBooleanSchema(schema)

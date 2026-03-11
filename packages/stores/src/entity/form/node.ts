@@ -126,7 +126,7 @@ export function nodeToFormNode<E extends Entity = any>(
                 if (node.form._addedListItem) {
                     return true; // Le noeud est dans un item de liste ajouté dans le formulaire => compte comme modifié.
                 }
-                return node.some(item => item.form.hasChanged);
+                return node.length !== node.sourceNode.length || node.some(item => item.form.hasChanged);
             },
             get isEmpty() {
                 return node.length === 0;

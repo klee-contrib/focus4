@@ -224,10 +224,10 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
             }
 
             return false;
-        });
+        }) as (FieldsOf<E> | ObjectsOf<E> | ListsOf<E>)[];
 
         // On enlève toutes les entrées qu'on ne garde pas.
-        this.removeAllBut(realCommonKeys as unknown as FieldsOf<E> | ObjectsOf<E> | FieldsOf<E>);
+        this.removeAllBut(...realCommonKeys);
 
         // Puis on ajoute toutes celles qui manquent.
         for (const targetEntryName in targetEntity) {
@@ -257,7 +257,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
         // Pour chacune des entrées en commun, on met à jour : pour une entrée objet/liste, on remplace le `required`, pour un champ, on écrase la définition.
         for (const commonKey of realCommonKeys) {
             const sourceEntry = this.node[commonKey];
-            const targetEntry = targetEntity[commonKey];
+            const targetEntry = targetEntity[commonKey as string as FieldsOf<NE> | ObjectsOf<NE> | ListsOf<NE>];
 
             if (isStoreListNode(sourceEntry)) {
                 sourceEntry.$required = Array.isArray(targetEntry)
