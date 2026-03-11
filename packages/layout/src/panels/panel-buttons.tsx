@@ -1,3 +1,4 @@
+import {motion} from "motion/react";
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -5,6 +6,8 @@ import {Button} from "@focus4/toolbox";
 
 /** Props des boutons du Panel. */
 export interface PanelButtonsProps {
+    /** Si le panel qui le contient est repliable. */
+    collapsible?: boolean;
     /** Etat d'édition. */
     editing?: boolean;
     /** Préfixe i18n. Par défaut : "focus" */
@@ -27,6 +30,7 @@ export interface PanelButtonsProps {
  * Les boutons seront désactivés pendant le chargement.
  */
 export function PanelButtons({
+    collapsible = false,
     editing,
     i18nPrefix = "focus",
     loading,
@@ -49,35 +53,37 @@ export function PanelButtons({
     }, [ref]);
 
     if (onClickCancel && onClickEdit) {
-        if (editing) {
-            return (
-                <span ref={setRef}>
+        return (
+            <motion.span ref={setRef} variants={collapsible ? {opened: {opacity: 1}, closed: {opacity: 0}} : {}}>
+                {editing ? (
+                    <>
+                        <Button
+                            color="primary"
+                            disabled={loading}
+                            icon={{i18nKey: `${i18nPrefix}.icons.button.save`}}
+                            label={t(`${i18nPrefix}.button.save`)}
+                            onClick={!isInForm ? save : undefined}
+                            type="submit"
+                        />
+                        <Button
+                            key="main"
+                            disabled={loading}
+                            icon={{i18nKey: `${i18nPrefix}.icons.button.cancel`}}
+                            label={t(`${i18nPrefix}.button.cancel`)}
+                            onClick={onClickCancel}
+                        />
+                    </>
+                ) : (
                     <Button
-                        color="primary"
+                        key="main"
                         disabled={loading}
-                        icon={{i18nKey: `${i18nPrefix}.icons.button.save`}}
-                        label={t(`${i18nPrefix}.button.save`)}
-                        onClick={!isInForm ? save : undefined}
-                        type="submit"
+                        icon={{i18nKey: `${i18nPrefix}.icons.button.edit`}}
+                        label={t(`${i18nPrefix}.button.edit`)}
+                        onClick={onClickEdit}
                     />
-                    <Button
-                        disabled={loading}
-                        icon={{i18nKey: `${i18nPrefix}.icons.button.cancel`}}
-                        label={t(`${i18nPrefix}.button.cancel`)}
-                        onClick={onClickCancel}
-                    />
-                </span>
-            );
-        } else {
-            return (
-                <Button
-                    disabled={loading}
-                    icon={{i18nKey: `${i18nPrefix}.icons.button.edit`}}
-                    label={t(`${i18nPrefix}.button.edit`)}
-                    onClick={onClickEdit}
-                />
-            );
-        }
+                )}
+            </motion.span>
+        );
     } else {
         return null;
     }

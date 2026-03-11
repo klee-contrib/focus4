@@ -1,9 +1,10 @@
 import {snakeCase} from "es-toolkit";
-import {ComponentType, PropsWithChildren, useContext, useEffect, useRef} from "react";
+import {motion} from "motion/react";
+import {ComponentType, PropsWithChildren, useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {CSSProp, useTheme} from "@focus4/styling";
-import {FontIcon, Icon, LinearProgressIndicator} from "@focus4/toolbox";
+import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
+import {FontIcon, Icon, IconButton, LinearProgressIndicator} from "@focus4/toolbox";
 
 import {ScrollspyContext} from "../utils";
 
@@ -20,12 +21,16 @@ export interface PanelProps extends PanelButtonsProps {
     Buttons?: ComponentType<PanelButtonsProps>;
     /** Position des boutons. Par défaut : "top". */
     buttonsPosition?: "both" | "bottom" | "none" | "top";
+    /** Si renseigné, le panel pourra être replié. Le panel doit avoir un titre et/ou les boutons en haut pour être repliable. */
+    collapsible?: boolean;
     /** Masque le panel dans le ScrollspyContainer. */
     hideOnScrollspy?: boolean;
     /** Masque la progress bar lors du chargement/sauvegarde. */
     hideProgressBar?: boolean;
     /** Affiche une icône devant le titre. */
     icon?: Icon;
+    /** Si le panel est initialement replié (le panel doit être repliable). */
+    initiallyCollapsed?: boolean;
     /** Identifiant du panel. Par défaut : premier mot du titre, si renseigné. */
     name?: string;
     /** CSS. */
@@ -44,12 +49,14 @@ export interface PanelProps extends PanelButtonsProps {
 export function Panel({
     Buttons = PanelButtons,
     buttonsPosition = "top",
+    collapsible = false,
     children,
     editing,
-    i18nPrefix,
+    i18nPrefix = "focus",
     hideOnScrollspy,
     hideProgressBar,
     icon,
+    initiallyCollapsed = false,
     loading,
     name,
     onClickCancel,
@@ -58,7 +65,11 @@ export function Panel({
     title,
     theme: pTheme
 }: PropsWithChildren<PanelProps>) {
+    const areButtonsTop = !!["top", "both"].some(i => i === buttonsPosition);
+    const areButtonsDown = !!["bottom", "both"].some(i => i === buttonsPosition);
+
     const {t} = useTranslation();
+    const [collapsed, setCollapsed] = useState(initiallyCollapsed && collapsible && (areButtonsTop || !!title));
 
     if (!name && title) {
         name = snakeCase(t(title)).split("_")[0];
@@ -80,6 +91,7 @@ export function Panel({
     const buttons = (
         <div className={theme.actions()}>
             <Buttons
+                collapsible={collapsible && areButtonsTop}
                 editing={editing}
                 i18nPrefix={i18nPrefix}
                 loading={loading}
@@ -87,16 +99,54 @@ export function Panel({
                 onClickEdit={onClickEdit}
                 save={save}
             />
+            {areButtonsTop && collapsible ? (
+                <motion.div
+                    initial={false}
+                    transition={getDefaultTransition()}
+                    variants={{opened: {rotate: 0}, closed: {rotate: -180}}}
+                >
+                    <IconButton
+                        icon={{i18nKey: `${i18nPrefix}.icons.button.collapse`}}
+                        onClick={() => setCollapsed(c => !c)}
+                    />
+                </motion.div>
+            ) : null}
         </div>
     );
 
-    const areButtonsTop = !!["top", "both"].some(i => i === buttonsPosition);
-    const areButtonsDown = !!["bottom", "both"].some(i => i === buttonsPosition);
+    // La taille du panel replié doit être égale à la hauteur de son titre, donc on récupère sa hauteur dans un `useState`.
+    // Par conséquent, on ne l'a pas au premier rendu, et pour éviter une animation initale vers la valeur récupérée avec `initiallyCollapsed: true`,
+    // On a besoin de forcer la durée des animations à 0 tant qu'on a pas rendu 2 fois...
+    const [titleTop, setTitleTop] = useState<HTMLDivElement | null>(null);
+    const titleHeight = titleTop?.clientHeight ?? 0;
+    const [renderedOnce, setRenderedOnce] = useState(false);
+    const [renderedTwice, setRenderedTwice] = useState(false);
+    useLayoutEffect(() => setRenderedOnce(true), []);
+    useLayoutEffect(() => {
+        if (renderedOnce) {
+            setRenderedTwice(true);
+        }
+    }, [renderedOnce]);
 
     return (
-        <div ref={ref} className={theme.panel({loading, editing})} id={name ? `panel-${name}` : undefined}>
+        <motion.div
+            ref={ref}
+            animate={collapsed ? "closed" : "opened"}
+            initial={false}
+            className={theme.panel({loading})}
+            id={name ? `panel-${name}` : undefined}
+            transition={!renderedTwice ? {duration: 0} : getDefaultTransition()}
+            variants={
+                collapsible
+                    ? {
+                          opened: {height: "auto", transitionEnd: {overflow: "visible"}},
+                          closed: {height: titleHeight, overflow: "hidden"}
+                      }
+                    : {}
+            }
+        >
             {!!title || areButtonsTop ? (
-                <div className={theme.title({top: true})}>
+                <div ref={setTitleTop} className={theme.title({top: true})}>
                     {title ? (
                         <h3>
                             {icon ? <FontIcon className={theme.icon()} icon={icon} /> : null}
@@ -106,7 +156,11 @@ export function Panel({
                     {areButtonsTop ? buttons : null}
                 </div>
             ) : null}
-            <div className={theme.content()}>
+            <motion.div
+                className={theme.content()}
+                initial={false}
+                variants={collapsible ? {opened: {opacity: 1}, closed: {opacity: 0}} : {}}
+            >
                 {!hideProgressBar && loading ? (
                     <LinearProgressIndicator
                         indeterminate
@@ -114,8 +168,8 @@ export function Panel({
                     />
                 ) : null}
                 {children}
-            </div>
+            </motion.div>
             {areButtonsDown ? <div className={theme.title({bottom: true})}>{buttons}</div> : null}
-        </div>
+        </motion.div>
     );
 }

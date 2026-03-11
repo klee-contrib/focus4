@@ -52,8 +52,9 @@
     justify-content: flex-end;
 }
 
-.panel--editing .actions {
-    display: block;
+.actions {
+    display: inline-flex;
+    align-items: center;
 }
 
 .content {

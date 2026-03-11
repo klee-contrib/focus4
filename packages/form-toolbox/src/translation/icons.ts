@@ -1,18 +1,4 @@
 export const icons = {
-    button: {
-        cancel: {
-            name: "clear"
-        },
-        edit: {
-            name: "edit"
-        },
-        help: {
-            name: "help_outline"
-        },
-        save: {
-            name: "save"
-        }
-    },
     file: {
         delete: {
             name: "clear"
