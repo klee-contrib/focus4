@@ -50,11 +50,8 @@ export class ServerCollectionStore<
 
     private abortController?: AbortController;
 
-    /* @internal */
     constructor(service: SearchService<T>, criteria?: C, initialQuery?: ServerCollectionStoreInitProperties<C, NC>);
-    /* @internal */
     constructor(service: SearchService<T>, initialQuery?: ServerCollectionStoreInitProperties<C, NC>, criteria?: C);
-    /* @internal */
     constructor(
         service: SearchService<T>,
         secondParam?: C | ServerCollectionStoreInitProperties<C, NC>,
@@ -285,7 +282,7 @@ export class ServerCollectionStore<
  * @param criteria La description du critère de recherche personnalisé.
  * @param initialQuery Les paramètres de recherche à l'initilisation.
  */
-export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity>(
+export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
     service: SearchService<T>,
     criteria?: C,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>
@@ -296,7 +293,7 @@ export function makeServerCollectionStore<T extends object, C extends Entity, NC
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
  */
-export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity>(
+export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
     service: SearchService<T>,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>,
     criteria?: C

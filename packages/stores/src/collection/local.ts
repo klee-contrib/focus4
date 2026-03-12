@@ -18,7 +18,6 @@ export class LocalCollectionStore<T extends object = any> extends CollectionStor
     /** Service de chargement posé par un `useLoad()`, en mode local. */
     localLoadService?: () => Promise<void>;
 
-    /* @internal */
     constructor(config: Partial<LocalCollectionStoreConfig<T>> = {}) {
         super();
         config.searchFields ??= [];
