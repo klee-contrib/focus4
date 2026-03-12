@@ -20,11 +20,11 @@ import {
  */
 export class ServerCollectionStore<
     T extends object = any,
-    C extends Entity = never,
+    C extends Entity = any,
     NC extends Entity = C
 > extends CollectionStore<T> {
     /** Service de recherche serveur. */
-    private readonly service?: SearchService<T>;
+    private readonly service?: SearchService<T, C>;
 
     /** Facettes résultat de la recherche. */
     private readonly innerFacets: IObservableArray<FacetOutput> = observable([]);
@@ -50,10 +50,10 @@ export class ServerCollectionStore<
 
     private abortController?: AbortController;
 
-    constructor(service: SearchService<T>, criteria?: C, initialQuery?: ServerCollectionStoreInitProperties<C, NC>);
-    constructor(service: SearchService<T>, initialQuery?: ServerCollectionStoreInitProperties<C, NC>, criteria?: C);
+    constructor(service: SearchService<T, C>, criteria?: C, initialQuery?: ServerCollectionStoreInitProperties<C, NC>);
+    constructor(service: SearchService<T, C>, initialQuery?: ServerCollectionStoreInitProperties<C, NC>, criteria?: C);
     constructor(
-        service: SearchService<T>,
+        service: SearchService<T, C>,
         secondParam?: C | ServerCollectionStoreInitProperties<C, NC>,
         thirdParam?: C | ServerCollectionStoreInitProperties<C, NC>
     ) {
@@ -283,7 +283,7 @@ export class ServerCollectionStore<
  * @param initialQuery Les paramètres de recherche à l'initilisation.
  */
 export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
-    service: SearchService<T>,
+    service: SearchService<T, C>,
     criteria?: C,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>
 ): ServerCollectionStore<T, C, NC>;
@@ -294,10 +294,10 @@ export function makeServerCollectionStore<T extends object, C extends Entity, NC
  * @param criteria La description du critère de recherche personnalisé.
  */
 export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
-    service: SearchService<T>,
+    service: SearchService<T, C>,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>,
     criteria?: C
 ): ServerCollectionStore<T, C, NC>;
-export function makeServerCollectionStore(service: SearchService, secondParam?: any, thirdParam?: any) {
+export function makeServerCollectionStore(service: SearchService<any, any>, secondParam?: any, thirdParam?: any) {
     return new ServerCollectionStore(service, secondParam, thirdParam);
 }

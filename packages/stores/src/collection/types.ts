@@ -3,7 +3,10 @@ import {Entity, EntityToType} from "@focus4/entities";
 import {FormNodeBuilder} from "../entity";
 
 /** Définition d'un service de recherche. */
-export type SearchService<T = any, C = {}> = (query: QueryInput<C>, options?: RequestInit) => Promise<QueryOutput<T>>;
+export type SearchService<T, C extends Entity> = (
+    query: QueryInput<EntityToType<C>>,
+    options?: RequestInit
+) => Promise<QueryOutput<T>>;
 
 /** Définition d'une facette côté client. */
 export interface LocalFacetDefinition<T> {

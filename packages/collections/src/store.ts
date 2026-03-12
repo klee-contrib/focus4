@@ -24,8 +24,8 @@ export function useLocalCollectionStore<T extends object>(config?: Partial<Local
  * @param criteria La description du critère de recherche personnalisé.
  * @param initialQuery Les paramètres de recherche à l'initilisation.
  */
-export function useServerCollectionStore<T extends object, C extends Entity, NC extends Entity>(
-    service: SearchService<T>,
+export function useServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
+    service: SearchService<T, C>,
     criteria?: C,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>
 ): ServerCollectionStore<T, C, NC>;
@@ -35,12 +35,12 @@ export function useServerCollectionStore<T extends object, C extends Entity, NC 
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
  */
-export function useServerCollectionStore<T extends object, C extends Entity, NC extends Entity>(
-    service: SearchService<T>,
+export function useServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
+    service: SearchService<T, C>,
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>,
     criteria?: C
 ): ServerCollectionStore<T, C, NC>;
-export function useServerCollectionStore(service: SearchService, secondParam?: any, thirdParam?: any) {
+export function useServerCollectionStore(service: SearchService<any, any>, secondParam?: any, thirdParam?: any) {
     const [store] = useState(() => makeServerCollectionStore(service, secondParam, thirdParam));
     return store;
 }
