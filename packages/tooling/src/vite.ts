@@ -63,16 +63,14 @@ export function cssAutoModules(regex: RegExp): PluginOption {
             }
         },
         handleHotUpdate(context) {
-            if (
-                context.modules.length === 0 &&
-                context.file.endsWith(".css") &&
-                !context.file.endsWith(".module.css")
-            ) {
+            if (context.file.endsWith(".css") && !context.file.endsWith(".module.css")) {
                 const id = `/${path
                     .relative(config.root, context.file.replace(".css", ".module.css"))
                     .replaceAll("\\", "/")}`;
                 const module = context.server.moduleGraph.getModuleById(id);
-                return module ? [module] : [];
+                if (module && !context.modules.includes(module)) {
+                    return [...context.modules, module];
+                }
             }
         }
     } satisfies PluginOption;
