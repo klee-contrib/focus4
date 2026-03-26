@@ -3,20 +3,19 @@
         // Général
         "lib": ["es2023", "dom"],
         "jsx": "react-jsx",
-        "module": "esnext",
         "moduleResolution": "bundler",
         "target": "es2023",
-        "strict": true,
+        "sourceMap": true,
 
         // Options additionnelles
         "importHelpers": true,
         "noFallthroughCasesInSwitch": true,
+        "noUncheckedSideEffectImports": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
 
         // Spécifique librairie
         "declaration": true,
-        "sourceMap": true,
         "declarationMap": true,
         "inlineSources": true,
         "stripInternal": true,

@@ -1,4 +1,4 @@
-import "./components/__style__/variables.css";
+import "./utils/variables.css";
 
 export {Autocomplete, autocompleteCss} from "./components/autocomplete";
 export {Button, buttonCss} from "./components/button";
