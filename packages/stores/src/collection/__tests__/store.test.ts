@@ -51,7 +51,7 @@ describe("CollectionStore", () => {
 
     describe("Constructeur - Mode serveur", () => {
         test("Crée un store serveur avec un service", () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 facets: [],
                 totalCount: 0
@@ -64,7 +64,7 @@ describe("CollectionStore", () => {
         });
 
         test("Crée un store serveur avec des propriétés initiales", () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 facets: [],
                 totalCount: 0
@@ -102,7 +102,7 @@ describe("CollectionStore", () => {
         });
 
         test("totalCount retourne serverCount en mode serveur", () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 facets: [],
                 totalCount: 100
@@ -340,7 +340,7 @@ describe("CollectionStore", () => {
 
     describe("Recherche - Mode serveur", () => {
         test("search appelle le service avec les bons paramètres", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
                 facets: [],
                 totalCount: 1
@@ -363,7 +363,7 @@ describe("CollectionStore", () => {
                 {id: 1, name: "Item 1", category: "A", status: "active"},
                 {id: 2, name: "Item 2", category: "B", status: "inactive"}
             ];
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: items,
                 facets: [],
                 totalCount: 2
@@ -378,7 +378,7 @@ describe("CollectionStore", () => {
         });
 
         test("search met à jour les facettes", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 facets: [
                     {
@@ -406,7 +406,7 @@ describe("CollectionStore", () => {
         });
 
         test("search gère les groupes", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 groups: [
                     {
@@ -431,7 +431,7 @@ describe("CollectionStore", () => {
         });
 
         test("search avec isScroll ajoute les résultats", async () => {
-            const service: SearchService<TestItem> = vi
+            const service: SearchService<TestItem, any> = vi
                 .fn()
                 .mockResolvedValueOnce({
                     list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
@@ -454,7 +454,7 @@ describe("CollectionStore", () => {
         });
 
         test("search vide la sélection si ce n'est pas un scroll", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
                 facets: [],
                 totalCount: 1
@@ -471,7 +471,7 @@ describe("CollectionStore", () => {
 
         test("clear vide tout", async () => {
             const item: TestItem = {id: 0, name: "Old", category: "X", status: "active"};
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [item],
                 facets: [],
                 totalCount: 1
@@ -545,7 +545,7 @@ describe("CollectionStore", () => {
 
     describe("Groupes", () => {
         test("groups retourne les groupes en mode serveur", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 groups: [
                     {
@@ -593,7 +593,7 @@ describe("CollectionStore", () => {
         });
 
         test("getSearchGroupStore retourne un store pour un groupe", async () => {
-            const service: SearchService<TestItem> = vi.fn().mockResolvedValue({
+            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
                 list: [],
                 groups: [
                     {
