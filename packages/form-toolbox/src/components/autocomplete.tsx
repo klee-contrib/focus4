@@ -1,6 +1,7 @@
 import {debounce} from "es-toolkit";
 import {useObserver} from "mobx-react";
 import {FocusEvent, useCallback, useEffect, useId, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
 import {isAbortError, requestStore} from "@focus4/core";
@@ -74,6 +75,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
     disabled,
     error,
     getKey = defaultGetKey,
+    getLabel,
     keyResolver,
     onChange,
     onFocus,
@@ -89,6 +91,9 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
     value,
     ...props
 }: AutocompleteSearchProps<S, TSource>) {
+    const {t} = useTranslation();
+    const finalGetLabel = useCallback(getLabel ?? ((x: any) => t(x.label)), [getLabel, t]);
+
     const [query, setQuery] = useState(pQuery);
     useEffect(() => setQuery(pQuery), [pQuery]);
 
@@ -174,6 +179,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
             error={!!error}
             getKey={getKey}
+            getLabel={finalGetLabel}
             label={undefined}
             loading={requestStore.isLoading(trackingId)}
             noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}

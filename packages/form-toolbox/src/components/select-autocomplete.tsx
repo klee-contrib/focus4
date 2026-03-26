@@ -66,8 +66,8 @@ export function SelectAutocomplete<const S extends ZodTypeSingle>({
 
     const getKey = useCallback((v: any) => `${v[values.$valueKey]}`, [values.$valueKey]);
     const getLabel = useCallback(
-        (v: any) => (v[values.$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`),
-        [i18nPrefix, values.$labelKey]
+        (v: any) => t((v[values.$labelKey] as string) ?? `${i18nPrefix}.select.noLabel`),
+        [i18nPrefix, t, values.$labelKey]
     );
 
     return useObserver(() => (

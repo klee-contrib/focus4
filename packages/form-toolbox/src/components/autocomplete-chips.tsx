@@ -200,7 +200,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                             className={theme.chip()}
                             color="light"
                             disabled={disabled === true}
-                            label={labels.get(item) ?? ""}
+                            label={t(labels.get(item) ?? "")}
                             onDeleteClick={
                                 !undeletable?.(item as output<SingleZodType<S>>)
                                     ? () => handleRemoveValue(item)

@@ -181,7 +181,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
         } else {
             return base;
         }
-    }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix, pTrailing]);
+    }, [handleAddAll, handleRemoveAll, hasSelectAll, i18nPrefix, pTrailing, t]);
 
     const LineComponent = useMemo(() => {
         if (!keepSelectedValuesInSelect) {
@@ -194,12 +194,12 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                 <span
                     className={theme.line({fittedSelect: !autocomplete && sizing !== "no-fit-single-line", selected})}
                 >
-                    {item[values.$labelKey]}
+                    {t(item[values.$labelKey])}
                     <FontIcon iconI18nKey={`${i18nPrefix}.icons.select.selected`} />
                 </span>
             );
         };
-    }, [autocomplete, i18nPrefix, keepSelectedValuesInSelect, sizing, value, values]);
+    }, [autocomplete, i18nPrefix, keepSelectedValuesInSelect, sizing, t, value, values]);
 
     const finalValues = useMemo(
         () =>
@@ -264,7 +264,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                             className={theme.chip()}
                             color="light"
                             disabled={disabled === true}
-                            label={values.getLabel(item)}
+                            label={t(values.getLabel(item))}
                             onDeleteClick={
                                 !undeletable?.(item as output<SingleZodType<S>>)
                                     ? () => handleRemoveValue(item as output<SingleZodType<S>>)

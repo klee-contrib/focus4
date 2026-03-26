@@ -54,7 +54,7 @@ export function Select<const S extends ZodTypeSingle>({
             error={!!error}
             label={undefined}
             getKey={v => `${v[$valueKey]}`}
-            getLabel={v => (v[$labelKey] as string) ?? t(`${i18nPrefix}.select.noLabel`)}
+            getLabel={v => t((v[$labelKey] as string) ?? `${i18nPrefix}.select.noLabel`)}
             onChange={val => onChange(stringToSchemaOutput(val, schema))}
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}

@@ -15,9 +15,9 @@ export interface BooleanRadioProps {
     disabled?: boolean;
     /** Error message to display. */
     error?: string;
-    /** Libellé pour le "non". Par défaut: "focus.boolean.no" */
+    /** Libellé pour le "non". Par défaut: "focus.bool.false" */
     labelNo?: string;
-    /** Libellé pour le "oui". Par défaut: "focus.boolean.yes" */
+    /** Libellé pour le "oui". Par défaut: "focus.bool.true" */
     labelYes?: string;
     /** Name for input field. */
     name?: string;
