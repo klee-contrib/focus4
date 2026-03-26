@@ -1,7 +1,7 @@
 // @ts-check
 import {glob} from "glob";
 import fs from "node:fs";
-import rimraf from "rimraf";
+import {rimraf} from "rimraf";
 
 for (const f of glob.sync("packages/*/lib")) {
     rimraf.sync(f);

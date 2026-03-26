@@ -1,5 +1,4 @@
-.npmrc
 src
-rollup.config.js
 tsconfig.json
+tsdown.config.ts
 vite.config.ts

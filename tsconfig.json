@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         // Général
-        "lib": ["es2022", "dom"],
+        "lib": ["es2023", "dom"],
         "jsx": "react-jsx",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "target": "es2022",
+        "target": "es2023",
         "strict": true,
 
         // Options additionnelles
@@ -17,6 +17,7 @@
         // Spécifique librairie
         "declaration": true,
         "sourceMap": true,
+        "declarationMap": true,
         "inlineSources": true,
         "stripInternal": true,
         "noEmitOnError": true

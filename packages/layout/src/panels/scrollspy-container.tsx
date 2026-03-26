@@ -22,7 +22,8 @@ import {FontIcon, Icon} from "@focus4/toolbox";
 import {LateralMenu} from "../presentation";
 import {PanelDescriptor, ScrollableContext, ScrollspyContext} from "../utils";
 
-import scrollspyCss, {ScrollspyCss} from "./__style__/scrollspy.css";
+import scrollspyCss from "./__style__/scrollspy.css";
+import type {ScrollspyCss} from "./__style__/scrollspy.css.d.ts";
 
 export {scrollspyCss};
 export type {ScrollspyCss};

@@ -30,7 +30,8 @@ import {SupportingText} from "./supporting-text";
 import {Tooltip} from "./tooltip";
 
 import {SupportingTextCss} from "./__style__/supporting-text.css";
-import textFieldCss, {TextFieldCss} from "./__style__/text-field.css";
+import textFieldCss from "./__style__/text-field.css";
+import type {TextFieldCss} from "./__style__/text-field.css.d.ts";
 
 export {textFieldCss};
 export type {TextFieldCss};

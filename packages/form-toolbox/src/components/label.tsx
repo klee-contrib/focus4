@@ -4,7 +4,8 @@ import {useTranslation} from "react-i18next";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, IconButton, Tooltip, TooltipCss} from "@focus4/toolbox";
 
-import labelCss, {LabelCss} from "./__style__/label.css";
+import labelCss from "./__style__/label.css";
+import type {LabelCss} from "./__style__/label.css.d.ts";
 
 export {labelCss};
 export type {LabelCss};

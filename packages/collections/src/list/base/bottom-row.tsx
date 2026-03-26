@@ -7,7 +7,8 @@ import {Button, CircularProgressIndicator, IconButton} from "@focus4/toolbox";
 
 import {PaginationState} from "./pagination";
 
-import listBaseCss, {ListBaseCss} from "../__style__/list-base.css";
+import listBaseCss from "../__style__/list-base.css";
+import type {ListBaseCss} from "../__style__/list-base.css.d.ts";
 
 export {listBaseCss};
 export type {ListBaseCss};

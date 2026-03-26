@@ -37,10 +37,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
     /** Mode d'affichage des erreurs du formulaire. */
     @observable accessor errorDisplay: "after-focus" | "always" | "never";
 
+    private readonly formNode: FormListNode | FormNode;
+
     // @ts-ignore
     declare protected builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>;
-
-    private readonly formNode: FormListNode | FormNode;
 
     /**
      * Enregistre des actions de formulaire sur un noeud.

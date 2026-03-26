@@ -21,7 +21,7 @@ export type {DisplayCss, DisplayProps} from "./display";
 export type {FormCheckboxProps} from "./form-checkbox";
 export type {FormSwitchProps} from "./form-switch";
 export type {InputProps} from "./input";
-export type {InputDateProps} from "./input-date";
+export type {InputDateCss, InputDateProps} from "./input-date";
 export type {InputFileCss, InputFileProps} from "./input-file";
 export type {LabelCss, LabelProps} from "./label";
 export type {SelectProps} from "./select";

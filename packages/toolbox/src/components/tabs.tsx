@@ -8,7 +8,8 @@ import {PointerEvents} from "../utils/pointer-events";
 import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import tabsCss, {TabsCss} from "./__style__/tabs.css";
+import tabsCss from "./__style__/tabs.css";
+import type {TabsCss} from "./__style__/tabs.css.d.ts";
 
 export {tabsCss};
 export type {TabsCss};

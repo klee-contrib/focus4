@@ -1,9 +1,9 @@
+import babel from "@rolldown/plugin-babel";
 import {createHash} from "node:crypto";
 import dns from "node:dns";
 import {existsSync, promises as fs} from "node:fs";
 import path from "node:path";
-import nesting from "postcss-nesting";
-import {PluginOption, ResolvedConfig, UserConfigExport} from "vite";
+import {PluginOption, UserConfigExport} from "vite";
 
 dns.setDefaultResultOrder("verbatim");
 
@@ -12,6 +12,7 @@ export const baseConfig = {
         chunkSizeWarningLimit: 5000
     },
     css: {
+        transformer: "postcss",
         modules: {
             generateScopedName(name, filename, css) {
                 return `${path.basename(filename).replace(".module.css", "")}_${name}__${createHash("sha1")
@@ -20,8 +21,7 @@ export const baseConfig = {
                     .replaceAll(/[+/=]/g, "")
                     .slice(0, 5)}`;
             }
-        },
-        postcss: {plugins: [nesting()]}
+        }
     }
 } satisfies UserConfigExport;
 
@@ -30,7 +30,7 @@ export const baseConfig = {
  * @param regex Regex pour identifier les modules CSS.
  */
 export function cssAutoModules(regex: RegExp): PluginOption {
-    let config: ResolvedConfig;
+    let config = {root: process.cwd()};
 
     return {
         name: "css-auto-modules",
@@ -91,4 +91,22 @@ export function ssiVariables(vars: Record<string, string>) {
             return html;
         }
     } satisfies PluginOption;
+}
+
+/**
+ * Plugin Vite pour compiler les décorateurs.
+ */
+export function decorators() {
+    return babel({
+        presets: [
+            {
+                preset: () => ({
+                    plugins: [["@babel/plugin-proposal-decorators", {version: "2023-11"}]]
+                }),
+                rolldown: {
+                    filter: {code: "@"}
+                }
+            }
+        ]
+    });
 }

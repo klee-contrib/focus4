@@ -24,9 +24,9 @@
     ],
     "importOrder": [
         "^@focus4/(.*)$",
-        "^\\.\\.\/.+(?<!\\.css)$",
-        "^\\.\/.+(?<!\\.css)$",
-        "\\.css$"
+        "^\\.\\.\/.+(?<!\\.css)(?<!\\.d\\.ts)$",
+        "^\\.\/.+(?<!\\.css)(?<!\\.d\\.ts)$",
+        "\\.css(?:\\.d\\.ts)?$"
     ],
     "importOrderCaseInsensitive": true,
     "importOrderSeparation": true,

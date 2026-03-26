@@ -9,7 +9,8 @@ import {useActiveTransition} from "./active-transition";
 import {useOverlay} from "./overlay";
 import {Scrollable, ScrollableCss} from "./scrollable";
 
-import popinCss, {PopinCss} from "./__style__/popin.css";
+import popinCss from "./__style__/popin.css";
+import type {PopinCss} from "./__style__/popin.css.d.ts";
 
 export {popinCss};
 export type {PopinCss};

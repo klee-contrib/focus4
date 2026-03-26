@@ -2,7 +2,7 @@
     "name": "@focus4/tooling",
     "version": "12.9.3",
     "description": "Focus v4, tooling module",
-    "main": "lib/focus4.tooling.js",
+    "main": "lib/focus4.tooling.mjs",
     "type": "module",
     "repository": {
         "type": "git",
@@ -12,14 +12,16 @@
     "license": "MIT",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/tooling",
     "bin": {
-        "focus4": "lib/focus4.tooling.js"
+        "focus4": "lib/focus4.tooling.mjs"
     },
     "scripts": {
-        "build": "rollup -cm --bundleConfigAsCjs"
+        "build": "tsdown"
     },
     "dependencies": {
+        "@babel/plugin-proposal-decorators": "7.29.0",
+        "@rolldown/plugin-babel": "0.2.2",
         "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-        "@types/node": "^25.4.0",
+        "@types/node": "^25.5.0",
         "@types/postcss-modules-extract-imports": "^3.0.5",
         "@types/postcss-modules-local-by-default": "^4.0.2",
         "@types/postcss-modules-scope": "^3.0.4",
@@ -27,16 +29,16 @@
         "glob": "^13.0.6",
         "package-json": "^10.0.1",
         "postcss": "^8.5.8",
+        "postcss-modules": "^6.0.1",
         "postcss-modules-extract-imports": "^3.1.0",
         "postcss-modules-local-by-default": "^4.2.0",
-        "postcss-modules-scope": "^3.2.1",
-        "postcss-nesting": "^14.0.0",
-        "typescript": "~5.9.3"
+        "postcss-modules-scope": "^3.2.1"
     },
     "peerDependencies": {
-        "@vitejs/plugin-react": ">= 5 < 6",
+        "@vitejs/plugin-react": ">= 6 < 7",
         "oxlint": ">= 1.4 < 2",
-        "vite": ">= 7 < 8",
+        "typescript": ">= 6",
+        "vite": ">= 8 < 9",
         "vite-plugin-checker": ">= 0.9 < 1"
     }
 }

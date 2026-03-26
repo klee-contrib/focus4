@@ -10,7 +10,8 @@ import {FontIcon, Icon} from "./font-icon";
 import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
-import buttonCss, {ButtonCss} from "./__style__/button.css";
+import buttonCss from "./__style__/button.css";
+import type {ButtonCss} from "./__style__/button.css.d.ts";
 
 export {buttonCss};
 export type {ButtonCss};

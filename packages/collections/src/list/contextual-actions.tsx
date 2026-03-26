@@ -13,7 +13,8 @@ import {
     useMenu
 } from "@focus4/toolbox";
 
-import contextualActionsCss, {ContextualActionsCss} from "./__style__/contextual-actions.css";
+import contextualActionsCss from "./__style__/contextual-actions.css";
+import type {ContextualActionsCss} from "./__style__/contextual-actions.css.d.ts";
 
 export {contextualActionsCss};
 export type {ContextualActionsCss};

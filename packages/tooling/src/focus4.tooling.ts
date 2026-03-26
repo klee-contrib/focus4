@@ -8,7 +8,7 @@ import {install} from "./install";
 
 export {generateCSSTypings};
 
-export {baseConfig, cssAutoModules, ssiVariables} from "./vite";
+export {baseConfig, cssAutoModules, decorators, ssiVariables} from "./vite";
 
 const filePath = fileURLToPath(import.meta.url);
 const callPath = realpathSync(process.argv?.[1] ?? "");

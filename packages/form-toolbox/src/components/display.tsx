@@ -5,7 +5,8 @@ import {ZodType} from "zod";
 import {useDisplay, UseDisplayProps} from "@focus4/forms";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import displayCss, {DisplayCss} from "./__style__/display.css";
+import displayCss from "./__style__/display.css";
+import type {DisplayCss} from "./__style__/display.css.d.ts";
 
 export {displayCss};
 export type {DisplayCss};

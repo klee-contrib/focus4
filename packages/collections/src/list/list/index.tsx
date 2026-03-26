@@ -14,7 +14,8 @@ import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
 
-import listCss, {ListCss} from "../__style__/list.css";
+import listCss from "../__style__/list.css";
+import type {ListCss} from "../__style__/list.css.d.ts";
 
 export {ListContext, listCss};
 export type {DetailProps, LineProps, ListCss};

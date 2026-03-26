@@ -10,7 +10,8 @@ import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
 
-import chipCss, {ChipCss} from "./__style__/chip.css";
+import chipCss from "./__style__/chip.css";
+import type {ChipCss} from "./__style__/chip.css.d.ts";
 
 export {chipCss};
 export type {ChipCss};

@@ -6,7 +6,8 @@ import {HeaderContext} from "../utils/contexts";
 
 import {HeaderContent} from "./content";
 
-import headerCss, {HeaderCss} from "./__style__/header.css";
+import headerCss from "./__style__/header.css";
+import type {HeaderCss} from "./__style__/header.css.d.ts";
 
 export {headerCss};
 export type {HeaderCss};

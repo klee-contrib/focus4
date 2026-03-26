@@ -4,7 +4,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {ScrollableContext} from "../utils/contexts";
 
-import headerCss, {HeaderCss} from "./__style__/header.css";
+import headerCss from "./__style__/header.css";
+import type {HeaderCss} from "./__style__/header.css.d.ts";
 
 /** Props du HeaderTopRow. */
 export interface HeaderTopRowProps {

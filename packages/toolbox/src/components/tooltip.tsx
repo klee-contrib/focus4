@@ -5,7 +5,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import tooltipCss, {TooltipCss} from "./__style__/tooltip.css";
+import tooltipCss from "./__style__/tooltip.css";
+import type {TooltipCss} from "./__style__/tooltip.css.d.ts";
 
 export {tooltipCss};
 export type {TooltipCss};

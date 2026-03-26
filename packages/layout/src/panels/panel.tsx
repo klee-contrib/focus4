@@ -10,7 +10,8 @@ import {ScrollspyContext} from "../utils";
 
 import {PanelButtons, PanelButtonsProps} from "./panel-buttons";
 
-import panelCss, {PanelCss} from "./__style__/panel.css";
+import panelCss from "./__style__/panel.css";
+import type {PanelCss} from "./__style__/panel.css.d.ts";
 
 export {panelCss};
 export type {PanelCss};

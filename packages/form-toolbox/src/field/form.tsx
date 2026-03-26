@@ -2,7 +2,8 @@ import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import formCss, {FormCss} from "./__style__/form.css";
+import formCss from "./__style__/form.css";
+import type {FormCss} from "./__style__/form.css.d.ts";
 
 export {formCss};
 export type {FormCss};

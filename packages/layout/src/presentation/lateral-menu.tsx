@@ -4,7 +4,8 @@ import {ReactNode, useState} from "react";
 import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button} from "@focus4/toolbox";
 
-import lateralMenuCss, {LateralMenuCss} from "./__style__/lateral-menu.css";
+import lateralMenuCss from "./__style__/lateral-menu.css";
+import type {LateralMenuCss} from "./__style__/lateral-menu.css.d.ts";
 
 export {lateralMenuCss};
 export type {LateralMenuCss};

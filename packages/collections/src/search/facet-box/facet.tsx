@@ -7,7 +7,8 @@ import {CollectionStore, FacetOutput} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton} from "@focus4/toolbox";
 
-import facetCss, {FacetCss} from "../__style__/facet.css";
+import facetCss from "../__style__/facet.css";
+import type {FacetCss} from "../__style__/facet.css.d.ts";
 
 export {facetCss};
 export type {FacetCss};

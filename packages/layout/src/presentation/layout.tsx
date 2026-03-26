@@ -7,7 +7,8 @@ import {MessageCenter, MessageCenterProps} from "../utils";
 import {OverlayProvider} from "./overlay";
 import {Scrollable, ScrollableCss} from "./scrollable";
 
-import layoutCss, {LayoutCss} from "./__style__/layout.css";
+import layoutCss from "./__style__/layout.css";
+import type {LayoutCss} from "./__style__/layout.css.d.ts";
 
 export {layoutCss};
 export type {LayoutCss};

@@ -2,7 +2,8 @@ import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import headerCss, {HeaderCss} from "./__style__/header.css";
+import headerCss from "./__style__/header.css";
+import type {HeaderCss} from "./__style__/header.css.d.ts";
 
 /** Props du HeaderItem. */
 export interface HeaderItemProps {

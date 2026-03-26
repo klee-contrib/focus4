@@ -11,7 +11,8 @@ import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button} from "./button";
 import {IconButton} from "./icon-button";
 
-import calendarCss, {CalendarCss} from "./__style__/calendar.css";
+import calendarCss from "./__style__/calendar.css";
+import type {CalendarCss} from "./__style__/calendar.css.d.ts";
 
 export {calendarCss};
 export type {CalendarCss};

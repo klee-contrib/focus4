@@ -34,7 +34,7 @@ export {domain} from "./domain";
 export {i18nFormToolbox} from "./translation";
 export {Field, fieldCss, FormCore, formCss};
 
-export {
+export type {
     AutocompleteChipsProps,
     AutocompleteSearchProps,
     BooleanRadioCss,
@@ -43,6 +43,7 @@ export {
     DisplayProps,
     FormCheckboxProps,
     FormSwitchProps,
+    InputDateCss,
     InputDateProps,
     InputFileCss,
     InputFileProps,

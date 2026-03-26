@@ -1,5 +1,3 @@
-.npmrc
-.rpt2_cache
 src
-rollup.config.js
 tsconfig.json
+tsdown.config.ts

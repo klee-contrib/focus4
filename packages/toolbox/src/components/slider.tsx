@@ -8,7 +8,8 @@ import {PointerEvents} from "../utils/pointer-events";
 
 import {Ripple} from "./ripple";
 
-import sliderCss, {SliderCss} from "./__style__/slider.css";
+import sliderCss from "./__style__/slider.css";
+import type {SliderCss} from "./__style__/slider.css.d.ts";
 
 export {sliderCss};
 export type {SliderCss};

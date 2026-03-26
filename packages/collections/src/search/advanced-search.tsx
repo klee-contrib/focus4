@@ -24,7 +24,8 @@ import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
 import {GroupCss, GroupHeaderProps, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
-import advancedSearchCss, {AdvancedSearchCss} from "./__style__/advanced-search.css";
+import advancedSearchCss from "./__style__/advanced-search.css";
+import type {AdvancedSearchCss} from "./__style__/advanced-search.css.d.ts";
 
 export {advancedSearchCss};
 export type {AdvancedSearchCss};

@@ -5,7 +5,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {MenuContext} from "./context";
 
-import mainMenuCss, {MainMenuCss} from "./__style__/main-menu.css";
+import mainMenuCss from "./__style__/main-menu.css";
+import type {MainMenuCss} from "./__style__/main-menu.css.d.ts";
 
 /** Props du MenuList. */
 export interface MainMenuListProps {

@@ -12,7 +12,8 @@ import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import actionBarCss, {ActionBarCss} from "./__style__/action-bar.css";
+import actionBarCss from "./__style__/action-bar.css";
+import type {ActionBarCss} from "./__style__/action-bar.css.d.ts";
 
 export {actionBarCss};
 export type {ActionBarCss};

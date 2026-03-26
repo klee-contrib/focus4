@@ -7,9 +7,11 @@ import {messageStore} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon, Icon, IconButton, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
-import inputFileCss, {InputFileCss} from "./__style__/input-file.css";
+import inputFileCss from "./__style__/input-file.css";
+import type {InputFileCss} from "./__style__/input-file.css.d.ts";
 
-export {inputFileCss, InputFileCss};
+export {inputFileCss};
+export type {InputFileCss};
 
 type InputFileValue<T extends number> = T extends 1 ? File : File[];
 

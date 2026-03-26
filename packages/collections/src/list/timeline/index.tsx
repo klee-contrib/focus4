@@ -12,7 +12,8 @@ import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps
 import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
 
-import timelineCss, {TimelineCss} from "../__style__/timeline.css";
+import timelineCss from "../__style__/timeline.css";
+import type {TimelineCss} from "../__style__/timeline.css.d.ts";
 
 export {timelineCss};
 export type {TimelineCss};

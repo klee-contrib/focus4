@@ -5,7 +5,8 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import progressIndicatorCss, {ProgressIndicatorCss} from "./__style__/progress-indicator.css";
+import progressIndicatorCss from "./__style__/progress-indicator.css";
+import type {ProgressIndicatorCss} from "./__style__/progress-indicator.css.d.ts";
 
 export {progressIndicatorCss};
 export type {ProgressIndicatorCss};

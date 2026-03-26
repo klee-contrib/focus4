@@ -8,7 +8,8 @@ import {useInputRef} from "../utils/use-input-ref";
 
 import {Ripple} from "./ripple";
 
-import radioCss, {RadioCss} from "./__style__/radio.css";
+import radioCss from "./__style__/radio.css";
+import type {RadioCss} from "./__style__/radio.css.d.ts";
 
 export {radioCss};
 export type {RadioCss};

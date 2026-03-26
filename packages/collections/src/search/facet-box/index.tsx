@@ -10,7 +10,8 @@ import {IconButton} from "@focus4/toolbox";
 import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
 import {shouldDisplayFacet} from "./utils";
 
-import facetBoxCss, {FacetBoxCss} from "../__style__/facet-box.css";
+import facetBoxCss from "../__style__/facet-box.css";
+import type {FacetBoxCss} from "../__style__/facet-box.css.d.ts";
 
 export {facetBoxCss, facetCss, shouldDisplayFacet};
 export type {FacetBoxCss, FacetCss, FacetProps};

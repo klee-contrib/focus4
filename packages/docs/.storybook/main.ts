@@ -22,7 +22,7 @@ export default {
         reactDocgen: "react-docgen-typescript"
     },
 
-    viteFinal: config => mergeConfig(config, {esbuild: {minifyIdentifiers: false}})
+    viteFinal: config => mergeConfig(config, {oxc: {minifyIdentifiers: false}})
 } satisfies StorybookConfig;
 
 function getAbsolutePath(value: string): any {

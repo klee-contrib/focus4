@@ -5,7 +5,8 @@ import {useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import rippleCss, {RippleCss} from "./__style__/ripple.css";
+import rippleCss from "./__style__/ripple.css";
+import type {RippleCss} from "./__style__/ripple.css.d.ts";
 
 export {rippleCss};
 export type {RippleCss};
