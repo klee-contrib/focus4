@@ -48,6 +48,8 @@ export function FormCore({children, labelWidth, noForm, save, theme: pTheme, val
             {children}
         </form>
     ) : (
-        <div style={style}>{children}</div>
+        <div className={theme.form()} style={style}>
+            {children}
+        </div>
     );
 }
