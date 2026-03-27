@@ -12,14 +12,14 @@ export interface StringParam<S extends string = string> {
     spec: S;
 }
 
-/** Paramètre (number ou string). */
+/** Paramètre de routeur (number ou string). */
 export type Param<T extends number | string> = T extends number
     ? NumberParam<T>
     : T extends string
       ? StringParam<T>
       : never;
 
-/** Définition d'un paramètre : nom, type et routes suivantes. */
+/** Définition d'un paramètre de routeur : nom, type et routes suivantes. */
 export type ParamDef<K extends string, P extends NumberParam | StringParam, V = unknown> = [K, P, V?];
 
 /** Builder pour un type de paramètre. */

@@ -11,7 +11,15 @@ import {Router, RouterConfirmation, RouterConstraintBuilder, UrlPathDescriptor, 
 export {param} from "./param";
 export {startHistory};
 
-export type {Router, RouterConfirmation, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor};
+export type {Param, ParamDef} from "./param";
+export type {
+    QueryParamConfig,
+    Router,
+    RouterConfirmation,
+    RouterConstraintBuilder,
+    UrlPathDescriptor,
+    UrlRouteDescriptor
+};
 
 /**
  * `makeRouter` permet de construire le routeur de l'application.

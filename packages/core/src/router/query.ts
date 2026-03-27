@@ -1,3 +1,4 @@
+/** Configuration des query params dans un routeur. */
 export interface QueryParamConfig {
     [key: string]: "boolean" | "number" | "string";
 }

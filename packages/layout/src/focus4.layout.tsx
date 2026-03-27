@@ -30,7 +30,14 @@ export {LayoutBase};
 
 export type {HeaderCss} from "./header";
 export type {MainMenuCss, MainMenuProps} from "./menu";
-export type {PanelButtonsProps, PanelCss, PanelProps, ScrollspyContainerProps, ScrollspyContainerRef} from "./panels";
+export type {
+    PanelButtonsProps,
+    PanelCss,
+    PanelProps,
+    ScrollspyContainerProps,
+    ScrollspyContainerRef,
+    ScrollspyMenuProps
+} from "./panels";
 export type {
     DialogCss,
     FilArianeCss,

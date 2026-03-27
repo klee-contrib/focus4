@@ -7,7 +7,7 @@ import {FormNode, isEntityField, isStoreListNode, isStoreNode, Patch, StoreListN
 import {nodeToFormNode} from "../node";
 
 import {EntityFieldBuilder} from "./entity-field";
-import {FormEntryBuilder} from "./entry";
+import {FormEntryBuilder} from "./form-entry";
 import {FormListNodeBuilder} from "./form-list-node";
 
 type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];

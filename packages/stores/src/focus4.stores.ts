@@ -9,6 +9,7 @@ export {
     cloneField,
     FormActions,
     FormActionsBuilder,
+    FormEntryBuilder,
     FormListNodeBuilder,
     FormNodeBuilder,
     fromField,
