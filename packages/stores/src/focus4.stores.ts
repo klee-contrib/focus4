@@ -34,7 +34,18 @@ export {
 export {emptyReferenceList, makeReferenceList, makeReferenceStore, referenceTrackingId} from "./reference";
 export {i18nStores} from "./translation";
 
-export type {FacetItem, FacetOutput, GroupResult, InputFacets, QueryInput, QueryOutput, SortInput} from "./collection";
+export type {
+    FacetItem,
+    FacetOutput,
+    GroupResult,
+    InputFacets,
+    LocalCollectionStoreConfig,
+    QueryInput,
+    QueryOutput,
+    SearchService,
+    ServerCollectionStoreInitProperties,
+    SortInput
+} from "./collection";
 export type {
     ActionsFormProps,
     ActionsPanelProps,

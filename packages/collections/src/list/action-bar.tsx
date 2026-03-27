@@ -8,7 +8,7 @@ import {CollectionStore, SortInput} from "@focus4/stores";
 import {CSSProp, getDefaultTransition, useTheme} from "@focus4/styling";
 import {Button, Checkbox, IconButton, Menu, MenuItem, MenuProps, TextField, useMenu} from "@focus4/toolbox";
 
-import {AdditionalFacet, FacetBox, shouldDisplayFacet} from "../search";
+import {AdditionalFacet, FacetBox, FacetState, shouldDisplayFacet} from "../search";
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
@@ -24,8 +24,10 @@ export interface ActionBarProps<T extends object> {
     additionalFacets?: {
         [facet: string]: AdditionalFacet;
     };
-    /** Facettes pliées par défaut. */
-    defaultFoldedFacets?: string[];
+    /** Etat des facettes par défaut : pliées (`collapsed`), ouvertes (`opened`, par défaut) ou étendues (`expanded`). */
+    defaultFacetState?: FacetState;
+    /** Surcharge de `defaultFacetState` pour des facettes en particulier.  */
+    defaultFacetStates?: {[facet: string]: FacetState};
     /** Constitution de l'éventuel groupe auquel est lié l'ActionBar */
     group?: {code: string; label: string; totalCount: number};
     /** Si renseignée, seules les facettes de cette liste pourront être sélectionnées comme groupingKey. */
@@ -73,7 +75,8 @@ export interface ActionBarProps<T extends object> {
  */
 export function ActionBar<T extends object>({
     additionalFacets,
-    defaultFoldedFacets,
+    defaultFacetState,
+    defaultFacetStates,
     group,
     groupableFacets,
     hasFacetBox,
@@ -294,7 +297,8 @@ export function ActionBar<T extends object>({
                                 />
                                 <FacetBox
                                     additionalFacets={additionalFacets}
-                                    defaultFoldedFacets={defaultFoldedFacets}
+                                    defaultFacetState={defaultFacetState}
+                                    defaultFacetStates={defaultFacetStates}
                                     nbDefaultDataList={nbDefaultDataListFacet}
                                     showSingleValuedFacets={showSingleValuedFacets}
                                     store={store}

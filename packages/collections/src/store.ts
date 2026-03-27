@@ -1,12 +1,14 @@
 import {useState} from "react";
 
 import {Entity} from "@focus4/entities";
-import {makeLocalCollectionStore, makeServerCollectionStore, ServerCollectionStore} from "@focus4/stores";
 import {
     LocalCollectionStoreConfig,
+    makeLocalCollectionStore,
+    makeServerCollectionStore,
     SearchService,
+    ServerCollectionStore,
     ServerCollectionStoreInitProperties
-} from "@focus4/stores/lib/collection/types";
+} from "@focus4/stores";
 
 /**
  * Crée un store de collection local stocké dans un state du component, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes côté client.

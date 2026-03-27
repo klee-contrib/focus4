@@ -1,6 +1,5 @@
-import {action, ObservableMap} from "mobx";
+import {action} from "mobx";
 import {useObserver} from "mobx-react";
-import {useState} from "react";
 import {useTranslation} from "react-i18next";
 
 import {CollectionStore, FacetOutput} from "@focus4/stores";
@@ -13,6 +12,8 @@ import type {FacetCss} from "../__style__/facet.css.d.ts";
 export {facetCss};
 export type {FacetCss};
 
+export type FacetState = "collapsed" | "opened" | "expanded";
+
 /** Props de Facet. */
 export interface FacetProps {
     /** Facette à afficher. */
@@ -21,10 +22,14 @@ export interface FacetProps {
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
     nbDefaultDataList: number;
-    /** Map des états d'ouverture des facettes.  */
-    openedMap: ObservableMap<string, boolean>;
+    /** Etat de la facette. */
+    state: FacetState;
     /** Store. */
     store: CollectionStore;
+    /** Toggle pour le bouton "Voir plus". */
+    toggleExpand: () => void;
+    /** Toggle pour plier/déplier la facette */
+    toggleOpen: () => void;
     /** CSS. */
     theme?: CSSProp<FacetCss>;
 }
@@ -34,19 +39,18 @@ export function Facet({
     facet,
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
-    openedMap,
+    state,
     store,
+    toggleExpand,
+    toggleOpen,
     theme: pTheme
 }: FacetProps) {
-    const [isShowAll, setIsShowAll] = useState(false);
-
     const {t} = useTranslation();
     const theme = useTheme("facet", facetCss, pTheme);
 
     return useObserver(() => {
         const inputFacet = store.inputFacets[facet.code];
         const count = (inputFacet?.selected?.length ?? 0) + (inputFacet?.excluded?.length ?? 0);
-        const opened = openedMap.get(facet.code) ?? false;
 
         // Si la facette n'est pas multi-sélectionnable et a une valeur sélectionnée, alors on n'affiche que celle-ci.
         let values = facet.values.filter(
@@ -58,17 +62,19 @@ export function Facet({
                         (inputFacet?.excluded?.includes(f.code) ?? false)))
         );
 
-        if (!isShowAll) {
+        if (state !== "expanded") {
             values = values.slice(0, nbDefaultDataList);
         }
 
         return (
             <div className={theme.facet()} data-facet={facet.code}>
-                <h4 onClick={() => openedMap.set(facet.code, !opened)}>
-                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
+                <h4 onClick={toggleOpen}>
+                    <IconButton
+                        icon={{i18nKey: `${i18nPrefix}.icons.facets.${state !== "collapsed" ? "close" : "open"}`}}
+                    />
                     {t(facet.label)}
                 </h4>
-                {opened ? (
+                {state !== "collapsed" ? (
                     <>
                         {facet.isMultiSelectable && facet.isMultiValued ? (
                             <Button
@@ -131,9 +137,11 @@ export function Facet({
                         {(facet.isMultiSelectable || count === 0) && facet.values.length > nbDefaultDataList ? (
                             <div className={theme.show()}>
                                 <Button
-                                    onClick={() => setIsShowAll(!isShowAll)}
+                                    onClick={toggleExpand}
                                     label={t(
-                                        isShowAll ? `${i18nPrefix}.list.show.less` : `${i18nPrefix}.list.show.all`
+                                        state === "expanded"
+                                            ? `${i18nPrefix}.list.show.less`
+                                            : `${i18nPrefix}.list.show.all`
                                     )}
                                 />
                             </div>

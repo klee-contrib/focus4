@@ -71,6 +71,7 @@ export type {
     FacetBoxProps,
     FacetCss,
     FacetProps,
+    FacetState,
     GroupCss,
     GroupHeaderProps,
     ResultsProps,

@@ -7,14 +7,14 @@ import {CollectionStore, FacetOutput, FormEntityField} from "@focus4/stores";
 import {CSSProp, fromBem, useTheme} from "@focus4/styling";
 import {IconButton} from "@focus4/toolbox";
 
-import {Facet, FacetCss, facetCss, FacetProps} from "./facet";
+import {Facet, FacetCss, facetCss, FacetProps, FacetState} from "./facet";
 import {shouldDisplayFacet} from "./utils";
 
 import facetBoxCss from "../__style__/facet-box.css";
 import type {FacetBoxCss} from "../__style__/facet-box.css.d.ts";
 
 export {facetBoxCss, facetCss, shouldDisplayFacet};
-export type {FacetBoxCss, FacetCss, FacetProps};
+export type {FacetBoxCss, FacetCss, FacetProps, FacetState};
 
 /** "Facette" additionnelle. */
 export interface AdditionalFacet {
@@ -36,8 +36,10 @@ export interface FacetBoxProps<T extends object> {
     };
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
-    /** Facettes pliées par défaut. */
-    defaultFoldedFacets?: string[];
+    /** Etat des facettes par défaut : pliées (`collapsed`), ouvertes (`opened`, par défaut) ou étendues (`expanded`). */
+    defaultFacetState?: FacetState;
+    /** Surcharge de `defaultFacetState` pour des facettes en particulier.  */
+    defaultFacetStates?: {[facet: string]: FacetState};
     /** Préfixe i18n pour les libellés. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Nombre de valeurs de facettes affichées. Par défaut : 6 */
@@ -67,7 +69,8 @@ const noAdditionalFacets = {};
 export function FacetBox<T extends object>({
     additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
-    defaultFoldedFacets,
+    defaultFacetState = "opened",
+    defaultFacetStates = {},
     i18nPrefix = "focus",
     nbDefaultDataList = 6,
     sections,
@@ -79,27 +82,33 @@ export function FacetBox<T extends object>({
     const theme = useTheme("facetBox", facetBoxCss, pTheme);
     const facetTheme = useTheme("facet", facetCss);
 
-    // Map pour contrôler les facettes qui sont ouvertes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
-    const [openedMap] = useState(() => observable.map<string, boolean>());
+    // Map pour contrôler l'état des facettes, initialisée une seule fois après le premier chargement du store (le service renvoie toujours toutes les facettes).
+    const [facetStateMap] = useState(() => observable.map<string, FacetState>());
 
-    function toggleAll(opened: boolean, forceDefaults: boolean) {
-        openedMap.replace([
-            ...store.facets.map(facet => [
-                facet.code,
-                forceDefaults && defaultFoldedFacets?.includes(facet.code) ? false : opened
-            ]),
-            ...Object.keys(additionalFacets).map(code => [
-                code,
-                forceDefaults && defaultFoldedFacets?.includes(code) ? false : opened
-            ])
-        ] as [string, boolean][]);
+    function toggleAll(state: FacetState | "default") {
+        facetStateMap.replace([
+            ...store.facets.map(facet => {
+                const defaultState = defaultFacetStates[facet.code] ?? defaultFacetState;
+                return [
+                    facet.code,
+                    state === "default" || (state === "opened" && defaultState === "expanded") ? defaultState : state
+                ];
+            }),
+            ...Object.keys(additionalFacets).map(code => {
+                const defaultState = defaultFacetStates[code] ?? defaultFacetState;
+                return [
+                    code,
+                    state === "default" || (state === "opened" && defaultState === "expanded") ? defaultState : state
+                ];
+            })
+        ] as [string, FacetState][]);
     }
 
     useEffect(
         () =>
             reaction(
                 () => store.facets.map(f => f.code),
-                () => toggleAll(true, true),
+                () => toggleAll("default"),
                 {
                     equals: comparer.structural,
                     fireImmediately: true
@@ -110,14 +119,25 @@ export function FacetBox<T extends object>({
 
     function renderFacet(facet: FacetOutput) {
         const FacetComponent = customFacetComponents[facet.code] ?? additionalFacets[facet.code]?.Component ?? Facet;
+        const state = facetStateMap.get(facet.code) ?? "collapsed";
+        const defaultState = defaultFacetStates[facet.code] ?? defaultFacetState;
         return (
             <FacetComponent
                 key={facet.code}
                 facet={facet}
                 i18nPrefix={i18nPrefix}
                 nbDefaultDataList={nbDefaultDataList}
-                openedMap={openedMap}
+                state={state}
                 store={store}
+                toggleExpand={() => {
+                    facetStateMap.set(facet.code, state !== "expanded" ? "expanded" : "opened");
+                }}
+                toggleOpen={() => {
+                    facetStateMap.set(
+                        facet.code,
+                        state !== "collapsed" ? "collapsed" : defaultState === "expanded" ? "expanded" : "opened"
+                    );
+                }}
                 theme={
                     (customFacetComponents[facet.code] ?? additionalFacets[facet.code])
                         ? fromBem(facetTheme)
@@ -208,7 +228,7 @@ export function FacetBox<T extends object>({
             }
         }
 
-        const opened = [...openedMap.values()].some(v => v);
+        const opened = [...facetStateMap.values()].some(v => v !== "collapsed");
 
         const shouldDisplayClear =
             Object.values(store.inputFacets).some(l => l.selected ?? l.excluded) ||
@@ -218,7 +238,7 @@ export function FacetBox<T extends object>({
 
         return (
             <div className={theme.facetBox()}>
-                <h3 onClick={() => toggleAll(!opened, false)}>
+                <h3 onClick={() => toggleAll(opened ? "collapsed" : "opened")}>
                     <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
                     <span>{t(`${i18nPrefix}.search.facets.title`)}</span>
                     {shouldDisplayClear ? (

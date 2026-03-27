@@ -20,7 +20,7 @@ import {
 } from "../list";
 
 import {ChipType} from "./chip";
-import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps} from "./facet-box";
+import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps, FacetState} from "./facet-box";
 import {GroupCss, GroupHeaderProps, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
@@ -64,8 +64,10 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     chipThemer?: (type: ChipType, code: string, values?: unknown[]) => ChipCss;
     /** Composant personnalisés pour affichage d'une facette en particulier. */
     customFacetComponents?: {[facet: string]: ElementType<FacetProps>};
-    /** Facettes pliées par défaut. */
-    defaultFoldedFacets?: string[];
+    /** Etat des facettes par défaut : pliées (`collapsed`), ouvertes (`opened`, par défaut) ou étendues (`expanded`). */
+    defaultFacetState?: FacetState;
+    /** Surcharge de `defaultFacetState` pour des facettes en particulier.  */
+    defaultFacetStates?: {[facet: string]: FacetState};
     /** Groupes pliés par défauts (par groupingKey) */
     defaultFoldedGroups?: Record<string, string[]>;
     /** Désactive le caractère sticky du Summary et de l'ActionBar. */
@@ -186,7 +188,8 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
     chipKeyResolver,
     chipThemer,
     customFacetComponents,
-    defaultFoldedFacets,
+    defaultFacetState,
+    defaultFacetStates,
     defaultFoldedGroups,
     disableStickyTopRow = false,
     facetBoxPosition = "left",
@@ -243,7 +246,8 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                 <FacetBox
                     additionalFacets={additionalFacets}
                     customFacetComponents={customFacetComponents}
-                    defaultFoldedFacets={defaultFoldedFacets}
+                    defaultFacetState={defaultFacetState}
+                    defaultFacetStates={defaultFacetStates}
                     i18nPrefix={i18nPrefix}
                     nbDefaultDataList={nbDefaultDataListFacet}
                     sections={facetSections}
@@ -327,7 +331,8 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                     {!hideActionBar && !(store.groups.length && useGroupActionBars) ? (
                         <ActionBar
                             additionalFacets={additionalFacets}
-                            defaultFoldedFacets={defaultFoldedFacets}
+                            defaultFacetState={defaultFacetState}
+                            defaultFacetStates={defaultFacetStates}
                             groupableFacets={groupableFacets}
                             hasFacetBox={facetBoxPosition === "action-bar"}
                             hasGrouping={hasGrouping}

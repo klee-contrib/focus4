@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 function getName(name, type) {
     if (["string", "number", "boolean", "enum"].includes(type)) {
         return type;
-    } else if (type == "ReactNode" && name.includes("icon")) {
+    } else if (type === "ReactNode" && name.includes("icon")) {
         return "string";
     } else if (name.startsWith("on")) {
         return "function";
@@ -76,9 +76,7 @@ const globalCssVariables = ["variables", "colors"].flatMap(file =>
 );
 
 const commonCssVariables = getCssVariables(
-    fs
-        .readFileSync(path.resolve(__filename, `../../packages/toolbox/src/components/__style__/variables.css`))
-        .toString()
+    fs.readFileSync(path.resolve(__filename, `../../packages/toolbox/src/utils/variables.css`)).toString()
 );
 
 function generateDocFile(module, globPath, componentFilter) {
@@ -92,8 +90,8 @@ function generateDocFile(module, globPath, componentFilter) {
             shouldExtractLiteralValuesFromEnum: true,
             propFilter: prop =>
                 !(
-                    prop.name == "ref" ||
-                    prop.name == "key" ||
+                    prop.name === "ref" ||
+                    prop.name === "key" ||
                     prop.name.startsWith("aria-") ||
                     prop.name.startsWith("onPointer")
                 )
