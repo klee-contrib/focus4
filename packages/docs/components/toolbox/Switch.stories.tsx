@@ -16,13 +16,13 @@ export const Showcase: StoryObj<typeof Switch> = {
         const [selected, setSelected] = useState(false);
         return (
             <div className="stack">
-                <Switch value={selected} {...props} onChange={setSelected} />
+                <Switch {...props} value={selected} onChange={setSelected} />
                 <Switch
                     iconOff="clear"
                     iconOn="check"
                     label="Avec des icônes"
-                    value={selected}
                     {...props}
+                    value={selected}
                     onChange={setSelected}
                 />
             </div>

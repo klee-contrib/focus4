@@ -17,8 +17,8 @@ export const Showcase: StoryObj<Partial<typeof Slider>> = {
         const [selected2, setSelected2] = useState(45);
         return (
             <div className="stack">
-                <Slider labeled value={selected} {...props} onChange={setSelected} />
-                <Slider step={5} ticks value={selected2} {...props} onChange={setSelected2} />
+                <Slider labeled value={selected} {...props} onChange={v => setSelected(v!)} />
+                <Slider step={5} ticks value={selected2} {...props} onChange={v => setSelected2(v!)} />
             </div>
         );
     }

@@ -178,6 +178,7 @@ export const ${component.displayName}Meta = {
     },
     argTypes: {
         ${Object.keys(component.props)
+            .filter(prop => escape(component.props[prop].description) !== "@internal")
             .sort((a, b) => a.localeCompare(b))
             .map(
                 prop =>
@@ -188,7 +189,10 @@ export const ${component.displayName}Meta = {
                 required: ${component.props[prop].required}${
                     component.props[prop].type.value
                         ? `,
-                value: [${component.props[prop].type.value.map(value => value.value).join(", ")}]`
+                value: [${component.props[prop].type.value
+                    .map(value => value.value)
+                    .filter(v => v !== "undefined")
+                    .join(", ")}]`
                         : getName(prop, component.props[prop].type.name) === "other"
                           ? `,
                 value: "${component.props[prop].type.name.replaceAll('"', String.raw`\"`)}"`

@@ -16,8 +16,8 @@ export const Showcase: StoryObj<typeof Checkbox> = {
         const [selected, setSelected] = useState(false);
         return (
             <div className="stack">
-                <Checkbox value={selected} {...props} onChange={setSelected} />
-                <Checkbox indeterminate label="Non déterminé" value={selected} {...props} onChange={setSelected} />
+                <Checkbox {...props} value={selected} onChange={setSelected} />
+                <Checkbox indeterminate label="Non déterminé" {...props} value={selected} onChange={setSelected} />
             </div>
         );
     }

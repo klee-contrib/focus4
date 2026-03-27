@@ -13,6 +13,7 @@
         "noUncheckedSideEffectImports": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "skipLibCheck": true,
 
         // Spécifique librairie
         "declaration": true,
@@ -21,5 +22,6 @@
         "stripInternal": true,
         "noEmitOnError": true
     },
-    "exclude": ["**/lib/**", "**/__tests__/**", "node_modules"]
+    "include": ["packages"],
+    "exclude": ["**/lib/**"]
 }

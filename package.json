@@ -34,7 +34,8 @@
         "oxlint": "oxlint packages",
         "publish": "lerna publish --exact",
         "test": "vitest run",
-        "test-ci": "vitest run --coverage"
+        "test-ci": "vitest run --coverage",
+        "tsc": "tsc --noEmit"
     },
     "devDependencies": {
         "@types/css-tree": "2.3.11",

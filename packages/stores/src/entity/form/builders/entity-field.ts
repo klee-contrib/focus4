@@ -169,9 +169,13 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
+        // @ts-ignore
         ICProps extends BaseInputProps<F["domain"]["schema"]> = DomainInputProps<F["domain"]>,
+        // @ts-ignore
         SCProps extends BaseSelectProps<F["domain"]["schema"]> = DomainSelectProps<F["domain"]>,
+        // @ts-ignore
         ACProps extends BaseAutocompleteProps<F["domain"]["schema"]> = DomainAutocompleteProps<F["domain"]>,
+        // @ts-ignore
         DCProps extends BaseDisplayProps<F["domain"]["schema"]> = DomainDisplayProps<F["domain"]>,
         LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(
