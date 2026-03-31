@@ -24,10 +24,10 @@ import {OverlayContext, ScrollableContext} from "../utils";
 
 import {Overlay} from "./overlay";
 
-import scrollableCss from "./__style__/scrollable.css";
+import css from "./__style__/scrollable.css";
 import type {ScrollableCss} from "./__style__/scrollable.css.d.ts";
 
-export {scrollableCss};
+export const scrollableCss: ScrollableCss = css;
 export type {ScrollableCss};
 
 export interface ScrollableProps {

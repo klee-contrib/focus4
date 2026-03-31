@@ -5,10 +5,10 @@ import {ZodType} from "zod";
 import {useDisplay, UseDisplayProps} from "@focus4/forms";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import displayCss from "./__style__/display.css";
+import css from "./__style__/display.css";
 import type {DisplayCss} from "./__style__/display.css.d.ts";
 
-export {displayCss};
+export const displayCss: DisplayCss = css;
 export type {DisplayCss};
 
 /** Props du composant d'affichage. */

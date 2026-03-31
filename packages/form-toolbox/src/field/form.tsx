@@ -2,10 +2,10 @@ import {ReactNode} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import formCss from "./__style__/form.css";
+import css from "./__style__/form.css";
 import type {FormCss} from "./__style__/form.css.d.ts";
 
-export {formCss};
+export const formCss: FormCss = css;
 export type {FormCss};
 
 declare global {

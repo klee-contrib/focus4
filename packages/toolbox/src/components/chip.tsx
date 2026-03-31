@@ -10,10 +10,10 @@ import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {Ripple} from "./ripple";
 
-import chipCss from "./__style__/chip.css";
+import css from "./__style__/chip.css";
 import type {ChipCss} from "./__style__/chip.css.d.ts";
 
-export {chipCss};
+export const chipCss: ChipCss = css;
 export type {ChipCss};
 
 export interface ChipProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement | HTMLSpanElement> {

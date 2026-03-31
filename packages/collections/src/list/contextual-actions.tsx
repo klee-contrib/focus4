@@ -13,10 +13,10 @@ import {
     useMenu
 } from "@focus4/toolbox";
 
-import contextualActionsCss from "./__style__/contextual-actions.css";
+import css from "./__style__/contextual-actions.css";
 import type {ContextualActionsCss} from "./__style__/contextual-actions.css.d.ts";
 
-export {contextualActionsCss};
+export const contextualActionsCss: ContextualActionsCss = css;
 export type {ContextualActionsCss};
 
 /** Description d'une action sur un ou plusieurs éléments de liste. */

@@ -3,10 +3,10 @@ import {useTranslation} from "react-i18next";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
-import booleanRadioCss from "./__style__/boolean-radio.css";
+import css from "./__style__/boolean-radio.css";
 import type {BooleanRadioCss} from "./__style__/boolean-radio.css.d.ts";
 
-export {booleanRadioCss};
+export const booleanRadioCss: BooleanRadioCss = css;
 export type {BooleanRadioCss};
 
 export interface BooleanRadioProps {

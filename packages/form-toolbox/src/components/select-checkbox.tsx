@@ -7,10 +7,10 @@ import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {Checkbox, CheckboxCss, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
-import selectCheckboxCss from "./__style__/select-checkbox.css";
+import css from "./__style__/select-checkbox.css";
 import type {SelectCheckboxCss} from "./__style__/select-checkbox.css.d.ts";
 
-export {selectCheckboxCss};
+export const selectCheckboxCss: SelectCheckboxCss = css;
 export type {SelectCheckboxCss};
 
 /** Props du SelectCheckbox */

@@ -7,10 +7,10 @@ import {Button, CircularProgressIndicator, IconButton} from "@focus4/toolbox";
 
 import {PaginationState} from "./pagination";
 
-import listBaseCss from "../__style__/list-base.css";
+import css from "../__style__/list-base.css";
 import type {ListBaseCss} from "../__style__/list-base.css.d.ts";
 
-export {listBaseCss};
+export const listBaseCss: ListBaseCss = css;
 export type {ListBaseCss};
 
 /** Props du composant `BottomRow`. */

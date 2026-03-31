@@ -24,10 +24,10 @@ import {AdditionalFacet, FacetBox, FacetBoxCss, FacetProps, FacetState} from "./
 import {GroupCss, GroupHeaderProps, Results} from "./results";
 import {Summary, SummaryCss} from "./summary";
 
-import advancedSearchCss from "./__style__/advanced-search.css";
+import css from "./__style__/advanced-search.css";
 import type {AdvancedSearchCss} from "./__style__/advanced-search.css.d.ts";
 
-export {advancedSearchCss};
+export const advancedSearchCss: AdvancedSearchCss = css;
 export type {AdvancedSearchCss};
 
 /** Props de l'AdvancedSearch. */

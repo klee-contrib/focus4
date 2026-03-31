@@ -9,10 +9,11 @@ import {OverlayContext} from "../utils/contexts";
 import {MainMenuItem} from "./item";
 import {MainMenuList} from "./list";
 
-import mainMenuCss from "./__style__/main-menu.css";
+import css from "./__style__/main-menu.css";
 import type {MainMenuCss} from "./__style__/main-menu.css.d.ts";
 
-export {mainMenuCss, MainMenuItem};
+export {MainMenuItem};
+export const mainMenuCss: MainMenuCss = css;
 export type {MainMenuCss};
 
 /** Props du Menu. */

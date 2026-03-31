@@ -9,10 +9,10 @@ import {useInputRef} from "../utils/use-input-ref";
 import {FontIcon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import checkboxCss from "./__style__/checkbox.css";
+import css from "./__style__/checkbox.css";
 import type {CheckboxCss} from "./__style__/checkbox.css.d.ts";
 
-export {checkboxCss};
+export const checkboxCss: CheckboxCss = css;
 export type {CheckboxCss};
 
 /** Props du Checkbox. */

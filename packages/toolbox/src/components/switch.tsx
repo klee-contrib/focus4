@@ -9,10 +9,10 @@ import {useInputRef} from "../utils/use-input-ref";
 import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import switchCss from "./__style__/switch.css";
+import css from "./__style__/switch.css";
 import type {SwitchCss} from "./__style__/switch.css.d.ts";
 
-export {switchCss};
+export const switchCss: SwitchCss = css;
 export type {SwitchCss};
 
 export interface SwitchProps extends PointerEvents<HTMLLabelElement> {

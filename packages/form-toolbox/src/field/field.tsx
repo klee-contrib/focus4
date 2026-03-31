@@ -5,10 +5,10 @@ import {FieldEntry} from "@focus4/entities";
 import {useField, UseFieldProps} from "@focus4/forms";
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import fieldCss from "./__style__/field.css";
+import css from "./__style__/field.css";
 import type {FieldCss} from "./__style__/field.css.d.ts";
 
-export {fieldCss};
+export const fieldCss: FieldCss = css;
 export type {FieldCss};
 
 declare global {

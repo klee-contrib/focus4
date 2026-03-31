@@ -10,10 +10,10 @@ import {ScrollableContext} from "../utils";
 import {useActiveTransition} from "./active-transition";
 import {useOverlay} from "./overlay";
 
-import dialogCss from "./__style__/dialog.css";
+import css from "./__style__/dialog.css";
 import type {DialogCss} from "./__style__/dialog.css.d.ts";
 
-export {dialogCss};
+export const dialogCss: DialogCss = css;
 export type {DialogCss};
 
 export interface DialogProps {

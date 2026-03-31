@@ -5,10 +5,10 @@ import {useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import rippleCss from "./__style__/ripple.css";
+import css from "./__style__/ripple.css";
 import type {RippleCss} from "./__style__/ripple.css.d.ts";
 
-export {rippleCss};
+export const rippleCss: RippleCss = css;
 export type {RippleCss};
 
 export interface RippleProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {

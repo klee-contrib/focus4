@@ -18,10 +18,10 @@ import {Ripple} from "./ripple";
 import {SupportingTextCss} from "./supporting-text";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
-import dropdownCss from "./__style__/dropdown.css";
+import css from "./__style__/dropdown.css";
 import type {DropdownCss} from "./__style__/dropdown.css.d.ts";
 
-export {dropdownCss};
+export const dropdownCss: DropdownCss = css;
 export type {DropdownCss};
 
 export interface DropdownProps<TSource = {key: string; label: string}> extends Omit<

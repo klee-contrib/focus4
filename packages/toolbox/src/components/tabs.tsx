@@ -8,10 +8,10 @@ import {PointerEvents} from "../utils/pointer-events";
 import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import tabsCss from "./__style__/tabs.css";
+import css from "./__style__/tabs.css";
 import type {TabsCss} from "./__style__/tabs.css.d.ts";
 
-export {tabsCss};
+export const tabsCss: TabsCss = css;
 export type {TabsCss};
 
 export interface TabProps extends PointerEvents<HTMLDivElement> {

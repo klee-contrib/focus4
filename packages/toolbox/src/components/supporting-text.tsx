@@ -1,9 +1,9 @@
 import {CSSProp, useTheme} from "@focus4/styling";
 
-import supportingTextCss from "./__style__/supporting-text.css";
+import css from "./__style__/supporting-text.css";
 import type {SupportingTextCss} from "./__style__/supporting-text.css.d.ts";
 
-export {supportingTextCss};
+export const supportingTextCss: SupportingTextCss = css;
 export type {SupportingTextCss};
 
 /**

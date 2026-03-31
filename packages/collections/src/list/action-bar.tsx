@@ -12,10 +12,10 @@ import {AdditionalFacet, FacetBox, FacetState, shouldDisplayFacet} from "../sear
 
 import {ContextualActions, OperationListItem} from "./contextual-actions";
 
-import actionBarCss from "./__style__/action-bar.css";
+import css from "./__style__/action-bar.css";
 import type {ActionBarCss} from "./__style__/action-bar.css.d.ts";
 
-export {actionBarCss};
+export const actionBarCss: ActionBarCss = css;
 export type {ActionBarCss};
 
 /** Props de l'ActionBar. */

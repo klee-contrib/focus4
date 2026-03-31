@@ -6,10 +6,10 @@ import {HeaderContext} from "../utils/contexts";
 
 import {HeaderContent} from "./content";
 
-import headerCss from "./__style__/header.css";
+import css from "./__style__/header.css";
 import type {HeaderCss} from "./__style__/header.css.d.ts";
 
-export {headerCss};
+export const headerCss: HeaderCss = css;
 export type {HeaderCss};
 
 /** Props du conteneur de header. */

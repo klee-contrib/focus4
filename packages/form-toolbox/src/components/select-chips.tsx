@@ -21,10 +21,10 @@ import {
 import {Select} from "./select";
 import {SelectAutocomplete} from "./select-autocomplete";
 
-import selectChipsCss from "./__style__/select-chips.css";
+import css from "./__style__/select-chips.css";
 import type {SelectChipsCss} from "./__style__/select-chips.css.d.ts";
 
-export {selectChipsCss};
+export const selectChipsCss: SelectChipsCss = css;
 export type {SelectChipsCss};
 
 export interface SelectChipsProps<S extends ZodTypeMultiple> {

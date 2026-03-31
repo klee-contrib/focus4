@@ -12,10 +12,10 @@ import {AddItemProps, DefaultAddItemComponent, DefaultEmptyComponent, EmptyProps
 import {TimelineAddItem} from "./add";
 import {TimelineLine} from "./line";
 
-import timelineCss from "../__style__/timeline.css";
+import css from "../__style__/timeline.css";
 import type {TimelineCss} from "../__style__/timeline.css.d.ts";
 
-export {timelineCss};
+export const timelineCss: TimelineCss = css;
 export type {TimelineCss};
 
 /** Props du composant de TimeLine. */

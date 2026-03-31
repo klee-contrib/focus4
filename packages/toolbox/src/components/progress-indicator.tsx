@@ -5,10 +5,10 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import progressIndicatorCss from "./__style__/progress-indicator.css";
+import css from "./__style__/progress-indicator.css";
 import type {ProgressIndicatorCss} from "./__style__/progress-indicator.css.d.ts";
 
-export {progressIndicatorCss};
+export const progressIndicatorCss: ProgressIndicatorCss = css;
 export type {ProgressIndicatorCss};
 
 export interface ProgressIndicatorProps extends PointerEvents<HTMLDivElement> {

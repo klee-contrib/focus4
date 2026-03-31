@@ -8,10 +8,10 @@ import {useInputRef} from "../utils/use-input-ref";
 
 import {Ripple} from "./ripple";
 
-import radioCss from "./__style__/radio.css";
+import css from "./__style__/radio.css";
 import type {RadioCss} from "./__style__/radio.css.d.ts";
 
-export {radioCss};
+export const radioCss: RadioCss = css;
 export type {RadioCss};
 
 const RadioContext = createContext({

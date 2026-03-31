@@ -8,10 +8,10 @@ import {ReferenceList} from "@focus4/stores";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {RadioButton, RadioCss, RadioGroup, SupportingText, SupportingTextCss} from "@focus4/toolbox";
 
-import selectRadioCss from "./__style__/select-radio.css";
+import css from "./__style__/select-radio.css";
 import type {SelectRadioCss} from "./__style__/select-radio.css.d.ts";
 
-export {selectRadioCss};
+export const selectRadioCss: SelectRadioCss = css;
 export type {SelectRadioCss};
 
 /** Props du SelectRadio. */

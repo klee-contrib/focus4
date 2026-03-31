@@ -14,10 +14,11 @@ import {ListContext} from "./context";
 import {DetailProps, DetailWrapper} from "./detail";
 import {LineProps, LineWrapper} from "./line";
 
-import listCss from "../__style__/list.css";
+import css from "../__style__/list.css";
 import type {ListCss} from "../__style__/list.css.d.ts";
 
-export {ListContext, listCss};
+export const listCss: ListCss = css;
+export {ListContext};
 export type {DetailProps, LineProps, ListCss};
 
 /** Props du composant de liste standard. */

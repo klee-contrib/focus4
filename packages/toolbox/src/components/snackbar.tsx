@@ -8,10 +8,10 @@ import {CSSProp, getSpringTransition, useTheme} from "@focus4/styling";
 import {Button} from "./button";
 import {IconButton} from "./icon-button";
 
-import snackbarCss from "./__style__/snackbar.css";
+import css from "./__style__/snackbar.css";
 import type {SnackbarCss} from "./__style__/snackbar.css.d.ts";
 
-export {snackbarCss};
+export const snackbarCss: SnackbarCss = css;
 export type {SnackbarCss};
 
 export interface SnackbarProps {

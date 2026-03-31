@@ -10,10 +10,10 @@ import {useInputRef} from "../utils/use-input-ref";
 import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import floatingActionButtonCss from "./__style__/floating-action-button.css";
+import css from "./__style__/floating-action-button.css";
 import type {FloatingActionButtonCss} from "./__style__/floating-action-button.css.d.ts";
 
-export {floatingActionButtonCss};
+export const floatingActionButtonCss: FloatingActionButtonCss = css;
 export type {FloatingActionButtonCss};
 
 export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {

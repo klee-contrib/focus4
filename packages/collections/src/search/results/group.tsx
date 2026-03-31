@@ -10,10 +10,10 @@ import {Checkbox, IconButton} from "@focus4/toolbox";
 
 import {ActionBar, List, ListBaseProps, ListProps, OperationListItem} from "../../list";
 
-import groupCss from "../__style__/group.css";
+import css from "../__style__/group.css";
 import type {GroupCss} from "../__style__/group.css.d.ts";
 
-export {groupCss};
+export const groupCss: GroupCss = css;
 export type {GroupCss};
 
 export interface GroupHeaderProps<T> {

@@ -20,10 +20,10 @@ import {Ripple} from "./ripple";
 import {SupportingTextCss} from "./supporting-text";
 import {TextField, TextFieldCss, TextFieldProps} from "./text-field";
 
-import autocompleteCss from "./__style__/autocomplete.css";
+import css from "./__style__/autocomplete.css";
 import type {AutocompleteCss} from "./__style__/autocomplete.css.d.ts";
 
-export {autocompleteCss};
+export const autocompleteCss: AutocompleteCss = css;
 export type {AutocompleteCss};
 
 export interface AutocompleteProps<TSource = {key: string; label: string}> extends Omit<

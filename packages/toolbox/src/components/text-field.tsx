@@ -26,14 +26,13 @@ import {PointerEvents} from "../utils/pointer-events";
 import {FontIcon, Icon} from "./font-icon";
 import {IconButton} from "./icon-button";
 import {CircularProgressIndicator} from "./progress-indicator";
-import {SupportingText} from "./supporting-text";
+import {SupportingText, SupportingTextCss} from "./supporting-text";
 import {Tooltip} from "./tooltip";
 
-import {SupportingTextCss} from "./__style__/supporting-text.css";
-import textFieldCss from "./__style__/text-field.css";
+import css from "./__style__/text-field.css";
 import type {TextFieldCss} from "./__style__/text-field.css.d.ts";
 
-export {textFieldCss};
+export const textFieldCss: TextFieldCss = css;
 export type {TextFieldCss};
 
 const CUT_START = 12;

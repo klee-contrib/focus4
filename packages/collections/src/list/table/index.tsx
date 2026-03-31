@@ -12,10 +12,10 @@ import {ContextualActions, OperationListItem} from "../contextual-actions";
 import {TableColumn, TableHeader} from "./header";
 import {TableLine} from "./line";
 
-import tableCss from "../__style__/table.css";
+import css from "../__style__/table.css";
 import type {TableCss} from "../__style__/table.css.d.ts";
 
-export {tableCss};
+export const tableCss: TableCss = css;
 export type {TableColumn, TableCss};
 
 /** Props du tableau de base. */

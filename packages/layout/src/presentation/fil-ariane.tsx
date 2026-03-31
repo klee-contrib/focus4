@@ -6,10 +6,10 @@ import {Router, UrlRouteDescriptor} from "@focus4/core";
 import {CSSProp, useTheme} from "@focus4/styling";
 import {FontIcon} from "@focus4/toolbox";
 
-import filArianeCss from "./__style__/fil-ariane.css";
+import css from "./__style__/fil-ariane.css";
 import type {FilArianeCss} from "./__style__/fil-ariane.css.d.ts";
 
-export {filArianeCss};
+export const filArianeCss: FilArianeCss = css;
 export type {FilArianeCss};
 
 /**

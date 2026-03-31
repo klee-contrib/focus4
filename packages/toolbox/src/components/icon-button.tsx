@@ -10,10 +10,10 @@ import {FontIcon, Icon} from "./font-icon";
 import {CircularProgressIndicator} from "./progress-indicator";
 import {Ripple} from "./ripple";
 
-import iconButtonCss from "./__style__/icon-button.css";
+import css from "./__style__/icon-button.css";
 import type {IconButtonCss} from "./__style__/icon-button.css.d.ts";
 
-export {iconButtonCss};
+export const iconButtonCss: IconButtonCss = css;
 export type {IconButtonCss};
 
 export interface IconButtonProps extends PointerEvents<HTMLButtonElement | HTMLLinkElement>, AriaAttributes {

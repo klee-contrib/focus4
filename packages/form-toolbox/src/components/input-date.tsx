@@ -9,10 +9,10 @@ import {Calendar, CalendarCss, Menu, useMenu} from "@focus4/toolbox";
 
 import {Input, InputProps} from "./input";
 
-import inputDateCss from "./__style__/input-date.css";
+import css from "./__style__/input-date.css";
 import type {InputDateCss} from "./__style__/input-date.css.d.ts";
 
-export {inputDateCss};
+export const inputDateCss: InputDateCss = css;
 export type {InputDateCss};
 
 export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {

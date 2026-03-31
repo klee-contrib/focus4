@@ -5,10 +5,10 @@ import {CSSProp, useTheme} from "@focus4/styling";
 
 import {PointerEvents} from "../utils/pointer-events";
 
-import tooltipCss from "./__style__/tooltip.css";
+import css from "./__style__/tooltip.css";
 import type {TooltipCss} from "./__style__/tooltip.css.d.ts";
 
-export {tooltipCss};
+export const tooltipCss: TooltipCss = css;
 export type {TooltipCss};
 
 export interface TooltipProps<T extends HTMLElement = HTMLElement> extends PointerEvents<T> {

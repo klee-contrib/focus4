@@ -24,10 +24,10 @@ import {PointerEvents} from "../utils/pointer-events";
 import {FontIcon, Icon} from "./font-icon";
 import {Ripple} from "./ripple";
 
-import menuCss from "./__style__/menu.css";
+import css from "./__style__/menu.css";
 import type {MenuCss} from "./__style__/menu.css.d.ts";
 
-export {menuCss};
+export const menuCss: MenuCss = css;
 export type {MenuCss};
 
 export interface MenuControls<T extends HTMLElement = HTMLDivElement> {
