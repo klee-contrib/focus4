@@ -1,6 +1,6 @@
 {
     "name": "@focus4/form-toolbox",
-    "version": "12.10.3",
+    "version": "12.10.4",
     "description": "Focus v4, form-toolbox module",
     "main": "lib/focus4.form-toolbox.js",
     "type": "module",
@@ -20,7 +20,7 @@
         "@focus4/forms": "12.10.2",
         "@focus4/stores": "12.10.2",
         "@focus4/styling": "12.10.0",
-        "@focus4/toolbox": "12.10.3",
+        "@focus4/toolbox": "12.10.4",
         "classnames": "^2.5.1",
         "es-toolkit": "^1.45.1",
         "file-type": "^21.3.4",
