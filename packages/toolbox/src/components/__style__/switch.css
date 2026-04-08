@@ -3,6 +3,7 @@
     --switch-length: 52px;
     --switch-state-size: 40px;
     --switch-border-size: 2px;
+    --switch-label-gap: 4px;
     --switch-focus-ring-offset: var(--switch-border-size);
 
     --switch-animation-curve: cubic-bezier(0.47, 1.64, 0.41, 1);
@@ -10,12 +11,11 @@
 }
 
 .switch {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    position: relative;
     user-select: none;
     width: fit-content;
-    cursor: pointer;
+    column-gap: var(--switch-label-gap);
 }
 
 .switch--loading * {
@@ -23,6 +23,13 @@
 }
 
 .input {
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    height: var(--switch-state-size);
+}
+
+.input input {
     opacity: 0;
     position: absolute;
     width: calc(var(--switch-length));
@@ -33,7 +40,7 @@
 }
 
 .track {
-    display: block;
+    display: inline-block;
     width: calc(var(--switch-length));
     height: var(--switch-height);
     margin: calc((var(--switch-state-size) - var(--switch-height)) / 2);
@@ -63,7 +70,7 @@
 }
 
 .thumb {
-    display: block;
+    display: inline-block;
     position: absolute;
     top: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
     left: calc(var(--switch-state-size) / 2 - var(--switch-height) / 4);
@@ -100,9 +107,7 @@ span.icon {
 
 .label {
     color: var(--input-text-color);
-    margin: 0 4px;
     font-size: var(--input-text-font-size);
-    line-height: var(--switch-state-size);
 }
 
 .switch--checked {
@@ -185,7 +190,7 @@ span.icon {
     }
 }
 
-.input:focus + .track {
+.input input:focus + .track {
     animation-name: focus;
     animation-duration: var(--animation-duration);
     animation-timing-function: var(--animation-curve-focus-ring);

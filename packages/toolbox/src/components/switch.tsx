@@ -86,31 +86,33 @@ export function Switch({
             onPointerLeave={handlePointerLeave}
             onPointerUp={handlePointerUp}
         >
-            <input
-                ref={ref}
-                checked={value ?? false}
-                className={theme.input()}
-                disabled={disabled}
-                id={id}
-                name={name}
-                onBlur={onBlur}
-                onClick={handleOnClick}
-                onFocus={onFocus}
-                readOnly
-                type="checkbox"
-            />
-            <span className={theme.track()} />
-            <Ripple disabled={disabled}>
-                <span className={theme.state()}>
-                    {value !== undefined ? (
-                        <>
-                            <span className={theme.thumb({icon: !!iconOff})} />
-                            {iconOn ? <FontIcon className={theme.icon({checked: true})} icon={iconOn} /> : null}
-                            {iconOff ? <FontIcon className={theme.icon({unchecked: true})} icon={iconOff} /> : null}
-                        </>
-                    ) : null}
-                </span>
-            </Ripple>
+            <span className={theme.input()}>
+                <input
+                    ref={ref}
+                    checked={value ?? false}
+                    className={theme.input()}
+                    disabled={disabled}
+                    id={id}
+                    name={name}
+                    onBlur={onBlur}
+                    onClick={handleOnClick}
+                    onFocus={onFocus}
+                    readOnly
+                    type="checkbox"
+                />
+                <span className={theme.track()} />
+                <Ripple disabled={disabled}>
+                    <span className={theme.state()}>
+                        {value !== undefined ? (
+                            <>
+                                <span className={theme.thumb({icon: !!iconOff})} />
+                                {iconOn ? <FontIcon className={theme.icon({checked: true})} icon={iconOn} /> : null}
+                                {iconOff ? <FontIcon className={theme.icon({unchecked: true})} icon={iconOff} /> : null}
+                            </>
+                        ) : null}
+                    </span>
+                </Ripple>
+            </span>
             {label ? <span className={theme.label()}>{label}</span> : null}
         </label>
     );
