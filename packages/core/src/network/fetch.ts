@@ -25,15 +25,13 @@ export const coreFetch = ky.create({
                 }
 
                 // Enregistrement de la requête dans le RequestStore.
-                if (!options.context.requestId) {
-                    options.context.requestId = await requestStore.startRequest(req.method as HttpMethod, req.url);
-
+                if (!options.context.requestId && !options.signal?.aborted) {
                     // On ne passe dans aucun autre hook si la requête est annulée, donc on s'assure de terminer la requête dans ce cas.
-                    if (options.signal) {
-                        options.signal.addEventListener("abort", () => {
-                            requestStore.endRequest(options.context.requestId as string);
-                        });
-                    }
+                    options.signal?.addEventListener("abort", () => {
+                        requestStore.endRequest(options.context.requestId as string);
+                    });
+
+                    options.context.requestId = await requestStore.startRequest(req.method as HttpMethod, req.url);
                 }
             }
         ],
