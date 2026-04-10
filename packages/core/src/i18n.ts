@@ -1,5 +1,5 @@
 import {merge} from "es-toolkit";
-import i18next, {InitOptions} from "i18next";
+import {i18n, InitOptions} from "i18next";
 import {DateTime} from "luxon";
 
 /**
@@ -54,24 +54,17 @@ export function baseI18nextConfig(
         nsSeparator: "🤷‍♂️",
         react: {useSuspense: false},
         resources,
-        supportedLngs: Object.keys(resources),
-        interpolation: {
-            format: (value, format, lng) => {
-                switch (format) {
-                    case "boolean":
-                        return value !== undefined ? i18next.t(`focus.bool.${value}`) : "";
-                    case "date":
-                        return value ? DateTime.fromISO(value).setLocale(lng!).toLocaleString(DateTime.DATE_SHORT) : "";
-                    case "datetime":
-                        return value
-                            ? DateTime.fromISO(value)
-                                  .setLocale(lng!)
-                                  .toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
-                            : "";
-                    default:
-                        return value;
-                }
-            }
-        }
+        supportedLngs: Object.keys(resources)
     };
+}
+
+/** Enregistre les formatters i18next pour `boolean`, `date` et `datetime`, utilisés par défaut pour les domaines de ces schémas-là. */
+export function addValueFormatters(i18next: i18n) {
+    i18next.services.formatter?.add("boolean", value => (value !== undefined ? i18next.t(`focus.bool.${value}`) : ""));
+    i18next.services.formatter?.add("date", (value, lng) =>
+        value ? DateTime.fromISO(value).setLocale(lng!).toLocaleString(DateTime.DATE_SHORT) : ""
+    );
+    i18next.services.formatter?.add("datetime", (value, lng) =>
+        value ? DateTime.fromISO(value).setLocale(lng!).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS) : ""
+    );
 }

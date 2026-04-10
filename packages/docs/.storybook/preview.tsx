@@ -13,7 +13,7 @@ import {initReactI18next} from "react-i18next";
 import {addons} from "storybook/preview-api";
 
 import {i18nCollections} from "@focus4/collections";
-import {baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
+import {addValueFormatters, baseI18nextConfig, colorScheme, initColorScheme} from "@focus4/core";
 import {i18nFormToolbox} from "@focus4/form-toolbox";
 import {i18nLayout} from "@focus4/layout";
 import {i18nStores} from "@focus4/stores";
@@ -42,6 +42,8 @@ i18next.use(initReactI18next).init({
     lng: "fr",
     fallbackLng: "fr"
 });
+
+addValueFormatters(i18next);
 
 export default {
     initialGlobals: {

@@ -25,12 +25,12 @@
         "mobx": ">= 6.13 < 7",
         "mobx-react": ">= 9.2 < 10",
         "react": ">= 19 < 20",
-        "react-i18next": ">= 16 < 17",
+        "react-i18next": ">= 17 < 18",
         "zod": ">= 4 < 5"
     },
     "devDependencies": {
         "@focus4/tooling": "12.10.0",
         "@testing-library/react": "16.3.2",
-        "jsdom": "29.0.1"
+        "jsdom": "29.0.2"
     }
 }

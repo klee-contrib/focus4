@@ -26,7 +26,7 @@
         "@focus4/tooling": "12.10.0"
     },
     "peerDependencies": {
-        "i18next": ">= 25 < 26",
+        "i18next": ">= 26 < 27",
         "mobx": ">= 6.13 < 7",
         "zod": ">= 4 < 5"
     }

@@ -3,15 +3,13 @@ import {storybookTest} from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
 import {playwright} from "@vitest/browser-playwright";
 import path from "node:path";
-import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
     plugins: [
         react(),
         storybookTest({
-            configDir: path.join(dirname, ".storybook")
+            configDir: path.join(import.meta.dirname, ".storybook")
         })
     ],
     test: {
@@ -25,7 +23,6 @@ export default defineConfig({
                     browser: "chromium"
                 }
             ]
-        },
-        setupFiles: [path.join(".storybook/vitest.setup.ts")]
+        }
     }
 });

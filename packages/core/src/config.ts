@@ -3,12 +3,6 @@ export const coreConfig = {
     /** Durée de cache par défaut pour les listes de référence. */
     referenceCacheDuration: 3_600_000, // 1h.
 
-    /** Nombre de tentatives de fetch supplémentaires après un "Failed to fetch" */
-    retryCountOnFailedFetch: 2,
-
-    /** Délai avant la tentative suivante de fetch après un "Failed to fetch" */
-    retryDelayOnFailedFetch: 300,
-
     /**
      * Renseigne le header `Accept-Language` par défaut de `coreFetch` pour utiliser la langue choisie dans `i18next`.
      *

@@ -25,7 +25,7 @@ function createHTTPError(status: number, url: string = "https://example.com/api"
     const options: NormalizedOptions = {
         method: "GET",
         retry: {},
-        prefixUrl: "",
+        prefix: "",
         onDownloadProgress: () => {
             /** */
         },

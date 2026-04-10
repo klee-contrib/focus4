@@ -1,27 +1,31 @@
 import i18next from "i18next";
-import isNetworkError from "is-network-error";
-import ky from "ky";
+import ky, {isHTTPError, isNetworkError} from "ky";
 
 import {coreConfig} from "../config";
 
-import {createProblemDetails, handleProblemDetails, HTTPDetailedError} from "./error-parsing";
+import {
+    createProblemDetails,
+    handleProblemDetails,
+    HTTPDetailedError,
+    isAbortError,
+    ProblemDetails
+} from "./error-parsing";
 import {HttpMethod, requestStore} from "./store";
 
 export const coreFetch = ky.create({
     timeout: false,
-    // On surcharge la logique par défaut de retry pour ne le faire que sur les erreurs réseau, et pour pouvoir correctement terminer la requête dans le RequestStore.
     retry: {
-        limit: Infinity,
         shouldRetry(state) {
-            return state.retryCount <= coreConfig.retryCountOnFailedFetch + 1 && isNetworkError(state.error);
+            // Ky retry 2 fois par défaut, on limite juste le comportement aux erreurs réseaux (on ne veut pas retry pour des erreurs du serveur ou des timeouts par exemple)
+            return isNetworkError(state.error);
         }
     },
     hooks: {
         beforeRequest: [
-            async (req, options) => {
+            async ({options, request}) => {
                 // Override du header Accept-Language par i18next si demandé dans la config.
                 if (coreConfig.useI18nextAcceptHeader) {
-                    req.headers.set("Accept-Language", i18next.language);
+                    request.headers.set("Accept-Language", i18next.language);
                 }
 
                 // Enregistrement de la requête dans le RequestStore.
@@ -31,48 +35,46 @@ export const coreFetch = ky.create({
                         requestStore.endRequest(options.context.requestId as string);
                     });
 
-                    options.context.requestId = await requestStore.startRequest(req.method as HttpMethod, req.url);
+                    options.context.requestId = await requestStore.startRequest(
+                        request.method as HttpMethod,
+                        request.url
+                    );
                 }
             }
         ],
         afterResponse: [
-            (_, options) => {
+            ({options}) => {
                 requestStore.endRequest(options.context.requestId as string);
             }
         ],
         beforeError: [
-            async error => {
-                error.message = `Une erreur ${error.response.status} est survenue lors de l'appel à "${error.request.url}".`;
+            async ({error, options, request, retryCount}) => {
+                if (isHTTPError(error)) {
+                    error.message = `Une erreur ${error.response.status} est survenue lors de l'appel à "${error.request.url}".`;
 
-                // On essaie de compléter cette erreur selon le type de retour en fonction du Content-Type dans le header.
-                const contentType = error.response.headers.get("Content-Type");
+                    // On essaie de compléter cette erreur selon le type de retour en fonction du Content-Type dans le header.
+                    const contentType = error.response.headers.get("Content-Type");
 
-                if (contentType?.includes("application/problem+json")) {
-                    // Pour un ProblemDetails, on le parse pour récupérer les erreurs à ajouter dans le MessageStore, puis on le renvoie.
-                    error = handleProblemDetails(error, await error.response.json());
-                } else if (contentType?.includes("application/json")) {
-                    // Pour une erreur JSON classique, on la transforme en ProblemDetails, puis on la traite comme précédemment.
-                    error = handleProblemDetails(
-                        error,
-                        createProblemDetails(error.response.status, await error.response.json())
-                    );
-                }
+                    if (contentType?.includes("application/problem+json")) {
+                        // Pour un ProblemDetails, on le parse pour récupérer les erreurs à ajouter dans le MessageStore, puis on le renvoie.
+                        error = handleProblemDetails(error, error.data as ProblemDetails);
+                    } else if (contentType?.includes("application/json")) {
+                        // Pour une erreur JSON classique, on la transforme en ProblemDetails, puis on la traite comme précédemment.
+                        error = handleProblemDetails(
+                            error,
+                            createProblemDetails(error.response.status, error.data as object)
+                        );
+                    }
 
-                if (error instanceof HTTPDetailedError) {
-                    console.error("Détails :", error.details);
+                    if (error instanceof HTTPDetailedError) {
+                        console.error("Détails :", error.details);
+                    }
+                } else if (!isAbortError(error)) {
+                    requestStore.endRequest(options.context.requestId as string); // Pour HTTPError, le endRequest est appelé par `afterResponse`, et pour AbortError par le listener sur le signal.
+                    error.message = `Une erreur technique non gérée est survenue lors de l'appel à "${request.url}" après ${retryCount + 1} tentatives.`;
                 }
 
                 return error;
-            }
-        ],
-        beforeRetry: [
-            r => {
-                // On contourne un peu la mécanique de retry en lançant l'erreur nous-même une fois notre nombre de retries atteint, pour s'assurer que le RequestStore est bien mis à jour.
-                if (r.retryCount >= coreConfig.retryCountOnFailedFetch + 1) {
-                    requestStore.endRequest(r.options.context.requestId as string);
-                    r.error.message = `Une erreur technique non gérée est survenue lors de l'appel à "${r.request.url}" après ${r.retryCount} tentatives.`;
-                    throw r.error;
-                }
             }
         ]
     }

@@ -23,6 +23,9 @@ jobs:
       - name: build
         run: npm run build
 
+      - name: tsc
+        run: npm run tsc
+
       - name: oxlint
         run: npm run oxlint
 

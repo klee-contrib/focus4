@@ -31,7 +31,7 @@
         "mobx": ">= 6.13 < 7",
         "mobx-react": ">= 9.2 < 10",
         "react": ">= 19 < 20",
-        "react-i18next": ">= 16 < 17",
+        "react-i18next": ">= 17 < 18",
         "zod": ">= 4 < 5"
     },
     "devDependencies": {
