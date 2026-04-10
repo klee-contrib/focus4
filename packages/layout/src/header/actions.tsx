@@ -17,7 +17,7 @@ import {ScrollableContext} from "../utils/contexts";
 import headerCss from "./__style__/header.css";
 
 /** Action principale, affichée dans son propre bouton. */
-type PrimaryAction = FloatingActionButtonProps & {
+export type PrimaryAction = FloatingActionButtonProps & {
     /** A renseigner pour poser une tooltip autour du bouton. */
     tooltip?: Omit<TooltipProps, "children">;
 };

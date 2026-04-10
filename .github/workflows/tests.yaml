@@ -23,14 +23,14 @@ jobs:
       - name: build
         run: npm run build
 
+      - name: docgen
+        run: npm run docgen
+
       - name: tsc
         run: npm run tsc
 
       - name: oxlint
         run: npm run oxlint
-
-      - name: docgen
-        run: npm run docgen
 
       - name: test
         run: npm run test-ci

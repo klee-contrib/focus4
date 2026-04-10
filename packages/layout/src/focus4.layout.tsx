@@ -28,7 +28,7 @@ export {i18nLayout} from "./translation";
 export {HeaderContext, MessageCenter, OverlayContext, ScrollableContext, ScrollspyContext} from "./utils";
 export {LayoutBase};
 
-export type {HeaderCss} from "./header";
+export type {HeaderCss, PrimaryAction} from "./header";
 export type {MainMenuCss, MainMenuProps} from "./menu";
 export type {
     PanelButtonsProps,
