@@ -34,11 +34,11 @@ export function makeStoreNode<E extends Entity>(
     if (Array.isArray(entity)) {
         const storeListNode = observable.array([] as any[], {deep: false}) as StoreListNode<E>;
 
-        // @ts-ignore
+        // @ts-expect-error - Le champ est readonly dans l'API.
         storeListNode.$entity = entity[0];
 
         storeListNode.load = defaultLoad;
-        storeListNode.pushNode = action("pushNode", function pushNode(this: typeof storeListNode, ...items: {}[]) {
+        storeListNode.pushNode = action("pushNode", function pushNode(this: typeof storeListNode, ...items: object[]) {
             return this.push(...items.map(item => getNodeForList(this, item)));
         });
         storeListNode.replaceNodes = replaceNode;
@@ -172,7 +172,7 @@ export function replaceNode<E extends Entity>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On remplace la liste existante par une nouvelle liste de noeuds construit à partir de `value`.
-            // oxlint-disable-next-line no-this-assignment
+            // oxlint-disable-next-line no-this-assignment no-this-alias
             const self = this;
             this.replace((value as (EntityToType<E> | StoreNode<E>)[]).map(item => getNodeForList(self, item)));
         } else if (isStoreNode(this) && typeof value === "object") {
@@ -220,10 +220,10 @@ export function setNode<E extends Entity>(
     runInAction(() => {
         if (isStoreListNode<E>(this) && (Array.isArray(value) || isObservableArray(value))) {
             // On va appeler récursivement `setNode` sur tous les éléments de la liste.
-            // oxlint-disable-next-line no-this-assignment
+            // oxlint-disable-next-line no-this-assignment no-this-alias
             const self = this;
             // oxlint-disable-next-line no-array-for-each
-            (value as {}[]).forEach((item, i) => {
+            (value as object[]).forEach((item, i) => {
                 if (i >= self.length) {
                     self.pushNode(item);
                 }

@@ -246,7 +246,6 @@ export function Calendar({
                 () =>
                     main.current
                         ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
-                        // @ts-ignore
                         ?.focus({preventScroll: true, focusVisible: true}),
                 0
             );
@@ -307,7 +306,6 @@ export function Calendar({
                     () =>
                         main.current
                             ?.querySelector<HTMLButtonElement>(`[data-date='${newDate.toFormat(viewFormat)}']`)
-                            // @ts-ignore
                             ?.focus({preventScroll: true, focusVisible: true}),
                     0
                 );

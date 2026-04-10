@@ -87,14 +87,14 @@ export type TableProps<T extends object> = ListBaseProps<T> & {
 export function Table<T extends object>({
     baseTheme,
     columns,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     data,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     hasSelection,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     hasSelectAll,
     i18nPrefix = "focus",
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     isLoading,
     itemKey,
     lineClassName,
@@ -108,7 +108,7 @@ export function Table<T extends object>({
     sentinelItemIndex = 5,
     showAllHandler,
     stickyHeader = false,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     store,
     theme: pTheme
 }: TableProps<T>) {

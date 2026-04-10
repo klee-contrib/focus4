@@ -18,7 +18,7 @@ export const referenceTrackingId = Math.random().toString();
  * @param referenceClearer Un service pour réinitialiser une (ou toutes) les listes de référence sur le serveur.
  */
 export function makeReferenceStore<T extends Record<string, ReferenceDefinition>>(
-    referenceLoader: (refName: string) => Promise<{}[]>,
+    referenceLoader: (refName: string) => Promise<object[]>,
     refConfig: T,
     referenceClearer?: (refName?: string) => Promise<void>
 ): ReferenceStore<T> {

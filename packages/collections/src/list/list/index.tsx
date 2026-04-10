@@ -93,15 +93,15 @@ export function List<T extends object>({
     addItemHandler,
     baseTheme,
     canOpenDetail = () => true,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     data,
     DetailComponent,
     EmptyComponent = DefaultEmptyComponent,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     hasSelection,
     hideAdditionalItems,
     i18nPrefix = "focus",
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     isLoading,
     itemKey,
     LineComponent,
@@ -113,7 +113,7 @@ export function List<T extends object>({
     perPage,
     sentinelItemIndex = 5,
     showAllHandler,
-    // @ts-ignore
+    // @ts-expect-error - La prop est définie conditionnellement.
     store,
     theme: pTheme
 }: ListProps<T>) {
@@ -243,7 +243,7 @@ export function List<T extends object>({
                     theme={theme}
                     toggleDetail={
                         canOpenDetail(item) && DetailComponent
-                            ? (callbacks?: {}) => listState.toggleDetail(idx, callbacks)
+                            ? (callbacks?: object) => listState.toggleDetail(idx, callbacks)
                             : undefined
                     }
                 />

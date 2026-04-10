@@ -1,5 +1,5 @@
 /** Merges passed themes by concatenating string keys */
-export function themeable<T extends {}>(...themes: T[]) {
+export function themeable<T extends object>(...themes: T[]) {
     return themes.reduce(merge, {}) as T;
 }
 

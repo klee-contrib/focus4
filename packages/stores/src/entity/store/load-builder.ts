@@ -43,17 +43,13 @@ export class NodeLoadBuilder<
     params(): NodeLoadBuilder<SN, []>;
     params<const NP extends any[]>(params?: NP | (() => NP | undefined)): any {
         if (params === undefined) {
-            // @ts-ignore
             this.getLoadParams = () => [];
         } else if (isFunction(params)) {
-            // @ts-ignore
             this.getLoadParams = params;
         } else {
-            // @ts-ignore
             this.getLoadParams = () => params;
         }
 
-        // @ts-ignore
         return this;
     }
 

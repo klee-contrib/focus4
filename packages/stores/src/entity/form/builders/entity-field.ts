@@ -169,13 +169,13 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * @param $field Métadonnées du champ à remplacer;
      */
     metadata<
-        // @ts-ignore
+        // @ts-expect-error - Problème de validation de type générique.
         ICProps extends BaseInputProps<F["domain"]["schema"]> = DomainInputProps<F["domain"]>,
-        // @ts-ignore
+        // @ts-expect-error - Problème de validation de type générique.
         SCProps extends BaseSelectProps<F["domain"]["schema"]> = DomainSelectProps<F["domain"]>,
-        // @ts-ignore
+        // @ts-expect-error - Problème de validation de type générique.
         ACProps extends BaseAutocompleteProps<F["domain"]["schema"]> = DomainAutocompleteProps<F["domain"]>,
-        // @ts-ignore
+        // @ts-expect-error - Problème de validation de type générique.
         DCProps extends BaseDisplayProps<F["domain"]["schema"]> = DomainDisplayProps<F["domain"]>,
         LCProps extends BaseLabelProps = DomainLabelProps<F["domain"]>
     >(

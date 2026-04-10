@@ -26,6 +26,7 @@ export type UrlPathDescriptor<C> =
                 : UrlPathDescriptor<C[K]>;
 
 /** Router correspondant à la config donnée. */
+// oxlint-disable-next-line ban-types
 export interface Router<C = any, Q extends QueryParamConfig = {}> {
     /** Valeurs des paramètres de query. */
     readonly query: QueryParams<Q>;

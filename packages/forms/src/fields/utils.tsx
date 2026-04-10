@@ -89,7 +89,7 @@ export function selectFor<F extends FieldEntry>(
             {...options}
             inputType="select"
             selectProps={{
-                ...(options.selectProps as {}),
+                ...options.selectProps,
                 values
             }}
         />

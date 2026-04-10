@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import {realpathSync} from "node:fs";
 import path from "node:path";
-import {fileURLToPath} from "node:url";
 
 import {generateCSSTypings} from "./generator";
 import {install} from "./install";
@@ -10,10 +9,9 @@ export {generateCSSTypings};
 
 export {baseConfig, cssAutoModules, decorators, ssiVariables} from "./vite";
 
-const filePath = fileURLToPath(import.meta.url);
 const callPath = realpathSync(process.argv?.[1] ?? "");
 
-if (filePath === callPath) {
+if (import.meta.filename === callPath) {
     if (process.argv[2] === "cssgen") {
         const rootDir = process.argv[3];
         const regex = process.argv[4] ? new RegExp(process.argv[4]) : undefined;

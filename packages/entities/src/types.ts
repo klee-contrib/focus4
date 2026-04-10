@@ -109,6 +109,7 @@ export type EntityToType<E extends Entity> = {
 };
 
 /** Définition d'une entité. */
+// oxlint-disable-next-line no-empty-interface
 export interface Entity extends Record<
     string,
     FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry | Entity | [Entity]

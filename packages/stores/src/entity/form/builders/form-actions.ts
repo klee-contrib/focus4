@@ -6,7 +6,7 @@ import {FormListNode, FormNode, SourceNodeType} from "../../types";
 
 type LoadData<FN extends FormNode | FormListNode | LocalCollectionStore> = FN extends LocalCollectionStore
     ? FN["list"]
-    : // @ts-ignore
+    : // @ts-expect-error - Impossible de vérifier le type générique.
       SourceNodeType<FN>;
 
 interface FormActionHandlers<
@@ -110,10 +110,10 @@ export class FormActionsBuilder<
             throw new Error("Impossible de spécifier un `create` en même temps qu'un `save`.");
         }
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         this.createService = service;
-        // @ts-ignore
-        return this as any;
+        // @ts-expect-error - Impossible de vérifier le type générique.
+        return this;
     }
 
     /**
@@ -129,9 +129,9 @@ export class FormActionsBuilder<
             throw new Error("Impossible de spécifier un `update` en même temps qu'un `save`.");
         }
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         this.updateService = service;
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         return this;
     }
 
@@ -146,9 +146,9 @@ export class FormActionsBuilder<
             throw new Error("Impossible de spécifier un `save` en même temps qu'un `create` ou un `update`.");
         }
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         this.saveService = service;
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         return this;
     }
 

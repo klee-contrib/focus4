@@ -13,7 +13,7 @@ import {
 /**
  * Crée un HTTPError réel pour les tests sans mocks.
  */
-function createHTTPError(status: number, url: string = "https://example.com/api"): HTTPError {
+function createHTTPError(status: number, url = "https://example.com/api"): HTTPError {
     const response = Response.json(
         {error: "test"},
         {

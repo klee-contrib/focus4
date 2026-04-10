@@ -46,7 +46,7 @@ type DefaultICProps<S extends z.ZodType> = S extends z.ZodBoolean
       ? InputDateProps<S>
       : S extends ZodTypeSingle
         ? InputProps<S>
-        : {};
+        : object;
 type DefaultSCProps<S extends z.ZodType> = S extends ZodTypeSingle
     ? SelectProps<S>
     : S extends ZodTypeMultiple
@@ -56,7 +56,7 @@ type DefaultACProps<S extends z.ZodType> = S extends ZodTypeSingle
     ? AutocompleteSearchProps<S>
     : S extends ZodTypeMultiple
       ? AutocompleteChipsProps<S>
-      : {};
+      : object;
 type FCProps = Omit<FieldOptions<any>, "onChange">;
 
 /**
@@ -66,10 +66,10 @@ type FCProps = Omit<FieldOptions<any>, "onChange">;
  */
 export function domain<
     const S extends z.ZodType = z.ZodUnknown,
-    // @ts-ignore
+    // @ts-expect-error - Problème de vérification du type générique.
     ICProps extends BaseInputProps<S> = DefaultICProps<S>,
     SCProps extends BaseSelectProps<S> = DefaultSCProps<S>,
-    // @ts-ignore
+    // @ts-expect-error - Problème de vérification du type générique.
     ACProps extends BaseAutocompleteProps<S> = DefaultACProps<S>,
     DCProps extends BaseDisplayProps<S> = DisplayProps<S>,
     LCProps extends BaseLabelProps = LabelProps

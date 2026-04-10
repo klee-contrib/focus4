@@ -103,7 +103,7 @@ export function nodeToFormNode<E extends Entity = any>(
                 if (entry === "sourceNode") {
                     continue;
                 }
-                const child: {} = (node as any)[entry];
+                const child: unknown = (node as any)[entry];
                 if (isFormEntityField(child)) {
                     child._dispose?.();
                 } else if (isAnyFormNode(child)) {
@@ -229,7 +229,7 @@ export function nodeToFormNode<E extends Entity = any>(
             if (entry === "sourceNode") {
                 continue;
             }
-            const child: {} = (node as any)[entry];
+            const child: unknown = (node as any)[entry];
             if (isEntityField(child)) {
                 addFormFieldProperties(child as BuildingFormEntityField, node);
             } else if (isAnyStoreNode(child)) {
@@ -304,7 +304,7 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
         }));
     } else {
         const {$field} = field as FormEntityField;
-        // @ts-ignore
+        // @ts-expect-error - Le champ est readonly dans l'API.
         delete field.$field;
         extendObservable(field, {
             get $field() {

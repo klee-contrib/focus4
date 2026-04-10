@@ -39,7 +39,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
 
     private readonly formNode: FormListNode | FormNode;
 
-    // @ts-ignore
+    // @ts-expect-error - On le redéclare pour changer le type, mais on ne peut pas écrire "declare accessor" et c'est une erreur de ne pas le mettre...
     declare protected builder: FormActionsBuilder<FormListNode | FormNode, A, any, any, any>;
 
     /**

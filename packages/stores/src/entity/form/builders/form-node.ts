@@ -69,9 +69,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
         builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormListNodeBuilder<NE>
     ): FormNodeBuilder<E & {[P in FE]: ListEntry<NE>}, E0>;
     add<FE extends string>(name: FE, builder: (b: FormEntryBuilder, node: StoreNode<E>) => any): any {
-        // @ts-ignore
         this.node[name] = builder(new FormEntryBuilder(name), this.node).collect();
-        // @ts-ignore
         return this;
     }
 
@@ -83,7 +81,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
 
         nodeToFormNode(this.node);
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de valider le type générique.
         return this.node;
     }
 
@@ -117,13 +115,13 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
             for (const key of params) {
                 const child = this.node[key];
                 if (isStoreListNode(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de valider le type générique.
                     this.node[key] = new FormListNodeBuilder(child).edit(isEdit).collect();
                 } else if (isStoreNode(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de valider le type générique.
                     this.node[key] = new FormNodeBuilder(child).edit(isEdit).collect();
                 } else if (isEntityField(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de valider le type générique.
                     this.node[key] = new EntityFieldBuilder(child).edit(isEdit).collect();
                 }
             }
@@ -138,7 +136,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      */
     patch<F extends FieldsOf<E>, NFE extends FieldEntry>(
         field: F,
-        // @ts-ignore
+        // @ts-expect-error - Impossible de valider le type générique.
         builder: (b: EntityFieldBuilder<E[F]>, node: StoreNode<E>) => EntityFieldBuilder<NFE>
     ): FormNodeBuilder<E[F] extends NFE ? E : Patch<E, {[_ in F]: NFE}>, E0>;
     /**
@@ -270,7 +268,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
             }
         }
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de valider le type générique.
         return this;
     }
 
@@ -282,7 +280,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
         for (const field of fields) {
             delete this.node[field];
         }
-        // @ts-ignore
+        // @ts-expect-error - Impossible de valider le type générique.
         return this;
     }
 
@@ -296,7 +294,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
                 delete this.node[key as F];
             }
         }
-        // @ts-ignore
+        // @ts-expect-error - Impossible de valider le type générique.
         return this;
     }
 
@@ -330,13 +328,13 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
             for (const key of params) {
                 const child = this.node[key];
                 if (isStoreListNode(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de vérifier le type générique.
                     this.node[key] = new FormListNodeBuilder(child).required(isRequired).collect();
                 } else if (isStoreNode(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de vérifier le type générique.
                     this.node[key] = new FormNodeBuilder(child).required(isRequired).collect();
                 } else if (isEntityField(child)) {
-                    // @ts-ignore
+                    // @ts-expect-error - Impossible de vérifier le type générique.
                     this.node[key] = new EntityFieldBuilder(child)
                         .metadata(isFunction(isRequired) ? () => ({isRequired: isRequired()}) : {isRequired})
                         .collect();
@@ -355,33 +353,33 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
 
 export function initFormNode(source: any): any {
     if (isStoreListNode(source)) {
-        const res = observable.array<{}>([], {deep: false}) as StoreListNode;
+        const res = observable.array<object>([], {deep: false}) as StoreListNode;
 
         res.$form = true;
         res.$required = source.$required ?? true;
 
-        // @ts-ignore
+        // @ts-expect-error - Le champ est readonly dans l'API.
         res.$entity = source.$entity;
         res.load = source.load;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;
         res.setNodes = source.setNodes;
 
-        // @ts-ignore
+        // @ts-expect-error - Le champ est readonly dans l'API.
         res.sourceNode = source;
 
         return res;
     } else if (isStoreNode(source)) {
         const res: typeof source = {} as any;
         for (const key in source) {
-            // @ts-ignore
+            // @ts-expect-error - Le champ est readonly dans l'API.
             res[key] = initFormNode((source as any)[key]);
         }
 
         res.$form = true;
         res.$required = source.$required ?? true;
 
-        // @ts-ignore
+        // @ts-expect-error - Le champ est readonly dans l'API.
         res.sourceNode = source;
 
         return res;

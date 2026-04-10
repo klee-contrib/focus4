@@ -60,11 +60,11 @@ export class LoadRegistration<A extends readonly any[] = never> {
         }
 
         if (!Array.isArray(params)) {
-            // @ts-ignore
+            // @ts-expect-error - Le type générique ne peut pas être validé.
             return [params];
         }
 
-        // @ts-ignore
+        // @ts-expect-error - Le type générique ne peut pas être validé.
         return params;
     }
 

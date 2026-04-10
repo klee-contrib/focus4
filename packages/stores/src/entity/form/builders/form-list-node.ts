@@ -23,7 +23,7 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
 
         nodeToFormNode(this.node);
 
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         return this.node;
     }
 
@@ -49,9 +49,9 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
     items<NE extends Entity>(
         builder: (b: FormNodeBuilder<E, E0>, node: StoreListNode<E>) => FormNodeBuilder<NE, E0>
     ): FormListNodeBuilder<NE, E0> {
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         this.node.$nodeBuilder = node => builder(new FormNodeBuilder(node), this.node).collect();
-        // @ts-ignore
+        // @ts-expect-error - Impossible de vérifier le type générique.
         return this;
     }
 

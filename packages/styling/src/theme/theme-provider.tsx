@@ -7,65 +7,65 @@ import {fromBem} from "./to-bem";
 /** Contient l'ensemble des classes CSS surchargeables (elles le sont toutes), regroupées par composant. */
 export interface FocusCSSContext extends CSSContext {
     // Collections
-    actionBar: {};
-    advancedSearch: {};
-    contextualActions: {};
-    facet: {};
-    facetBox: {};
-    group: {};
-    list: {};
-    listBase: {};
-    searchBar: {};
-    summary: {};
-    table: {};
-    timeline: {};
+    actionBar: object;
+    advancedSearch: object;
+    contextualActions: object;
+    facet: object;
+    facetBox: object;
+    group: object;
+    list: object;
+    listBase: object;
+    searchBar: object;
+    summary: object;
+    table: object;
+    timeline: object;
 
     // Forms
-    booleanRadio: {};
-    display: {};
-    field: {};
-    form: {};
-    inputDate: {};
-    inputFile: {};
-    label: {};
-    select: {};
-    selectCheckbox: {};
-    selectChips: {};
-    selectRadio: {};
+    booleanRadio: object;
+    display: object;
+    field: object;
+    form: object;
+    inputDate: object;
+    inputFile: object;
+    label: object;
+    select: object;
+    selectCheckbox: object;
+    selectChips: object;
+    selectRadio: object;
 
     // Layout
-    dialog: {};
-    filAriane: {};
-    header: {};
-    lateralMenu: {};
-    layout: {};
-    mainMenu: {};
-    overlay: {};
-    panel: {};
-    popin: {};
-    scrollable: {};
-    scrollspy: {};
+    dialog: object;
+    filAriane: object;
+    header: object;
+    lateralMenu: object;
+    layout: object;
+    mainMenu: object;
+    overlay: object;
+    panel: object;
+    popin: object;
+    scrollable: object;
+    scrollspy: object;
 
     // Toolbox
-    autocomplete: {};
-    button: {};
-    calendar: {};
-    checkbox: {};
-    chip: {};
-    dropdown: {};
-    floatingActionButton: {};
-    iconButton: {};
-    menu: {};
-    progressIndicator: {};
-    radio: {};
-    ripple: {};
-    slider: {};
-    snackbar: {};
-    supportingText: {};
-    switch: {};
-    textField: {};
-    tabs: {};
-    tooltip: {};
+    autocomplete: object;
+    button: object;
+    calendar: object;
+    checkbox: object;
+    chip: object;
+    dropdown: object;
+    floatingActionButton: object;
+    iconButton: object;
+    menu: object;
+    progressIndicator: object;
+    radio: object;
+    ripple: object;
+    slider: object;
+    snackbar: object;
+    supportingText: object;
+    switch: object;
+    textField: object;
+    tabs: object;
+    tooltip: object;
 }
 
 /** Props du ThemeProvider. */

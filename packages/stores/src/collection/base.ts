@@ -237,7 +237,7 @@ export abstract class CollectionStore<T extends object = any> {
      * @param groupCode Le code de la valeur de groupe en cours.
      */
     getSearchGroupStore(groupCode: string): CollectionStore<T> {
-        // oxlint-disable-next-line no-this-assignment
+        // oxlint-disable-next-line no-this-assignment no-this-alias
         const self = this;
         return observable(
             {

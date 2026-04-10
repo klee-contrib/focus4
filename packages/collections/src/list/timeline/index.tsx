@@ -64,19 +64,19 @@ export function Timeline<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     baseTheme,
-    // @ts-ignore
+    // @ts-expect-error - Le champ existe conditionnellement dans les props.
     data,
     dateSelector,
     EmptyComponent = DefaultEmptyComponent,
     i18nPrefix = "focus",
-    // @ts-ignore
+    // @ts-expect-error - Le champ existe conditionnellement dans les props.
     isLoading,
     itemKey,
     paginationMode = "single-auto",
     perPage,
     sentinelItemIndex = 5,
     showAllHandler,
-    // @ts-ignore
+    // @ts-expect-error - Le champ existe conditionnellement dans les props.
     store,
     TimelineComponent,
     theme: pTheme

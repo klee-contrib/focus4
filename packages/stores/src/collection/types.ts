@@ -147,7 +147,7 @@ export interface InputFacets {
 }
 
 /** Objet d'entrée pour la recherche. */
-export interface QueryInput<C = {}> {
+export interface QueryInput<C = object> {
     /** Facettes sélectionnées. */
     facets?: InputFacets;
     /** Critère de recherche. */

@@ -9,6 +9,7 @@ export const FormContext = createContext({
 
 declare global {
     /** Options additionnelles du Form. */
+    // oxlint-disable-next-line no-empty-interface
     interface FormProps extends Partial<ActionsFormProps> {}
 }
 

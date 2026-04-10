@@ -72,7 +72,7 @@ export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToFo
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: {};
+        readonly errors: object;
     };
 
     /** Vide l'objet (récursivement). */
@@ -131,7 +131,7 @@ export interface FormListNode<E extends Entity = any, E0 extends Entity = E> ext
         readonly isValid: boolean;
 
         /** Les erreurs des champs du noeud. */
-        readonly errors: {}[];
+        readonly errors: object[];
     };
 
     /** Fonction de modification d'un objet, appelé à la création. */
