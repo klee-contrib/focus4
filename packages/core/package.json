@@ -1,6 +1,6 @@
 {
     "name": "@focus4/core",
-    "version": "12.11.0",
+    "version": "12.11.1",
     "description": "Focus v4, core module",
     "main": "lib/focus4.core.js",
     "type": "module",
@@ -27,7 +27,7 @@
         "mobx": ">= 6.13 < 7"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.11.0",
+        "@focus4/tooling": "12.11.1",
         "jsdom": "29.0.2"
     }
 }

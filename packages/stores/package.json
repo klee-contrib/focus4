@@ -1,6 +1,6 @@
 {
     "name": "@focus4/stores",
-    "version": "12.11.0",
+    "version": "12.11.1",
     "description": "Focus v4, stores module",
     "main": "lib/focus4.stores.js",
     "type": "module",
@@ -15,15 +15,15 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "@focus4/core": "12.11.0",
-        "@focus4/entities": "12.10.1",
+        "@focus4/core": "12.11.1",
+        "@focus4/entities": "12.10.2",
         "@types/luxon": "^3.7.1",
         "es-toolkit": "^1.45.1",
         "luxon": "^3.7.2",
         "tslib": "^2.8.1"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.11.0"
+        "@focus4/tooling": "12.11.1"
     },
     "peerDependencies": {
         "i18next": ">= 26 < 27",
