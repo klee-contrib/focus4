@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Gestion des warnings oxlint/typescript",
-  "packageName": "@focus4/tooling",
-  "email": "damien.frikha@kleegroup.com",
-  "dependentChangeType": "none"
-}

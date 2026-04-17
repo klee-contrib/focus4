@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Listes de référence en dur dans le store de référence",
-  "packageName": "@focus4/stores",
-  "email": "damien.frikha@kleegroup.com",
-  "dependentChangeType": "minor"
-}

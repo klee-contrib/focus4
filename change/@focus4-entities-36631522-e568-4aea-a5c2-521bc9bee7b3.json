@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Gestion des warnings oxlint/typescript",
-  "packageName": "@focus4/entities",
-  "email": "damien.frikha@kleegroup.com",
-  "dependentChangeType": "patch"
-}

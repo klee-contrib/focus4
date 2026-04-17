@@ -1,4 +1,7 @@
 {
     "access": "public",
-    "generateChangelog": false
+    "generateChangelog": false,
+    "gitTags": false,
+    "publish": false,
+    "push": false
 }
