@@ -4,7 +4,6 @@ node_modules
 lib
 metas
 *.css.d.ts
-lerna-debug.log
 test-report.xml
 coverage
 test-report.junit.xml

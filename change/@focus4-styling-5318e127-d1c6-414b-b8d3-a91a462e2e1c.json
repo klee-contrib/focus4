@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "maj deps (majeures Ky et i18next en particulier)",
+  "packageName": "@focus4/styling",
+  "email": "damien.frikha@kleegroup.com",
+  "dependentChangeType": "minor"
+}
