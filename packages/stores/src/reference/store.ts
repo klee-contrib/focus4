@@ -2,7 +2,7 @@ import {extendObservable, observable, when} from "mobx";
 
 import {coreConfig, requestStore} from "@focus4/core";
 
-import {ReferenceDefinition, ReferenceStore} from "./types";
+import {ReferenceDefinition, ReferenceList, ReferenceStore} from "./types";
 import {filter, getLabel} from "./util";
 
 /** Id du suivi de requêtes du ReferenceStore. */
@@ -17,76 +17,92 @@ export const referenceTrackingId = Math.random().toString();
  * @param refConfig Un objet dont les propriétés correspondent aux définitions de toutes les listes de référence souhaitées.
  * @param referenceClearer Un service pour réinitialiser une (ou toutes) les listes de référence sur le serveur.
  */
-export function makeReferenceStore<T extends Record<string, ReferenceDefinition>>(
+export function makeReferenceStore<C extends Record<string, ReferenceDefinition>>(
     referenceLoader: (refName: string) => Promise<object[]>,
-    refConfig: T,
+    refConfig: C,
     referenceClearer?: (refName?: string) => Promise<void>
-): ReferenceStore<T> {
+): ReferenceStore<C> {
     const referenceStore: any = {};
     for (const ref in refConfig) {
-        // On initialise un champ "caché" qui contient la liste de référence, avec une liste vide, ainsi que les clés de valeur et libellé, le résolveur de libellé et la surcharge de filter.
-        referenceStore[`_${ref}`] = observable.array([], {deep: false});
-        referenceStore[`_${ref}`].$valueKey = refConfig[ref].valueKey ?? "code";
-        referenceStore[`_${ref}`].$labelKey = refConfig[ref].labelKey ?? "label";
-        referenceStore[`_${ref}`].getLabel = (value: any) => getLabel(value, referenceStore[`_${ref}`]);
-        referenceStore[`_${ref}`].filter = (callbackFn: any) => filter(referenceStore[`_${ref}`], callbackFn);
-        referenceStore[`_${ref}_trackingIds`] = new Map<string, string[]>();
+        // Si on passe une liste, on garde la liste, sinon on crée une liste observable pour stocker la liste qu'on va charger.
+        const list = (
+            "list" in refConfig[ref] ? refConfig[ref].list : observable.array([], {deep: false})
+        ) as ReferenceList;
 
-        extendObservable(referenceStore, {
-            // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
-            [`_${ref}_cache`]: undefined,
-            // On définit le getter de la liste de référence par une dérivation MobX.
-            get [ref]() {
-                // Si on n'est pas en train de charger et que la donnée n'est pas dans le cache, alors on appelle le service de chargement.
-                if (
-                    !referenceStore[`_${ref}_loading`] &&
-                    !(
-                        referenceStore[`_${ref}_cache`] &&
-                        Date.now() - referenceStore[`_${ref}_cache`] < coreConfig.referenceCacheDuration
-                    )
-                ) {
-                    referenceStore[`_${ref}_loading`] = true;
+        // On renseigne les éléments de la liste de référence sur la liste.
+        list.$valueKey = refConfig[ref].valueKey ?? "code";
+        list.$labelKey = refConfig[ref].labelKey ?? "label";
+        list.getLabel = (value: any) => getLabel(value, list);
+        list.filter = (callbackFn: any) => filter(list, callbackFn);
 
-                    // On effectue l'appel et on met à jour la liste.
-                    requestStore.track(
-                        [referenceTrackingId, ...[...referenceStore[`_${ref}_trackingIds`].values()].flat()],
-                        () => referenceLoader(ref),
-                        refList => {
-                            referenceStore[`_${ref}_cache`] = Date.now();
-                            referenceStore[`_${ref}`].replace(refList);
-                            delete referenceStore[`_${ref}_loading`];
-                        }
-                    );
+        if ("type" in refConfig[ref]) {
+            // Si on renseigne `type`, alors c'est une list qu'il faudra charger automatiquement du serveur.
+            referenceStore[`_${ref}`] = list;
+            referenceStore[getTrackingIdsKey(ref)] = new Map<string, string[]>();
+
+            extendObservable(referenceStore, {
+                // Le timestamp qui sert au cache est stocké dans le store et est observable. Cela permettra de forcer le rechargement en le vidant.
+                [getCacheKey(ref)]: undefined,
+                // On définit le getter de la liste de référence par une dérivation MobX.
+                get [ref]() {
+                    // Si on n'est pas en train de charger et que la donnée n'est pas dans le cache, alors on appelle le service de chargement.
+                    if (
+                        !referenceStore[getLoadingKey(ref)] &&
+                        !(
+                            referenceStore[getCacheKey(ref)] &&
+                            Date.now() - referenceStore[getCacheKey(ref)] < coreConfig.referenceCacheDuration
+                        )
+                    ) {
+                        referenceStore[getLoadingKey(ref)] = true;
+
+                        // On effectue l'appel et on met à jour la liste.
+                        requestStore.track(
+                            [referenceTrackingId, ...[...referenceStore[getTrackingIdsKey(ref)].values()].flat()],
+                            () => referenceLoader(ref),
+                            refList => {
+                                referenceStore[getCacheKey(ref)] = Date.now();
+                                referenceStore[`_${ref}`].replace(refList);
+                                delete referenceStore[getLoadingKey(ref)];
+                            }
+                        );
+                    }
+
+                    // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.
+                    return referenceStore[`_${ref}`];
                 }
-
-                // Dans tous les cas, on renvoie la liste "cachée". Ainsi, sa mise à jour relancera toujours la dérivation.
-                return referenceStore[`_${ref}`];
-            }
-        });
+            });
+        } else {
+            // Sinon, on affecte simplement la liste de référence dans le store.
+            referenceStore[ref] = list;
+        }
     }
 
-    referenceStore.get = async (refName: string & keyof T) => {
+    referenceStore.get = async (refName: string & keyof C) => {
         await when(() => referenceStore[refName].length > 0);
         return referenceStore[refName];
     };
 
-    referenceStore.reload = async (refName?: string & keyof T) => {
+    referenceStore.reload = async (refName?: string & keyof C) => {
         if (refName) {
-            if (referenceClearer) {
-                await referenceClearer(refName);
+            if (getCacheKey(refName) in referenceStore) {
+                if (referenceClearer) {
+                    await referenceClearer(refName);
+                }
+                referenceStore[getCacheKey(refName)] = undefined;
             }
-            referenceStore[`_${refName}_cache`] = undefined;
         } else {
             if (referenceClearer) {
                 await referenceClearer();
             }
             for (const ref in refConfig) {
-                referenceStore[`_${ref}_cache`] = undefined;
+                if (getCacheKey(ref) in referenceStore) {
+                    referenceStore[getCacheKey(ref)] = undefined;
+                }
             }
         }
     };
 
-    referenceStore.track = (trackingIds: string[] | string, ...refNames: (string & keyof T)[]) => {
+    referenceStore.track = (trackingIds: string[] | string, ...refNames: (string & keyof C)[]) => {
         if (!refNames.length) {
             refNames = Object.keys(refConfig);
         }
@@ -95,11 +111,15 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
         }
         const id = Math.random().toString();
         for (const refName of refNames) {
-            referenceStore[`_${refName}_trackingIds`].set(id, trackingIds);
+            if (getTrackingIdsKey(refName) in referenceStore) {
+                referenceStore[getTrackingIdsKey(refName)].set(id, trackingIds);
+            }
         }
         return () => {
             for (const refName of refNames) {
-                referenceStore[`_${refName}_trackingIds`].delete(id);
+                if (getTrackingIdsKey(refName) in referenceStore) {
+                    referenceStore[getTrackingIdsKey(refName)].delete(id);
+                }
             }
         };
     };
@@ -111,4 +131,16 @@ export function makeReferenceStore<T extends Record<string, ReferenceDefinition>
     });
 
     return referenceStore;
+}
+
+function getCacheKey(ref: string) {
+    return `_${ref}_cache`;
+}
+
+function getLoadingKey(ref: string) {
+    return `_${ref}_loading`;
+}
+
+function getTrackingIdsKey(ref: string) {
+    return `_${ref}_trackingIds`;
 }

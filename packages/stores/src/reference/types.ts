@@ -1,12 +1,20 @@
 /** Définition d'un type de référence. */
-export interface ReferenceDefinition<T = any, VK extends keyof T = any, LK extends keyof T = any> {
+export type ReferenceDefinition<T = any, VK extends keyof T = any, LK extends keyof T = any> = {
     /** Propriété représentant le libellé. */
     labelKey: LK;
-    /** Le type de la liste. */
-    type: T;
+
     /** Propriété représentant la valeur. */
     valueKey: VK;
-}
+} & (
+    | {
+          /** Le type de la liste. */
+          type: T;
+      }
+    | {
+          /** La liste. */
+          list: T[];
+      }
+);
 
 /**
  * Liste de référence.
@@ -34,8 +42,12 @@ export interface ReferenceList<T = any, VK extends keyof T = any, LK extends key
 }
 
 /** Mapping de type pour transformer les types d'entrée en liste de ces même types. */
-export type AsList<T extends Record<string, ReferenceDefinition>> = {
-    [P in keyof T]: ReferenceList<T[P]["type"], T[P]["valueKey"], T[P]["labelKey"]>;
+export type AsList<C extends Record<string, ReferenceDefinition>> = {
+    readonly [P in keyof C]: ReferenceList<
+        C[P] extends {type: infer T1} ? T1 : C[P] extends {list: (infer T2)[]} ? T2 : never,
+        C[P]["valueKey"],
+        C[P]["labelKey"]
+    >;
 };
 
 /** Store de référence. */

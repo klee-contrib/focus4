@@ -73,6 +73,28 @@ Ce composant sera initialement rendu 3 fois :
 - La deuxième fois, l'une des deux listes aura été chargée et sera affichée.
 - La troisième fois, l'autre liste aura également été chargée et les deux seront affichées.
 
+### Listes de références côté client
+
+Si votre liste de référence n'a pas besoin d'être chargée depuis le serveur, vous pouvez aussi la stocker dans un store de référence sous le format :
+
+```ts
+const typeDroit = {
+    list: [
+        {code: "ADMIN", libelle: "Administrateur"},
+        {code: "CLASSIC", libelle: "Classique"}
+    ], // Il faut remplacer `type` par `list`, avec les valeurs dedans directement.
+    valueKey: "code",
+    labelKey: "libelle"
+};
+
+const referenceStore = makeReferenceStore(referenceLoader, {
+    typeDroit
+    // autres listes de références...
+});
+```
+
+Naturellement, la liste de référence étant "en dur" dans le store, elle est directement disponible et n'a pas besoin d'être chargée...
+
 ### Autres APIs de `ReferenceStore`
 
 - `referenceStore.isLoading` permet de savoir s'il y a au moins une liste de référence en cours de chargement.
