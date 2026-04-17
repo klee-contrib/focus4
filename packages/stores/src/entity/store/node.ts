@@ -193,7 +193,7 @@ export function replaceNode<E extends Entity>(
                     if (isEntityField(valueEntry)) {
                         item.value = valueEntry.value;
                     } else {
-                        item.value = valueEntry;
+                        item.value = valueEntry ?? undefined;
                     }
                 }
             }
@@ -242,7 +242,7 @@ export function setNode<E extends Entity>(
                             itemEntry.value = itemValue.value;
                         }
                     } else if (isEntityField(itemEntry)) {
-                        itemEntry.value = itemValue;
+                        itemEntry.value = itemValue ?? undefined;
                     }
                 }
             }
