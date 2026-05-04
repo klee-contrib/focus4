@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix formatter i18n si value === undefined",
-    "packageName": "@focus4/forms",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
