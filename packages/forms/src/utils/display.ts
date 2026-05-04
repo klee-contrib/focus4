@@ -36,7 +36,7 @@ export function useDisplay<S extends ZodType>({
 
     const format = useCallback(
         function format(v?: output<SingleZodType<S>>) {
-            return t(typeof formatter === "string" ? formatter : formatter(v), {value: v});
+            return t(typeof formatter === "string" ? formatter : formatter(v), {value: v ?? ""});
         },
         [formatter, t]
     );
