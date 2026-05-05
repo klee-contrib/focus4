@@ -266,6 +266,7 @@ export function TextField({
 
     const handleClick = useCallback(
         function handleClick(e: MouseEvent<HTMLDivElement>) {
+            e.stopPropagation();
             setFocused(true);
             inputNode.current?.focus();
             onClick?.(e);
