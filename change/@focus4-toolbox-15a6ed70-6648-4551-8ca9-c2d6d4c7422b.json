@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Ajout stopPropagation sur click du TextField",
+    "packageName": "@focus4/toolbox",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
