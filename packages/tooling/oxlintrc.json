@@ -55,6 +55,7 @@
         "eslint/no-useless-return": "off",
         "eslint/no-ternary": "off",
         "eslint/no-undefined": "off",
+        "eslint/no-underscore-dangle": "off",
         "eslint/no-unexpected-multiline": "off",
         "eslint/prefer-destructuring": [
             "warn",
@@ -89,6 +90,7 @@
         "oxc/no-rest-spread-properties": "off",
         "oxc/no-this-in-exported-function": "off",
         "react/exhaustive-deps": "off",
+        "react/forbid-component-props": "off",
         "react/hook-use-state": "off",
         "react/jsx-filename-extension": "off",
         "react/jsx-handler-names": "off",
@@ -105,6 +107,7 @@
         "typescript/consistent-indexed-object-style": "off",
         "typescript/consistent-type-imports": "off",
         "typescript/explicit-function-return-type": "off",
+        "typescript/explicit-member-accessibility": "off",
         "typescript/explicit-module-boundary-types": "off",
         "typescript/no-dynamic-delete": "off",
         "typescript/no-empty-object-type": "off",
