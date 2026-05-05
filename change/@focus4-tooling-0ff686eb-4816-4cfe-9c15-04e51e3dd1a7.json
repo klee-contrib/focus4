@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix config oxlint",
-    "packageName": "@focus4/tooling",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "none"
-}

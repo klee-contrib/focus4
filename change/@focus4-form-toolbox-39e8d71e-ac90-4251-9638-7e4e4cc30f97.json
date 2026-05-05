@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Ajout hint sur SelectChips",
-    "packageName": "@focus4/form-toolbox",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
