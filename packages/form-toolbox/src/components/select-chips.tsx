@@ -40,6 +40,8 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
     error?: string;
     /** Permet la sélection de tous les éléments à la fois. */
     hasSelectAll?: boolean;
+    /** Placeholder pour le champ texte. */
+    hint?: string;
     /** Laisse les valeurs sélectionnées dans le Select au lieu de les retirer. */
     keepSelectedValuesInSelect?: boolean;
     /** Préfixe i18n. Par défaut : "focus". */
@@ -94,6 +96,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
     disabled = false,
     error,
     hasSelectAll = false,
+    hint,
     keepSelectedValuesInSelect = false,
     i18nPrefix = "focus",
     icon,
@@ -222,6 +225,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     disabled={disabled as any}
                     error={error}
                     hasUndefined={false}
+                    hint={hint}
                     icon={icon}
                     id={id}
                     LineComponent={LineComponent}
@@ -254,6 +258,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     sizing={sizing}
                     theme={theme}
                     trailing={trailing}
+                    undefinedLabel={hint}
                     values={finalValues}
                 />
             )}
