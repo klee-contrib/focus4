@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix formatter stringFor pour value undefined",
+    "packageName": "@focus4/stores",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

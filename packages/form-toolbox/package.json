@@ -22,8 +22,8 @@
         "@focus4/styling": "12.11.1",
         "@focus4/toolbox": "12.11.1",
         "classnames": "^2.5.1",
-        "es-toolkit": "^1.45.1",
-        "file-type": "22.0.0",
+        "es-toolkit": "^1.46.1",
+        "file-type": "22.0.1",
         "luxon": "^3.7.2",
         "tslib": "^2.8.1"
     },
@@ -37,6 +37,6 @@
     "devDependencies": {
         "@focus4/tooling": "12.11.1",
         "@testing-library/react": "16.3.2",
-        "jsdom": "29.0.2"
+        "jsdom": "29.1.1"
     }
 }
