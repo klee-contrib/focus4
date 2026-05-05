@@ -14,7 +14,7 @@ const callPath = realpathSync(process.argv?.[1] ?? "");
 if (import.meta.filename === callPath) {
     if (process.argv[2] === "cssgen") {
         const rootDir = process.argv[3];
-        const regex = process.argv[4] ? new RegExp(process.argv[4]) : undefined;
+        const regex = process.argv[4] ? new RegExp(process.argv[4], "u") : undefined;
         if (!rootDir) {
             throw new Error("Veuillez fournir un dossier racine pour 'cssgen'");
         }

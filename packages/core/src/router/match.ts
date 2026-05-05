@@ -1,5 +1,5 @@
 function escapeRegExp(string: string) {
-    return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+    return string.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 }
 
 function _compilePattern(pattern: string) {
@@ -9,7 +9,7 @@ function _compilePattern(pattern: string) {
 
     let lastIndex = 0;
     let m;
-    const matcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|\*\*|\*|\(|\)/g;
+    const matcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|\*\*|\*|\(|\)/gu;
     while ((m = matcher.exec(pattern))) {
         if (m.index !== lastIndex) {
             tokens.push(pattern.slice(lastIndex, m.index));
@@ -102,7 +102,7 @@ export function match({pattern, path}: {pattern: string; path: string}): MatchRe
         regexpSource += "$";
     }
 
-    const m = new RegExp(`^${regexpSource}`, "i").exec(path);
+    const m = new RegExp(`^${regexpSource}`, "iu").exec(path);
     if (!m) {
         return null;
     }

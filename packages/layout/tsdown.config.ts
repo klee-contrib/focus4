@@ -5,7 +5,7 @@ import {baseConfig, cssAutoModules, generateCSSTypings} from "@focus4/tooling";
 await generateCSSTypings("src");
 
 export default defineConfig({
-    plugins: [cssAutoModules(/__style__/)],
+    plugins: [cssAutoModules(/__style__/u)],
     entry: "src/focus4.layout.tsx",
     outDir: "lib",
     target: "es2023",

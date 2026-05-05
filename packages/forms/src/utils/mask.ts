@@ -28,9 +28,9 @@ export interface MaskDefinition {
 }
 
 const escapeChar = "\\";
-const digitRegex = /^\d$/;
-const letterRegex = /^[A-Za-z]$/;
-const alphanumericRegex = /^[\dA-Za-z]$/;
+const digitRegex = /^\d$/u;
+const letterRegex = /^[A-Za-z]$/u;
+const alphanumericRegex = /^[\dA-Za-z]$/u;
 const defaultFormatCharacters: Record<string, InputMaskFormatOptions> = {
     "*": {
         validate(char: string) {
@@ -85,7 +85,7 @@ export function useMask({
     }
 
     // KeyPress ne renvoie pas de code de touche sur mobile donc le masque ne fonctionne pas...
-    if (/Android|iPhone|iPad/.test(navigator.userAgent)) {
+    if (/Android|iPhone|iPad/u.test(navigator.userAgent)) {
         sourcePattern = undefined;
     }
 

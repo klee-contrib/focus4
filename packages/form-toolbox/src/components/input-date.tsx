@@ -308,7 +308,7 @@ export function InputDate<S extends z.ZodISODate | z.ZodISODateTime>({
                 error={error}
                 fieldRef={menu.anchor}
                 id={id}
-                mask={{pattern: inputFormat.replaceAll(/\w/g, "1")}}
+                mask={{pattern: inputFormat.replaceAll(/\w/gu, "1")}}
                 name={name}
                 onBlur={onInputBlur}
                 onChange={onInputChange}

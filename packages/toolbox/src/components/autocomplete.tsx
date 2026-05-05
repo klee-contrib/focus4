@@ -214,7 +214,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 case "anywhere":
                     return v.includes(q);
                 case "word":
-                    return new RegExp(`(?:^|\\s)${q}`, "g").test(v);
+                    return new RegExp(`(?:^|\\s)${q}`, "gu").test(v);
                 default:
                     return false;
             }

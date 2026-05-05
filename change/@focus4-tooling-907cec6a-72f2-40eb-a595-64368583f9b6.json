@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix nouveaux warnings",
+    "packageName": "@focus4/tooling",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "none"
+}

@@ -151,7 +151,7 @@ export function SearchBar<T extends object>({
                 // On parcourt les tokens et on cherche pour un token de la forme critere:valeur.
                 // oxlint-disable-next-line no-constant-condition
                 while (1) {
-                    const [crit = "", value = ""] = token?.split(/:(.+)/) || [];
+                    const [crit = "", value = ""] = token?.split(/:(.+)/u) || [];
                     // Si le token est de la bonne forme et que le critère existe, alors on l'enregistre.
                     if (crit && value && (store.criteria as any)[crit] && !this.criteriaList.some(u => u === crit)) {
                         ((store.criteria as any)[crit] as FormEntityField).value = value;
@@ -169,7 +169,7 @@ export function SearchBar<T extends object>({
                 }
 
                 // Et on reconstruit le reste de la query avec ce qu'il reste.
-                store.query = `${tokens.slice(skip).join(" ")}${/\s*$/.exec(currentTarget.value)![0]}`; // La regex sert à garder les espaces en plus à la fin.
+                store.query = `${tokens.slice(skip).join(" ")}${/\s*$/u.exec(currentTarget.value)![0]}`; // La regex sert à garder les espaces en plus à la fin.
             }
         },
 

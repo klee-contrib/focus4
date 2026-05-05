@@ -18,7 +18,7 @@ export const baseConfig = {
                 return `${path.basename(filename).replace(".module.css", "")}_${name}__${createHash("sha1")
                     .update(filename + css)
                     .digest("base64")
-                    .replaceAll(/[+/=]/g, "")
+                    .replaceAll(/[+/=]/gu, "")
                     .slice(0, 5)}`;
             }
         }
@@ -85,7 +85,7 @@ export function ssiVariables(vars: Record<string, string>) {
         name: "ssi-variables",
         transformIndexHtml(html, ctx) {
             if (!ctx.bundle) {
-                return html.replaceAll(/<!--#echo var='(\w+)'-->/g, (_, varName) => vars[varName] ?? "");
+                return html.replaceAll(/<!--#echo var='(\w+)'-->/gu, (_, varName) => vars[varName] ?? "");
             }
 
             return html;

@@ -50,7 +50,7 @@ export function buildQueryString(query: Record<string, boolean | number | string
 
 export function parseSearchString(query: string) {
     return query
-        .replace(/(^\?)/, "")
+        .replace(/(^\?)/u, "")
         .split("&")
         .reduce((obj: {[key: string]: any}, currentPair) => {
             const pair = currentPair.split("=");

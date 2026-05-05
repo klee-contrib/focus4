@@ -123,9 +123,9 @@ export function useInput<const S extends ZodTypeSingle>({
 
                 const invalidCharRegex = new RegExp(
                     `[^\\d${thousands ? `\\${thousands}` : ""}${decimal ? `\\${decimal}` : ""}]`,
-                    "g"
+                    "gu"
                 );
-                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`);
+                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`, "u");
                 const [left, right, nope] = decimal ? v.split(decimal) : [v, undefined, undefined];
 
                 if (
@@ -158,7 +158,7 @@ export function useInput<const S extends ZodTypeSingle>({
                     const ajustedEnd =
                         Math.max(
                             0,
-                            v.slice(0, end).replace(invalidCharRegex, "").replaceAll(new RegExp(thousands, "g"), "")
+                            v.slice(0, end).replace(invalidCharRegex, "").replaceAll(new RegExp(thousands, "gu"), "")
                                 .length +
                                 [...newNumberStringValue!].filter(c => c === "0").length -
                                 [...v].filter(c => c === "0").length
