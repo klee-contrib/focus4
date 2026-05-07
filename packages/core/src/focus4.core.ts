@@ -19,6 +19,8 @@ export {MessageStore, messageStore, UserStore} from "./stores";
 
 export type {HttpMethod, ProblemDetails, Request} from "./network";
 export type {
+    NumberParam,
+    StringParam,
     Param,
     ParamDef,
     QueryParamConfig,
