@@ -9,6 +9,8 @@ import {buildQueryMap, buildQueryString, QueryParamConfig, QueryParams} from "./
 import {Router, RouterConfirmation, RouterConstraintBuilder, UrlPathDescriptor, UrlRouteDescriptor} from "./types";
 
 export {param} from "./param";
+export type {NumberParam, StringParam} from "./param";
+
 export {startHistory};
 
 export type {Param, ParamDef} from "./param";
