@@ -56,7 +56,7 @@ Pour afficher un champ en consultation, il faudra modifier son `isEdit` à `fals
 
 La validation est **portée par chacun des champs** grâce aux **validateurs** définis sur leurs domaines, ainsi que leur **caractère obligatoire**.
 
-Les propriétés calculées **`error`** et **`isValid`** sont ajoutées sur chacun des `field` et contiennent le résultat de la validation du champ. En particulier, `fieldFor`/`selectFor`/`autocompleteFor` récupère directement le résultat de `field.error` pour afficher l'erreur dans les composants du champ.
+Les propriétés calculées **`errors`** et **`isValid`** sont ajoutées sur chacun des `field` et contiennent le résultat de la validation du champ. En particulier, `fieldFor`/`selectFor`/`autocompleteFor` récupère directement le résultat de `field.errors` pour afficher les erreurs dans les composants du champ.
 
 Au niveau des noeuds, on définit également `node.form.isValid` et `node.form.errors`, qui agrègent le résultat de validation des champs et des autres noeuds qu'ils contiennent. Le formulaire est donc valide si et seulement si tous ses champs sont valides.
 
@@ -79,7 +79,7 @@ Cas particuliers :
 
 Ce sont tous des versions "dérivées" de leur objet source, donc toute API qui prend un `StoreNode` pourra aussi prendre un `FormNode` par exemple.
 
-En plus des quatre propriétés `hasChanged`, `isEdit`, `error(s)` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
+En plus des quatre propriétés `hasChanged`, `isEdit`, `errors` et `isValid` vues précédement, `FormNode` et `FormListNode` exposent aussi :
 
 - `isEmpty`, pour savoir si le noeud est vide (en lien avec la condition de validité du noeud). Les champs ajoutés ne sont pas pris en compte.
 - `sourceNode`, une référence vers le noeud source parent du `FormNode`/`FormListNode` (dans le cas d'un store créé à partir d'une définition d'entité, c'est le seul moyen d'y accéder).

@@ -105,6 +105,7 @@
         "react/no-clone-element": "off",
         "react/no-multi-comp": "off",
         "react/no-unescaped-entities": "off",
+        "react/no-unstable-nested-components": "off",
         "react/only-export-components": "off",
         "react/react-in-jsx-scope": "off",
         "react/rules-of-hooks": "off",
