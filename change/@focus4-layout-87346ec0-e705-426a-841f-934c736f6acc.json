@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix traduction message d'action MessageCenter",
-    "packageName": "@focus4/layout",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

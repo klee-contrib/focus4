@@ -1,7 +1,0 @@
-{
-    "type": "minor",
-    "comment": "`formField.errors` avec traduction et concaténation dans `useField`",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "minor"
-}

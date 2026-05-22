@@ -1,7 +1,0 @@
-{
-    "type": "minor",
-    "comment": "Surcharge de `requiredErrorMessage` dans `.metadata()`",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "minor"
-}
