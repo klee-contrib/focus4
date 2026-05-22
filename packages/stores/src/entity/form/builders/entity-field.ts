@@ -51,6 +51,8 @@ export interface Metadata<
     isRequired?: boolean;
     /** Libellé du champ. */
     label?: string;
+    /** Surcharge pour le message d'erreur de champ obligatoire. */
+    requiredErrorMessage?: string;
     /** Configurateur pour le schéma du champ (issu du domaine). */
     schema?: (schema: S) => z.ZodType;
     /**
@@ -77,6 +79,7 @@ export type BuildingFormEntityField<F extends FieldEntry = any> = EntityField<F>
     _domain: Domain;
     _isEdit: boolean | (() => boolean);
     _metadatas: (Metadata | ((metadata?: Metadata) => Metadata))[];
+    $field: {requiredErrorMessage?: string};
 };
 
 export class EntityFieldBuilder<F extends FieldEntry> {
@@ -298,13 +301,15 @@ function mergeMetadata(domain: Domain, targetMetadata: Metadata, newMetadata: Me
         comment = targetMetadata.comment,
         isRequired = targetMetadata.isRequired,
         label = targetMetadata.label,
+        requiredErrorMessage = targetMetadata.requiredErrorMessage,
         ...domainOverrides
     } = newMetadata;
     return [
         {
             comment,
             isRequired,
-            label
+            label,
+            requiredErrorMessage
         },
         {
             ...domain,

@@ -1,13 +1,12 @@
 import {isFunction} from "es-toolkit";
 import {DateTime} from "luxon";
-import z from "zod";
+import {ZodType} from "zod";
 
 import {FieldEntry} from "@focus4/entities";
 
 import {
     DateValidator,
     EmailValidator,
-    EntityField,
     FunctionValidator,
     NumberValidator,
     RegexValidator,
@@ -15,15 +14,18 @@ import {
     Validator
 } from "../types";
 
+import {BuildingFormEntityField} from "./builders";
+
 const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/u;
 
 /** Récupère les erreurs associées au champ. */
-export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodType>>>): string[] {
+export function validateField(entityField: BuildingFormEntityField<FieldEntry<Domain<ZodType>>>): string[] {
     const {
         $field: {
             domain: {schema, validator},
-            isRequired
+            isRequired,
+            requiredErrorMessage = "focus.validation.required"
         },
         value
     } = entityField;
@@ -36,7 +38,7 @@ export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodTy
             (typeof value === "string" && value.trim() === "") ||
             (schema.type === "array" && Array.isArray(value) && value.length === 0))
     ) {
-        return ["focus.validation.required"];
+        return [requiredErrorMessage];
     }
 
     if (value !== undefined && value !== null) {
