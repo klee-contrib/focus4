@@ -110,47 +110,44 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
     const ref = useRef<HTMLDivElement>(null);
     useStickyClip(ref);
 
-    return useObserver(() => {
-        const filteredGroups = store.groups.filter(group => group.totalCount !== 0);
-        return (
-            <div ref={ref} data-focus="results">
-                {filteredGroups.length ? (
-                    <List
-                        key="result-group-list"
-                        data={filteredGroups}
-                        paginationMode={paginationMode}
-                        itemKey={data => data.code}
-                        LineComponent={({data}) => (
-                            <Group
-                                key={data.code}
-                                group={data}
-                                GroupHeader={GroupHeader}
-                                groupOperationList={groupOperationList?.(data)}
-                                hasSelection={hasSelection}
-                                i18nPrefix={i18nPrefix}
-                                ListComponent={ListComponent}
-                                listProps={{...listProps, perPage: groupPageSize}}
-                                openedMap={openedMap}
-                                store={store}
-                                theme={groupTheme}
-                                useGroupActionBars={useGroupActionBars}
-                            />
-                        )}
-                        mode="list"
-                        perPage={groupPageListSize}
-                        sentinelItemIndex={groupSentinelItemIndex}
-                    />
-                ) : (
-                    <ListComponent
-                        key="result-list"
-                        {...(listProps as P)}
-                        {...{hasSelection}}
-                        i18nPrefix={i18nPrefix}
-                        paginationMode={paginationMode}
-                        store={store}
-                    />
-                )}
-            </div>
-        );
-    });
+    return useObserver(() => (
+        <div ref={ref} data-focus="results">
+            {store.groups.length ? (
+                <List
+                    key="result-group-list"
+                    data={store.groups}
+                    paginationMode={paginationMode}
+                    itemKey={data => data.code}
+                    LineComponent={({data}) => (
+                        <Group
+                            key={data.code}
+                            group={data}
+                            GroupHeader={GroupHeader}
+                            groupOperationList={groupOperationList?.(data)}
+                            hasSelection={hasSelection}
+                            i18nPrefix={i18nPrefix}
+                            ListComponent={ListComponent}
+                            listProps={{...listProps, perPage: groupPageSize}}
+                            openedMap={openedMap}
+                            store={store}
+                            theme={groupTheme}
+                            useGroupActionBars={useGroupActionBars}
+                        />
+                    )}
+                    mode="list"
+                    perPage={groupPageListSize}
+                    sentinelItemIndex={groupSentinelItemIndex}
+                />
+            ) : (
+                <ListComponent
+                    key="result-list"
+                    {...(listProps as P)}
+                    {...{hasSelection}}
+                    i18nPrefix={i18nPrefix}
+                    paginationMode={paginationMode}
+                    store={store}
+                />
+            )}
+        </div>
+    ));
 }

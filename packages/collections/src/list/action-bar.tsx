@@ -218,7 +218,7 @@ export function ActionBar<T extends object>({
                     ) : null}
 
                     {/** Bouton de tri. */}
-                    {store.totalCount > 1 && !store.selectedItems.size && !store.groupingKey && orderableColumnList ? (
+                    {store.totalCount > 1 && !store.selectedItems.size && orderableColumnList ? (
                         <div ref={sortMenu.anchor} style={{position: "relative"}}>
                             <Button
                                 icon={

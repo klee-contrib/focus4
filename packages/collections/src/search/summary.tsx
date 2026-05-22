@@ -253,7 +253,7 @@ export function Summary<T extends object>({
                 ) : null}
 
                 {/* Tri. */}
-                {state.currentSort && !hideSort && !groupingKey && totalCount > 1 ? (
+                {state.currentSort && !hideSort && totalCount > 1 ? (
                     <>
                         <span>{t(`${i18nPrefix}.search.summary.sortBy`)}</span>
                         <SearchChip
