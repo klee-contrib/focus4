@@ -1,4 +1,5 @@
 import {isBoolean, isEqual, isFunction} from "es-toolkit";
+import i18next from "i18next";
 import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
 
 import {Entity} from "@focus4/entities";
@@ -321,8 +322,24 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
     }
 
     extendObservable(field, {
-        get error() {
+        get errors() {
             return validateField(field);
+        },
+        get error() {
+            if (!this.errors.length) {
+                return undefined;
+            } else {
+                return this.errors
+                    .map(e =>
+                        i18next.t(e, {
+                            comment: field.$field.comment,
+                            label: field.$field.label,
+                            name: field.$field.name,
+                            interpolation: {skipOnVariables: false}
+                        })
+                    )
+                    .join(", ");
+            }
         },
         get hasChanged() {
             if (field._added || parentNode.form._added) {
@@ -347,7 +364,7 @@ function addFormFieldProperties(field: BuildingFormEntityField, parentNode: Form
             }
         },
         get isValid() {
-            return !this.isEdit || !this.error;
+            return !this.isEdit || !this.errors.length;
         }
     });
 

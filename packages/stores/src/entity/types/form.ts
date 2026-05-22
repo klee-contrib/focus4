@@ -174,8 +174,11 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry> extends Enti
     /** Détermine si le champ a été ajouté dans le formulaire. */
     _added?: boolean;
 
-    /** Erreur de validation du champ (FormNode uniquement). */
+    /** Erreurs de validation du champ, traduites et concaténées en une seule chaîne de caractères. */
     readonly error: string | undefined;
+
+    /** Erreurs de validation brutes du champ. */
+    readonly errors: string[];
 
     /** Précise si le chhamp a fait l'objet d'une modification par rapport au noeud source. */
     readonly hasChanged: boolean;

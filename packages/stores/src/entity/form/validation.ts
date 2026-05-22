@@ -1,5 +1,4 @@
 import {isFunction} from "es-toolkit";
-import i18next from "i18next";
 import {DateTime} from "luxon";
 import z from "zod";
 
@@ -19,8 +18,8 @@ import {
 const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/u;
 
-/** Récupère l'erreur associée au champ. Si la valeur vaut `undefined`, alors il n'y en a pas. */
-export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodType>>>): string | undefined {
+/** Récupère les erreurs associées au champ. */
+export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodType>>>): string[] {
     const {
         $field: {
             domain: {schema, validator},
@@ -28,6 +27,7 @@ export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodTy
         },
         value
     } = entityField;
+
     // On vérifie que le champ n'est pas vide et obligatoire.
     if (
         isRequired &&
@@ -36,73 +36,56 @@ export function validateField(entityField: EntityField<FieldEntry<Domain<z.ZodTy
             (typeof value === "string" && value.trim() === "") ||
             (schema.type === "array" && Array.isArray(value) && value.length === 0))
     ) {
-        return i18next.t("focus.validation.required", {...entityField.$field, interpolation: {skipOnVariables: false}});
+        return ["focus.validation.required"];
     }
 
-    // On applique le validateur du domaine.
     if (value !== undefined && value !== null) {
-        const errors = validate(value, schema, Array.isArray(validator) ? validator : validator ? [validator] : []);
-        if (errors.length) {
-            return errors
-                .map(e =>
-                    i18next.t(e, {
-                        comment: entityField.$field.comment,
-                        label: entityField.$field.label,
-                        name: entityField.$field.name,
-                        interpolation: {skipOnVariables: false}
-                    })
-                )
-                .join(", ");
+        // On applique la validation du schéma.
+        const errors = schema.safeParse(value).error?.issues.map(i => i.message) ?? [];
+
+        // Puis les validateurs legacy.
+        const validators: Validator<any>[] = Array.isArray(validator) ? validator : validator ? [validator] : [];
+        for (const v of validators) {
+            let error: string | false | undefined = false;
+            if (isFunctionValidator(v)) {
+                error = v(value);
+            } else if (isRegexValidator(v) && typeof value === "string") {
+                error = value && !v.regex.test(value) ? (v.errorMessage ?? "focus.validation.regex") : false;
+            } else if (isEmailValidator(v) && typeof value === "string") {
+                error = value && !EMAIL_REGEX.test(value) ? (v.errorMessage ?? "focus.validation.email") : false;
+            } else if (isStringValidator(v)) {
+                const {maxLength, minLength, errorMessage} = v;
+                const text = value?.toString() ?? "";
+                const isMinLength = text.length < (minLength ?? 0);
+                const isMaxLength = maxLength !== undefined && text.length > maxLength;
+                error = isMinLength || isMaxLength ? (errorMessage ?? "focus.validation.string") : undefined;
+            } else if (isDateValidator(v)) {
+                error = !DateTime.fromISO(value as string).isValid
+                    ? (v.errorMessage ?? "focus.validation.date")
+                    : false;
+            } else if (isNumberValidator(v)) {
+                const val = Number(value);
+
+                const {min, max, errorMessage, maxDecimals} = v;
+                const isMin = min !== undefined && val < min;
+                const isMax = max !== undefined && val > max;
+                const isDecimals = maxDecimals !== undefined && (`${val}`.split(".")[1] || "").length > maxDecimals;
+                error =
+                    Number.isNaN(val) || isMin || isMax || isDecimals
+                        ? (errorMessage ?? "focus.validation.number")
+                        : false;
+            }
+
+            if (error) {
+                errors.push(error);
+            }
         }
+
+        return errors;
     }
+
     // Pas d'erreur.
-    return undefined;
-}
-
-/**
- * Valide une propriété avec les validateurs fournis et retourne la liste des erreurs.
- * @param value La valeur à valider.
- * @param validators Les validateurs.
- */
-function validate<T>(value: T, domainSchema: z.ZodType, validators: Validator<T>[]) {
-    const errors = domainSchema.safeParse(value).error?.issues.map(i => i.message) ?? [];
-
-    for (const validator of validators) {
-        let error: string | false | undefined = false;
-        if (isFunctionValidator(validator)) {
-            error = validator(value);
-        } else if (isRegexValidator(validator) && typeof value === "string") {
-            error =
-                value && !validator.regex.test(value) ? (validator.errorMessage ?? "focus.validation.regex") : false;
-        } else if (isEmailValidator(validator) && typeof value === "string") {
-            error = value && !EMAIL_REGEX.test(value) ? (validator.errorMessage ?? "focus.validation.email") : false;
-        } else if (isStringValidator(validator)) {
-            const {maxLength, minLength, errorMessage} = validator;
-            const text = value?.toString() ?? "";
-            const isMinLength = text.length < (minLength ?? 0);
-            const isMaxLength = maxLength !== undefined && text.length > maxLength;
-            error = isMinLength || isMaxLength ? (errorMessage ?? "focus.validation.string") : undefined;
-        } else if (isDateValidator(validator)) {
-            error = !DateTime.fromISO(value as string).isValid
-                ? (validator.errorMessage ?? "focus.validation.date")
-                : false;
-        } else if (isNumberValidator(validator)) {
-            const val = Number(value);
-
-            const {min, max, errorMessage, maxDecimals} = validator;
-            const isMin = min !== undefined && val < min;
-            const isMax = max !== undefined && val > max;
-            const isDecimals = maxDecimals !== undefined && (`${val}`.split(".")[1] || "").length > maxDecimals;
-            error =
-                Number.isNaN(val) || isMin || isMax || isDecimals ? (errorMessage ?? "focus.validation.number") : false;
-        }
-
-        if (error) {
-            errors.push(error);
-        }
-    }
-
-    return errors;
+    return [];
 }
 
 function isFunctionValidator<T>(validator: Validator<T>): validator is FunctionValidator<T> {

@@ -1,6 +1,7 @@
 import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
 import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import {FieldEntry} from "@focus4/entities";
 import {
@@ -142,7 +143,7 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
     );
 
     const {
-        error,
+        errors = [],
         isEdit,
         value,
         $field: {
@@ -171,9 +172,13 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         setHasHadFocus(false);
     }, [isEdit]);
 
+    const {t} = useTranslation();
+
     const baseProps = {
         comment,
-        error: showError ? error : undefined,
+        error: showError
+            ? errors.map(e => t(e, {comment, label, name, interpolation: {skipOnVariables: false}})).join(", ")
+            : undefined,
         label,
         name,
         id,
