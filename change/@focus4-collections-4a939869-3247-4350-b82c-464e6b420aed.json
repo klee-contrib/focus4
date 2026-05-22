@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Recherche : ne masque plus le tri quand on est groupé",
-    "packageName": "@focus4/collections",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
