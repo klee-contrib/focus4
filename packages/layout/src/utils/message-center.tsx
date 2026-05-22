@@ -60,20 +60,23 @@ export function MessageCenter({
         [...(Object.keys(messageTypes) as unknown[]), ...Object.values(messageTypes)]
     );
 
-    return useObserver(() => (
-        <Snackbar
-            action={state.notifications[0]?.message.action}
-            active={state.active}
-            close={close}
-            level={
-                state.notifications[0]?.type === "error" ||
-                state.notifications[0]?.type === "success" ||
-                state.notifications[0]?.type === "warning"
-                    ? state.notifications[0]?.type
-                    : undefined
-            }
-            message={t(state.notifications[0]?.message.label ?? "")}
-            onClose={onClose}
-        />
-    ));
+    return useObserver(() => {
+        const a = state.notifications[0]?.message.action;
+        return (
+            <Snackbar
+                action={a ? {label: t(a.label), onClick: a.onClick} : undefined}
+                active={state.active}
+                close={close}
+                level={
+                    state.notifications[0]?.type === "error" ||
+                    state.notifications[0]?.type === "success" ||
+                    state.notifications[0]?.type === "warning"
+                        ? state.notifications[0]?.type
+                        : undefined
+                }
+                message={t(state.notifications[0]?.message.label ?? "")}
+                onClose={onClose}
+            />
+        );
+    });
 }
