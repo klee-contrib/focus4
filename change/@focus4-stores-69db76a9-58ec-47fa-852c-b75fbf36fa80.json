@@ -1,0 +1,7 @@
+{
+    "type": "minor",
+    "comment": "Surchage de makeReferenceList avec une définition de liste de référence",
+    "packageName": "@focus4/stores",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "minor"
+}

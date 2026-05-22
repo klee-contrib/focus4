@@ -58,6 +58,37 @@ describe("makeReferenceList", () => {
         expect(refList.$valueKey).toBe("code");
         expect(refList.$labelKey).toBe("label");
     });
+
+    test("Crée une liste de référence à partir d'une définition de liste de référence avec type", () => {
+        const definition = {
+            type: {} as {id: number; name: string},
+            valueKey: "id",
+            labelKey: "name"
+        } as const;
+        const refList = makeReferenceList(definition);
+
+        expect(refList).toHaveLength(0);
+        expect(refList.$valueKey).toBe("id");
+        expect(refList.$labelKey).toBe("name");
+    });
+
+    test("Crée une liste de référence à partir d'une définition de liste de référence avec list", () => {
+        const definition = {
+            list: [
+                {id: 1, name: "Un"},
+                {id: 2, name: "Deux"}
+            ],
+            valueKey: "id" as const,
+            labelKey: "name" as const
+        };
+        const refList = makeReferenceList(definition);
+
+        expect(refList).toHaveLength(2);
+        expect(refList).toContainEqual({id: 1, name: "Un"});
+        expect(refList).toContainEqual({id: 2, name: "Deux"});
+        expect(refList.$valueKey).toBe("id");
+        expect(refList.$labelKey).toBe("name");
+    });
 });
 
 describe("emptyReferenceList", () => {

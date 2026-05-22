@@ -1,4 +1,4 @@
-import {ReferenceList} from "./types";
+import {ReferenceDefinition, ReferenceList} from "./types";
 
 /**
  * Construit une liste de référence à partir d'une liste classique.
@@ -7,6 +7,14 @@ import {ReferenceList} from "./types";
  * @param keys Les propriétés à faire correspondre à `valueKey` et `labelKey`, si ce n'est pas `"code"` ou `"label"`.
  */
 export function makeReferenceList<T extends {code: any; label: any}>(list: T[]): ReferenceList<T, "code", "label">;
+/**
+ * Construit une liste de référence à partir d'une définition de liste de référence
+ *
+ * @param definition La définition de la liste.
+ */
+export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
+    definition: ReferenceDefinition<T, VK, LK>
+): ReferenceList<T, VK, LK>;
 export function makeReferenceList<T extends {label: any}, VK extends keyof T>(
     list: T[],
     {valueKey}: {valueKey: VK}
@@ -20,12 +28,12 @@ export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
     {labelKey, valueKey}: {labelKey: LK; valueKey: VK}
 ): ReferenceList<T, VK, LK>;
 export function makeReferenceList<T, VK extends keyof T, LK extends keyof T>(
-    list: T[],
+    list: T[] | ReferenceDefinition<T, VK, LK>,
     {labelKey, valueKey}: {labelKey?: LK; valueKey?: VK} = {}
 ) {
-    const newList = [...list] as ReferenceList<T, VK, LK>;
-    newList.$valueKey = valueKey ?? (list as ReferenceList<T>).$valueKey ?? "code";
-    newList.$labelKey = labelKey ?? (list as ReferenceList<T>).$labelKey ?? "label";
+    const newList = (Array.isArray(list) ? [...list] : "type" in list ? [] : list.list) as ReferenceList<T, VK, LK>;
+    newList.$valueKey = valueKey ?? ("valueKey" in list ? list.valueKey : undefined) ?? ("code" as VK);
+    newList.$labelKey = labelKey ?? ("labelKey" in list ? list.labelKey : undefined) ?? ("label" as LK);
     newList.getLabel = value => getLabel(value, newList);
     newList.filter = callbackFn => filter(newList, callbackFn);
     return newList;
