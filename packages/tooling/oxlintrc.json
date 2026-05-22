@@ -70,6 +70,7 @@
                 }
             }
         ],
+        "eslint/prefer-arrow-callback": "off",
         "eslint/radix": "off",
         "eslint/require-await": "off",
         "eslint/sort-imports": [
@@ -83,6 +84,8 @@
         "eslint/yoda": "off",
         "jsx_a11y/aria-activedescendant-has-tabindex": "off",
         "jsx_a11y/click-events-have-key-events": "off",
+        "jsx_a11y/control-has-associated-label": "off",
+        "jsx_a11y/no-noninteractive-element-interactions": "off",
         "jsx_a11y/no-noninteractive-tabindex": "off",
         "jsx_a11y/no-static-element-interactions": "off",
         "jsx_a11y/prefer-tag-over-role": "off",
