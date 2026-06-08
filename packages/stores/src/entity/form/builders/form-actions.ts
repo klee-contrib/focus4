@@ -40,7 +40,7 @@ export class FormActionsBuilder<
     /** @internal */
     confirmation?: RouterConfirmation;
     /** @internal */
-    message = "focus.detail.saved";
+    message? = "focus.detail.saved";
     /** @internal */
     hasInit = false;
     /** @internal */
@@ -196,10 +196,10 @@ export class FormActionsBuilder<
     }
 
     /**
-     * Surcharge le message de succès à la sauvegarde du formulaire. Si le message est vide, aucun message ne sera affiché.
+     * Surcharge le message de succès à la sauvegarde du formulaire. Si le message est vide ou non renseigné, aucun message ne sera affiché.
      * @param message Le message de succès.
      */
-    successMessage(message: string) {
+    successMessage(message?: string) {
         this.message = message;
         return this;
     }

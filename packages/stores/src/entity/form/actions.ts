@@ -1,5 +1,4 @@
 import {merge} from "es-toolkit";
-import i18next from "i18next";
 import {action, autorun, computed, observable} from "mobx";
 
 import {messageStore, requestStore} from "@focus4/core";
@@ -199,7 +198,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
             );
 
             if (this.builder.message) {
-                messageStore.addSuccessMessage(i18next.t(this.builder.message));
+                messageStore.addSuccessMessage(this.builder.message);
             }
 
             // On ne force plus l'affichage des erreurs une fois la sauvegarde effectuée, puisqu'il n'y a plus.
