@@ -1,5 +1,5 @@
 import type {StorybookConfig} from "@storybook/react-vite";
-import {dirname} from "node:path";
+import path from "node:path";
 import {fileURLToPath} from "node:url";
 import {mergeConfig} from "vite";
 
@@ -26,5 +26,5 @@ export default {
 } satisfies StorybookConfig;
 
 function getAbsolutePath(value: string): any {
-    return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
+    return path.dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
 }

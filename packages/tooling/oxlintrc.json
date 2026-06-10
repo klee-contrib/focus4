@@ -71,6 +71,7 @@
             }
         ],
         "eslint/prefer-arrow-callback": "off",
+        "eslint/prefer-named-capture-group": "off",
         "eslint/radix": "off",
         "eslint/require-await": "off",
         "eslint/sort-imports": [
@@ -114,6 +115,7 @@
         "typescript/explicit-function-return-type": "off",
         "typescript/explicit-member-accessibility": "off",
         "typescript/explicit-module-boundary-types": "off",
+        "typescript/method-signature-style": "off",
         "typescript/no-dynamic-delete": "off",
         "typescript/no-empty-object-type": "off",
         "typescript/no-explicit-any": "off",

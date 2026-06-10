@@ -18,14 +18,14 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "@babel/plugin-proposal-decorators": "7.29.0",
+        "@babel/plugin-proposal-decorators": "7.29.7",
         "@rolldown/plugin-babel": "0.2.3",
         "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-        "@types/node": "^25.9.1",
+        "@types/node": "^25.9.2",
         "@types/postcss-modules-extract-imports": "^3.0.5",
         "@types/postcss-modules-local-by-default": "^4.0.2",
         "@types/postcss-modules-scope": "^3.0.4",
-        "es-toolkit": "^1.46.1",
+        "es-toolkit": "^1.47.0",
         "glob": "^13.0.6",
         "package-json": "^10.0.1",
         "postcss": "^8.5.15",
