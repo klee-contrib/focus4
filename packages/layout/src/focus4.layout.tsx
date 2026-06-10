@@ -28,8 +28,16 @@ export {i18nLayout} from "./translation";
 export {HeaderContext, MessageCenter, OverlayContext, ScrollableContext, ScrollspyContext} from "./utils";
 export {LayoutBase};
 
-export type {HeaderCss, PrimaryAction} from "./header";
-export type {MainMenuCss, MainMenuProps} from "./menu";
+export type {
+    HeaderActionsProps,
+    HeaderContentProps,
+    HeaderCss,
+    HeaderItemProps,
+    HeaderProps,
+    HeaderTopRowProps,
+    PrimaryAction
+} from "./header";
+export type {MainMenuCss, MainMenuItemProps, MainMenuListProps, MainMenuProps} from "./menu";
 export type {
     PanelButtonsProps,
     PanelCss,
@@ -40,12 +48,16 @@ export type {
 } from "./panels";
 export type {
     DialogCss,
+    DialogProps,
     FilArianeCss,
+    FilArianeProps,
     LateralMenuCss,
     LateralMenuProps,
     LayoutCss,
+    LayoutProps,
     OverlayCss,
     PopinCss,
+    PopinProps,
     ScrollableCss,
     ScrollableProps
 } from "./presentation";

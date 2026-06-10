@@ -6,15 +6,15 @@ import {CSSProp, useTheme} from "@focus4/styling";
 import {Overlay} from "../presentation/overlay";
 import {OverlayContext} from "../utils/contexts";
 
-import {MainMenuItem} from "./item";
-import {MainMenuList} from "./list";
+import {MainMenuItem, MainMenuItemProps} from "./item";
+import {MainMenuList, MainMenuListProps} from "./list";
 
 import css from "./__style__/main-menu.css";
 import type {MainMenuCss} from "./__style__/main-menu.css.d.ts";
 
 export {MainMenuItem};
 export const mainMenuCss: MainMenuCss = css;
-export type {MainMenuCss};
+export type {MainMenuCss, MainMenuItemProps, MainMenuListProps};
 
 /** Props du Menu. */
 export interface MainMenuProps {

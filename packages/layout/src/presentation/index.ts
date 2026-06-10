@@ -9,10 +9,10 @@ export {Popin, popinCss} from "./popin";
 export {Scrollable, scrollableCss} from "./scrollable";
 export {useStickyClip} from "./sticky-clip";
 
-export type {DialogCss} from "./dialog";
-export type {FilArianeCss} from "./fil-ariane";
+export type {DialogCss, DialogProps} from "./dialog";
+export type {FilArianeCss, FilArianeProps} from "./fil-ariane";
 export type {LateralMenuCss, LateralMenuProps} from "./lateral-menu";
 export type {LayoutCss, LayoutProps} from "./layout";
 export type {OverlayCss} from "./overlay";
-export type {PopinCss} from "./popin";
+export type {PopinCss, PopinProps} from "./popin";
 export type {ScrollableCss, ScrollableProps} from "./scrollable";

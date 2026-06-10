@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix traduction du message d'erreur de sauvegarde avant l'arrivée dans le messageStore",
+    "packageName": "@focus4/stores",
+    "email": "gilderic.deruette@kleegroup.com",
+    "dependentChangeType": "patch"
+}

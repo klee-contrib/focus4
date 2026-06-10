@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Ajout exports de types de props manquants module layout",
+    "packageName": "@focus4/layout",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
