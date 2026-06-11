@@ -169,12 +169,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                         if (isFormNode(source) && target && typeof target === "object") {
                             for (const key in source) {
                                 const item: any = source[key];
-                                if (key in target) {
-                                    if (isFormEntityField(item)) {
-                                        (target as any)[key] = item.value;
-                                    } else if (isFormNode(item)) {
-                                        updateInitialData(item, (target as any)[key]);
-                                    }
+                                if (isFormEntityField(item) && (key in target || item._added)) {
+                                    (target as any)[key] = item.value;
+                                } else if (isFormNode(item) && (key in target || item.form._added)) {
+                                    updateInitialData(item, (target as any)[key]);
                                 }
                             }
                         }
