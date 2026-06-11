@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix saisie champ input number",
+    "packageName": "@focus4/forms",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
