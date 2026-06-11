@@ -121,11 +121,8 @@ export function useInput<const S extends ZodTypeSingle>({
                 const decimal = sample.find(s => s.type === "decimal")?.value ?? "";
                 const thousands = sample.find(s => s.type === "group")?.value ?? "";
 
-                const invalidCharRegex = new RegExp(
-                    `[^\\d${thousands ? `\\${thousands}` : ""}${decimal ? `\\${decimal}` : ""}]`,
-                    "gu"
-                );
-                const digitDecimalRegex = new RegExp(`[\\d\\${decimal}-]`, "u");
+                const invalidCharRegex = new RegExp(`[^\\d${thousands}${decimal}]`, "gu");
+                const digitDecimalRegex = new RegExp(`[\\d${decimal}-]`, "u");
                 const [left, right, nope] = decimal ? v.split(decimal) : [v, undefined, undefined];
 
                 if (
