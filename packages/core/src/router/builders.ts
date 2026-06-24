@@ -59,7 +59,7 @@ export function buildParamsMap<C>(
 ) {
     if (Array.isArray(config)) {
         const setter = (value: string | undefined) => {
-            const newValue = config[1].type === "number" && value !== undefined ? Number.parseFloat(value) : value;
+            const newValue = config[1].type === "number" && value !== undefined ? +value : value;
             (object as any)[config[0]] = newValue;
             return newValue;
         };

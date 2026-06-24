@@ -22,7 +22,7 @@ export function buildQueryMap<Q extends QueryParamConfig>(query: Q, object: Quer
                 value === undefined
                     ? undefined
                     : query[key] === "number"
-                      ? Number.parseFloat(value)
+                      ? +value
                       : query[key] === "boolean"
                         ? value === "true"
                             ? true

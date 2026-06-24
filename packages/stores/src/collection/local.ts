@@ -259,7 +259,7 @@ function isFacetMatch(facetValue: string, itemValue: any): boolean {
     }
 
     if (typeof itemValue === "number") {
-        return itemValue === (Number.parseFloat(facetValue) || undefined);
+        return itemValue === (+facetValue || undefined);
     }
 
     if (typeof itemValue === "boolean") {

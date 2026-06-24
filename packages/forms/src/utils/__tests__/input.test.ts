@@ -138,7 +138,7 @@ describe("useInput", () => {
             const {result} = renderHook(() =>
                 useInput({
                     schema: z.number(),
-                    value: 123.456_789,
+                    value: 123.456789,
                     maxDecimals: 2,
                     onChange
                 })

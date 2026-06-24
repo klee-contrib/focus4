@@ -21,7 +21,7 @@ export function stringToSchemaOutput<S extends ZodType>(value: string | undefine
     }
 
     if (schema.type === "number" && value) {
-        return Number.parseFloat(value) as output<S>;
+        return +value as output<S>;
     }
 
     if (schema.type === "boolean") {

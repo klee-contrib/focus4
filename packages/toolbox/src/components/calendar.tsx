@@ -17,6 +17,8 @@ import type {CalendarCss} from "./__style__/calendar.css.d.ts";
 export const calendarCss: CalendarCss = css;
 export type {CalendarCss};
 
+type DT = DateTime<true> | DateTime<false>;
+
 export interface CalendarProps {
     /** Classe CSS pour le composant racine. */
     className?: string;
@@ -117,7 +119,7 @@ export function Calendar({
     const [transitionLines, setTransitionLines] = useState<
         {
             line: string;
-            items: DateTime[];
+            items: DT[];
         }[]
     >([]);
 
@@ -520,7 +522,7 @@ function handleValue(value: string | undefined, format: string, language: string
     return DateTime.fromISO(date.toFormat(format)).setLocale(language);
 }
 
-function getLines(displayedMonth: DateTime, view: "days" | "months" | "years", language: string) {
+function getLines(displayedMonth: DT, view: "days" | "months" | "years", language: string) {
     if (view === "days") {
         const w = Object.entries(
             groupBy(
