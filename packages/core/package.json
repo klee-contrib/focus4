@@ -27,7 +27,7 @@
         "mobx": ">= 6.13 < 7"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.11.4",
+        "@focus4/tooling": "12.11.5",
         "jsdom": "29.1.1"
     }
 }

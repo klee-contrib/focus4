@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix valeur par défaut hasLabel",
-    "packageName": "@focus4/forms",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
