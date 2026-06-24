@@ -76,7 +76,7 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     value?: output<S>;
 }
 
-const defaultGetKey = (x: any) => x.key;
+const defaultGetKey = (x: any) => x.key?.toString();
 
 /**
  * Un [`AutocompleteSearch`](/docs/composants-focus4∕form-toolbox-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.

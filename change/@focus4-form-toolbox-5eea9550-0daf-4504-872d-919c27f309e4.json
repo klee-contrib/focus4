@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix defaultGetKey autocompleteSearch/Chips",
+    "packageName": "@focus4/form-toolbox",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

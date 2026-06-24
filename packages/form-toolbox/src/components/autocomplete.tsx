@@ -47,7 +47,7 @@ export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key
     value?: output<S>;
 }
 
-const defaultGetKey = (x: any) => x.key;
+const defaultGetKey = (x: any) => x.key?.toString();
 
 /**
  * Un [`Autocomplete`](/docs/composants-focus4∕toolbox-autocomplete--docs) qui récupère ses suggestions à partir **d'un service de recherche** au lieu d'une liste pré-chargée.
