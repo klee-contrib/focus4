@@ -1,0 +1,272 @@
+import {Meta} from "@storybook/addon-docs/blocks";
+
+<Meta title="Modèle métier/Décrire des spécifications" />
+
+# Décrire des spécifications de formulaire
+
+Toutes les APIs de spécifications sont fortement typées et transforment le type du store de formulaire au fur et à mesure qu'il est spécifié. En revanche, il existe beaucoup de cas concrets où on a besoin de représenter le type exact du formulaire ou d'un de ses composants, ce qui n'est pas toujours immédiat.
+
+## Description d'un `FormNode` patché
+
+```ts
+const entity = useFormNode(utilisateurStore.utilisateur, e =>
+    e
+        .remove("id", "dateCreation", "dateModification")
+        .patch("typeUtilisateurCode", f => f.metadata({SelectComponent: SelectRadio<ZodString>}))
+        .add("nombreUtilisateursMax", f =>
+            f
+                .domain(DO_ENTIER)
+                .metadata({
+                    label: "Nombre maximal d'utilisateurs",
+                    InputComponent: Slider,
+                    inputProps: {labeled: true, ticks: true, max: 20},
+                    schema: s => s.max(20)
+                })
+                .value(8)
+        )
+);
+```
+
+Dans l'exemple précédent rappelé ici, le type de la variable `entity` prend bien en compte ici les trois modifications qu'on a fait qui l'impacte :
+
+- Les 3 champs retirés.
+- Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
+- Le champ `nombreUtilisateursMax` en plus.
+
+Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus complexe qui prend en compte ces modifications. Si
+dans le cas général écrire ce type n'est pas nécessaire, cela peut l'être lorsque vos formulaires deviennent de plus en plus compliqués et que vous voulez le
+diviser en plusieurs composants. Dans ce cas, il va bien falloir écrire ce type dans les `props` d'un sous-composant.
+
+Pour simplifier l'écriture, il existe quelques types dédiés :
+
+### `Patch` (et `PatchedFormNode`/`PatchedFormListNode`)
+
+Le type **`Patch`** prend en premier paramètre le type de l'**entité à patcher** et en deuxième un objet décrivant les propriétés à ajouter ou modifier.
+
+Par exemple :
+
+```ts
+type PatchedUtilisateurEntityType = Patch<
+    UtilisateurEntityType,
+    {
+        nombreUtilisateursMax: FieldEntry<typeof DO_ENTIER>; // Champ ajouté.
+        typeUtilisateurCode: FieldEntry<Domain<ZodString>, TypeUtilisateurCode>; // Champ préexistant modifié.
+        liste: ListEntry<
+            Patch<
+                MySubEntity,
+                {
+                    // Champ ajouté dans `liste` (non existant dans l'exemple précédent...).
+                    nouveauChamp: FieldEntry<typeof DO_ENTIER>;
+                }
+            >
+        >;
+    }
+>;
+```
+
+Vous pouvez ensuite utiliser ce type dans un `FormNode`, en n'oubliant pas de préciser le type original en deuxième paramètre :
+
+```ts
+type PatchedUtilisateurFormNode = FormNode<PatchedUtilisateurEntityType, UtilisateurEntityType>;
+
+// Vous pouvez utiliser `PatchedFormNode` directement si vous n'avez pas besoin du type ailleurs que pour écrire le `FormNode`
+type PatchedUtilisateurFormNode = PatchedFormNode<
+    UtilisateurEntityType,
+    {
+        /* Même définition que précédemment. */
+    }
+>;
+
+// `PatchedFormListNode` est bien évidemment également disponible pour `FormListNode`.
+
+// N'hésitez pas à utiliser le type pour typer explicitement le retour de `useFormNode`, afin d'être sûr qu'il est correct
+const entity: PatchedUtilisateurFormNode = useFormNode(utilisateurStore.utilisateur, e => /* ... */);
+// L'affectation sera en erreur si le type de correspond pas, donc pas de crainte à avoir là dessus :)
+```
+
+`Patch`, `PatchedFormNode` et `PatchedFormListNode` peuvent également prendre un 3ème paramètre optionnel pour lister les champs qui ont été retirés du
+noeud avec `remove()` et `removeAllBut()` :
+
+```ts
+type UtilisateurWithoutNameEntity = Patch<UtilisateurEntity, {}, "nom" | "prenom">;
+```
+
+### Description d'un champ (et comment le patcher avec `PatchInput`/`PatchSelect`...)
+
+Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin. Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
+
+Les différentes possibilités (par ordre de précision croissante) sont :
+
+- `FieldEntry` => N'importe quel champ
+- `FieldEntry<Domain<ZodString>>` => Un champ avec un domaine de schéma `ZodString`.
+- `FieldEntry<Domain<ZodString>, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
+- `FieldEntry<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
+- `FieldEntry<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
+- `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
+
+Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
+
+Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<ZodString, TypeUtilisateurCode>` dans le `Patch` afin qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que **avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à `selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
+
+Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`, `PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
+
+```ts
+// Par conséquent, la manière la plus précise de définir le type du champ `typeUtilisateurCode` patché serait ce type-là :
+type PatchedTypeUtilisateurCode = PatchSelect<
+    UtilisateurEntityType["typeUtilisateurCode"],
+    SelectRadioProps<ZodString>
+>;
+
+// Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
+type NouveauChamp = PatchAutocomplete<FieldEntry<typeof DO_CODE>, MyCustomAutocompleteProps>;
+```
+
+## Factoriser des spécifications
+
+Au fur et à mesure que votre application et votre nombre de formulaire grandit, vous allez sûrement devoir répéter les mêmes spécifications de formulaire à plusieurs endroits. Naturellement, vous allez vouloir les factoriser pour éviter de recopier le même code partout.
+
+### Factoriser un seul champ
+
+Prenons une règle courante de vérification de date :
+
+```ts
+.patch("dateDebut", f =>
+    f.metadata({
+        schema: s =>
+            s.refine(
+                value => DateTime.fromISO(value).diffNow("day").days > -1,
+                "La date ne peut pas être dans le passé"
+            )
+    })
+)
+```
+
+Vous pouvez ici simplement extraire la fonction de configuration du champ `dateDebut` :
+
+```ts
+function patchDateFuture(f: EntityFieldBuilder<FieldEntry<Domain<ZodISODate>>>) {
+    // Vous pouvez aussi utiliser `FieldEntry<typeof DO_DATE>` si vous voulez faire plus simple, mais ce type-là est plus
+    // précis et pourrait ne pas être compatible si vous avez patché un composant de saisie par exemple.
+    return f.metadata({
+        schema: s =>
+            s.refine(
+                value => DateTime.fromISO(value).diffNow("day").days > -1,
+                "La date ne peut pas être dans le passé"
+            )
+    });
+}
+
+/* ... */
+
+.patch("dateDebut", patchDateFuture);
+```
+
+### Factoriser un sous-noeud
+
+De la même façon que précédemment, pour un sous-objet contenant une adresse avec des spécifications identiques pour tous les objets contenant des adresses :
+
+```ts
+.patch("adresse", f => f
+    .edit(
+        n => n.libelleComplet.value === undefined && n.id.value === undefined,
+        "numeroEtVoie",
+        "codePostal",
+        "ville",
+        "paysCode"
+    )
+    .edit(n => n.id.value === undefined, "lieuDit", "cedex")
+    .patch("paysCode", (h, n) =>
+        h.value("FR").metadata(() => ({isRequired: !!n.codePostal.value && !!n.ville.value}))
+    )
+)
+```
+
+On peut l'extraire dans une fonction dédiée :
+
+```ts
+function patchAdresse(f: FormNodeBuilder<AdresseEntityType>) {
+    return f
+        .edit(
+            n => n.libelleComplet.value === undefined && n.id.value === undefined,
+            "numeroEtVoie",
+            "codePostal",
+            "ville",
+            "paysCode"
+        )
+        .edit(n => n.id.value === undefined, "lieuDit", "cedex")
+        .patch("paysCode", (h, n) =>
+            h.value("FR").metadata(() => ({isRequired: !!n.codePostal.value && !!n.ville.value}))
+        );
+}
+
+/* ... */
+
+.patch("adresse", patchAdresse);
+```
+
+### Factoriser un ensemble de champs
+
+Si vous avez plusieurs entités avec une date de création et de modification et que vous voulez appliquer les mêmes règles partout :
+
+```ts
+.patch("dateCreation", f => f.metadata({requiredErrorMessage: "La date de création est obligatoire"}))
+.patch("dateModification", f => f.metadata({InputComponent: Input<ZodISODateTime>}))
+.add("ecart", (f, n) =>
+    f
+        .domain(DO_ENTIER)
+        .value(
+            () =>
+                DateTime.fromISO(n.dateModification.value!).diff(
+                    DateTime.fromISO(n.dateCreation.value!),
+                    "seconds"
+                ).seconds
+        )
+)
+```
+
+Vous allez vouloir créer une méthode `patchDates` que vous allez appeler de la façon suivante :
+
+```ts
+useFormNode(myStore, f => patchDates(f).patch(/*... */)); // Avec le reste de la spécification derrière.
+```
+
+Malheureusement, **ce n'est pas du tout aussi facile à écrire proprement**, en gardant les bons types des formulaires à tout moment. En particulier, on sera obligés de créer une méthode générique du type de l'entité, mais les appels de `patch` ne fonctionnent pas sur les types génériques...
+
+La solution qui fonctionne pour faire ça consiste à expliciter tous les types et de faire des assertions au début et à la fin. Celà ressemble à :
+
+```ts
+// On définit le type d'entité minimal pour notre méthode.
+type BaseDateEntity = {
+    dateCreation: FieldEntry<typeof DO_DATE_HEURE>;
+    dateModification: FieldEntry<typeof DO_DATE_HEURE>;
+};
+
+// On définit le type d'entité qui contient le champ qu'on va ajouter.
+type EcartEntity = {ecart: FieldEntry<typeof DO_ENTIER>};
+
+// Parce qu'on modifie le type du champ `dateModification`, on aura aussi besoin d'expliciter son type...
+type PatchedDateModification = PatchInput<BaseDateEntity["dateCreation"], InputProps<ZodISODateTime>>;
+
+// La fonction prend en entrée un FormNodeBuilder d'un type d'entité générique qui étend BaseDateEntity.
+function patchDates<E extends BaseDateEntity, E0 extends BaseDateEntity>(builder: FormNodeBuilder<E, E0>) {
+    return (builder as FormNodeBuilder<BaseDateEntity, E0>) // On doit faire une assertion de type ici pour avoir le type de base dans le builder.
+        .patch("dateCreation", f => f.metadata({requiredErrorMessage: "La date de création est obligatoire"}))
+        .patch("dateModification", f => f.metadata({InputComponent: Input<ZodISODateTime>}))
+        .add("ecart", (f, n) =>
+            f
+                .domain(DO_ENTIER)
+                .value(
+                    () =>
+                        DateTime.fromISO(n.dateModification.value!).diff(
+                            DateTime.fromISO(n.dateCreation.value!),
+                            "seconds"
+                        ).seconds
+                )
+        ) as FormNodeBuilder<
+        Omit<E, "dateModification"> & {dateModification: PatchedDateModification} & EcartEntity,
+        E0
+    >; // Et on refait une assertion à la fin pour retrouver le vrai type final, sinon on n'aurait plus les autres champs de l'entité dans le reste du formulaire...
+}
+```
+
+De manière générale, si vous pouvez éviter d'avoir à faire ce genre de chose et que vous pouvez extraire vos groupes de champs dans des sous-objets (comme le cas précédent de l'adresse), ce sera beaucoup plus simple à gérer.

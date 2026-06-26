@@ -7,6 +7,7 @@ export {
 } from "./collection";
 export {
     cloneField,
+    EntityFieldBuilder,
     FormActions,
     FormActionsBuilder,
     FormEntryBuilder,

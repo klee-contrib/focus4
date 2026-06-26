@@ -1,4 +1,11 @@
-export {FormActions, FormActionsBuilder, FormEntryBuilder, FormListNodeBuilder, FormNodeBuilder} from "./form";
+export {
+    EntityFieldBuilder,
+    FormActions,
+    FormActionsBuilder,
+    FormEntryBuilder,
+    FormListNodeBuilder,
+    FormNodeBuilder
+} from "./form";
 export {LoadRegistration, makeStoreNode, NodeLoadBuilder} from "./store";
 export {
     isAnyFormNode,

@@ -1,8 +1,8 @@
 import {Meta} from "@storybook/addon-docs/blocks";
 
-<Meta title="Modèle métier/Personnalisation" />
+<Meta title="Modèle métier/Spécifications de formulaire" />
 
-# Personnalisation de formulaire
+# Spécifications de formulaire
 
 Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
 
@@ -159,7 +159,7 @@ Idem `FormNodeBuilder`
 
 La fonction `items` permet de modifier les items de la liste (qui sont, pour rappel, des `FormNode`). Elle prend comme unique paramètre `objectBuilder`, pour préciser la configuration. Comme toujours, cette fonction est donc appelée avec un `FormNodeBuilder` ainsi que le `FormListNode` courant.
 
-## Exemple de personnalisation fixe
+## Exemple de spécifications fixes
 
 ```ts
 const entity = useFormNode(utilisateurStore.utilisateur, e =>
@@ -186,103 +186,7 @@ const entity = useFormNode(utilisateurStore.utilisateur, e =>
 );
 ```
 
-## Description d'un `FormNode` patché
-
-Le type de la variable `entity` prend bien en compte ici les trois modifications qu'on a fait qui l'impacte :
-
-- Les 3 champs retirés.
-- Le type du `SelectComponent` de la propriété `typeUtilisateurCode`.
-- Le champ `nombreUtilisateursMax` en plus.
-
-Par conséquent, son type n'est pas simplement `FormNode<UtilisateurReadEntity>`, mais un type plus complexe qui prend en compte ces modifications. Si
-dans le cas général écrire ce type n'est pas nécessaire, cela peut l'être lorsque vos formulaires deviennent de plus en plus compliqués et que vous voulez le
-diviser en plusieurs composants. Dans ce cas, il va bien falloir écrire ce type dans les `props` d'un sous-composant.
-
-Pour simplifier l'écriture, il existe quelques types dédiés :
-
-### `Patch` (et `PatchedFormNode`/`PatchedFormListNode`)
-
-Le type **`Patch`** prend en premier paramètre le type de l'**entité à patcher** et en deuxième un objet décrivant les propriétés à ajouter ou modifier.
-
-Par exemple :
-
-```ts
-type PatchedUtilisateurEntityType = Patch<
-    UtilisateurEntityType,
-    {
-        nombreUtilisateursMax: FieldEntry<typeof DO_ENTIER>; // Champ ajouté.
-        typeUtilisateurCode: FieldEntry<Domain<ZodString>, TypeUtilisateurCode>; // Champ préexistant modifié.
-        liste: ListEntry<
-            Patch<
-                MySubEntity,
-                {
-                    // Champ ajouté dans `liste` (non existant dans l'exemple précédent...).
-                    nouveauChamp: FieldEntry<typeof DO_ENTIER>;
-                }
-            >
-        >;
-    }
->;
-```
-
-Vous pouvez ensuite utiliser ce type dans un `FormNode`, en n'oubliant pas de préciser le type original en deuxième paramètre :
-
-```ts
-type PatchedUtilisateurFormNode = FormNode<PatchedUtilisateurEntityType, UtilisateurEntityType>;
-
-// Vous pouvez utiliser `PatchedFormNode` directement si vous n'avez pas besoin du type ailleurs que pour écrire le `FormNode`
-type PatchedUtilisateurFormNode = PatchedFormNode<
-    UtilisateurEntityType,
-    {
-        /* Même définition que précédemment. */
-    }
->;
-
-// `PatchedFormListNode` est bien évidemment également disponible pour `FormListNode`.
-
-// N'hésitez pas à utiliser le type pour typer explicitement le retour de `useFormNode`, afin d'être sûr qu'il est correct
-const entity: PatchedUtilisateurFormNode = useFormNode(utilisateurStore.utilisateur, e => /* ... */);
-// L'affectation sera en erreur si le type de correspond pas, donc pas de crainte à avoir là dessus :)
-```
-
-`Patch`, `PatchedFormNode` et `PatchedFormListNode` peuvent également prendre un 3ème paramètre optionnel pour lister les champs qui ont été retirés du
-noeud avec `remove()` et `removeAllBut()` :
-
-```ts
-type UtilisateurWithoutNameEntity = Patch<UtilisateurEntity, {}, "nom" | "prenom">;
-```
-
-### Description d'un champ (et comment le patcher avec `PatchInput`/`PatchSelect`...)
-
-Lorsque vous décrivez un champ (que ça soit dans un `Patch` ou de manière générale), vous avez le choix du niveau de précision dont vous avez besoin. Idéalement, vous êtes le plus précis possible, mais si vos implémentations n'utilisent pas cette précision vous n'êtes pas obligés d'aller jusqu'au bout.
-
-Les différentes possibilités (par ordre de précision croissante) sont :
-
-- `FieldEntry` => N'importe quel champ
-- `FieldEntry<Domain<ZodString>>` => Un champ avec un domaine de schéma `ZodString`.
-- `FieldEntry<Domain<ZodString>, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
-- `FieldEntry<typeof DO_CODE_10>` => Un champ de domaine `DO_CODE_10`
-- `FieldEntry<typeof DO_CODE_10, TypeUtilisateurCode>` => Le même champ mais avec un type `string` plus précis.
-- `UtilisateurEntityType["typeUtilisateurCode"]` => Le champ `typeUtilisateurCode` de l'entité `UtilisateurEntityType`.
-
-Vous pouvez toujours **baisser la précision du type de champ** au besoin, en particulier dans un `Patch` où vous avez modifié un composant de saisie mais que vous n'avez pas besoin du détail dans son utilisation.
-
-Dans l'exemple précédent, le type de `typeUtilisateurCode` a été remplacé par `FieldEntry<ZodString, TypeUtilisateurCode>` dans le `Patch` afin qu'il reste compatible avec le type modifié dans le `patch` du `useFormNode` par la modification du `SelectComponent`. Attention néanmoins au fait que **avec cette définition là, le type du `SelectComponent` a été remplacé par `any`**, et que donc le type de `selectProps` ne sera pas vérifié dans l'appel à `selectFor`. La plupart du temps ce n'est pas très gênant donc ça peut rester un compromis acceptable.
-
-Si vous voulez matérialiser correctement un changement de type de composant sur un champ, les types `PatchInput`, `PatchSelect`, `PatchAutocomplete`, `PatchDisplay` et `PatchLabel` sont disponibles. Ils s'utilisent par dessus le type du champ avec le type des props du composant en question.
-
-```ts
-// Par conséquent, la manière la plus précise de définir le type du champ `typeUtilisateurCode` patché serait ce type-là :
-type PatchedTypeUtilisateurCode = PatchSelect<
-    UtilisateurEntityType["typeUtilisateurCode"],
-    SelectRadioProps<ZodString>
->;
-
-// Mais vous pouvez le combiner avec un champ défini avec un domaine par exemple :
-type NouveauChamp = PatchAutocomplete<FieldEntry<typeof DO_CODE>, MyCustomAutocompleteProps>;
-```
-
-## Personnalisation dynamique
+## Spécifications dynamiques
 
 L'ensemble de ces personnalisation peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autre état observable externe (et **observable uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en particulier).
 
