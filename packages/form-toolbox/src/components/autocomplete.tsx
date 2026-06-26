@@ -43,6 +43,8 @@ export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key
     searchOnEmptyQuery?: boolean;
     /** Rappelle la recherche quand le `querySearcher` change (nécessite un `querySearcher` stable). */
     searchOnQuerySearcherChange?: boolean;
+    /** Id de suivi personnalisé pour les requêtes de chargement. */
+    trackingId?: string;
     /** Valeur. */
     value?: output<S>;
 }
@@ -88,6 +90,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
     searchOnQuerySearcherChange = false,
     supportingText,
     showSupportingText = "always",
+    trackingId,
     value,
     ...props
 }: AutocompleteSearchProps<S, TSource>) {
@@ -97,13 +100,13 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
     const [query, setQuery] = useState(pQuery);
     useEffect(() => setQuery(pQuery), [pQuery]);
 
-    const trackingId = useId();
+    const trackingIds = [useId(), ...(trackingId ? [trackingId] : [])];
     const [values, setValues] = useState<TSource[]>([]);
 
     useEffect(() => {
-        if ((!!value || value === 0) && (!!keyResolver || !!pQuery)) {
+        if (value !== undefined && (!!keyResolver || !!pQuery)) {
             requestStore.track(
-                trackingId,
+                trackingIds,
                 () =>
                     keyResolver
                         ? keyResolver(value)
@@ -113,10 +116,12 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
                 async label => {
                     setQuery(label ?? `${value}`);
                     if (!values.some(v => getKey(v) === value) && label && querySearcher) {
-                        requestStore.track(trackingId, () => querySearcher(label), setValues);
+                        requestStore.track(trackingIds, () => querySearcher(label), setValues);
                     }
                 }
             );
+        } else if (value === undefined && !pQuery) {
+            setQuery("");
         }
     }, [value]);
 
@@ -129,7 +134,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
                     abortController.current = new AbortController();
                     const {signal} = abortController.current;
 
-                    setValues(await requestStore.track(trackingId, () => querySearcher(newQuery.trim(), {signal})));
+                    setValues(await requestStore.track(trackingIds, () => querySearcher(newQuery.trim(), {signal})));
 
                     abortController.current = undefined;
                     // oxlint-disable-next-line no-shadow
@@ -181,7 +186,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
             getKey={getKey}
             getLabel={finalGetLabel}
             label={undefined}
-            loading={requestStore.isLoading(trackingId)}
+            loading={requestStore.isLoading(trackingIds[0])}
             noSuggestionsOnEmptyQuery={!searchOnEmptyQuery}
             onChange={handleChange}
             onFocus={handleFocus}

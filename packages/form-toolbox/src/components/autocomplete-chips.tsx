@@ -70,6 +70,8 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     trailing?: TrailingIcon | TrailingIcon[];
     /** CSS. */
     theme?: CSSProp<AutocompleteCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
+    /** Id de suivi personnalisé pour les requêtes de chargement. */
+    trackingId?: string;
     /** Empêche la suppression des valeurs correspondants à ce filtre. */
     undeletable?: (value: output<SingleZodType<S>>) => boolean;
     /** Valeur. */
@@ -104,6 +106,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
     searchOnEmptyQuery = false,
     showSupportingText = "always",
     theme: pTheme,
+    trackingId,
     trailing,
     undeletable,
     value
@@ -182,6 +185,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                 searchOnEmptyQuery={searchOnEmptyQuery}
                 showSupportingText="never"
                 theme={theme}
+                trackingId={trackingId}
                 trailing={[
                     {
                         icon: {i18nKey: `${i18nPrefix}.icons.select.unselectAll`},

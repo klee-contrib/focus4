@@ -24,6 +24,7 @@ export const Showcase: StoryObj<typeof AutocompleteSearch<z.ZodString>> = {
                 querySearcher={searchAdresse}
                 supportingText={value ? `Code sélectionné : ${value}` : undefined}
                 schema={z.string()}
+                trailing={[{icon: "clear", onClick: () => setValue(undefined)}]}
                 value={value}
             />
         );
