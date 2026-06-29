@@ -72,13 +72,13 @@ export function makeStoreNode<E extends Entity>(
                     node.$required = entry.isRequired ?? true;
                     return node;
                 }
-                case undefined: {
+                case "field":
+                    return extendObservable({$field: entry}, {value: undefined}, {value: observable.ref});
+                default: {
                     const node = makeStoreNode(e as Entity);
                     node.$required = true;
                     return node;
                 }
-                default:
-                    return extendObservable({$field: entry}, {value: undefined}, {value: observable.ref});
             }
         }),
         clear: clearNode,
