@@ -12,10 +12,14 @@ export {
 
 export type {
     Entity,
+    EntryToEntity,
     EntityToType,
     FieldEntry,
+    FieldsOf,
     ListEntry,
+    ListsOf,
     ObjectEntry,
+    ObjectsOf,
     RecursiveListEntry,
     SingleZodType,
     ZodTypeMultiple,

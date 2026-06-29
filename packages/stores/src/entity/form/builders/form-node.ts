@@ -1,7 +1,16 @@
 import {intersection, isFunction} from "es-toolkit";
 import {extendObservable, observable} from "mobx";
 
-import {Entity, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {
+    Entity,
+    EntryToEntity,
+    FieldEntry,
+    FieldsOf,
+    ListEntry,
+    ListsOf,
+    ObjectEntry,
+    ObjectsOf
+} from "@focus4/entities";
 
 import {FormNode, isEntityField, isStoreListNode, isStoreNode, Patch, StoreListNode, StoreNode} from "../../types";
 import {nodeToFormNode} from "../node";
@@ -9,19 +18,6 @@ import {nodeToFormNode} from "../node";
 import {EntityFieldBuilder} from "./entity-field";
 import {FormEntryBuilder} from "./form-entry";
 import {FormListNodeBuilder} from "./form-list-node";
-
-type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
-type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
-type ListsOf<E extends Entity> = {[P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never}[keyof E];
-
-type EntryToEntity<E> =
-    E extends ObjectEntry<infer E1>
-        ? E1
-        : E extends ListEntry<infer E2>
-          ? E2
-          : E extends RecursiveListEntry
-            ? E
-            : never;
 
 const reservedKeys = [
     "clear",

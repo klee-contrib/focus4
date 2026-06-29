@@ -60,7 +60,11 @@ export function baseI18nextConfig(
 
 /** Enregistre les formatters i18next pour `boolean`, `date` et `datetime`, utilisés par défaut pour les domaines de ces schémas-là. */
 export function addValueFormatters(i18next: i18n) {
-    i18next.services.formatter?.add("boolean", value => (value !== undefined ? i18next.t(`focus.bool.${value}`) : ""));
+    i18next.services.formatter?.add("boolean", value =>
+        value === true || value === false || value === "true" || value === "false"
+            ? i18next.t(`focus.bool.${value}`)
+            : ""
+    );
     i18next.services.formatter?.add("date", (value, lng) =>
         value ? DateTime.fromISO(value).setLocale(lng!).toLocaleString(DateTime.DATE_SHORT) : ""
     );

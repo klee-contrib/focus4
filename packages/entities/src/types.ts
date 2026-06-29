@@ -114,3 +114,24 @@ export interface Entity extends Record<
     string,
     FieldEntry | ObjectEntry | ListEntry | RecursiveListEntry | Entity | [Entity]
 > {}
+
+/** Récupère le nom des propriétés d'une entité qui sont des champs. */
+export type FieldsOf<E extends Entity> = {[P in keyof E]: E[P] extends FieldEntry ? P : never}[keyof E];
+
+/** Récupère le nom des propriétés d'une entité qui sont des objets. */
+export type ObjectsOf<E extends Entity> = {[P in keyof E]: E[P] extends ObjectEntry ? P : never}[keyof E];
+
+/** Récupère le nom des propriétés d'une entité qui sont des listes. */
+export type ListsOf<E extends Entity> = {
+    [P in keyof E]: E[P] extends ListEntry | RecursiveListEntry ? P : never;
+}[keyof E];
+
+/** Récupère l'entité correspondant à une entrée d'entité. */
+export type EntryToEntity<E> =
+    E extends ObjectEntry<infer E1>
+        ? E1
+        : E extends ListEntry<infer E2>
+          ? E2
+          : E extends RecursiveListEntry
+            ? E
+            : never;
