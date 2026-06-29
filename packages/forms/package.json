@@ -1,6 +1,6 @@
 {
     "name": "@focus4/forms",
-    "version": "12.12.4",
+    "version": "12.12.5",
     "description": "Focus v4, forms module",
     "main": "lib/focus4.forms.js",
     "type": "module",
@@ -15,8 +15,8 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "@focus4/entities": "12.10.2",
-        "@focus4/stores": "12.12.3",
+        "@focus4/entities": "12.10.3",
+        "@focus4/stores": "12.12.4",
         "es-toolkit": "^1.49.0",
         "intl-number-parser": "^1.0.6",
         "tslib": "^2.8.1"

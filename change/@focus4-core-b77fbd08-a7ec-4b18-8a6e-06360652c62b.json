@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix valueFormatter booleen",
-    "packageName": "@focus4/core",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

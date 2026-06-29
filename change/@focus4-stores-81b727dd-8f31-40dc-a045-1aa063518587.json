@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "ajout types utilitaires dans entities",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

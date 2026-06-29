@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "12.12.3",
+    "version": "12.12.4",
     "description": "Focus v4, legacy module",
     "main": "lib/focus4.legacy.js",
     "type": "module",
@@ -15,8 +15,8 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "@focus4/entities": "12.10.2",
-        "@focus4/stores": "12.12.3",
+        "@focus4/entities": "12.10.3",
+        "@focus4/stores": "12.12.4",
         "es-toolkit": "^1.49.0"
     },
     "peerDependencies": {
