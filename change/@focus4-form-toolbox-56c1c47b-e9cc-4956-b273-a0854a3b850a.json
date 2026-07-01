@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix inputDate pour autoriser les formats avec des heures/minutes/secondes dans le texte",
+    "packageName": "@focus4/form-toolbox",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

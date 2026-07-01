@@ -247,8 +247,16 @@ export function InputDate<S extends z.ZodISODate | z.ZodISODateTime>({
             const transformedDate = text ? transformDate(text, inputFormat) : undefined;
 
             if (transformedDate?.isValid) {
-                const {year, month, day} = transformedDate;
-                let newDate = date.set({year, month, day});
+                const {year, month, day, hour, minute, second} = transformedDate;
+                let newDate = date.set({
+                    year: inputFormat.includes("yy") ? year : undefined,
+                    month: inputFormat.includes("MM") ? month : undefined,
+                    day: inputFormat.includes("dd") ? day : undefined,
+                    hour: inputFormat.includes("HH") ? hour : undefined,
+                    minute: inputFormat.includes("mm") ? minute : undefined,
+                    second: inputFormat.includes("ss") ? second : undefined
+                });
+
                 if (ISOStringFormat === "local-utc-midnight") {
                     newDate = newDate.toUTC();
                 }
