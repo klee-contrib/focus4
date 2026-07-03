@@ -1,4 +1,4 @@
-import {Entity, EntityToType} from "@focus4/entities";
+import {Entity, EntityToPartialType, EntityToType} from "@focus4/entities";
 
 import {FormNodeBuilder} from "../entity";
 
@@ -72,7 +72,7 @@ export interface CollectionStoreProperties {
 /** Critères génériques de recherche. */
 export interface ServerCollectionStoreProperties<NC extends Entity = any> extends CollectionStoreProperties {
     /** Critère personnalisé. */
-    criteria?: EntityToType<NoInfer<NC>>;
+    criteria?: EntityToPartialType<NoInfer<NC>>;
     /** Nombre de résultats à retourner par requête. */
     top?: number;
 }

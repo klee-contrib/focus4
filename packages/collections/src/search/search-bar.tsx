@@ -7,14 +7,7 @@ import z from "zod";
 
 import {domain, SelectCheckbox} from "@focus4/form-toolbox";
 import {fieldFor} from "@focus4/forms";
-import {
-    CollectionStore,
-    FormEntityField,
-    makeField,
-    makeReferenceList,
-    ServerCollectionStore,
-    toFlatValues
-} from "@focus4/stores";
+import {CollectionStore, FormEntityField, makeField, makeReferenceList, ServerCollectionStore} from "@focus4/stores";
 import {CSSProp, getSpringTransition, uiConfig, useTheme} from "@focus4/styling";
 import {Button, Checkbox, FontIcon, IconButton} from "@focus4/toolbox";
 
@@ -72,7 +65,7 @@ export function SearchBar<T extends object>({
         /** Paires clés/valeurs des différents critères. */
         get flatCriteria() {
             if (store instanceof ServerCollectionStore) {
-                return Object.entries(toFlatValues(store.criteria));
+                return Object.entries(store.criteria.getValues(true));
             } else {
                 return [];
             }
@@ -114,8 +107,7 @@ export function SearchBar<T extends object>({
             if (!(store instanceof ServerCollectionStore)) {
                 return undefined;
             }
-            const error = Object.entries(store.criteriaErrors)
-                .filter(([_, isError]) => isError)
+            const error = Object.entries(store.criteria?.form.errors ?? {})
                 .map(([crit]) => crit)
                 .join(", ");
             if (error) {
@@ -164,7 +156,7 @@ export function SearchBar<T extends object>({
                 }
 
                 // On force tous les critères sont trouvés à undefined.
-                for (const crit of difference(Object.keys(toFlatValues(store.criteria)), this.criteriaList)) {
+                for (const crit of difference(Object.keys(store.criteria.getValues(true)), this.criteriaList)) {
                     ((store.criteria as any)[crit] as FormEntityField).value = undefined;
                 }
 

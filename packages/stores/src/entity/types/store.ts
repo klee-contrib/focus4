@@ -1,6 +1,14 @@
 import {IObservableArray} from "mobx";
 
-import {Entity, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {
+    Entity,
+    EntityToPartialType,
+    EntityToType,
+    FieldEntry,
+    ListEntry,
+    ObjectEntry,
+    RecursiveListEntry
+} from "@focus4/entities";
 
 /** Génère les entrées de noeud de store équivalent à une entité. */
 export type EntityToNode<E extends Entity> = {
@@ -47,14 +55,21 @@ export type StoreNode<E extends Entity = any> = EntityToNode<E> & {
     /** Vide l'objet (récursivement). */
     clear(): StoreNode<E>;
 
+    /**
+     * Récupère les valeurs du noeud.
+     * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
+     */
+    getValues(allowUndefined?: false): EntityToType<E>;
+    getValues(allowUndefined: true): EntityToPartialType<E>;
+
     /** Appelle le service de chargement enregistré. */
     load(): Promise<void>;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): StoreNode<E>;
+    replace(data: EntityToPartialType<E>): StoreNode<E>;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): StoreNode<E>;
+    set(data: EntityToPartialType<E>): StoreNode<E>;
 };
 
 /** Noeud de store liste. C'est une liste de noeud de store simple. */
@@ -82,17 +97,24 @@ export interface StoreListNode<E extends Entity = any> extends IObservableArray<
     /** @internal */
     $nodeBuilder?: <NE extends Entity>(source: StoreNode<E>) => StoreNode<NE>;
 
+    /**
+     * Récupère les valeurs du noeud.
+     * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
+     */
+    getValues(allowUndefined?: false): EntityToType<E>[];
+    getValues(allowUndefined: true): EntityToPartialType<E>[];
+
     /** Appelle le service de chargement enregistré. */
     load(): Promise<void>;
 
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<E>[]): number;
+    pushNode(...items: EntityToPartialType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<E>[]): StoreListNode<E>;
+    replaceNodes(data: EntityToPartialType<E>[]): StoreListNode<E>;
 
     /** Met à jour le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<E>[]): StoreListNode<E>;
+    setNodes(data: EntityToPartialType<E>[]): StoreListNode<E>;
 }
 
 /** Définition de champ dans un store. */
