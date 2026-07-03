@@ -19,6 +19,7 @@ import {
     StoreListNode,
     StoreNode
 } from "../types";
+import {isEmpty} from "../utils";
 
 import {BuildingFormEntityField} from "./builders";
 import {validateField} from "./validation";
@@ -76,6 +77,9 @@ export function nodeToFormNode<E extends Entity = any>(
             set isEdit(edit) {
                 this._isEdit = edit;
             },
+            get isEmpty() {
+                return isEmpty(node);
+            },
             get isRequired() {
                 if (parentNode && parentNode.form.isEmpty && !parentNode.form.isRequired) {
                     return false;
@@ -128,9 +132,6 @@ export function nodeToFormNode<E extends Entity = any>(
                     return true; // Le noeud est dans un item de liste ajouté dans le formulaire => compte comme modifié.
                 }
                 return node.length !== node.sourceNode.length || node.some(item => item.form.hasChanged);
-            },
-            get isEmpty() {
-                return node.length === 0;
             },
             get isValid() {
                 return isFormListNode(node) && node.every(item => item.form.isValid);
@@ -248,27 +249,10 @@ export function nodeToFormNode<E extends Entity = any>(
                 return Object.values(node).some(item => {
                     if (isFormEntityField(item)) {
                         return item.hasChanged;
-                    } else if (isAnyFormNode(item) && item !== node) {
+                    } else if (isAnyFormNode(item) && (item as unknown) !== node) {
                         return item.form.hasChanged;
                     } else {
                         return false;
-                    }
-                });
-            },
-            get isEmpty() {
-                return Object.values(node).every(item => {
-                    if (isFormEntityField(item)) {
-                        return (
-                            !!item._added ||
-                            item.value === undefined ||
-                            item.value === null ||
-                            (typeof item.value === "string" && item.value.trim() === "") ||
-                            (Array.isArray(item.value) && item.value.length === 0)
-                        );
-                    } else if (isAnyFormNode(item) && !node.form._added) {
-                        return item.form.isEmpty;
-                    } else {
-                        return true;
                     }
                 });
             },

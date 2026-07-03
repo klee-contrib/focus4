@@ -77,7 +77,7 @@ Le store expose les différents critères suivants, qui seront utilisés pour fi
 Pour un store serveur, les critères suivants sont aussi disponibles :
 
 - `top` : le nombre de résultats à retourner par requête
-- `criteria`, un objet de critère personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à partir d'une définition d'entité.
+- `criteria`, un objet de critère personnalisé pour ajouter d'autres champs à utiliser pour la recherche. Cet objet sera stocké sous la forme d'un `FormNode` afin de pouvoir l'utiliser directement avec des champs de formulaire. Il devra donc être défini à partir d'une définition d'entité. Les champs invalides seront retirés de l'appel à la recherche, et la recherche ne sera pas appelée s'il manque un champ obligatoire.
 
 **Toute modification d'une de ces propriétés va immédiatement déclencher la mise à jour des données du store** :
 

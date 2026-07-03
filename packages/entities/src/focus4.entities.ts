@@ -12,8 +12,10 @@ export {
 
 export type {
     Entity,
-    EntryToEntity,
+    EntityToPartialType,
     EntityToType,
+    EntryToEntity,
+    EntryToRequired,
     FieldEntry,
     FieldsOf,
     ListEntry,

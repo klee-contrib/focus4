@@ -46,7 +46,7 @@ export type {
     PatchSelect
 } from "./patch";
 export type {EntityField, StoreListNode, StoreNode} from "./store";
-export type {NodeToType, SourceNodeType} from "./utils";
+export type {NodePartialType, NodeType, SourceNodePartialType, SourceNodeType} from "./utils";
 export type {
     DateValidator,
     EmailValidator,
