@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Support pour prefix/suffix sur autocomplete/select chips",
-    "packageName": "@focus4/form-toolbox",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
