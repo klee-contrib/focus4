@@ -25,7 +25,7 @@
         "@storybook/addon-docs": "10.4.6",
         "@storybook/addon-vitest": "10.4.6",
         "@storybook/react-vite": "10.4.6",
-        "@vitest/browser-playwright": "4.1.9",
+        "@vitest/browser-playwright": "4.1.10",
         "@vueless/storybook-dark-mode": "10.0.8",
         "storybook": "10.4.6",
         "storybook-react-i18next": "10.1.2"
