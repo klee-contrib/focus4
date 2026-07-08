@@ -137,6 +137,7 @@
 .suffix {
     pointer-events: none;
     color: var(--input-outline-color);
+    white-space: nowrap;
 }
 
 .prefix {

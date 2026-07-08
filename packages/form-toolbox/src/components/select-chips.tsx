@@ -56,6 +56,8 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
     name?: string;
     /** Est appelé à chaque changement de valeur. */
     onChange: (value?: output<S>) => void;
+    /** Préfixe à poser devant le texte saisi. */
+    prefix?: string;
     /** Schéma du champ (celui du domaine). */
     schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
@@ -70,6 +72,8 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
      * - `fit-to-values` force la largeur du champ sur la largeur des valeurs, sans retour à la ligne.
      */
     sizing?: "fit-to-field-and-wrap" | "fit-to-field-single-line" | "fit-to-values" | "no-fit-single-line";
+    /** Suffixe à poser après le texte saisi. */
+    suffix?: string;
     /** CSS. */
     theme?: CSSProp<DropdownCss & SelectChipsCss & TextFieldCss & SupportingTextCss>;
     /** Définition des icônes à poser après le texte dans le champ de sélection. */
@@ -104,9 +108,11 @@ export function SelectChips<const S extends ZodTypeMultiple>({
     maxSelectable,
     name,
     onChange,
+    prefix,
     schema,
     showSupportingText = "always",
     sizing,
+    suffix,
     suggestionMatch = "start",
     theme: pTheme,
     trailing: pTrailing,
@@ -232,10 +238,13 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     name={name}
                     noCloseOnChange={keepSelectedValuesInSelect}
                     onChange={handleAddValue}
+                    prefix={prefix}
                     schema={schema.element}
+                    showPrefixAndSuffixOnEmptyValue
                     showSupportingText="never"
                     sizing={sizing === "no-fit-single-line" ? sizing : "fit-to-field-single-line"}
                     suggestionMatch={suggestionMatch}
+                    suffix={suffix}
                     theme={theme}
                     trailing={trailing}
                     values={finalValues}
@@ -253,9 +262,12 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                     name={name}
                     noCloseOnChange={keepSelectedValuesInSelect}
                     onChange={handleAddValue}
+                    prefix={prefix}
                     schema={schema.element}
+                    showPrefixAndSuffixOnEmptyValue
                     showSupportingText="never"
                     sizing={sizing}
+                    suffix={suffix}
                     theme={theme}
                     trailing={trailing}
                     undefinedLabel={hint}

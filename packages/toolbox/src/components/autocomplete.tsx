@@ -139,6 +139,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
     ref,
     query: pQuery,
     rows,
+    showPrefixAndSuffixOnEmptyValue = false,
     showSupportingText = "auto",
     sizing = "fit-to-field-single-line",
     supportingText,
@@ -345,6 +346,7 @@ export function Autocomplete<TSource = {key: string; label: string}>({
                 required={required}
                 role="combobox"
                 rows={rows}
+                showPrefixAndSuffixOnEmptyValue={showPrefixAndSuffixOnEmptyValue}
                 showSupportingText={showSupportingText}
                 suffix={suffix}
                 supportingText={supportingText}

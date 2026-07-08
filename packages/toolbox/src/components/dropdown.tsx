@@ -113,6 +113,7 @@ export function Dropdown<TSource = {key: string; label: string}>({
     required,
     rows,
     sizing = "fit-to-field-and-wrap",
+    showPrefixAndSuffixOnEmptyValue = false,
     showSupportingText = "auto",
     supportingText,
     suffix,
@@ -281,6 +282,7 @@ export function Dropdown<TSource = {key: string; label: string}>({
                 readonly
                 required={required}
                 rows={rows}
+                showPrefixAndSuffixOnEmptyValue={showPrefixAndSuffixOnEmptyValue}
                 showSupportingText={showSupportingText}
                 suffix={suffix}
                 supportingText={supportingText}

@@ -97,7 +97,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     onKeyUp?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
     /** Au collage de texte dans le champ. */
     onPaste?: ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-    /** Préfixe à poser devant le texte. */
+    /** Préfixe à poser devant le texte saisi. */
     prefix?: string;
     /** Si renseigné, crée un champ texte en lecture seule sans `<input>` HTML. */
     readonly?: boolean;
@@ -109,9 +109,11 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     role?: AriaRole;
     /** Nombre de lignes pour le `<textarea>` (si `multiline`). */
     rows?: number;
+    /** Affiche quand même le préfixe et le suffixe quand la valeur est vide. */
+    showPrefixAndSuffixOnEmptyValue?: boolean;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "auto". */
     showSupportingText?: "always" | "auto" | "never";
-    /** Préfixe à poser après le texte. */
+    /** Suffixe à poser après le texte saisi. */
     suffix?: string;
     /** Texte à afficher en dessous du champ. Sera affiché en rouge si `error`. */
     supportingText?: string;
@@ -174,6 +176,7 @@ export function TextField({
     required = false,
     role,
     rows = 1,
+    showPrefixAndSuffixOnEmptyValue = false,
     showSupportingText = "auto",
     supportingText,
     suffix,
@@ -340,7 +343,7 @@ export function TextField({
                     </div>
                 ) : null}
                 <div className={theme.inputContainer()}>
-                    {prefix && !multiline && (focused || !!value?.length) ? (
+                    {prefix && !multiline && (showPrefixAndSuffixOnEmptyValue || focused || !!value?.length) ? (
                         <span className={theme.prefix()}>{prefix}</span>
                     ) : null}
                     {readonly ? (
@@ -358,7 +361,7 @@ export function TextField({
                     ) : (
                         <input {...inputElementProps} />
                     )}
-                    {suffix && !multiline && (focused || !!value?.length) ? (
+                    {suffix && !multiline && (showPrefixAndSuffixOnEmptyValue || focused || !!value?.length) ? (
                         <span className={theme.suffix()}>{suffix}</span>
                     ) : null}
                 </div>

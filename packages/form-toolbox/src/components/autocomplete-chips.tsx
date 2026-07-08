@@ -56,6 +56,8 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     name?: string;
     /** Est appelé à chaque changement de valeur. */
     onChange: (value?: output<S>) => void;
+    /** Préfixe à poser devant le texte saisi. */
+    prefix?: string;
     /** Service de recherche. */
     querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
     /** Délai (en ms) entre la fin de la saisie de l'utilisateur et le lancement de la recherche. Par défaut : 500.  */
@@ -66,6 +68,8 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     showSupportingText?: "always" | "auto" | "never";
     /** Schéma du champ (celui du domaine). */
     schema: S;
+    /** Suffixe à poser après le texte saisi. */
+    suffix?: string;
     /** Définition des icônes à poser après le texte dans le champ de recherche. */
     trailing?: TrailingIcon | TrailingIcon[];
     /** CSS. */
@@ -100,11 +104,13 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
     maxSelectable,
     name,
     onChange,
+    prefix,
     querySearcher,
     schema,
     searchDelay = 500,
     searchOnEmptyQuery = false,
     showSupportingText = "always",
+    suffix,
     theme: pTheme,
     trackingId,
     trailing,
@@ -179,11 +185,14 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                 keyResolver={keyResolver}
                 name={name}
                 onChange={handleAddValue}
+                prefix={prefix}
                 querySearcher={fixedQuerySearcher}
                 schema={schema.element}
                 searchDelay={searchDelay}
                 searchOnEmptyQuery={searchOnEmptyQuery}
+                showPrefixAndSuffixOnEmptyValue
                 showSupportingText="never"
+                suffix={suffix}
                 theme={theme}
                 trackingId={trackingId}
                 trailing={[
