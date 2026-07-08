@@ -1,6 +1,6 @@
 import {observable} from "mobx";
 import {useObserver} from "mobx-react";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
@@ -10,6 +10,7 @@ import {
     AutocompleteCss,
     Chip,
     ChipCss,
+    FontIcon,
     Icon,
     SupportingText,
     SupportingTextCss,
@@ -40,6 +41,8 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
      * Par défaut : `item => item.label`
      */
     getLabel?: (item: TSource) => string;
+    /** Laisse les valeurs sélectionnées dans l'Autocomplete au lieu de les retirer. */
+    keepSelectedValuesInAutocomplete?: boolean;
     /** Service de résolution de clé. Doit retourner le libellé. */
     keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
     /** Placeholder pour le champ texte. */
@@ -83,6 +86,7 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
 }
 
 const defaultGetKey = (x: any) => x.key?.toString();
+const defaultGetLabel = (x: any) => x.label;
 
 /**
  * Un [`AutocompleteSearch`](/docs/composants-focus4∕form-toolbox-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
@@ -94,12 +98,13 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
     direction,
     disabled = false,
     error,
+    getKey = defaultGetKey,
+    getLabel = defaultGetLabel,
     hint,
     i18nPrefix = "focus",
     icon,
     id,
-    getKey = defaultGetKey,
-    getLabel,
+    keepSelectedValuesInAutocomplete = false,
     keyResolver,
     maxSelectable,
     name,
@@ -157,17 +162,35 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
         [onChange]
     );
 
+    const LineComponent = useMemo(() => {
+        if (!keepSelectedValuesInAutocomplete) {
+            return undefined;
+        }
+
+        return function AutocompleteChipsLineComponent({item}: any) {
+            const selected = (value ?? []).includes(getKey(item) as never);
+            return (
+                <span className={theme.line({selected})}>
+                    {t(getLabel(item))}
+                    <FontIcon iconI18nKey={`${i18nPrefix}.icons.select.selected`} />
+                </span>
+            );
+        };
+    }, [getKey, getLabel, i18nPrefix, keepSelectedValuesInAutocomplete, t, value]);
+
     const fixedQuerySearcher = useCallback(
         async function fixedQuerySearcher(query: string, options?: RequestInit) {
             if (querySearcher) {
                 const results = await querySearcher(query, options);
-                return results.filter(r => !(value ?? []).includes(getKey(r) as never));
+                return results.filter(
+                    r => keepSelectedValuesInAutocomplete || !(value ?? []).includes(getKey(r) as never)
+                );
             } else {
                 return [];
             }
         },
 
-        [getKey, querySearcher, value]
+        [getKey, querySearcher, keepSelectedValuesInAutocomplete, value]
     );
 
     return useObserver(() => (
@@ -183,6 +206,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                 icon={icon}
                 id={id}
                 keyResolver={keyResolver}
+                LineComponent={LineComponent}
                 name={name}
                 onChange={handleAddValue}
                 prefix={prefix}
