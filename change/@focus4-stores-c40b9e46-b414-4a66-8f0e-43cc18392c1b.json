@@ -1,7 +1,0 @@
-{
-    "type": "minor",
-    "comment": "Intégration du caractère obligatoire des champs dans le typage des entités, et `store.getValues()`",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "minor"
-}
