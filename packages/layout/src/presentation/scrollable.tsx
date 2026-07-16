@@ -202,7 +202,7 @@ export function Scrollable({
                 focusTrapOptions={{
                     allowOutsideClick: true,
                     escapeDeactivates: false,
-                    fallbackFocus: `.${theme.container()}`
+                    initialFocus: `.${theme.container()}`
                 }}
             >
                 <div ref={containerNode} className={classNames(theme.container(), className)} tabIndex={-1}>

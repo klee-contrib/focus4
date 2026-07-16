@@ -64,7 +64,7 @@ export function Dialog({
                   focusTrapOptions={{
                       allowOutsideClick: true,
                       escapeDeactivates: false,
-                      fallbackFocus: `.${theme.dialog()}`
+                      initialFocus: `.${theme.dialog()}`
                   }}
                   active={!tClassName}
               >

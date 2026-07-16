@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Force le focus trap à toujours focus la popin/le dialog à l'ouverture",
+    "packageName": "@focus4/layout",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
