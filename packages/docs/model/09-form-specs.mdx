@@ -86,7 +86,7 @@ const formNode = useFormNode(
 
 Un membre ajouté dans un noeud de formulaire se comportera comme un membre classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un membre correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce membre.
 
-De plus, un membre ajouté sera **omis par défaut du résultat de [`toFlatValues`](/docs/modèle-métier-stores-d-entité--docs#toflatvaluesnode-includeaddedfields)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `toFlatValues` à `true`.
+De plus, un membre ajouté sera **omis par défaut du résultat de [`getValues`](/docs/modèle-métier-stores-d-entité--docs#apis-de-storenode-et-storelistnode)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `getValues` à `true`.
 
 Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud parent, et la valeur de son `hasChanged` sera toujours `false`.
 

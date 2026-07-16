@@ -60,7 +60,7 @@ Les propriétés calculées **`errors`** et **`isValid`** sont ajoutées sur cha
 
 Au niveau des noeuds, on définit également `node.form.isValid` et `node.form.errors`, qui agrègent le résultat de validation des champs et des autres noeuds qu'ils contiennent. Le formulaire est donc valide si et seulement si tous ses champs sont valides.
 
-De plus, si un noeud a été défini comme `isRequired: false`, alors tous ses champs et sous-noeuds seront également considérés comme `isRequired: false` si **le noeud est entièrement vide** (tous les champs à `undefined`, et les listes vides). `toFlatValues` retournera `undefined` pour
+De plus, si un noeud a été défini comme `isRequired: false`, alors tous ses champs et sous-noeuds seront également considérés comme `isRequired: false` si **le noeud est entièrement vide** (tous les champs à `undefined`, et les listes vides). `getValues` retournera `undefined` pour
 un noeud vide non obligatoire, au lieu d'un objet vide (`{}`).
 
 _Remarque : un champ non éditable (`field.isEdit == false`) est toujours valide (`field.isValid == true`), quelque soit le résultat de la validation._

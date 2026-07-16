@@ -2,7 +2,7 @@ import {isFunction} from "es-toolkit";
 import {disposeOnUnmount} from "mobx-react";
 import {Component} from "react";
 
-import {Entity, EntityToType} from "@focus4/entities";
+import {Entity, EntityToPartialType} from "@focus4/entities";
 import {
     FormActions,
     FormActionsBuilder,
@@ -15,8 +15,7 @@ import {
     makeStoreNode,
     SourceNodeType,
     StoreListNode,
-    StoreNode,
-    toFlatValues
+    StoreNode
 } from "@focus4/stores";
 
 /**
@@ -32,7 +31,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[])
 ): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -47,7 +46,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToType<E> | (() => EntityToType<E>)
+    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>)
 ): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'une définition d'entité
@@ -60,7 +59,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: [E],
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[])
 ): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'une définition d'entité.
@@ -73,7 +72,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: E,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToType<E> | (() => EntityToType<E>)
+    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>)
 ): FormNode<NE, E>;
 export function makeFormNode(
     componentClass: Component | null,
@@ -95,7 +94,7 @@ export function makeFormNode(
             formNode.set(isFunction(initialData) ? initialData() : initialData);
         }
     }
-    formNode.form._initialData = toFlatValues(formNode, true);
+    formNode.form._initialData = formNode.getValues(true, true);
     if (componentClass && formNode.dispose) {
         disposeOnUnmount(componentClass, formNode.dispose);
     }

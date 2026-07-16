@@ -2,7 +2,7 @@ import {Router, RouterConfirmation} from "@focus4/core";
 
 import {LocalCollectionStore} from "../../../collection";
 import {NodeLoadBuilder} from "../../store";
-import {FormListNode, FormNode, SourceNodeType} from "../../types";
+import {FormListNode, FormNode, SourceNodePartialType, SourceNodeType} from "../../types";
 
 type LoadData<FN extends FormNode | FormListNode | LocalCollectionStore> = FN extends LocalCollectionStore
     ? FN["list"]
@@ -15,7 +15,7 @@ interface FormActionHandlers<
     U extends SourceNodeType<FN> | void | string | number,
     S extends SourceNodeType<FN> | void | string | number
 > {
-    init?: ((event: "init", data: SourceNodeType<FN>) => void)[];
+    init?: ((event: "init", data: SourceNodePartialType<FN>) => void)[];
     load?: ((event: "load", data: LoadData<FN>) => void)[];
     cancel?: ((event: "cancel") => void)[];
     edit?: ((event: "edit") => void)[];
@@ -44,7 +44,7 @@ export class FormActionsBuilder<
     /** @internal */
     hasInit = false;
     /** @internal */
-    initService?: () => Promise<SourceNodeType<FN>>;
+    initService?: () => Promise<SourceNodePartialType<FN>>;
     /** @internal */
     createService?: (entity: SourceNodeType<FN>) => Promise<C>;
     /** @internal */
@@ -83,7 +83,7 @@ export class FormActionsBuilder<
      * La méthode peut aussi être appelée sans service, simplement pour effectuer la recopie (ou un clear) du noeud source.
      * @param service Service d'initialisation.
      */
-    init(service?: () => Promise<SourceNodeType<FN>>) {
+    init(service?: () => Promise<SourceNodePartialType<FN>>) {
         this.hasInit = true;
         this.initService = service;
         return this;

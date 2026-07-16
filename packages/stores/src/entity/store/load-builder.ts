@@ -1,11 +1,11 @@
 import {isFunction} from "es-toolkit";
 
 import {LocalCollectionStore} from "../../collection";
-import {NodeToType, StoreListNode, StoreNode} from "../types";
+import {NodeType, StoreListNode, StoreNode} from "../types";
 
 type LoadData<SN extends StoreNode | StoreListNode | LocalCollectionStore> = SN extends LocalCollectionStore
     ? SN["list"]
-    : NodeToType<SN>;
+    : NodeType<SN>;
 
 interface LoadRegistrationHandlers<SN extends StoreNode | StoreListNode | LocalCollectionStore> {
     load?: ((event: "load", data: LoadData<SN>) => void)[];

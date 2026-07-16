@@ -1,6 +1,14 @@
 import {IObservableArray, Lambda} from "mobx";
 
-import {Entity, EntityToType, FieldEntry, ListEntry, ObjectEntry, RecursiveListEntry} from "@focus4/entities";
+import {
+    Entity,
+    EntityToPartialType,
+    EntityToType,
+    FieldEntry,
+    ListEntry,
+    ObjectEntry,
+    RecursiveListEntry
+} from "@focus4/entities";
 
 import {EntityField, StoreListNode, StoreNode} from "./store";
 
@@ -54,7 +62,7 @@ export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToFo
 
         /** @internal */
         /** Données initiales du formulaire. */
-        _initialData?: EntityToType<E>;
+        _initialData?: EntityToPartialType<E>;
 
         /** Précise si le noeud a fait l'objet d'une modification par rapport au noeud source. */
         readonly hasChanged: boolean;
@@ -81,17 +89,27 @@ export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToFo
     /** Désactive la synchronisation entre ce FormNode et son noeud source. */
     dispose(): void;
 
+    /**
+     * Récupère les valeurs du noeud.
+     * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
+     * @param includeAddedFields Si `true`, inclue les champs ajoutés dans le formulaire.
+     */
+    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToType<E0>;
+    getValues(allowUndefined: false, includeAddedFields: true): EntityToType<E>;
+    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialType<E0>;
+    getValues(allowUndefined: true, includeAddedFields: true): EntityToPartialType<E>;
+
     /** Appelle le service de chargement enregistré du noeud source. */
     load(): Promise<void>;
 
     /** Remplace le contenu du noeud par le contenu donné. */
-    replace(data: EntityToType<E>): FormNode<E, E0>;
+    replace(data: EntityToPartialType<E>): FormNode<E, E0>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): FormNode<E, E0>;
 
     /** Met à jour les champs donnés dans le noeud. */
-    set(data: EntityToType<E>): FormNode<E, E0>;
+    set(data: EntityToPartialType<E>): FormNode<E, E0>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreNode<E0>;
@@ -113,7 +131,7 @@ export interface FormListNode<E extends Entity = any, E0 extends Entity = E> ext
 
         /** @internal */
         /** Données initiales du formulaire. */
-        _initialData?: EntityToType<E>[];
+        _initialData?: EntityToPartialType<E>[];
 
         /** Précise si le noeud a fait l'objet d'une modification par rapport au noeud source. */
         readonly hasChanged: boolean;
@@ -148,17 +166,27 @@ export interface FormListNode<E extends Entity = any, E0 extends Entity = E> ext
     /** Appelle le service de chargement enregistré du noeud source. */
     load(): Promise<void>;
 
+    /**
+     * Récupère les valeurs du noeud.
+     * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
+     * @param includeAddedFields Si `true`, inclue les champs ajoutés dans le formulaire.
+     */
+    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToType<E0>[];
+    getValues(allowUndefined: false, includeAddedFields: true): EntityToType<E>[];
+    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialType<E0>[];
+    getValues(allowUndefined: true, includeAddedFields: true): EntityToPartialType<E>[];
+
     /** Ajoute un élément à la liste. */
-    pushNode(...items: EntityToType<E>[]): number;
+    pushNode(...items: EntityToPartialType<E>[]): number;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    replaceNodes(data: EntityToType<E>[]): FormListNode<E, E0>;
+    replaceNodes(data: EntityToPartialType<E>[]): FormListNode<E, E0>;
 
     /** Réinitialise le FormNode à partir du StoreNode. */
     reset(): FormListNode<E, E0>;
 
     /** Reconstruit le noeud de liste à partir de la liste fournie. */
-    setNodes(data: EntityToType<E>[]): FormListNode<E, E0>;
+    setNodes(data: EntityToPartialType<E>[]): FormListNode<E, E0>;
 
     /** StoreNode original. */
     readonly sourceNode: StoreListNode<E0>;

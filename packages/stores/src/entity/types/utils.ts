@@ -1,12 +1,12 @@
 import {isObservableArray} from "mobx";
 
-import {Entity, EntityToType} from "@focus4/entities";
+import {Entity, EntityToPartialType, EntityToType} from "@focus4/entities";
 
 import {FormEntityField, FormListNode, FormNode} from "./form";
 import {EntityField, StoreListNode, StoreNode} from "./store";
 
-/** Génère l'objet JS "normal" équivalent à un noeud de store. */
-export type NodeToType<SN> =
+/** Récupère le type de l'objet de l'entité contenue dans un noeud, avec les champs obligatoires non optionnels. */
+export type NodeType<SN> =
     SN extends FormListNode<infer LEF, infer _>
         ? EntityToType<LEF>[]
         : SN extends FormNode<infer OEF, infer __>
@@ -17,8 +17,23 @@ export type NodeToType<SN> =
               ? EntityToType<OE>
               : never;
 
-/** Génère l'objet JS "normal" équivalent au noeud source d'un FormNode. */
-export type SourceNodeType<FN extends FormNode | FormListNode> = NodeToType<FN["sourceNode"]>;
+/** Récupère le type de l'objet de l'entité contenue dans un noeud, avec les champs obligatoires optionnels. */
+export type NodePartialType<SN> =
+    SN extends FormListNode<infer LEF, infer _>
+        ? EntityToPartialType<LEF>[]
+        : SN extends FormNode<infer OEF, infer __>
+          ? EntityToPartialType<OEF>
+          : SN extends StoreListNode<infer LE>
+            ? EntityToPartialType<LE>[]
+            : SN extends StoreNode<infer OE>
+              ? EntityToPartialType<OE>
+              : never;
+
+/** Récupère le type de l'objet de l'entité contenue dans un noeud source d'un formulaire, avec les champs obligatoires non optionnels. */
+export type SourceNodeType<FN extends FormNode | FormListNode> = NodeType<FN["sourceNode"]>;
+
+/** Récupère le type de l'objet de l'entité contenue dans un noeud source d'un formulaire, avec les champs obligatoires optionnels. */
+export type SourceNodePartialType<FN extends FormNode | FormListNode> = NodePartialType<FN["sourceNode"]>;
 
 export function isEntityField(data: any): data is EntityField {
     return data && typeof data === "object" && "$field" in data;

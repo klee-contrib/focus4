@@ -13,6 +13,7 @@ import {
     StringValidator,
     Validator
 } from "../types";
+import {isEmpty} from "../utils";
 
 import {BuildingFormEntityField} from "./builders";
 
@@ -20,7 +21,7 @@ const EMAIL_REGEX =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/u;
 
 /** Récupère les erreurs associées au champ. */
-export function validateField(entityField: BuildingFormEntityField<FieldEntry<Domain<ZodType>>>): string[] {
+export function validateField(field: BuildingFormEntityField<FieldEntry<Domain<ZodType>>>): string[] {
     const {
         $field: {
             domain: {schema, validator},
@@ -28,16 +29,10 @@ export function validateField(entityField: BuildingFormEntityField<FieldEntry<Do
             requiredErrorMessage = "focus.validation.required"
         },
         value
-    } = entityField;
+    } = field;
 
     // On vérifie que le champ n'est pas vide et obligatoire.
-    if (
-        isRequired &&
-        (value === undefined ||
-            value === null ||
-            (typeof value === "string" && value.trim() === "") ||
-            (schema.type === "array" && Array.isArray(value) && value.length === 0))
-    ) {
+    if (isRequired && isEmpty(field, true)) {
         return [requiredErrorMessage];
     }
 

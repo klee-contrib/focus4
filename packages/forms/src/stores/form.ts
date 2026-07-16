@@ -1,7 +1,7 @@
 import {isFunction} from "es-toolkit";
 import {useEffect, useId, useRef, useState} from "react";
 
-import {Entity, EntityToType} from "@focus4/entities";
+import {Entity, EntityToPartialType} from "@focus4/entities";
 import {
     FormActions,
     FormActionsBuilder,
@@ -14,8 +14,7 @@ import {
     makeStoreNode,
     SourceNodeType,
     StoreListNode,
-    StoreNode,
-    toFlatValues
+    StoreNode
 } from "@focus4/stores";
 
 /**
@@ -29,7 +28,7 @@ import {
 export function useFormNode<E extends Entity, NE extends Entity = E>(
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToType<E>[] | (() => EntityToType<E>[]) | true
+    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[]) | true
 ): FormListNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'un StoreListNode.
@@ -42,7 +41,7 @@ export function useFormNode<E extends Entity, NE extends Entity = E>(
 export function useFormNode<E extends Entity, NE extends Entity = E>(
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToType<E> | (() => EntityToType<E>) | true
+    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>) | true
 ): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'une définition d'entité.
@@ -53,7 +52,7 @@ export function useFormNode<E extends Entity, NE extends Entity = E>(
 export function useFormNode<E extends Entity, NE extends Entity = E>(
     entity: [E],
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToType<E>[] | (() => EntityToType<E>[])
+    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[])
 ): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -64,7 +63,7 @@ export function useFormNode<E extends Entity, NE extends Entity = E>(
 export function useFormNode<E extends Entity, NE extends Entity = E>(
     entity: E,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToType<E> | (() => EntityToType<E>)
+    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>)
 ): FormNode<NE, E>;
 export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: any) => x, initialData: any = undefined) {
     const [node] = useState(() => (isAnyStoreNode(entityOrNode) ? entityOrNode : makeStoreNode(entityOrNode)));
@@ -74,18 +73,18 @@ export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: an
             fn = builder(new FormListNodeBuilder(node)).build();
             if (initialData) {
                 fn.setNodes(
-                    initialData === true ? toFlatValues(node) : isFunction(initialData) ? initialData() : initialData
+                    initialData === true ? node.getValues(true) : isFunction(initialData) ? initialData() : initialData
                 );
             }
         } else {
             fn = builder(new FormNodeBuilder(node)).build();
             if (initialData) {
                 fn.set(
-                    initialData === true ? toFlatValues(node) : isFunction(initialData) ? initialData() : initialData
+                    initialData === true ? node.getValues(true) : isFunction(initialData) ? initialData() : initialData
                 );
             }
         }
-        fn.form._initialData = toFlatValues(fn, true);
+        fn.form._initialData = fn.getValues(true, true);
         return fn;
     });
     useEffect(() => formNode.dispose, []);

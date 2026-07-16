@@ -4,17 +4,21 @@ import {entity} from "./entity";
 
 type PartialNonReadonly<T> = {-readonly [P in keyof T]?: T[P]};
 
-class EntryBuilder {
+class EntryBuilder<R extends boolean = true> {
     /** @internal */
-    entry: PartialNonReadonly<ObjectEntry | FieldEntry | ListEntry | RecursiveListEntry>;
+    entry: PartialNonReadonly<
+        ObjectEntry<any, R> | FieldEntry<any, any, R> | ListEntry<any, R> | RecursiveListEntry<R>
+    >;
 
     constructor(type: "field" | "object" | "list" | "recursive-list") {
-        this.entry = {type, label: "", isRequired: true};
+        this.entry = {type, label: "", isRequired: true as any};
     }
 
     /** Rend l'entrée d'entité non-obligatoire. */
-    optional() {
+    optional(): EntryBuilder<false> {
+        // @ts-expect-error - Justement, on change le type de R.
         this.entry.isRequired = false;
+        // @ts-expect-error - Justement, on change le type de R.
         return this;
     }
 
@@ -36,15 +40,18 @@ class EntryBuilder {
     }
 }
 
-export class FieldEntryBuilder<T = any> extends EntryBuilder {
+export class FieldEntryBuilder<T = any, R extends boolean = true> extends EntryBuilder<R> {
     /** @internal */
-    declare entry: PartialNonReadonly<FieldEntry>;
+    declare entry: PartialNonReadonly<FieldEntry<any, any, R>>;
 
     constructor(domain: Domain) {
         super("field");
         this.entry.name = "";
         this.entry.domain = domain;
     }
+
+    declare optional: () => FieldEntryBuilder<T, false>;
+
     /**
      * Renseigne la valeur par défaut du champ.
      * @param defaultValue La valeur par défaut.
@@ -64,32 +71,38 @@ export class FieldEntryBuilder<T = any> extends EntryBuilder {
     }
 
     /** Précise le type du champ, au delà du type déduit de son schéma. Le nouveau type doit y être assignable à l'ancien. */
-    type<NT extends T>(): FieldEntryBuilder<NT> {
+    type<NT extends T>(): FieldEntryBuilder<NT, R> {
         return this;
     }
 }
 
-export class ObjectEntryBuilder extends EntryBuilder {
+export class ObjectEntryBuilder<R extends boolean = true> extends EntryBuilder<R> {
     /** @internal */
-    declare entry: PartialNonReadonly<ObjectEntry>;
+    declare entry: PartialNonReadonly<ObjectEntry<any, R>>;
     constructor(e: Entity) {
         super("object");
         this.entry.entity = entity(e);
     }
+
+    declare optional: () => ObjectEntryBuilder<false>;
 }
 
-export class ListEntryBuilder extends EntryBuilder {
+export class ListEntryBuilder<R extends boolean = true> extends EntryBuilder<R> {
     /** @internal */
-    declare entry: PartialNonReadonly<ListEntry>;
+    declare entry: PartialNonReadonly<ListEntry<any, R>>;
     constructor(e: Entity) {
         super("list");
         this.entry.entity = entity(e);
     }
+
+    declare optional: () => ListEntryBuilder<false>;
 }
 
-export class RecursiveListEntryBuilder extends EntryBuilder {
-    declare entry: RecursiveListEntry;
+export class RecursiveListEntryBuilder<R extends boolean = true> extends EntryBuilder<R> {
+    declare entry: RecursiveListEntry<R>;
     constructor() {
         super("recursive-list");
     }
+
+    declare optional: () => RecursiveListEntryBuilder<false>;
 }

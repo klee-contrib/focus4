@@ -4,7 +4,7 @@ import {action, computed, IObservableArray, observable, reaction} from "mobx";
 import {isAbortError, requestStore} from "@focus4/core";
 import {Entity, EntityToType} from "@focus4/entities";
 
-import {FormEntityField, FormNode, FormNodeBuilder, makeStoreNode, toFlatValues} from "../entity";
+import {FormNode, FormNodeBuilder, isEmpty, isRequired, makeStoreNode} from "../entity";
 
 import {CollectionStore} from "./base";
 import {
@@ -136,47 +136,27 @@ export class ServerCollectionStore<
         return this.serverCount;
     }
 
-    /** Objet contenant toutes les erreurs de validation des critères personnalisés. */
-    @computed.struct
-    get criteriaErrors() {
-        const errors: {[key: string]: boolean} = {};
-        const {criteria = {}} = this;
-        for (const key in criteria) {
-            if (key !== "set" && key !== "clear") {
-                const entry = (criteria as any)[key] as FormEntityField;
-                if (entry.error) {
-                    errors[key] = true;
-                    continue;
-                }
-                errors[key] = false;
-            }
-        }
-        return errors;
-    }
-
-    /** Récupère l'objet de critères personnalisé à plat (via `toFlatValues`, sans les critères en erreurs). */
+    /** Récupère l'objet de critères personnalisé à plat (via `getValues`, sans les critères vides ou en erreur). */
     @computed.struct
     get flatCriteria() {
         const criteria =
             this.criteria &&
-            (toFlatValues(
-                this.criteriaMode === "manual" ? this.criteria.sourceNode : this.criteria
-            ) as EntityToType<C>);
+            (this.criteriaMode === "manual" ? this.criteria.sourceNode : this.criteria).getValues(true);
+
         if (criteria) {
             // On enlève les critères en erreur.
-            for (const error in this.criteriaErrors) {
-                if (this.criteriaErrors[error]) {
-                    delete (criteria as any)[error];
-                }
+            for (const error in this.criteria.form.errors) {
+                delete criteria[error];
             }
 
             // On enlève les critères non renseignés.
             for (const criteriaKey in criteria) {
-                if ((criteria as any)[criteriaKey] === "" || (criteria as any)[criteriaKey] === undefined) {
-                    delete (criteria as any)[criteriaKey];
+                if (isEmpty(this.criteria[criteriaKey])) {
+                    delete criteria[criteriaKey];
                 }
             }
         }
+
         return criteria || {};
     }
 
@@ -201,14 +181,23 @@ export class ServerCollectionStore<
             this.skipToken = undefined;
         }
 
+        // Si un critère obligatoire est en erreur, on bloque la recherche.
+        if (this.criteria) {
+            for (const field in this.criteria.form.errors) {
+                if (isRequired(this.criteria[field])) {
+                    return;
+                }
+            }
+        }
+
         const {query, inputFacets, groupingKey, sort, list, top, skipToken} = this;
 
         if (this.criteriaMode === "manual" && !isScroll) {
-            this.criteria.sourceNode.replace(toFlatValues(this.criteria) as EntityToType<C>);
+            this.criteria.sourceNode.replace(this.criteria.getValues(true));
         }
 
         const data = {
-            criteria: {...this.flatCriteria, query, searchFields: this.searchFields},
+            criteria: {...(this.flatCriteria as EntityToType<C>), query, searchFields: this.searchFields},
             facets: inputFacets || {},
             group: groupingKey ?? "",
 
