@@ -1,6 +1,6 @@
 {
     "name": "@focus4/stores",
-    "version": "12.12.5",
+    "version": "12.12.6",
     "description": "Focus v4, stores module",
     "main": "lib/focus4.stores.js",
     "type": "module",
@@ -15,7 +15,7 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "@focus4/core": "12.11.2",
+        "@focus4/core": "12.11.3",
         "@focus4/entities": "12.10.3",
         "@types/luxon": "^3.7.3",
         "es-toolkit": "^1.50.0",

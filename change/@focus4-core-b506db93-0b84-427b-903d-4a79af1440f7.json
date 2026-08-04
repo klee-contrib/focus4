@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "deps + export manquant QueryParams",
-    "packageName": "@focus4/core",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
