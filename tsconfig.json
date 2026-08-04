@@ -22,6 +22,5 @@
         "stripInternal": true,
         "noEmitOnError": true
     },
-    "include": ["packages"],
     "exclude": ["**/lib/**"]
 }

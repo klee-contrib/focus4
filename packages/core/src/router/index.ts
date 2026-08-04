@@ -16,6 +16,7 @@ export {startHistory};
 export type {Param, ParamDef} from "./param";
 export type {
     QueryParamConfig,
+    QueryParams,
     Router,
     RouterConfirmation,
     RouterConstraintBuilder,

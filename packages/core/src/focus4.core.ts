@@ -12,7 +12,7 @@ declare module "i18next" {
 
 export {colorScheme, initColorScheme} from "./color-scheme";
 export {coreConfig} from "./config";
-export {baseI18nextConfig, addValueFormatters} from "./i18n";
+export {addValueFormatters, baseI18nextConfig} from "./i18n";
 export {coreFetch, downloadFile, HTTPDetailedError, isAbortError, requestStore} from "./network";
 export {makeRouter, param, startHistory} from "./router";
 export {MessageStore, messageStore, UserStore} from "./stores";
@@ -20,13 +20,14 @@ export {MessageStore, messageStore, UserStore} from "./stores";
 export type {HttpMethod, ProblemDetails, Request} from "./network";
 export type {
     NumberParam,
-    StringParam,
     Param,
     ParamDef,
     QueryParamConfig,
+    QueryParams,
     Router,
     RouterConfirmation,
     RouterConstraintBuilder,
+    StringParam,
     UrlPathDescriptor,
     UrlRouteDescriptor
 } from "./router";

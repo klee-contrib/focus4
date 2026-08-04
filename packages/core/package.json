@@ -15,7 +15,7 @@
         "build": "tsdown"
     },
     "dependencies": {
-        "es-toolkit": "^1.49.0",
+        "es-toolkit": "^1.50.0",
         "history": "^5.3.0",
         "ky": "^2.0.2",
         "luxon": "^3.7.2",
@@ -28,6 +28,6 @@
     },
     "devDependencies": {
         "@focus4/tooling": "12.11.5",
-        "jsdom": "29.1.1"
+        "jsdom": "30.0.1"
     }
 }

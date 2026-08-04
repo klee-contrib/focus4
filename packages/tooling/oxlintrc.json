@@ -96,6 +96,7 @@
         "oxc/no-this-in-exported-function": "off",
         "react/exhaustive-deps": "off",
         "react/forbid-component-props": "off",
+        "react/function-component-definition": "off",
         "react/hook-use-state": "off",
         "react/jsx-filename-extension": "off",
         "react/jsx-handler-names": "off",
