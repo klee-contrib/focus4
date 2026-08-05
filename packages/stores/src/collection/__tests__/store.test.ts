@@ -2,11 +2,13 @@ import {runInAction} from "mobx";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
-import {e, entity} from "@focus4/entities";
+import * as core from "@focus4/core";
+import {e, entity, Entity} from "@focus4/entities";
 
+import {domain} from "../../__tests__/test-utils";
 import {makeLocalCollectionStore} from "../local";
 import {makeServerCollectionStore} from "../server";
-import {QueryInput, SearchService} from "../types";
+import {QueryInput, QueryOutput, SearchService} from "../types";
 
 // Type de test pour les items
 interface TestItem {
@@ -17,14 +19,41 @@ interface TestItem {
     tags?: string[];
 }
 
-const domain = {
-    schema: z.string().max(1),
-    AutocompleteComponent: () => null,
-    DisplayComponent: () => null,
-    LabelComponent: () => null,
-    InputComponent: () => null,
-    SelectComponent: () => null
-};
+const DO_STRING = domain(z.string().max(1));
+
+const makeItem = (
+    id: number,
+    category = "A",
+    status: TestItem["status"] = "active",
+    name = `Item ${id}`
+): TestItem => ({id, name, category, status});
+
+type MockSearchService = ReturnType<typeof vi.fn> & SearchService<TestItem, Entity>;
+
+const makeServerService = (result: Partial<QueryOutput<TestItem>> = {}): MockSearchService =>
+    vi.fn().mockResolvedValue({
+        list: [],
+        facets: [],
+        totalCount: 0,
+        ...result
+    }) as MockSearchService;
+
+const makeOptionalCriteriaEntity = () =>
+    entity({
+        name: e.field(DO_STRING, f => f.optional()),
+        category: e.field(DO_STRING, f => f.optional())
+    });
+
+const makeRequiredNameCriteriaEntity = () => entity({name: e.field(DO_STRING)});
+
+const makeOptionalNameCriteriaEntity = () => entity({name: e.field(DO_STRING, f => f.optional())});
+
+interface CriteriaFields {
+    name: {value: string | undefined};
+    category?: {value: string | undefined};
+}
+
+const asCriteriaFields = (criteria: unknown) => criteria as CriteriaFields;
 
 describe("CollectionStore", () => {
     describe("Constructeur - Mode local", () => {
@@ -63,11 +92,7 @@ describe("CollectionStore", () => {
 
     describe("Constructeur - Mode serveur", () => {
         test("Crée un store serveur avec un service", () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
-                list: [],
-                facets: [],
-                totalCount: 0
-            });
+            const service = makeServerService();
 
             const store = makeServerCollectionStore(service);
 
@@ -76,11 +101,7 @@ describe("CollectionStore", () => {
         });
 
         test("Crée un store serveur avec des propriétés initiales", () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
-                list: [],
-                facets: [],
-                totalCount: 0
-            });
+            const service = makeServerService();
 
             const store = makeServerCollectionStore(service, {
                 query: "test",
@@ -114,7 +135,7 @@ describe("CollectionStore", () => {
         });
 
         test("totalCount retourne serverCount en mode serveur", () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [],
                 facets: [],
                 totalCount: 100
@@ -122,7 +143,7 @@ describe("CollectionStore", () => {
             const store = makeServerCollectionStore(service);
 
             runInAction(() => {
-                (store as any).serverCount = 100;
+                Reflect.set(store, "serverCount", 100);
             });
 
             expect(store.totalCount).toBe(100);
@@ -180,53 +201,53 @@ describe("CollectionStore", () => {
             expect(store.list[0].name).toBe("Alpha");
         });
 
-        test("Le tri fonctionne", () => {
+        test.each([
+            {
+                label: "Le tri fonctionne",
+                items: [
+                    {id: 3, name: "Charlie", category: "C", status: "active"},
+                    {id: 1, name: "Alpha", category: "A", status: "active"},
+                    {id: 2, name: "Beta", category: "B", status: "inactive"}
+                ] as TestItem[],
+                sort: [{fieldName: "name", sortDesc: false}],
+                expected: [{name: "Alpha"}, {name: "Beta"}, {name: "Charlie"}]
+            },
+            {
+                label: "Le tri descendant fonctionne",
+                items: [
+                    {id: 1, name: "Alpha", category: "A", status: "active"},
+                    {id: 2, name: "Beta", category: "B", status: "inactive"},
+                    {id: 3, name: "Charlie", category: "C", status: "active"}
+                ] as TestItem[],
+                sort: [{fieldName: "name", sortDesc: true}],
+                expected: [{name: "Charlie"}, {name: "Beta"}, {name: "Alpha"}]
+            },
+            {
+                label: "Le tri multiple fonctionne",
+                items: [
+                    {id: 1, name: "Alpha", category: "B", status: "active"},
+                    {id: 2, name: "Beta", category: "A", status: "active"},
+                    {id: 3, name: "Alpha", category: "A", status: "inactive"}
+                ] as TestItem[],
+                sort: [
+                    {fieldName: "name", sortDesc: false},
+                    {fieldName: "category", sortDesc: false}
+                ],
+                expected: [
+                    {name: "Alpha", category: "A"},
+                    {name: "Alpha", category: "B"}
+                ]
+            }
+        ])("$label", ({items, sort, expected}) => {
             const store = makeLocalCollectionStore<TestItem>();
-            store.list = [
-                {id: 3, name: "Charlie", category: "C", status: "active"},
-                {id: 1, name: "Alpha", category: "A", status: "active"},
-                {id: 2, name: "Beta", category: "B", status: "inactive"}
-            ];
+            store.list = items;
+            store.sort = sort as any;
 
-            store.sort = [{fieldName: "name", sortDesc: false}];
-
-            expect(store.list[0].name).toBe("Alpha");
-            expect(store.list[1].name).toBe("Beta");
-            expect(store.list[2].name).toBe("Charlie");
-        });
-
-        test("Le tri descendant fonctionne", () => {
-            const store = makeLocalCollectionStore<TestItem>();
-            store.list = [
-                {id: 1, name: "Alpha", category: "A", status: "active"},
-                {id: 2, name: "Beta", category: "B", status: "inactive"},
-                {id: 3, name: "Charlie", category: "C", status: "active"}
-            ];
-
-            store.sort = [{fieldName: "name", sortDesc: true}];
-
-            expect(store.list[0].name).toBe("Charlie");
-            expect(store.list[1].name).toBe("Beta");
-            expect(store.list[2].name).toBe("Alpha");
-        });
-
-        test("Le tri multiple fonctionne", () => {
-            const store = makeLocalCollectionStore<TestItem>();
-            store.list = [
-                {id: 1, name: "Alpha", category: "B", status: "active"},
-                {id: 2, name: "Beta", category: "A", status: "active"},
-                {id: 3, name: "Alpha", category: "A", status: "inactive"}
-            ];
-
-            store.sort = [
-                {fieldName: "name", sortDesc: false},
-                {fieldName: "category", sortDesc: false}
-            ];
-
-            expect(store.list[0].name).toBe("Alpha");
-            expect(store.list[0].category).toBe("A");
-            expect(store.list[1].name).toBe("Alpha");
-            expect(store.list[1].category).toBe("B");
+            for (const [i, exp] of expected.entries()) {
+                for (const [k, v] of Object.entries(exp)) {
+                    expect((store.list[i] as any)[k]).toBe(v);
+                }
+            }
         });
     });
 
@@ -352,7 +373,7 @@ describe("CollectionStore", () => {
 
     describe("Recherche - Mode serveur", () => {
         test("search appelle le service avec les bons paramètres", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
                 facets: [],
                 totalCount: 1
@@ -365,17 +386,14 @@ describe("CollectionStore", () => {
             await store.search();
 
             expect(service).toHaveBeenCalled();
-            const callArgs = (service as any).mock.calls[0][0] as QueryInput;
+            const callArgs = vi.mocked(service).mock.calls[0][0] as QueryInput;
             expect(callArgs.criteria?.query).toBe("test");
             expect(callArgs.top).toBe(25);
         });
 
         test("search met à jour la liste avec les résultats", async () => {
-            const items: TestItem[] = [
-                {id: 1, name: "Item 1", category: "A", status: "active"},
-                {id: 2, name: "Item 2", category: "B", status: "inactive"}
-            ];
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const items: TestItem[] = [makeItem(1, "A", "active"), makeItem(2, "B", "inactive")];
+            const service = makeServerService({
                 list: items,
                 facets: [],
                 totalCount: 2
@@ -390,7 +408,7 @@ describe("CollectionStore", () => {
         });
 
         test("search met à jour les facettes", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [],
                 facets: [
                     {
@@ -418,7 +436,7 @@ describe("CollectionStore", () => {
         });
 
         test("search gère les groupes", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [],
                 groups: [
                     {
@@ -443,7 +461,7 @@ describe("CollectionStore", () => {
         });
 
         test("search avec isScroll ajoute les résultats", async () => {
-            const service: SearchService<TestItem, any> = vi
+            const service = vi
                 .fn()
                 .mockResolvedValueOnce({
                     list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
@@ -454,7 +472,7 @@ describe("CollectionStore", () => {
                     list: [{id: 2, name: "Item 2", category: "B", status: "inactive"}],
                     facets: [],
                     totalCount: 2
-                });
+                }) as MockSearchService;
 
             const store = makeServerCollectionStore(service);
 
@@ -465,8 +483,61 @@ describe("CollectionStore", () => {
             expect(store.list).toHaveLength(2);
         });
 
+        test("search avec skipToken en scroll n'actualise pas totalCount", async () => {
+            const service = vi
+                .fn()
+                .mockResolvedValueOnce({
+                    list: [makeItem(1)],
+                    facets: [],
+                    totalCount: 2,
+                    skipToken: "page-2"
+                })
+                .mockResolvedValueOnce({
+                    list: [makeItem(2, "B")],
+                    facets: [],
+                    totalCount: 999,
+                    skipToken: undefined
+                });
+
+            const store = makeServerCollectionStore(service);
+
+            await store.search();
+            expect(store.totalCount).toBe(2);
+
+            await store.search(true);
+            expect(store.totalCount).toBe(2);
+
+            const secondCall = service.mock.calls[1][0] as QueryInput;
+            expect(secondCall.skipToken).toBe("page-2");
+            expect(secondCall.skip).toBeUndefined();
+        });
+
+        test("search en scroll sans skipToken calcule skip", async () => {
+            const service = vi
+                .fn()
+                .mockResolvedValueOnce({
+                    list: [makeItem(1)],
+                    facets: [],
+                    totalCount: 2
+                })
+                .mockResolvedValueOnce({
+                    list: [makeItem(2, "B")],
+                    facets: [],
+                    totalCount: 2
+                });
+
+            const store = makeServerCollectionStore(service);
+
+            await store.search();
+            await store.search(true);
+
+            const secondCall = service.mock.calls[1][0] as QueryInput;
+            expect(secondCall.skipToken).toBeUndefined();
+            expect(secondCall.skip).toBe(1);
+        });
+
         test("search vide la sélection si ce n'est pas un scroll", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [{id: 1, name: "Item 1", category: "A", status: "active"}],
                 facets: [],
                 totalCount: 1
@@ -488,14 +559,12 @@ describe("CollectionStore", () => {
                 totalCount: 0
             });
 
-            const criteriaEntity = entity({
-                name: e.field(domain, f => f.optional()),
-                category: e.field(domain, f => f.optional())
-            });
+            const criteriaEntity = makeOptionalCriteriaEntity();
 
             const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
-            store.criteria.name.value = "ab";
-            store.criteria.category.value = "A";
+            const criteria = asCriteriaFields(store.criteria);
+            criteria.name.value = "ab";
+            criteria.category!.value = "A";
 
             await store.search();
 
@@ -505,25 +574,86 @@ describe("CollectionStore", () => {
             expect(callArgs.criteria).not.toHaveProperty("name");
         });
 
+        test("search retire les critères vides", async () => {
+            const service = makeServerService();
+
+            const criteriaEntity = makeOptionalCriteriaEntity();
+
+            const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
+            const criteria = asCriteriaFields(store.criteria);
+            criteria.name.value = "";
+            criteria.category!.value = "B";
+
+            await store.search();
+
+            const callArgs = service.mock.calls[0][0] as QueryInput;
+            expect(callArgs.criteria).toMatchObject({category: "B"});
+            expect(callArgs.criteria).not.toHaveProperty("name");
+        });
+
+        test("mode debounced déclenche une recherche sur query", async () => {
+            vi.useFakeTimers();
+            try {
+                const service = makeServerService();
+                const store = makeServerCollectionStore(service, {criteriaMode: "debounced", textSearchDelay: 10});
+                store.query = "new-query";
+
+                await vi.advanceTimersByTimeAsync(20);
+
+                expect(service).toHaveBeenCalled();
+            } finally {
+                vi.useRealTimers();
+            }
+        });
+
         test("search bloque l'appel si un critère requis est invalide", async () => {
             const service = vi.fn().mockResolvedValue({
                 list: [],
                 facets: [],
                 totalCount: 0
             });
-            const criteriaEntity = entity({name: e.field(domain)});
+            const criteriaEntity = makeRequiredNameCriteriaEntity();
 
             const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
-            store.criteria.name.value = undefined;
+            const criteria = asCriteriaFields(store.criteria);
+            criteria.name.value = undefined;
 
             await store.search();
 
             expect(service).not.toHaveBeenCalled();
         });
 
+        test("search ignore les erreurs d'abandon", async () => {
+            const service = makeServerService();
+            const abortError = new Error("aborted");
+
+            const trackSpy = vi.spyOn(core.requestStore, "track").mockRejectedValueOnce(abortError);
+            const abortSpy = vi.spyOn(core, "isAbortError").mockReturnValueOnce(true);
+            const store = makeServerCollectionStore(service);
+
+            await expect(store.search()).resolves.toBeUndefined();
+
+            trackSpy.mockRestore();
+            abortSpy.mockRestore();
+        });
+
+        test("search rethrow les erreurs techniques", async () => {
+            const service = makeServerService();
+            const technicalError = new Error("boom");
+
+            const trackSpy = vi.spyOn(core.requestStore, "track").mockRejectedValueOnce(technicalError);
+            const abortSpy = vi.spyOn(core, "isAbortError").mockReturnValueOnce(false);
+            const store = makeServerCollectionStore(service);
+
+            await expect(store.search()).rejects.toThrow("boom");
+
+            trackSpy.mockRestore();
+            abortSpy.mockRestore();
+        });
+
         test("clear vide tout", async () => {
             const item: TestItem = {id: 0, name: "Old", category: "X", status: "active"};
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [item],
                 facets: [],
                 totalCount: 1
@@ -579,6 +709,31 @@ describe("CollectionStore", () => {
 
             expect(store.inputFacets.category?.selected).toEqual(["A", "B"]);
         });
+
+        test("Met à jour les critères personnalisés en mode serveur", () => {
+            const service = makeServerService();
+            const criteriaEntity = makeOptionalNameCriteriaEntity();
+            const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
+
+            store.setProperties({criteria: {name: "Hello"}});
+
+            expect(asCriteriaFields(store.criteria).name.value).toBe("Hello");
+        });
+
+        test("Met à jour les facettes d'entrée en mode serveur", () => {
+            const service = makeServerService();
+            const store = makeServerCollectionStore(service);
+
+            store.setProperties({
+                inputFacets: {
+                    category: {
+                        selected: ["A"]
+                    }
+                }
+            });
+
+            expect(store.inputFacets.category?.selected).toEqual(["A"]);
+        });
     });
 
     describe("clear", () => {
@@ -597,7 +752,7 @@ describe("CollectionStore", () => {
 
     describe("Groupes", () => {
         test("groups retourne les groupes en mode serveur", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [],
                 groups: [
                     {
@@ -645,7 +800,7 @@ describe("CollectionStore", () => {
         });
 
         test("getSearchGroupStore retourne un store pour un groupe", async () => {
-            const service: SearchService<TestItem, any> = vi.fn().mockResolvedValue({
+            const service = makeServerService({
                 list: [],
                 groups: [
                     {
@@ -667,6 +822,43 @@ describe("CollectionStore", () => {
             const groupStore = store.getSearchGroupStore("A");
             expect(groupStore.list).toHaveLength(1);
             expect(groupStore.totalCount).toBe(1);
+        });
+
+        test("getSearchGroupStore retourne des valeurs par défaut pour groupe inconnu", async () => {
+            const service = makeServerService({
+                list: [],
+                groups: [],
+                facets: [],
+                totalCount: 0
+            });
+
+            const store = makeServerCollectionStore(service);
+            await store.search();
+
+            const groupStore = store.getSearchGroupStore("unknown");
+            expect(groupStore.currentCount).toBe(0);
+            expect(groupStore.totalCount).toBe(0);
+            expect(groupStore.list).toEqual([]);
+            expect(groupStore.selectionStatus).toBe("none");
+        });
+    });
+
+    describe("Constructeur serveur", () => {
+        test("accepte l'ordre (service, criteria, init)", () => {
+            const service = makeServerService();
+            const criteriaEntity = makeOptionalNameCriteriaEntity();
+
+            const store = makeServerCollectionStore(service, criteriaEntity, {query: "from-init", top: 12});
+
+            expect(store.query).toBe("from-init");
+            expect(store.top).toBe(12);
+        });
+
+        test("expose le type server", () => {
+            const service = makeServerService();
+            const store = makeServerCollectionStore(service);
+
+            expect(store.type).toBe("server");
         });
     });
 
@@ -737,6 +929,405 @@ describe("CollectionStore", () => {
 
             expect(store.selectionnableList).toHaveLength(1);
             expect(store.selectionnableList[0].status).toBe("active");
+        });
+    });
+
+    describe("Sélection et facettes avancées", () => {
+        test("toggle ignore un élément non sélectionnable", () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            const item = {id: 1, name: "Item 1", category: "A", status: "inactive" as const};
+            store.isItemSelectionnable = x => x.status === "active";
+            store.list = [item];
+
+            store.toggle(item);
+
+            expect(store.selectedItems.size).toBe(0);
+            expect(store.selectionStatus).toBe("none");
+        });
+
+        test("toggleAll sélectionne puis désélectionne tout", () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            store.list = [
+                {id: 1, name: "Item 1", category: "A", status: "active"},
+                {id: 2, name: "Item 2", category: "B", status: "active"}
+            ];
+
+            store.toggleAll();
+            expect(store.selectedItems.size).toBe(2);
+            expect(store.selectionStatus).toBe("selected");
+
+            store.toggleAll();
+            expect(store.selectedItems.size).toBe(0);
+            expect(store.selectionStatus).toBe("none");
+        });
+
+        test("selectionStatus passe à partial", () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            store.list = [
+                {id: 1, name: "Item 1", category: "A", status: "active"},
+                {id: 2, name: "Item 2", category: "B", status: "active"}
+            ];
+
+            store.toggle(store.list[0]);
+
+            expect(store.selectionStatus).toBe("partial");
+            expect(store.selectedList).toHaveLength(1);
+        });
+
+        test("removeFacetValue global conserve l'opérateur", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Catégorie", fieldName: "category"}]
+            });
+
+            store.addFacetValue("category", "A", "selected");
+            store.toggleFacetOperator("category");
+            expect(store.inputFacets.category?.operator).toBe("and");
+
+            store.removeFacetValue();
+
+            expect(store.inputFacets.category?.selected).toBeUndefined();
+            expect(store.inputFacets.category?.excluded).toBeUndefined();
+            expect(store.inputFacets.category?.operator).toBe("and");
+        });
+
+        test("removeFacetValue supprime une valeur exclue", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Catégorie", fieldName: "category"}]
+            });
+
+            store.addFacetValue("category", "A", "excluded");
+            expect(store.inputFacets.category?.excluded).toEqual(["A"]);
+
+            store.removeFacetValue("category", "A");
+
+            expect(store.inputFacets.category).toBeUndefined();
+        });
+
+        test("getSearchGroupStore.toggle délègue au store parent", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Catégorie", fieldName: "category"}],
+                searchFields: []
+            });
+            store.list = [
+                {id: 1, name: "A1", category: "A", status: "active"},
+                {id: 2, name: "B1", category: "B", status: "active"}
+            ];
+            store.groupingKey = "category";
+
+            const groupStore = store.getSearchGroupStore("A");
+            groupStore.toggle(store.list[0]);
+
+            expect(store.selectedItems.has(store.list[0])).toBe(true);
+            expect(groupStore.selectionStatus).toBe("selected");
+        });
+
+        test("getSearchGroupStore.toggleAll agit uniquement sur le groupe", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Catégorie", fieldName: "category"}],
+                searchFields: []
+            });
+            store.list = [
+                {id: 1, name: "A1", category: "A", status: "active"},
+                {id: 2, name: "A2", category: "A", status: "active"},
+                {id: 3, name: "B1", category: "B", status: "active"}
+            ];
+            store.groupingKey = "category";
+            store.selectedItems.add(store.list[0]);
+            store.selectedItems.add(store.list[2]);
+
+            const groupStore = store.getSearchGroupStore("A");
+
+            groupStore.toggleAll();
+            expect(store.selectedItems.has(store.list[0])).toBe(true);
+            expect(store.selectedItems.has(store.list[1])).toBe(true);
+            expect(store.selectedItems.has(store.list[2])).toBe(true);
+
+            groupStore.toggleAll();
+            expect(store.selectedItems.has(store.list[0])).toBe(false);
+            expect(store.selectedItems.has(store.list[1])).toBe(false);
+            expect(store.selectedItems.has(store.list[2])).toBe(true);
+        });
+    });
+
+    describe("Filtrage par facettes - Types de valeurs", () => {
+        interface NumericItem {
+            id: number;
+            count: number;
+        }
+        interface BooleanItem {
+            id: number;
+            active: boolean;
+        }
+        interface ArrayItem {
+            id: number;
+            tags: string[];
+        }
+        interface NullableItem {
+            id: number;
+            category: string | null | undefined;
+        }
+
+        test("filtre par valeur numérique", () => {
+            const store = makeLocalCollectionStore<NumericItem>({
+                facetDefinitions: [{code: "count", label: "Count", fieldName: "count"}]
+            });
+            store.list = [
+                {id: 1, count: 1},
+                {id: 2, count: 2},
+                {id: 3, count: 3}
+            ];
+
+            store.addFacetValue("count", "2", "selected");
+
+            expect(store.list.map(i => i.id)).toEqual([2]);
+        });
+
+        test("filtre par valeur booléenne", () => {
+            const store = makeLocalCollectionStore<BooleanItem>({
+                facetDefinitions: [{code: "active", label: "Actif", fieldName: "active"}]
+            });
+            store.list = [
+                {id: 1, active: true},
+                {id: 2, active: false},
+                {id: 3, active: true}
+            ];
+
+            store.addFacetValue("active", "true", "selected");
+
+            expect(store.list.map(i => i.id)).toEqual([1, 3]);
+        });
+
+        test("filtre par valeur <null> pour un item de valeur null", () => {
+            const store = makeLocalCollectionStore<NullableItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category"}]
+            });
+            store.list = [
+                {id: 1, category: "A"},
+                {id: 2, category: null},
+                {id: 3, category: undefined}
+            ];
+
+            store.addFacetValue("category", "<null>", "selected");
+
+            expect(store.list.map(i => i.id).sort()).toEqual([2, 3]);
+        });
+
+        test("filtre par tableau : facette <null> matche un tableau vide", () => {
+            const store = makeLocalCollectionStore<ArrayItem>({
+                facetDefinitions: [{code: "tags", label: "Tags", fieldName: "tags"}]
+            });
+            store.list = [
+                {id: 1, tags: ["a"]},
+                {id: 2, tags: []}
+            ];
+
+            store.addFacetValue("tags", "<null>", "selected");
+
+            expect(store.list.map(i => i.id)).toEqual([2]);
+        });
+
+        test("filtre par tableau : facette matche un élément du tableau", () => {
+            const store = makeLocalCollectionStore<ArrayItem>({
+                facetDefinitions: [{code: "tags", label: "Tags", fieldName: "tags"}]
+            });
+            store.list = [
+                {id: 1, tags: ["a", "b"]},
+                {id: 2, tags: ["c"]},
+                {id: 3, tags: ["b"]}
+            ];
+
+            store.addFacetValue("tags", "b", "selected");
+
+            expect(store.list.map(i => i.id).sort()).toEqual([1, 3]);
+        });
+
+        test("groupe les items par valeur de tableau", () => {
+            const store = makeLocalCollectionStore<ArrayItem>({
+                facetDefinitions: [{code: "tags", label: "Tags", fieldName: "tags"}]
+            });
+            store.list = [
+                {id: 1, tags: ["a", "b"]},
+                {id: 2, tags: []},
+                {id: 3, tags: ["a"]}
+            ];
+
+            const {facets} = store;
+            const {values} = facets[0];
+            expect(values.find(v => v.code === "a")?.count).toBe(2);
+            expect(values.find(v => v.code === "b")?.count).toBe(1);
+            expect(values.find(v => v.code === "<null>")?.count).toBe(1);
+        });
+
+        test("facette <null> ne matche pas un nombre non nul (itemValue !== 0)", () => {
+            const store = makeLocalCollectionStore<NumericItem>({
+                facetDefinitions: [{code: "count", label: "Count", fieldName: "count"}]
+            });
+            store.list = [
+                {id: 1, count: 5},
+                {id: 2, count: 0}
+            ];
+
+            store.addFacetValue("count", "<null>", "selected");
+
+            // Le "0" n'est pas considéré <null>, seuls les valeurs falsy non-zéro le sont.
+            expect(store.list).toEqual([]);
+        });
+
+        test("facette vide (aucun selected ni excluded) ne filtre rien", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category"}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "B", status: "active"}
+            ];
+
+            store.addFacetValue("category", "A", "selected");
+            store.removeFacetValue("category", "A");
+            (store.inputFacets as any).category = {selected: [], excluded: []};
+
+            expect(store.list).toHaveLength(2);
+        });
+    });
+
+    describe("Divers - Mode local", () => {
+        test("setProperties applique inputFacets", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category"}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "B", status: "active"}
+            ];
+
+            store.setProperties({
+                inputFacets: {category: {selected: ["A"]}}
+            });
+
+            expect(store.list.map(i => i.id)).toEqual([1]);
+        });
+
+        test("search appelle le service local si présent", async () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            const localLoad = vi.fn().mockResolvedValue(undefined);
+            store.localLoadService = localLoad;
+
+            await store.search();
+
+            expect(localLoad).toHaveBeenCalledTimes(1);
+        });
+
+        test("search sans service local ne fait rien", async () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            await expect(store.search()).resolves.toBeUndefined();
+        });
+
+        test("facets: isMultiSelectable garde les items filtrés par la même facette", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category", isMultiSelectable: true}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "B", status: "active"}
+            ];
+            store.setProperties({inputFacets: {category: {selected: ["A"]}}});
+            // Comme isMultiSelectable, le calcul des valeurs de facette doit ignorer sa propre sélection
+            const cat = store.facets[0];
+            expect(cat.values.map(v => v.code).sort()).toEqual(["A", "B"]);
+        });
+
+        test("facets: ordering 'key-asc' trie les valeurs par code croissant", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category", ordering: "key-asc"}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "B", status: "active"},
+                {id: 2, name: "b", category: "A", status: "active"},
+                {id: 3, name: "c", category: "C", status: "active"}
+            ];
+            expect(store.facets[0].values.map(v => v.code)).toEqual(["A", "B", "C"]);
+        });
+
+        test("facets: ordering 'count-asc' trie par count croissant", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category", ordering: "count-asc"}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "A", status: "active"},
+                {id: 3, name: "c", category: "B", status: "active"}
+            ];
+            expect(store.facets[0].values.map(v => v.code)).toEqual(["B", "A"]);
+        });
+
+        test("facets: displayFormatter transforme les labels non-null", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [
+                    {
+                        code: "category",
+                        label: "Cat",
+                        fieldName: "category",
+                        displayFormatter: v => `[${v}]`
+                    }
+                ]
+            });
+            store.list = [{id: 1, name: "a", category: "A", status: "active"}];
+            expect(store.facets[0].values[0].label).toBe("[A]");
+        });
+
+        test("groups: sans groupingKey retourne []", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category"}]
+            });
+            store.list = [{id: 1, name: "a", category: "A", status: "active"}];
+            expect(store.groups).toEqual([]);
+        });
+
+        test("groups: avec groupingKey sans facetDefinitions retourne []", () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            store.list = [{id: 1, name: "a", category: "A", status: "active"}];
+            store.groupingKey = "category";
+            expect(store.groups).toEqual([]);
+        });
+
+        test("list: tri ascendant est appliqué", () => {
+            const store = makeLocalCollectionStore<TestItem>();
+            store.list = [
+                {id: 3, name: "c", category: "A", status: "active"},
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "A", status: "active"}
+            ];
+            store.sort = [{fieldName: "id", sortDesc: false}];
+            expect(store.list.map(i => i.id)).toEqual([1, 2, 3]);
+        });
+
+        test("filterItemByFacet: excluded exclut les correspondances", () => {
+            const store = makeLocalCollectionStore<TestItem>({
+                facetDefinitions: [{code: "category", label: "Cat", fieldName: "category"}]
+            });
+            store.list = [
+                {id: 1, name: "a", category: "A", status: "active"},
+                {id: 2, name: "b", category: "B", status: "active"}
+            ];
+            store.setProperties({inputFacets: {category: {excluded: ["A"]}}});
+            expect(store.list.map(i => i.id)).toEqual([2]);
+        });
+
+        test("setProperties: sort et query sont pris en compte", () => {
+            const store = makeLocalCollectionStore<TestItem>({searchFields: ["name"]});
+            store.list = [
+                {id: 1, name: "hello", category: "A", status: "active"},
+                {id: 2, name: "world", category: "B", status: "active"}
+            ];
+            store.setProperties({sort: [{fieldName: "id", sortDesc: true}], query: "hello"});
+            expect(store.list.map(i => i.id)).toEqual([1]);
+        });
+
+        test("setProperties: groupingKey et searchFields sont écrasés", () => {
+            const store = makeLocalCollectionStore<TestItem>({searchFields: ["name"]});
+            store.setProperties({groupingKey: "category", searchFields: ["category"]});
+            expect(store.groupingKey).toBe("category");
+            expect(store.searchFields).toEqual(["category"]);
         });
     });
 });

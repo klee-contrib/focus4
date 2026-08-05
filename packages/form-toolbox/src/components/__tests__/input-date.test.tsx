@@ -1,88 +1,218 @@
-// Libs
-import {render} from "@testing-library/react";
-import {describe, expect, it} from "vitest";
+import {fireEvent, render, screen} from "@testing-library/react";
+import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
+import {setupComponentTest} from "../../__tests__/test-utils";
 import {InputDate} from "../input-date";
 
-const props = {
-    theme: {
-        calendar: "calendar",
-        input: "input"
-    }
+const inputDateTheme = {
+    input: "inputDate-input",
+    calendar: "inputDate-calendar"
 };
 
-// Components
+const textFieldTheme = {
+    input: "textField-input"
+};
+
 describe("InputDate component", () => {
-    it("with input", () => {
-        // Arrange/Act
-        const {container} = render(
+    setupComponentTest();
+
+    test("render un input", () => {
+        render(
             <InputDate
-                onChange={() => {
-                    /* */
-                }}
+                inputProps={{theme: textFieldTheme}}
+                onChange={() => undefined}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
                 value={undefined}
-                schema={z.iso.date()}
-                {...props}
             />
         );
-        // Assert
-        expect(container.querySelectorAll("input")).toHaveLength(1);
-    });
-});
 
-describe("Some date formation", () => {
-    it("Formatter", () => {
-        // Arrange/Act
-
-        const {container} = render(
-            <InputDate
-                onChange={() => {
-                    /* */
-                }}
-                value="10/11/2016"
-                inputFormat="dd/MM/yy"
-                schema={z.iso.date()}
-                {...props}
-            />
-        );
-        // Assert
-        expect(container.querySelector("input")?.value).toBe("10/11/20");
+        expect(screen.getByRole("textbox")).toBeTruthy();
     });
 
-    it("Invalid input day", () => {
-        // Arrange/Act
-
-        const {container} = render(
+    test("formatte une valeur ISO initiale", () => {
+        render(
             <InputDate
-                onChange={() => {
-                    /* */
-                }}
-                value="df/11/2016"
                 inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={() => undefined}
                 schema={z.iso.date()}
-                {...props}
+                theme={inputDateTheme}
+                value="2024-10-24"
             />
         );
-        // Assert
-        expect(container.querySelector("input")?.value).toBe("__/11/2016");
+
+        expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("24/10/2024");
     });
 
-    it("Invalid input all", () => {
-        // Arrange/Act
-
-        const {container} = render(
+    test("réinitialise un texte non ISO à vide", () => {
+        render(
             <InputDate
-                onChange={() => {
-                    /* */
-                }}
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={() => undefined}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
                 value="sddqsdqsdq"
-                inputFormat="dd/MM/yyyy"
-                schema={z.iso.date()}
-                {...props}
             />
         );
-        // Assert
-        expect(container.querySelector("input")?.value).toBe("");
+
+        expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("");
+    });
+
+    test("saisie complète commit en date-only", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/2024"}});
+
+        expect(onChange).toHaveBeenCalledWith("2024-10-24");
+    });
+
+    test("saisie incomplète puis Enter commit la valeur saisie", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/20"}});
+        expect(onChange).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(screen.getByRole("textbox"), {key: "Enter"});
+
+        expect(onChange).toHaveBeenCalledWith("24/10/20");
+    });
+
+    test("blur externe commit un texte invalide", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        const input = screen.getByRole("textbox");
+        fireEvent.change(input, {target: {value: "abc"}});
+        fireEvent.blur(input, {relatedTarget: null});
+
+        expect(onChange).toHaveBeenCalledWith("abc");
+    });
+
+    test("Enter sans saisie commit undefined", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.keyDown(screen.getByRole("textbox"), {key: "Enter"});
+
+        expect(onChange).toHaveBeenCalledWith(undefined);
+    });
+
+    test("trimme les espaces avant commit", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        const input = screen.getByRole("textbox");
+        fireEvent.change(input, {target: {value: "   "}});
+        fireEvent.blur(input, {relatedTarget: null});
+
+        expect(onChange).toHaveBeenCalledWith(undefined);
+    });
+
+    test("ISOStringFormat utc-midnight retourne un ISO UTC", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                ISOStringFormat="utc-midnight"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.datetime()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/2024"}});
+        fireEvent.keyDown(screen.getByRole("textbox"), {key: "Enter"});
+
+        const lastCall = onChange.mock.calls.at(-1)?.[0] as string | undefined;
+        expect(lastCall).toMatch(/Z$/u);
+    });
+
+    test("ISOStringFormat local-midnight retourne un ISO datetime", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                ISOStringFormat="local-midnight"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.datetime()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/2024"}});
+        fireEvent.keyDown(screen.getByRole("textbox"), {key: "Enter"});
+
+        const lastCall = onChange.mock.calls.at(-1)?.[0] as string | undefined;
+        expect(lastCall).toContain("T");
+    });
+
+    test("ignore les placeholders '_' pour le déclenchement du commit", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/20__"}});
+
+        expect(onChange).not.toHaveBeenCalled();
     });
 });

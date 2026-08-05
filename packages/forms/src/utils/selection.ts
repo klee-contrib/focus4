@@ -21,15 +21,7 @@ export function setInputSelection(el: HTMLInputElement | HTMLTextAreaElement, se
 
     globalThis.requestAnimationFrame(() => {
         try {
-            if (el.selectionStart === undefined) {
-                const rangeEl = (el as any).createTextRange();
-                rangeEl.collapse(true);
-                rangeEl.moveStart("character", selection.start);
-                rangeEl.moveEnd("character", selection.end - selection.start);
-                rangeEl.select();
-            } else {
-                el.setSelectionRange(selection.start, selection.end);
-            }
+            el.setSelectionRange(selection.start, selection.end);
         } catch {
             /* Not focused or not visible */
         }

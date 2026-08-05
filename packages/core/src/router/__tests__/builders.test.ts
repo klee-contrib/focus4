@@ -1,6 +1,6 @@
 import {describe, expect, test} from "vitest";
 
-import {buildEndpoints, buildParamsMap} from "../builders";
+import {buildEndpoints, buildParamsMap, ParamObject} from "../builders";
 import {param} from "../param";
 
 describe("buildEndpoints", () => {
@@ -41,7 +41,7 @@ describe("buildEndpoints", () => {
 describe("buildParamsMap", () => {
     test("construit une map pour un paramètre string", () => {
         const config = param("id", b => b.string());
-        const object = {id: undefined} as any;
+        const object = {id: undefined} as unknown as ParamObject<typeof config>;
         const map = buildParamsMap(config, object);
 
         map.id("test");
@@ -50,7 +50,7 @@ describe("buildParamsMap", () => {
 
     test("construit une map pour un paramètre number", () => {
         const config = param("id", b => b.number());
-        const object = {id: undefined} as any;
+        const object = {id: undefined} as unknown as ParamObject<typeof config>;
         const map = buildParamsMap(config, object);
 
         map.id("123");
@@ -74,7 +74,7 @@ describe("buildParamsMap", () => {
                 param("postId", b => b.number())
             )
         };
-        const object = {users: {userId: undefined, postId: undefined}} as any;
+        const object = {users: {userId: undefined, postId: undefined}} as unknown as ParamObject<typeof config>;
         const map = buildParamsMap(config, object);
 
         map.userId("123");

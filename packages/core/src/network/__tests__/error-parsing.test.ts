@@ -40,11 +40,8 @@ function createHTTPError(status: number, url = "https://example.com/api"): HTTPE
 
 describe("error-parsing", () => {
     beforeEach(() => {
-        // Réinitialiser le messageStore avant chaque test
-        const store = messageStore as any;
-        store.messages.clear();
+        messageStore.clearMessages();
     });
-
     describe("createProblemDetails", () => {
         test("Crée un ProblemDetails avec les valeurs par défaut", () => {
             const jsonResponse = {message: "Une erreur est survenue"};
@@ -136,71 +133,42 @@ describe("error-parsing", () => {
             expect(messageStore.getLatestMessage("error")?.label).toBe("Détail");
         });
 
-        test("Traite un ProblemDetails avec errors comme string", () => {
-            const error = createHTTPError(422);
-            const problemDetails: ProblemDetails = {
-                status: 422,
-                errors: "Erreur globale"
-            };
-
-            const result = handleProblemDetails(error, problemDetails);
-
-            expect(result.$messages).toHaveLength(1);
-            expect(result.$messages[0]).toEqual({
-                type: "error",
-                message: "Erreur globale"
-            });
-        });
-
-        test("Traite un ProblemDetails avec errors comme string[]", () => {
-            const error = createHTTPError(422);
-            const problemDetails: ProblemDetails = {
-                status: 422,
-                errors: ["Erreur 1", "Erreur 2", "Erreur 3"]
-            };
-
-            const result = handleProblemDetails(error, problemDetails);
-
-            expect(result.$messages).toHaveLength(3);
-            expect(result.$messages[0].message).toBe("Erreur 1");
-            expect(result.$messages[1].message).toBe("Erreur 2");
-            expect(result.$messages[2].message).toBe("Erreur 3");
-        });
-
-        test("Traite un ProblemDetails avec errors comme Record<string, string>", () => {
-            const error = createHTTPError(422);
-            const problemDetails: ProblemDetails = {
-                status: 422,
+        test.each([
+            {
+                label: "string",
+                errors: "Erreur globale" as ProblemDetails["errors"],
+                expectedMessages: ["Erreur globale"]
+            },
+            {
+                label: "string[]",
+                errors: ["Erreur 1", "Erreur 2", "Erreur 3"] as ProblemDetails["errors"],
+                expectedMessages: ["Erreur 1", "Erreur 2", "Erreur 3"]
+            },
+            {
+                label: "Record<string, string>",
                 errors: {
                     email: "Email invalide",
                     password: "Mot de passe trop court",
                     global: "Erreur globale"
-                }
-            };
-
-            const result = handleProblemDetails(error, problemDetails);
-
-            expect(result.$messages).toHaveLength(3);
-            expect(result.$messages.find(m => m.message === "email: Email invalide")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "password: Mot de passe trop court")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "Erreur globale")).toBeDefined();
-        });
-
-        test("Traite un ProblemDetails avec errors comme Record<string, string[]>", () => {
-            const error = createHTTPError(422);
-            const problemDetails: ProblemDetails = {
-                status: 422,
+                } as ProblemDetails["errors"],
+                expectedMessages: ["email: Email invalide", "password: Mot de passe trop court", "Erreur globale"]
+            },
+            {
+                label: "Record<string, string[]>",
                 errors: {
                     email: "Email invalide",
                     globals: "Erreur globale"
-                }
-            };
+                } as ProblemDetails["errors"],
+                expectedMessages: ["email: Email invalide", "Erreur globale"]
+            }
+        ])("Traite un ProblemDetails avec errors comme $label", ({errors, expectedMessages}) => {
+            const error = createHTTPError(422);
+            const result = handleProblemDetails(error, {status: 422, errors});
 
-            const result = handleProblemDetails(error, problemDetails);
-
-            expect(result.$messages).toHaveLength(2);
-            expect(result.$messages.find(m => m.message === "email: Email invalide")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "Erreur globale")).toBeDefined();
+            expect(result.$messages).toHaveLength(expectedMessages.length);
+            for (const message of expectedMessages) {
+                expect(result.$messages.find(m => m.message === message)).toBeDefined();
+            }
         });
 
         test("Traite des champs personnalisés comme string", () => {
@@ -352,40 +320,16 @@ describe("error-parsing", () => {
     });
 
     describe("isAbortError", () => {
-        test("Retourne true pour un DOMException AbortError", () => {
-            const abortError = new DOMException("The operation was aborted.", "AbortError");
-
-            expect(isAbortError(abortError)).toBe(true);
-        });
-
-        test("Retourne false pour un DOMException avec un autre nom", () => {
-            const otherError = new DOMException("Other error", "NetworkError");
-
-            expect(isAbortError(otherError)).toBe(false);
-        });
-
-        test("Retourne false pour une Error standard", () => {
-            const standardError = new Error("Standard error");
-
-            expect(isAbortError(standardError)).toBe(false);
-        });
-
-        test("Retourne false pour un HTTPError", () => {
-            const httpError = createHTTPError(400);
-
-            expect(isAbortError(httpError)).toBe(false);
-        });
-
-        test("Retourne false pour null", () => {
-            expect(isAbortError(null)).toBe(false);
-        });
-
-        test("Retourne false pour undefined", () => {
-            expect(isAbortError(undefined)).toBe(false);
-        });
-
-        test("Retourne false pour un objet simple", () => {
-            expect(isAbortError({name: "AbortError"})).toBe(false);
+        test.each([
+            ["DOMException AbortError", new DOMException("The operation was aborted.", "AbortError"), true],
+            ["DOMException avec un autre nom", new DOMException("Other error", "NetworkError"), false],
+            ["Error standard", new Error("Standard error"), false],
+            ["HTTPError", createHTTPError(400), false],
+            ["null", null, false],
+            ["undefined", undefined, false],
+            ["objet simple", {name: "AbortError"}, false]
+        ])("Retourne %s -> %s", (_label, input, expected) => {
+            expect(isAbortError(input)).toBe(expected);
         });
     });
 });

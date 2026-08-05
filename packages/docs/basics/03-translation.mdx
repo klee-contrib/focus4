@@ -24,12 +24,8 @@ import {i18nStores} from "@focus4/stores";
 
 i18next.use(initReactI18next).init({
     ...basei18nConfig([i18nCollections, i18nFormToolbox, i18nLayout, i18nStores], {
-        fr: {
-            /* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */
-        },
-        en: {
-            /* Vos traductions personnalisées en anglais, qui peuvent surcharger celles de Focus. */
-        }
+        fr: {/* Vos traductions personnalisées en français, qui peuvent surcharger celles de Focus. */},
+        en: {/* Vos traductions personnalisées en anglais, qui peuvent surcharger celles de Focus. */}
     }),
     lng: "fr"
 });

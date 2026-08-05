@@ -1,7 +1,7 @@
 import {Router, RouterConfirmation} from "@focus4/core";
 
 import {LocalCollectionStore} from "../../../collection";
-import {NodeLoadBuilder} from "../../store";
+import {NodeLoadBuilder} from "../../store/load-builder";
 import {FormListNode, FormNode, SourceNodePartialType, SourceNodeType} from "../../types";
 
 type LoadData<FN extends FormNode | FormListNode | LocalCollectionStore> = FN extends LocalCollectionStore

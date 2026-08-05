@@ -18,56 +18,75 @@ interface PanelCss {
     "title--top": CSSMod<"top", Title>;
 }
 
-const panelCss: PanelCss = {
-    actions: "el-actions",
-    title: "el-title",
-    "title--bottom": "mod-bottom",
-    "title--top": "mod-top"
-} as any;
+function makePanelCss(): PanelCss {
+    return {
+        actions: "el-actions",
+        title: "el-title",
+        "title--bottom": "mod-bottom",
+        "title--top": "mod-top"
+    } as unknown as PanelCss;
+}
 
-describe("toBem : usage simple", () => {
-    const panelBem = toBem(panelCss);
+describe("Styling helpers", () => {
+    describe("toBem — usage classique (chaîne)", () => {
+        test("Un élément sans modifier retourne la classe de base", () => {
+            expect(toBem(makePanelCss()).actions()).toBe("el-actions");
+        });
 
-    test("élement sans modifiers", () => expect(panelBem.actions()).toBe("el-actions"));
-    test("élément avec modifiers appelé sans", () => expect(panelBem.title()).toBe("el-title"));
-    test("élément avec modifiers appelé avec 1", () =>
-        expect(panelBem.title({bottom: true})).toBe("el-title mod-bottom"));
-    test("élément avec modifiers appelé avec 1 autre", () =>
-        expect(panelBem.title({top: true})).toBe("el-title mod-top"));
-    test("élément avec modifiers appelé avec 2", () =>
-        expect(panelBem.title({bottom: true, top: true})).toBe("el-title mod-bottom mod-top"));
-    test("élément avec modifiers appelé avec 2 à l'envers", () =>
-        expect(panelBem.title({top: true, bottom: true})).toBe("el-title mod-bottom mod-top"));
-});
+        test("Un élément avec modifiers appelé sans modifier retourne la base", () => {
+            expect(toBem(makePanelCss()).title()).toBe("el-title");
+        });
 
-describe("toBem : usage alternatif", () => {
-    const panelBem = toBem(panelCss);
+        test.each([
+            {label: "un seul modifier (bottom)", mods: {bottom: true}, expected: "el-title mod-bottom"},
+            {label: "un seul modifier (top)", mods: {top: true}, expected: "el-title mod-top"},
+            {label: "deux modifiers", mods: {bottom: true, top: true}, expected: "el-title mod-bottom mod-top"},
+            {
+                label: "deux modifiers en ordre inverse",
+                mods: {top: true, bottom: true},
+                expected: "el-title mod-bottom mod-top"
+            }
+        ])("Élément avec modifiers appelé avec $label", ({mods, expected}) => {
+            expect(toBem(makePanelCss()).title(mods)).toBe(expected);
+        });
+    });
 
-    test("élement sans modifiers", () => expect(panelBem.actions(true)).toStrictEqual({actions: "el-actions"}));
-    test("élément avec modifiers", () =>
-        expect(panelBem.title(true)).toStrictEqual({
-            title: "el-title",
-            "title--top": "mod-top",
-            "title--bottom": "mod-bottom"
-        }));
-});
+    describe("toBem — usage alternatif (objet)", () => {
+        test("Un élément sans modifier retourne un objet clé/classe", () => {
+            expect(toBem(makePanelCss()).actions(true)).toStrictEqual({actions: "el-actions"});
+        });
 
-describe("fromBem : à partir d'un bem", () => {
-    const panelCss2 = fromBem(toBem(panelCss));
-    test("on retrouve le même css", () => expect(panelCss2).toStrictEqual(panelCss));
-});
+        test("Un élément avec modifiers retourne toutes les classes associées", () => {
+            expect(toBem(makePanelCss()).title(true)).toStrictEqual({
+                title: "el-title",
+                "title--top": "mod-top",
+                "title--bottom": "mod-bottom"
+            });
+        });
+    });
 
-describe("fromBem : à partir d'un css", () => {
-    const panelCss2 = fromBem(panelCss);
-    test("on retrouve le même css", () => expect(panelCss2).toStrictEqual(panelCss));
-});
+    describe("fromBem — reconstruction du CSS d'origine", () => {
+        test("Depuis un objet issu de toBem, on retrouve le CSS de départ", () => {
+            const panelCss = makePanelCss();
+            expect(fromBem(toBem(panelCss))).toStrictEqual(panelCss);
+        });
 
-describe("fromBem : à partir d'un mix", () => {
-    const css = fromBem({...toBem(panelCss), lol: "salut", lol2: "yo"});
-    test("on trouve le bon css", () => expect(css).toStrictEqual({...panelCss, lol: "salut", lol2: "yo"}));
-});
+        test("Depuis un CSS déjà brut, la sortie est équivalente à l'entrée", () => {
+            const panelCss = makePanelCss();
+            expect(fromBem(panelCss)).toStrictEqual(panelCss);
+        });
 
-describe("themeable", () => {
-    const css = themeable({a: "test", b: "yolo"}, {a: "ahah", c: "hoho"}, {d: "aa", a: "allo"});
-    test("ça marche", () => expect(css).toStrictEqual({a: "test ahah allo", b: "yolo", c: "hoho", d: "aa"}));
+        test("Depuis un mix bem + entrées supplémentaires, tout est préservé", () => {
+            const panelCss = makePanelCss();
+            const css = fromBem({...toBem(panelCss), lol: "salut", lol2: "yo"});
+            expect(css).toStrictEqual({...panelCss, lol: "salut", lol2: "yo"});
+        });
+    });
+
+    describe("themeable — fusion de thèmes", () => {
+        test("Concatène les classes par clé et préserve les clés uniques", () => {
+            const css = themeable({a: "test", b: "yolo"}, {a: "ahah", c: "hoho"}, {d: "aa", a: "allo"});
+            expect(css).toStrictEqual({a: "test ahah allo", b: "yolo", c: "hoho", d: "aa"});
+        });
+    });
 });

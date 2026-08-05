@@ -38,20 +38,16 @@ const operation = {
     id: 4,
     numero: "A324",
     montant: 400.32,
-    structure: {
-        id: 5,
-        nom: "Test",
-        siret: "324123456"
-    }
+    structure: {id: 5, nom: "Test", siret: "324123456"}
 };
 const structureList = [{id: 5}, {id: 6}, {id: 7}];
 const projetTest = {ligneList: [{id: 5}, {id: 6}, {id: 7}]};
 
-describe("EntityStore: Création", () => {
-    const store = getStore();
+describe("EntityStore — Structure et création", () => {
+    test("Un StoreNode expose les entrées, sous-noeuds et méthodes standards", () => {
+        const store = getStore();
+        const {id, numero, montant} = OperationEntity;
 
-    const {id, numero, montant} = OperationEntity;
-    test("L'entrée 'operation' a bien la forme attendue", () =>
         expect(store.operation).toEqual({
             $entity: OperationEntity,
             id: {$field: id, value: undefined},
@@ -75,264 +71,239 @@ describe("EntityStore: Création", () => {
             load: defaultLoad,
             getValues,
             $required: true
-        }));
+        });
+    });
 
-    test("L'entrée 'structureList' est bien un array", () => expect(isObservableArray(store.structureList)).toBe(true));
-    test("L'entrée 'structureList' possède bien la bonne entité", () =>
-        expect(store.structureList.$entity).toEqual(StructureEntity));
+    test("Les StoreListNode sont bien des arrays observables typés", () => {
+        const store = getStore();
+        expect(isObservableArray(store.structureList)).toBe(true);
+        expect(store.structureList.$entity).toEqual(StructureEntity);
+        expect(isObservableArray(store.projetTest.ligneList)).toBe(true);
+        expect(store.projetTest.ligneList.$entity).toEqual(LigneEntity);
+    });
 
-    test("'ligneList' de l'entrée 'projet' est bien un array", () =>
-        expect(isObservableArray(store.projetTest.ligneList)).toBe(true));
-    test("'ligneList' de l'entrée 'projet' possède bien la bonne entité", () =>
-        expect(store.projetTest.ligneList.$entity).toEqual(LigneEntity));
-
-    test("Le sous-store est bien accessible", () =>
-        expect(store.subStore.structure.id.$field).toEqual(StructureEntity.id));
+    test("Un sous-store est directement accessible via ses entrées", () => {
+        const store = getStore();
+        expect(store.subStore.structure.id.$field).toEqual(StructureEntity.id);
+    });
 });
 
-describe("EntityStore: Replace global", () => {
-    const store = getStore();
-    store.replace({
-        operation,
-        structureList,
-        projetTest,
-        subStore: {operationList: [operation], structure: structureList[0]}
-    });
-
-    test("La propriété 'id' de l'entrée 'operation' a bien été enregistrée.", () =>
-        expect(store.operation.id.value).toBe(operation.id));
-    test("La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée.", () =>
-        expect(store.operation.structure.id.value).toBe(operation.structure.id));
-
-    test("La liste 'structureList' a bien été enregistrée.", () => expect(store.structureList[2]).toBeTruthy());
-    test("Le deuxième élément de 'structureList' a bien été enregistré.", () =>
-        expect(store.structureList[1].id.value).toBe(structureList[1].id));
-
-    test("La liste 'projet.ligneList' a bien été enregistrée.", () =>
-        expect(store.projetTest.ligneList[2]).toBeTruthy());
-    test("Le deuxième élément de 'projet.ligneList' a bien été enregistré.", () =>
-        expect(store.projetTest.ligneList[1].id.value).toBe(projetTest.ligneList[1].id));
-
-    test("Le noeud 'structure' du sous-store a bien été enregistré.", () =>
-        expect(store.subStore.structure.id.value).toBeTruthy());
-    test("Le liste 'operationList' du sous-store a bien été enregistrée.", () =>
-        expect(store.subStore.operationList[0].id).toBeTruthy());
-    test("La liste `operationList` possède bien les bonnes valeurs.", () =>
-        expect(store.subStore.operationList[0].id.value).toBe(operation.id));
-});
-
-describe("EntityStore: Replace locaux", () => {
-    describe("operation", () => {
+describe("EntityStore — Mutations", () => {
+    test("replace() global propage les valeurs à toutes les entrées et sous-stores", () => {
         const store = getStore();
-        store.operation.replace(operation);
+        store.replace({
+            operation,
+            structureList,
+            projetTest,
+            subStore: {operationList: [operation], structure: structureList[0]}
+        });
 
-        test("La propriété 'id' de l'entrée 'operation' a bien été enregistrée.", () =>
-            expect(store.operation.id.value).toBe(operation.id));
-        test("La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée (set operation).", () =>
-            expect(store.operation.structure.id.value).toBe(operation.structure.id));
+        expect(store.operation.id.value).toBe(operation.id);
+        expect(store.operation.structure.id.value).toBe(operation.structure.id);
+        expect(store.structureList).toHaveLength(3);
+        expect(store.structureList[1].id.value).toBe(structureList[1].id);
+        expect(store.projetTest.ligneList).toHaveLength(3);
+        expect(store.projetTest.ligneList[1].id.value).toBe(projetTest.ligneList[1].id);
+        expect(store.subStore.structure.id.value).toBe(structureList[0].id);
+        expect(store.subStore.operationList[0].id.value).toBe(operation.id);
     });
 
-    describe("operation.structure", () => {
+    test.each([
+        {
+            label: "replace() sur un StoreNode",
+            act: (s: ReturnType<typeof getStore>) => s.operation.replace(operation),
+            check: (s: ReturnType<typeof getStore>) => {
+                expect(s.operation.id.value).toBe(operation.id);
+                expect(s.operation.structure.id.value).toBe(operation.structure.id);
+            }
+        },
+        {
+            label: "replace() sur un sous-noeud",
+            act: (s: ReturnType<typeof getStore>) => s.operation.structure.replace(operation.structure),
+            check: (s: ReturnType<typeof getStore>) => {
+                expect(s.operation.structure.id.value).toBe(operation.structure.id);
+            }
+        },
+        {
+            label: "replaceNodes() sur un StoreListNode",
+            act: (s: ReturnType<typeof getStore>) => s.structureList.replaceNodes(structureList),
+            check: (s: ReturnType<typeof getStore>) => {
+                expect(s.structureList).toHaveLength(3);
+                expect(s.structureList[1].id.value).toBe(structureList[1].id);
+            }
+        },
+        {
+            label: "replace() sur un noeud contenant une liste",
+            act: (s: ReturnType<typeof getStore>) => s.projetTest.replace(projetTest),
+            check: (s: ReturnType<typeof getStore>) => {
+                expect(s.projetTest.ligneList).toHaveLength(3);
+                expect(s.projetTest.ligneList[1].id.value).toBe(projetTest.ligneList[1].id);
+            }
+        }
+    ])("Mise à jour locale : $label", ({act, check}) => {
         const store = getStore();
-        store.operation.structure.replace(operation.structure);
-
-        test("La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée (set structure)", () =>
-            expect(store.operation.structure.id.value).toBe(operation.structure.id));
+        act(store);
+        check(store);
     });
 
-    describe("structureList", () => {
+    test("pushNode() ajoute un item de type StoreNode avec ses métadonnées", () => {
         const store = getStore();
         store.structureList.replaceNodes(structureList);
+        store.structureList.pushNode({id: 8});
 
-        test("La liste 'structureList' a bien été enregistrée.", () => expect(store.structureList[2]).toBeTruthy());
-        test("Le deuxième élément de 'structureList' a bien été enregistré.", () =>
-            expect(store.structureList[1].id.value).toBe(structureList[1].id));
+        expect(store.structureList).toHaveLength(4);
+        expect(store.structureList[3].id.$field).toEqual(StructureEntity.id);
+        expect(store.structureList[3].id.value).toBe(8);
     });
 
-    describe("projetTest", () => {
+    test("set() global fait une mise à jour partielle et étend les listes existantes", () => {
         const store = getStore();
-        store.projetTest.replace(projetTest);
+        store.set({operation, subStore: {structure: structureList[0]}});
+        store.structureList.pushNode({id: 1}, {id: 2});
+        store.set({structureList: [{siret: "test"}, {id: 4}, {id: 5}, {id: 6}]});
 
-        test("La liste 'projet.ligneList' a bien été enregistrée.", () =>
-            expect(store.projetTest.ligneList[2]).toBeTruthy());
-        test("Le deuxième élément de 'projet.ligneList' a bien été enregistré.", () =>
-            expect(store.projetTest.ligneList[1].id.value).toBe(projetTest.ligneList[1].id));
+        expect(store.operation.id.value).toBe(operation.id);
+        expect(store.operation.structure.id.value).toBe(operation.structure.id);
+        expect(store.subStore.structure.id.value).toBe(structureList[0].id);
+        expect(store.structureList[0].id.value).toBe(1);
+        expect(store.structureList[0].siret.value).toBe("test");
+        expect(store.structureList[1].id.value).toBe(4);
+        expect(store.structureList[2].id.value).toBe(5);
+        expect(store.structureList[3].id.value).toBe(6);
+    });
+
+    test("clear() global vide toutes les valeurs et listes", () => {
+        const store = getStore();
+        store.replace({
+            operation,
+            structureList,
+            projetTest,
+            subStore: {operationList: [operation], structure: structureList[0]}
+        });
+        store.clear();
+
+        expect(store.operation.id.value).toBeUndefined();
+        expect(store.operation.structure.id.value).toBeUndefined();
+        expect(store.structureList).toHaveLength(0);
+        expect(store.projetTest.ligneList).toHaveLength(0);
+        expect(store.subStore.structure.id.value).toBeUndefined();
+        expect(store.subStore.operationList).toHaveLength(0);
+    });
+
+    test("clear() local vide uniquement le noeud ciblé", () => {
+        const store = getStore();
+        store.operation.clear();
+        store.structureList.clear();
+        store.projetTest.ligneList.clear();
+
+        expect(store.operation.id.value).toBeUndefined();
+        expect(store.operation.structure.id.value).toBeUndefined();
+        expect(store.structureList).toHaveLength(0);
+        expect(store.projetTest.ligneList).toHaveLength(0);
     });
 });
 
-describe("EntityStore: Ajout élément dans une liste", () => {
-    const store = getStore();
-    store.structureList.replaceNodes(structureList);
-    store.structureList.pushNode({id: 8});
-
-    test("La liste 'structureList' possède bien un élément de plus.", () => expect(store.structureList.length).toBe(4));
-    test("L'élément ajouté est bien un node avec les bonnes métadonnées.", () =>
-        expect(store.structureList[3].id.$field).toEqual(StructureEntity.id));
-    test("L'élement ajouté possède bien les valeurs attendues", () => expect(store.structureList[3].id.value).toBe(8));
-});
-
-describe("EntityStore: Set global", () => {
-    const store = getStore();
-    store.set({operation, subStore: {structure: structureList[0]}});
-    store.structureList.pushNode({id: 1}, {id: 2});
-    store.set({structureList: [{siret: "test"}, {id: 4}, {id: 5}, {id: 6}]});
-
-    test("La propriété 'id' de l'entrée 'operation' a bien été enregistrée.", () =>
-        expect(store.operation.id.value).toBe(operation.id));
-    test("La propriété 'structure.id' de l'entrée 'operation' a bien été enregistrée.", () =>
-        expect(store.operation.structure.id.value).toBe(operation.structure.id));
-
-    test("Le noeud 'structure' du sous-store a bien été enregistré.", () =>
-        expect(store.subStore.structure.id.value).toBeTruthy());
-
-    test("La propriété 'structure[0].id' n'a pas été modifiée.", () => expect(store.structureList[0].id.value).toBe(1));
-    test("La propriété 'structure[1].id' a bien été modifiée.", () => expect(store.structureList[1].id.value).toBe(4));
-    test("La propriété 'structure[0].siret' a bien été renseignée.", () =>
-        expect(store.structureList[0].siret.value).toBe("test"));
-    test("Un item supplémentaire dans la liste a bien été créé.", () =>
-        expect(store.structureList[2].id.value).toBe(5));
-    test("Un deuxième item supplémentaire dans la liste a bien été créé.", () =>
-        expect(store.structureList[3].id.value).toBe(6));
-});
-
-describe("EntityStore: Clear global", () => {
-    const store = getStore();
-    store.replace({
-        operation,
-        structureList,
-        projetTest,
-        subStore: {operationList: [operation], structure: structureList[0]}
-    });
-    store.clear();
-
-    test("La propriété 'id' de l'entrée 'operation' est bien undefined.", () =>
-        expect(store.operation.id.value).toBe(undefined));
-    test("La propriété 'structure.id' de l'entrée 'operation' est bien undefined.", () =>
-        expect(store.operation.structure.id.value).toBe(undefined));
-    test("La liste 'structureList' est bien vide.", () => expect(store.structureList.length === 0).toBeTruthy());
-    test("La liste 'projet.ligneList' est bien vide.", () =>
-        expect(store.projetTest.ligneList.length === 0).toBeTruthy());
-    test("La propriété 'id' de l'entrée 'structure' du sous-store est bien undefined.", () =>
-        expect(store.subStore.structure.id.value).toBe(undefined));
-    test("La liste 'operationList' du sous store est bien vide.", () =>
-        expect(store.subStore.operationList.length === 0).toBeTruthy());
-});
-
-describe("EntityStore: Clear locaux", () => {
-    const store = getStore();
-    store.operation.clear();
-    store.structureList.clear();
-    store.projetTest.ligneList.clear();
-
-    test("La propriété 'id' de l'entrée 'operation' est bien undefined.", () =>
-        expect(store.operation.id.value).toBe(undefined));
-    test("La propriété 'structure.id' de l'entrée 'operation' est bien undefined.", () =>
-        expect(store.operation.structure.id.value).toBe(undefined));
-
-    test("La liste 'structureList' est bien vide.", () => expect(store.structureList.length === 0).toBeTruthy());
-
-    test("La liste 'projet.ligneList' est bien vide.", () =>
-        expect(store.projetTest.ligneList.length === 0).toBeTruthy());
-});
-
-describe("getValues", () => {
-    const store = getStore();
-    store.replace({operation, projetTest, structureList});
-
-    test("L'entrée 'operation' retourne les valeurs attendues.", () => {
+describe("EntityStore — getValues", () => {
+    test("getValues(true) reproduit fidèlement l'entrée pour toutes les formes de noeud", () => {
+        const store = getStore();
+        store.replace({operation, projetTest, structureList});
         const errorSpy = vi.spyOn(console, "error");
 
         expect(store.operation.getValues(true)).toEqual(operation);
-        expect(errorSpy).not.toHaveBeenCalled();
-    });
-    test("L'entrée 'projet' retourne les valeurs attendues.", () => {
-        const errorSpy = vi.spyOn(console, "error");
-
         expect(store.projetTest.getValues(true)).toEqual(projetTest);
-        expect(errorSpy).not.toHaveBeenCalled();
-    });
-    test("L'entrée 'structureList' retourne les valeurs attendues.", () => {
-        const errorSpy = vi.spyOn(console, "error");
-
         expect(store.structureList.getValues(true)).toEqual(structureList);
         expect(errorSpy).not.toHaveBeenCalled();
     });
-});
 
-describe("getValues: comportement avancé", () => {
-    test("StoreNode avec allowUndefined false retourne les valeurs quand les champs requis sont remplis", () => {
-        const errorSpy = vi.spyOn(console, "error");
+    test("getValues() sans allowUndefined renvoie la donnée quand tous les champs requis sont là", () => {
         const store = getStore();
         store.operation.replace(operation);
+        const errorSpy = vi.spyOn(console, "error");
 
         expect(store.operation.getValues()).toEqual(operation);
         expect(errorSpy).not.toHaveBeenCalled();
     });
 
-    test("StoreNode avec allowUndefined false logue une erreur si un champ requis est manquant", () => {
-        const errorSpy = vi.spyOn(console, "error");
+    test.each([
+        {
+            label: "champ requis manquant sur un StoreNode",
+            setup: (s: ReturnType<typeof getStore>) => s.operation.replace({...operation, numero: undefined}),
+            expected: {id: 4, montant: 400.32, structure: {id: 5, nom: "Test", siret: "324123456"}},
+            error: "getValues() - champ obligatoire manquant : numero",
+            read: (s: ReturnType<typeof getStore>) => s.operation.getValues()
+        },
+        {
+            label: "champ requis manquant sur un sous-objet",
+            setup: (s: ReturnType<typeof getStore>) =>
+                s.operation.replace({...operation, structure: {...operation.structure, nom: undefined}}),
+            expected: {id: 4, numero: "A324", montant: 400.32, structure: {id: 5, siret: "324123456"}},
+            error: "getValues() - champ obligatoire manquant : structure.nom",
+            read: (s: ReturnType<typeof getStore>) => s.operation.getValues()
+        },
+        {
+            label: "sous-objet obligatoire vide",
+            setup: (s: ReturnType<typeof getStore>) => s.operation.replace({...operation, structure: undefined}),
+            expected: {id: 4, numero: "A324", montant: 400.32, structure: {}},
+            error: "getValues() - champ obligatoire manquant : structure",
+            read: (s: ReturnType<typeof getStore>) => s.operation.getValues()
+        },
+        {
+            label: "champ requis manquant dans une liste",
+            setup: (s: ReturnType<typeof getStore>) =>
+                s.structureList.replaceNodes([
+                    {id: 1, nom: "A", siret: "123"},
+                    {id: 2, nom: undefined, siret: "456"}
+                ]),
+            expected: [
+                {id: 1, nom: "A", siret: "123"},
+                {id: 2, siret: "456"}
+            ],
+            error: "getValues() - champ obligatoire manquant : [1].nom",
+            read: (s: ReturnType<typeof getStore>) => s.structureList.getValues()
+        },
+        {
+            label: "champ requis manquant dans un sous-objet d'un item de liste",
+            setup: (s: ReturnType<typeof getStore>) =>
+                s.subStore.operationList.replaceNodes([
+                    {id: 1, numero: "A", structure: {id: 10, nom: "ok", siret: "123"}},
+                    {id: 2, numero: "B", structure: {id: 20, nom: undefined, siret: "456"}}
+                ]),
+            expected: [
+                {id: 1, numero: "A", structure: {id: 10, nom: "ok", siret: "123"}},
+                {id: 2, numero: "B", structure: {id: 20, siret: "456"}}
+            ],
+            error: "getValues() - champ obligatoire manquant : [1].structure.nom",
+            read: (s: ReturnType<typeof getStore>) => s.subStore.operationList.getValues()
+        }
+    ])("Logue et omet le champ manquant : $label", ({setup, expected, error, read}) => {
         const store = getStore();
-        store.operation.replace({...operation, numero: undefined});
+        setup(store);
+        const errorSpy = vi.spyOn(console, "error");
 
-        expect(store.operation.getValues()).toEqual({
-            id: 4,
-            montant: 400.32,
-            structure: {id: 5, nom: "Test", siret: "324123456"}
-        });
-        expect(errorSpy).toHaveBeenCalledWith("getValues() - champ obligatoire manquant : numero");
+        expect(read(store)).toEqual(expected);
+        expect(errorSpy).toHaveBeenCalledWith(error);
         errorSpy.mockRestore();
     });
 
-    test("StoreNode avec allowUndefined false logue une erreur si un champ requis d'un sous-objet est manquant", () => {
-        const errorSpy = vi.spyOn(console, "error");
+    test("StoreListNode getValues() OK quand tous les champs requis sont renseignés", () => {
         const store = getStore();
-        store.operation.replace({...operation, structure: {...operation.structure, nom: undefined}});
-
-        expect(store.operation.getValues()).toEqual({
-            id: 4,
-            numero: "A324",
-            montant: 400.32,
-            structure: {id: 5, siret: "324123456"}
-        });
-        expect(errorSpy).toHaveBeenCalledWith("getValues() - champ obligatoire manquant : structure.nom");
-        errorSpy.mockRestore();
-    });
-
-    test("StoreNode avec allowUndefined false logue une erreur si un sous-objet obligatoire est vide", () => {
-        const errorSpy = vi.spyOn(console, "error");
-        const store = getStore();
-        store.operation.replace({...operation, structure: undefined as any});
-
-        expect(store.operation.getValues()).toEqual({
-            id: 4,
-            numero: "A324",
-            montant: 400.32,
-            structure: {}
-        });
-        expect(errorSpy).toHaveBeenCalledWith("getValues() - champ obligatoire manquant : structure");
-        errorSpy.mockRestore();
-    });
-
-    test("StoreListNode avec allowUndefined false logue une erreur si un champ requis d'un sous-objet dans un élément est manquant", () => {
-        const errorSpy = vi.spyOn(console, "error");
-        const store = getStore();
-        store.subStore.operationList.replaceNodes([
-            {id: 1, numero: "A", structure: {id: 10, nom: "ok", siret: "123"}},
-            {id: 2, numero: "B", structure: {id: 20, nom: undefined, siret: "456"}} as any
+        store.structureList.replaceNodes([
+            {id: 1, nom: "A", siret: "123"},
+            {id: 2, nom: "B"}
         ]);
+        const errorSpy = vi.spyOn(console, "error");
 
-        expect(store.subStore.operationList.getValues()).toEqual([
-            {id: 1, numero: "A", structure: {id: 10, nom: "ok", siret: "123"}},
-            {id: 2, numero: "B", structure: {id: 20, siret: "456"}}
+        expect(store.structureList.getValues()).toEqual([
+            {id: 1, nom: "A", siret: "123"},
+            {id: 2, nom: "B"}
         ]);
-        expect(errorSpy).toHaveBeenCalledWith("getValues() - champ obligatoire manquant : [1].structure.nom");
-        errorSpy.mockRestore();
+        expect(errorSpy).not.toHaveBeenCalled();
     });
 
-    test("FormNode exclut les champs ajoutés par défaut et les inclut si demandé", () => {
-        const errorSpy = vi.spyOn(console, "error");
+    test("FormNode.getValues() ignore les champs ajoutés sauf si includeAddedFields=true", () => {
         const {formNode2} = getFormNodes();
         formNode2.set({test: "yolo"});
+        const errorSpy = vi.spyOn(console, "error");
 
         expect(formNode2.getValues(true)).not.toHaveProperty("test");
         expect(formNode2.getValues(true, true)).toEqual(expect.objectContaining({test: "yolo"}));
@@ -340,37 +311,9 @@ describe("getValues: comportement avancé", () => {
         errorSpy.mockRestore();
     });
 
-    test("StoreListNode avec allowUndefined false retourne les valeurs quand tous les éléments sont valides", () => {
-        const errorSpy = vi.spyOn(console, "error");
-        const store = getStore();
-        store.structureList.replaceNodes([
-            {id: 1, nom: "A", siret: "123"},
-            {id: 2, nom: "B"}
-        ]);
-
-        expect(store.structureList.getValues()).toEqual([
-            {id: 1, nom: "A", siret: "123"},
-            {id: 2, nom: "B"}
-        ]);
-        expect(errorSpy).not.toHaveBeenCalled();
-    });
-
-    test("StoreListNode avec allowUndefined false logue une erreur si un élément a un champ requis manquant", () => {
-        const errorSpy = vi.spyOn(console, "error");
-        const store = getStore();
-        store.structureList.replaceNodes([{id: 1, nom: "A", siret: "123"}, {id: 2, siret: "456"} as any]);
-
-        expect(store.structureList.getValues()).toEqual([
-            {id: 1, nom: "A", siret: "123"},
-            {id: 2, siret: "456"}
-        ]);
-        expect(errorSpy).toHaveBeenCalledWith("getValues() - champ obligatoire manquant : [1].nom");
-        errorSpy.mockRestore();
-    });
-
-    test("FormNode avec allowUndefined false logue une erreur si un champ requis d'un sous-formulaire est manquant", () => {
-        const errorSpy = vi.spyOn(console, "error");
+    test("FormNode.getValues() logue les champs requis manquants dans les sous-formulaires", () => {
         const {formNode} = getFormNodes();
+        const errorSpy = vi.spyOn(console, "error");
 
         formNode.set({structure: {nom: undefined}});
         formNode.getValues();
@@ -381,195 +324,157 @@ describe("getValues: comportement avancé", () => {
     });
 });
 
-describe("FormNode: Création", () => {
-    const {entry, entry2, formNode, formNode2} = getFormNodes();
+describe("FormNode — Création et structure", () => {
+    test("Un FormNode vide partage la structure du StoreNode et ses métadonnées de champ", () => {
+        const {entry, entry2, formNode, formNode2} = getFormNodes();
 
-    test("Les champs simples du FormNode sont bien identiques à ceux du StoreNode.", () =>
-        expect(formNode.numero.$field).toEqual(entry.numero.$field));
-    test("Les champs composites du FormNode sont bien identiques à ceux du StoreNode.", () =>
-        expect(formNode.structure.getValues()).toEqual(entry.structure.getValues()));
-    test("Une sous liste est bien toujours observable", () =>
-        expect(isObservableArray(formNode2.ligneList)).toBeTruthy());
-    test("Une sous liste a bien toujours son entité attachée.", () =>
-        expect(formNode2.ligneList.$entity).toEqual(entry2.ligneList.$entity));
-    test("Une sous liste a bien toujours sa méthode 'setNodes' attachée", () =>
-        expect(formNode2.ligneList.setNodes).toBeTruthy());
-    test("Le sourceNode racine est bien le bon.", () => expect(entry).toEqual(formNode.sourceNode));
-    test("Le sous-sourceNode simple est bien le bon", () =>
-        expect(entry.structure).toEqual(formNode.structure.sourceNode));
-    test("Le sous-sourceNode liste est bien le bon", () =>
-        expect(entry2.ligneList).toEqual(formNode2.ligneList.sourceNode));
-    test("Un champ ajouté est bien présent", () => expect(formNode2.test).toBeDefined());
+        expect(formNode.numero.$field).toEqual(entry.numero.$field);
+        expect(formNode.structure.getValues()).toEqual(entry.structure.getValues());
+        expect(isObservableArray(formNode2.ligneList)).toBeTruthy();
+        expect(formNode2.ligneList.$entity).toEqual(entry2.ligneList.$entity);
+        expect(formNode2.ligneList.setNodes).toBeTruthy();
+        expect(formNode.sourceNode).toEqual(entry);
+        expect(formNode.structure.sourceNode).toEqual(entry.structure);
+        expect(formNode2.ligneList.sourceNode).toEqual(entry2.ligneList);
+        expect(formNode2.test).toBeDefined();
+    });
 
-    test("Le FormNode a bien une propriété '_isEdit' initialisée à 'false'.", () =>
-        expect((formNode.form as any)._isEdit).toBe(false));
-    test("Le FormNode a bien une propriété 'isEdit' initialisée à 'false'.", () =>
-        expect(formNode.form.isEdit).toBe(false));
-    test("Les champs du FormNode ont bien une propriété '_isEdit' qui vaut 'true'.", () =>
-        expect((formNode.montant as any)._isEdit).toBe(true));
-    test("Les champs du FormNode ont bien une propriété 'isEdit' calculée qui vaut 'false'.", () =>
-        expect(formNode.montant.isEdit).toBe(false));
+    test("Un FormNode initialise isEdit/isValid/isRequired/isEmpty/hasChanged aux valeurs par défaut", () => {
+        const {formNode} = getFormNodes();
+        expect((formNode.form as unknown as {_isEdit: boolean})._isEdit).toBe(false);
+        expect(formNode.form.isEdit).toBe(false);
+        expect((formNode.montant as unknown as {_isEdit: boolean})._isEdit).toBe(true);
+        expect(formNode.montant.isEdit).toBe(false);
+        expect(formNode.numero.hasOwnProperty("error")).toBeTruthy();
+        expect(formNode.form.isValid).toBe(true);
+        expect(formNode.form.isRequired).toBe(true);
+        expect(formNode.form.isEmpty).toBe(true);
+        expect(formNode.form.hasChanged).toBe(false);
+    });
 
-    test("Les champs ont bien une propriété 'error'", () =>
-        expect(formNode.numero.hasOwnProperty("error")).toBeTruthy());
-    test("Le FormNode a bien une propriété 'isValid', initialisée à 'true'.", () =>
-        expect(formNode.form.isValid).toBe(true));
-    test("Le FormNode a bien une propriété 'isRequired', initialisée à 'true'.", () =>
-        expect(formNode.form.isRequired).toBe(true));
-    test("Le FormNode a bien une propriété 'isEmpty', initialisée à 'true'.", () =>
-        expect(formNode.form.isEmpty).toBe(true));
-    test("Le FormNode a bien une propriété 'hasChanged', initialisée à 'false'.", () =>
-        expect(formNode.form.hasChanged).toBe(false));
+    test("Un FormNode créé depuis un StoreNode non vide est initialement vide et marqué hasChanged", () => {
+        const store = getStore();
+        const entry = store.operation;
+        const entry2 = store.projetTest;
+        entry.replace(operation);
+        entry2.replace(projetTest);
+
+        const formNode = new FormNodeBuilder(entry).build();
+        const formNode2 = new FormNodeBuilder(entry2).build();
+
+        expect(formNode.getValues()).toEqual({structure: {}});
+        expect(formNode2.getValues()).toEqual({ligneList: []});
+        expect(formNode.form.hasChanged).toBe(true);
+    });
 });
 
-describe("FormNode: Création à partir d'un noeud non-vide", () => {
-    const entry = getStore().operation;
-    const entry2 = getStore().projetTest;
-    entry.replace(operation);
-    entry2.replace(projetTest);
+describe("FormNode — Synchronisation StoreNode → FormNode", () => {
+    test("Un replace() sur le StoreNode répercute la donnée sur le FormNode", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
 
-    const formNode = new FormNodeBuilder(entry).build();
-    const formNode2 = new FormNodeBuilder(entry2).build();
+        expect(formNode.getValues()).toEqual(entry.getValues());
+        expect(formNode.form.isEmpty).toBe(false);
+        expect(formNode.form.hasChanged).toBe(false);
+    });
 
-    test("Un FormNode créé à partir d'une source non vide est bien vide.", () =>
-        expect(formNode.getValues()).toEqual({structure: {}}));
-    test("Un FormListNode vide à partir d'une source non vide est bien vide.", () =>
-        expect(formNode2.getValues()).toEqual({ligneList: []}));
-    test("La propriété 'hasChanged' est initialisée à 'true'.", () => expect(formNode.form.hasChanged).toBe(true));
-});
-
-describe("FormNode: Modification de StoreNode.", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-
-    test("Le contenu du FormNode est identique à celui du StoreNode.", () =>
-        expect(formNode.getValues()).toEqual(entry.getValues()));
-    test("La propriété 'isEmpty' vaut bien désormais 'false'.", () => expect(formNode.form.isEmpty).toBe(false));
-    test("La propriété 'hasChanged' vaut bien désormais 'false'.", () => expect(formNode.form.hasChanged).toBe(false));
-});
-
-describe("FormNode: Ajout de champs.", () => {
-    describe("replace sur storeNode", () => {
+    test("Les champs ajoutés côté FormNode conservent leur valeur quand le StoreNode change", () => {
         const {entry2, formNode2, setter} = getFormNodes();
         formNode2.set({test: "yolo"});
         entry2.replace(projetTest);
 
-        test("Un champ ajouté a bien sa valeur.", () => expect(formNode2.test.value).toEqual("yolo"));
-        test("Un champ ajouté calculé a bien sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
-        test("Le setter du champ custom n'a pas été appelé", () => expect(setter).toHaveBeenCalledTimes(0));
-        test("Un champ ajouté n'est pas remonté dans getValues.", () =>
-            expect(formNode2.getValues()).toEqual(entry2.getValues()));
-        test("Un champ ajouté est remonté dans getValues avec includeAddedFields.", () =>
-            expect(formNode2.getValues(false, true)).toEqual({
-                ligneList: [
-                    {id: 5, label: "label"},
-                    {id: 6, label: "label"},
-                    {id: 7, label: "label"}
-                ],
-                test: "yolo",
-                test2: "2"
-            }));
-        test("Un champ ajouté à toujours 'hasChanged' à 'false'.", () => expect(formNode2.test.hasChanged).toBe(false));
+        expect(formNode2.test.value).toEqual("yolo");
+        expect(formNode2.test2.value).toEqual("2");
+        expect(setter).not.toHaveBeenCalled();
+        expect(formNode2.getValues()).toEqual(entry2.getValues());
+        expect(formNode2.getValues(false, true)).toEqual({
+            ligneList: [
+                {id: 5, label: "label"},
+                {id: 6, label: "label"},
+                {id: 7, label: "label"}
+            ],
+            test: "yolo",
+            test2: "2"
+        });
+        expect(formNode2.test.hasChanged).toBe(false);
     });
 
-    describe("replace sur formNode", () => {
+    test("replace() sur le FormNode vide les champs ajoutés simples mais préserve les calculés", () => {
         const {formNode2, setter} = getFormNodes();
         formNode2.set({test: "yolo"});
         formNode2.replace(projetTest);
 
-        test("Un champ ajouté a bien sa valeur vidée.", () => expect(formNode2.test.value).toBeUndefined());
-        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
-        test("Le setter du champ ajouté a été appelé 1 fois", () => expect(setter).toHaveBeenCalledTimes(1));
+        expect(formNode2.test.value).toBeUndefined();
+        expect(formNode2.test2.value).toEqual("2");
+        expect(setter).toHaveBeenCalledTimes(1);
     });
 
-    describe("clear sur storeNode", () => {
+    test("clear() du StoreNode ne touche pas aux champs ajoutés du FormNode", () => {
         const {entry2, formNode2, setter} = getFormNodes();
         formNode2.set({test: "yolo"});
         entry2.clear();
 
-        test("Un champ ajouté a bien sa valeur.", () => expect(formNode2.test.value).toEqual("yolo"));
-        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
-        test("Le setter du champ custom n'a pas été appelé", () => expect(setter).toHaveBeenCalledTimes(0));
+        expect(formNode2.test.value).toEqual("yolo");
+        expect(formNode2.test2.value).toEqual("2");
+        expect(setter).not.toHaveBeenCalled();
     });
 
-    describe("clear sur formNode", () => {
+    test("clear() du FormNode vide les champs ajoutés simples et laisse les calculés", () => {
         const {formNode2, setter} = getFormNodes();
         formNode2.set({test: "yolo"});
         formNode2.clear();
 
-        test("Un champ ajouté a bien sa valeur vidée.", () => expect(formNode2.test.value).toBeUndefined());
-        test("Un champ ajouté calculé a bien toujours sa valeur.", () => expect(formNode2.test2.value).toEqual("2"));
-        test("Le setter du champ ajouté a été appelé 1 fois", () => expect(setter).toHaveBeenCalledTimes(1));
+        expect(formNode2.test.value).toBeUndefined();
+        expect(formNode2.test2.value).toEqual("2");
+        expect(setter).toHaveBeenCalledTimes(1);
+    });
+
+    test("Modifier le FormNode ne modifie pas le StoreNode source (isolation)", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        formNode.montant.value = 1000;
+        formNode.set({structure: {id: 26}});
+        formNode.structure.set({nom: "yolo"});
+
+        expect(formNode.montant.value).toBe(1000);
+        expect(entry.montant.value).toBe(operation.montant);
+        expect(formNode.structure.id.value).toBe(26);
+        expect(entry.structure.id.value).toBe(operation.structure.id);
+        expect(formNode.structure.nom.value).toBe("yolo");
+        expect(entry.structure.nom.value).toBe(operation.structure.nom);
+        expect(formNode.form.hasChanged).toBe(true);
+        expect(formNode.montant.hasChanged).toBe(true);
+        expect(formNode.numero.hasChanged).toBe(false);
     });
 });
 
-describe("FormNode: Modification de StoreListNode.", () => {
-    describe("replace", () => {
+describe("FormListNode — Synchronisation StoreListNode → FormListNode", () => {
+    test("Un replace() sur le StoreListNode remplit le FormListNode avec les mêmes sourceNode", () => {
         const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
-        test("Le contenu du FormListNode est identique à celui du StoreListNode.", () =>
-            expect(formNode2.getValues()).toEqual(entry2.getValues()));
-        test("Le sourceNode d'un objet de liste est bien le bon.", () =>
-            expect(formNode2.ligneList[0].sourceNode).toEqual(entry2.ligneList[0]));
-        test("La propriété 'hasChanged' vaut bien désormais 'false'.", () =>
-            expect(formNode2.form.hasChanged).toBe(false));
+
+        expect(formNode2.getValues()).toEqual(entry2.getValues());
+        expect(formNode2.ligneList[0].sourceNode).toEqual(entry2.ligneList[0]);
+        expect(formNode2.form.hasChanged).toBe(false);
     });
 
-    describe("delete", () => {
+    test("Les splice/pushNode côté StoreListNode sont répercutés", () => {
         const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
         entry2.ligneList.splice(2, 1);
-        test("Les suppressions d'élements de liste dans un StoreNode sont bien répercutées.", () =>
-            expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 6}]));
-    });
+        expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 6}]);
 
-    describe("push", () => {
-        const {entry2, formNode2} = getFormNodes();
-        entry2.replace(projetTest);
-        entry2.ligneList.splice(2, 1);
         entry2.ligneList.pushNode({id: 8});
-
-        test("Les ajouts d'élements de liste dans un StoreNode sont bien répercutées.", () =>
-            expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 6}, {id: 8}]));
-        test("La propriété 'hasChanged' vaut bien désormais 'false'.", () =>
-            expect(formNode2.ligneList.form.hasChanged).toBe(false));
+        expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 6}, {id: 8}]);
+        expect(formNode2.ligneList.form.hasChanged).toBe(false);
     });
-});
 
-describe("FormNode: Modification de FormNode", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-    formNode.montant.value = 1000;
-    formNode.set({structure: {id: 26}});
-    formNode.structure.set({nom: "yolo"});
-
-    test("Champ simple: le FormNode a bien été modifié.", () => expect(formNode.montant.value).toBe(1000));
-    test("Champ simple: le StoreNode est bien toujours identique.", () =>
-        expect(entry.montant.value).toBe(operation.montant));
-    test("Champ composite via set global: le FormNode a bien été modifié.", () =>
-        expect(formNode.structure.id.value).toBe(26));
-    test("Champ composite via set global: le StoreNode est bien toujours identique.", () =>
-        expect(entry.structure.id.value).toBe(operation.structure.id));
-    test("Champ composite via set local: le FormNode a bien été modifié.", () =>
-        expect(formNode.structure.nom.value).toBe("yolo"));
-    test("Champ composite via set local: le StoreNode est bien toujours identique.", () =>
-        expect(entry.structure.nom.value).toBe(operation.structure.nom));
-    test("La propriété 'hasChanged' est bien 'true'.", () => expect(formNode.form.hasChanged).toBe(true));
-    test("La propriété 'hasChanged' du montant est bien 'true'.", () => expect(formNode.montant.hasChanged).toBe(true));
-    test("La propriété 'hasChanged' du numéro est bien 'false'.", () => expect(formNode.numero.hasChanged).toBe(false));
-});
-
-describe("FormListNode: Modification", () => {
-    function step1() {
+    test("Une suppression côté StoreListNode conserve un item ajouté côté FormListNode à la fin", () => {
         const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
         formNode2.ligneList.pushNode({id: 8});
         entry2.ligneList.splice(1, 1);
-        return {entry2, formNode2};
-    }
 
-    test("Une suppression d'élement dans un StoreListNode est bien répercutée dans le FormListNode en conservant un élément dans ce dernier ajouté à la fin.", () => {
-        const {formNode2} = step1();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 7}, {id: 8}]);
         expect(formNode2.ligneList.form.hasChanged).toBe(true);
         expect(formNode2.ligneList[0].form.hasChanged).toBe(false);
@@ -577,15 +482,14 @@ describe("FormListNode: Modification", () => {
         expect(formNode2.ligneList[2].form.hasChanged).toBe(true);
     });
 
-    function step2() {
-        const {entry2, formNode2} = step1();
+    test("Un push côté StoreListNode fusionne avec l'item ajouté côté FormListNode", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.pushNode({id: 8});
+        entry2.ligneList.splice(1, 1);
         formNode2.ligneList[2].label.value = "yolo";
         entry2.ligneList.pushNode({id: 9});
-        return {entry2, formNode2};
-    }
 
-    test("Un élément ajouté dans un StoreListNode est fusionné avec l'élément en plus du FormListNode.", () => {
-        const {formNode2} = step2();
         expect(formNode2.ligneList.getValues(false, true)).toEqual([
             {id: 5, label: "label"},
             {id: 7, label: "label"},
@@ -593,17 +497,18 @@ describe("FormListNode: Modification", () => {
         ]);
     });
 
-    function step3() {
-        const {entry2, formNode2} = step2();
+    test("Deux pushs côté StoreListNode : le premier fusionne, le second est ajouté", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.pushNode({id: 8});
+        entry2.ligneList.splice(1, 1);
+        formNode2.ligneList[2].label.value = "yolo";
+        entry2.ligneList.pushNode({id: 9});
         entry2.ligneList[1].id.value = 77;
         entry2.ligneList[2].id.value = 99;
         formNode2.ligneList.pushNode({id: 10, label: "salut"});
         entry2.ligneList.pushNode({id: 11}, {id: 12});
-        return {entry2, formNode2};
-    }
 
-    test("Et si on en ajoute 2, le premier est fusionné et le deuxième ajouté.", () => {
-        const {formNode2} = step3();
         expect(formNode2.ligneList.getValues(false, true)).toEqual([
             {id: 5, label: "label"},
             {id: 77, label: "label"},
@@ -613,70 +518,80 @@ describe("FormListNode: Modification", () => {
         ]);
     });
 
-    function step4() {
-        const {entry2, formNode2} = step3();
+    test("Un retrait côté FormListNode laisse les nouveaux items du StoreListNode à la fin", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.pushNode({id: 8});
+        entry2.ligneList.splice(1, 1);
+        formNode2.ligneList[2].label.value = "yolo";
+        entry2.ligneList.pushNode({id: 9});
+        entry2.ligneList[1].id.value = 77;
+        entry2.ligneList[2].id.value = 99;
+        formNode2.ligneList.pushNode({id: 10, label: "salut"});
+        entry2.ligneList.pushNode({id: 11}, {id: 12});
         entry2.ligneList[1].id.value = 7;
         entry2.ligneList[2].id.value = 9;
         formNode2.ligneList.splice(1, 1);
         entry2.ligneList.pushNode({id: 13});
-        return {entry2, formNode2};
-    }
 
-    test("Si le FormListNode retire un élément, un élément ajouté dans le StoreListNode se retrouve bien à la fin.", () => {
-        const {formNode2} = step4();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 9}, {id: 11}, {id: 12}, {id: 13}]);
     });
 
-    function step5() {
-        const {entry2, formNode2} = step4();
+    test("Un replace() du StoreListNode retrouve la liste initiale suivie des items ajoutés côté form", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.pushNode({id: 8});
+        entry2.ligneList.splice(1, 1);
+        formNode2.ligneList[2].label.value = "yolo";
+        entry2.ligneList.pushNode({id: 9});
+        entry2.ligneList[1].id.value = 77;
+        entry2.ligneList[2].id.value = 99;
+        formNode2.ligneList.pushNode({id: 10, label: "salut"});
+        entry2.ligneList.pushNode({id: 11}, {id: 12});
+        entry2.ligneList[1].id.value = 7;
+        entry2.ligneList[2].id.value = 9;
+        formNode2.ligneList.splice(1, 1);
+        entry2.ligneList.pushNode({id: 13});
         formNode2.ligneList.pushNode({id: 14});
         entry2.replace(projetTest);
-        return {entry2, formNode2};
-    }
 
-    test("Et si je reset ma liste initiale : je la retrouve dans le FormNode suivie des éléments qui y on été ajoutés.", () => {
-        const {formNode2} = step5();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 6}, {id: 7}, {id: 14}]);
     });
 
-    function step6() {
-        const {entry2, formNode2} = step5();
+    test("Un replace() côté FormListNode écrase les modifications", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
         formNode2.replace({ligneList: [{id: 1}, {id: 2}, {id: 5}, {id: 7}]});
         entry2.replace(projetTest);
-        return {entry2, formNode2};
-    }
 
-    test("Un replace du StoreListNode écrase totalement les modifications du FormListNode.", () => {
-        const {formNode2, entry2} = step6();
         expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues());
     });
 
-    function step7() {
-        const {entry2, formNode2} = step6();
+    test("setNodes() se répercute au FormListNode", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.replace({ligneList: [{id: 1}, {id: 2}, {id: 5}, {id: 7}]});
+        entry2.replace(projetTest);
         entry2.ligneList.setNodes([{id: 10}, {id: 11}, {}, {id: 13}]);
-        return {entry2, formNode2};
-    }
 
-    test("SetNodes marche comme attendu.", () => {
-        const {formNode2, entry2} = step7();
         expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues());
     });
 
-    function step8() {
-        const {entry2, formNode2} = step7();
+    test("Un splice côté FormListNode combiné à setNodes côté StoreListNode reste cohérent", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.replace({ligneList: [{id: 1}, {id: 2}, {id: 5}, {id: 7}]});
+        entry2.replace(projetTest);
+        entry2.ligneList.setNodes([{id: 10}, {id: 11}, {}, {id: 13}]);
         formNode2.ligneList.splice(1, 1);
         entry2.ligneList.setNodes([{id: 14}, {id: 15}, {}, {id: 17}]);
-        return {entry2, formNode2};
-    }
 
-    test("SetNodes marche comme attendu bis.", () => {
-        const {formNode2} = step8();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 14}, {id: 7}, {id: 17}]);
     });
 });
 
-describe("FormNode: Modification de source forcée", () => {
-    function step1() {
+describe("FormNode — Reset et source forcée", () => {
+    test("Un replace() de la source qui n'apporte rien reset toujours la cible", () => {
         const {entry, entry2, formNode, formNode2} = getFormNodes();
         entry.replace(operation);
         entry2.replace(projetTest);
@@ -684,214 +599,157 @@ describe("FormNode: Modification de source forcée", () => {
         formNode2.ligneList[0].id.value = 65;
         entry.replace(operation);
         entry2.replace(projetTest);
-        return {entry, entry2, formNode, formNode2};
-    }
 
-    describe("init", () => {
-        const {entry, entry2, formNode, formNode2} = step1();
-        test("La mise à jour de la source (noeud simple) reset toujours la cible, même si la mise à jour de la source ne fait rien.", () =>
-            expect(formNode.getValues()).toEqual(entry.getValues()));
-        test("La mise à jour de la source (noeud liste) reset toujours la cible, même si la mise à jour de la source ne fait rien.", () =>
-            expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues()));
+        expect(formNode.getValues()).toEqual(entry.getValues());
+        expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues());
     });
 
-    function step2() {
-        const {entry, entry2, formNode, formNode2} = step1();
+    test("Un reset partiel n'affecte que les champs concernés", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        entry.replace(operation);
         formNode.numero.value = "yolo";
         entry.structure.id.value = 9000;
         entry.structure.replace(operation.structure);
-        return {entry, entry2, formNode, formNode2};
-    }
 
-    describe("resetPartiel 1", () => {
-        const {formNode} = step2();
-        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
-            expect(formNode.numero.value).toBe("yolo");
-        });
-        test("Un reset partiel affecte les champs concernés.", () => {
-            expect(formNode.structure.getValues()).toEqual(operation.structure);
-        });
+        expect(formNode.numero.value).toBe("yolo");
+        expect(formNode.structure.getValues()).toEqual(operation.structure);
     });
 
-    function step3() {
-        const {entry, entry2, formNode, formNode2} = step2();
+    test("Modifier un champ non concerné par le reset ne l'affecte pas", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        formNode.numero.value = "yolo";
+        entry.structure.id.value = 9000;
+        entry.structure.replace(operation.structure);
         formNode.montant.value = 9000;
         entry.numero.value = "déso";
-        return {entry, entry2, formNode, formNode2};
-    }
 
-    describe("resetPartiel 2", () => {
-        const {formNode} = step3();
-        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
-            expect(formNode.montant.value).toBe(9000);
-        });
-        test("Un reset partiel n'affecte pas les champs non affectés.", () => {
-            expect(formNode.numero.value).toBe("déso");
-        });
+        expect(formNode.montant.value).toBe(9000);
+        expect(formNode.numero.value).toBe("déso");
+    });
+
+    test("clear() du StoreNode vide aussi le FormNode", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        entry.clear();
+        expect(formNode.getValues()).toEqual({structure: {}});
+    });
+
+    test("reset() global remet toutes les valeurs modifiées à l'état source", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
+        formNode.reset();
+
+        expect(formNode.montant.value).toBe(operation.montant);
+        expect(formNode.structure.id.value).toBe(operation.structure.id);
+    });
+
+    test("reset() local ne touche qu'au sous-noeud ciblé", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        formNode.set({montant: 3000, structure: {id: 23}});
+        formNode.structure.reset();
+
+        expect(formNode.montant.value).toBe(3000);
+        expect(formNode.structure.id.value).toBe(operation.structure.id);
+    });
+
+    test("reset() sur un FormListNode restaure la liste et retire les items ajoutés/enlevés", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList[0].id.value = 23;
+        formNode2.ligneList.remove(formNode2.ligneList[2]);
+        formNode2.ligneList.reset();
+
+        expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues());
+    });
+
+    test("reset() sur un item de FormListNode réinitialise cet item uniquement", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList[0].id.value = 23;
+        formNode2.ligneList[0].reset();
+
+        expect(formNode2.ligneList[0].id.value).toBe(5);
     });
 });
 
-describe("FormNode: propagation isEdit et isValid", () => {
-    function step1() {
+describe("FormNode — Validation et propagation", () => {
+    test("isEdit=true sur un FormNode se propage à tous les champs et sous-noeuds", () => {
         const {formNode, formNode2} = getFormNodes();
         formNode.replace(operation);
         formNode2.replace(projetTest);
         formNode.form.isEdit = true;
         formNode2.form.isEdit = true;
-        return {formNode, formNode2};
-    }
 
-    describe("isEdit", () => {
-        const {formNode, formNode2} = step1();
-        test("Tous les champs du noeud simple sont maintenant en édition", () =>
-            expect(formNode.structure.nom.isEdit).toBe(true));
-        test("Tous les champs du noeud liste sont maintenant en édition", () =>
-            expect(formNode2.ligneList[0].id.isEdit).toBe(true));
+        expect(formNode.structure.nom.isEdit).toBe(true);
+        expect(formNode2.ligneList[0].id.isEdit).toBe(true);
     });
 
-    function step2() {
-        const {formNode, formNode2} = step1();
+    test("Un champ requis vide marque le FormNode comme invalide avec l'erreur remontée aux parents", () => {
+        const {formNode} = getFormNodes();
+        formNode.replace(operation);
+        formNode.form.isEdit = true;
         formNode.structure.nom.value = undefined;
-        return {formNode, formNode2};
-    }
 
-    describe("validation object", () => {
-        const {formNode} = step2();
-        test("Un champ required non renseigné est bien en erreur.", () => {
-            expect(!!formNode.structure.nom.error).toBeTruthy();
-        });
-        test("Par conséquent le FormNode n'est plus valide.", () => {
-            expect(formNode.form.isValid).toBe(false);
-        });
-        test("La liste d'erreurs du FormNode est bien remplie.", () => {
-            expect(formNode.form.errors).toEqual({structure: {nom: "focus.validation.required"}});
-        });
-        test("Les erreurs de formulaires sont les mêmes à tous les niveaux.", () => {
-            expect(formNode.structure.form.errors).toEqual((formNode.form.errors as any).structure);
-        });
+        expect(!!formNode.structure.nom.error).toBeTruthy();
+        expect(formNode.form.isValid).toBe(false);
+        expect(formNode.form.errors).toEqual({structure: {nom: "focus.validation.required"}});
+        expect(formNode.structure.form.errors).toEqual(
+            (formNode.form.errors as unknown as {structure: unknown}).structure
+        );
     });
 
-    function step3() {
-        const {formNode, formNode2} = step2();
+    test("Dans un FormListNode, seul l'item invalide est marqué et la liste devient invalide", () => {
+        const {formNode, formNode2} = getFormNodes();
+        formNode.replace(operation);
+        formNode2.replace(projetTest);
+        formNode.form.isEdit = true;
+        formNode2.form.isEdit = true;
+        formNode.structure.nom.value = undefined;
         formNode2.ligneList[1].id.value = undefined;
-        return {formNode, formNode2};
-    }
 
-    describe("validation liste", () => {
-        const {formNode2} = step3();
-        test("Dans un FormListNode le noeud avec une champ en erreur est invalide.", () => {
-            expect(formNode2.ligneList[1].form.isValid).toBe(false);
-        });
-        test("Mais le noeud d'à côté reste valide.", () => {
-            expect(formNode2.ligneList[0].form.isValid).toBe(true);
-        });
-        test("La liste elle-même est invalide.", () => {
-            expect(formNode2.ligneList.form.isValid).toBe(false);
-        });
-        test("La liste des erreurs sur le noeud liste est correcte.", () => {
-            expect(formNode2.ligneList.form.errors).toEqual([{}, {id: "focus.validation.required"}, {}]);
-        });
+        expect(formNode2.ligneList[1].form.isValid).toBe(false);
+        expect(formNode2.ligneList[0].form.isValid).toBe(true);
+        expect(formNode2.ligneList.form.isValid).toBe(false);
+        expect(formNode2.ligneList.form.errors).toEqual([{}, {id: "focus.validation.required"}, {}]);
     });
 });
 
-describe("FormNode: clear du storeNode", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-    entry.clear();
+describe("FormNode — Dispose", () => {
+    test("Un FormNode disposé n'est plus mis à jour par sa source", () => {
+        const {entry, formNode} = getFormNodes();
+        entry.replace(operation);
+        formNode.dispose();
+        entry.montant.value = 2;
 
-    test("Le FormNode est bien vide après un clear du StoreNode.", () =>
-        expect(formNode.getValues()).toEqual({structure: {}}));
-});
+        expect(formNode.montant.value).toBe(operation.montant);
+    });
 
-describe("FormNode: reset global", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-    formNode.set({montant: 3000, structure: {id: 23, nom: "LOL"}});
-    formNode.reset();
-
-    test("Champ simple: le FormNode a bien été réinitialisé.", () =>
-        expect(formNode.montant.value).toBe(operation.montant));
-    test("Champ composite: le FormNode a bien été réinitialisé.", () =>
-        expect(formNode.structure.id.value).toBe(operation.structure.id));
-});
-
-describe("FormNode: reset local (noeud simple)", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-    formNode.set({montant: 3000, structure: {id: 23}});
-    formNode.structure.reset();
-
-    test("Champ non concerné pas le reset : n'a pas été touché.", () => expect(formNode.montant.value).toBe(3000));
-    test("Champ concerné par le reset : a été réinitialisé.", () =>
-        expect(formNode.structure.id.value).toBe(operation.structure.id));
-});
-
-describe("FormListNode: reset", () => {
-    const {entry2, formNode2} = getFormNodes();
-    entry2.replace(projetTest);
-    formNode2.ligneList[0].id.value = 23;
-    formNode2.ligneList.remove(formNode2.ligneList[2]);
-    formNode2.ligneList.reset();
-
-    test("La liste à bien été réinitialisée.", () =>
-        expect(formNode2.ligneList.getValues()).toEqual(entry2.ligneList.getValues()));
-});
-
-describe("FormListNode: reset d'un item", () => {
-    const {entry2, formNode2} = getFormNodes();
-    entry2.replace(projetTest);
-    formNode2.ligneList[0].id.value = 23;
-    formNode2.ligneList[0].reset();
-
-    test("Champ modifié de l'item : a été réinitialisé.", () => expect(formNode2.ligneList[0].id.value).toBe(5));
-});
-
-describe("FormNode: dispose", () => {
-    const {entry, formNode} = getFormNodes();
-    entry.replace(operation);
-    formNode.dispose();
-    entry.montant.value = 2;
-
-    test("Le FormNode n'a pas été mis à jour.", () => expect(formNode.montant.value).toBe(operation.montant));
-});
-
-describe("FormListNode: dispose", () => {
-    function step1() {
+    test("Un item retiré d'un FormListNode n'est plus lié à sa source, les autres le restent", () => {
         const {entry2, formNode2} = getFormNodes();
         entry2.replace(projetTest);
         const [item2] = formNode2.ligneList.splice(2, 1);
         entry2.ligneList[2].id.value = 55;
         entry2.ligneList[1].id.value = 54;
-        return {item2, entry2, formNode2};
-    }
 
-    describe("modif", () => {
-        const {item2, formNode2} = step1();
-        test("Un objet supprimé d'un FormListNode n'est bien plus mis à jour.", () =>
-            expect(item2.id.value).toBe(projetTest.ligneList[2].id));
-        test("Mais les autres le sont toujours.", () => expect(formNode2.ligneList[1].id.value).toBe(54));
+        expect(item2.id.value).toBe(projetTest.ligneList[2].id);
+        expect(formNode2.ligneList[1].id.value).toBe(54);
     });
 
-    function step2() {
-        const {entry2, formNode2} = step1();
+    test("Après dispose() d'un FormListNode, les ajouts/suppressions/modifs de la source sont ignorés", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.splice(2, 1);
+        entry2.ligneList[2].id.value = 55;
+        entry2.ligneList[1].id.value = 54;
         formNode2.dispose();
         entry2.replace({ligneList: [{id: 41}]});
-        return {entry2, formNode2};
-    }
-
-    test("Après le dispose de la liste, les ajouts et les suppressions ne font plus rien.", () => {
-        const {formNode2} = step2();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 54}]);
-    });
 
-    function step3() {
-        const {entry2, formNode2} = step2();
         entry2.ligneList[0].id.value = 235;
-        return {entry2, formNode2};
-    }
-
-    test("Et les noeuds invididuels sont inchangés.", () => {
-        const {formNode2} = step3();
         expect(formNode2.ligneList.getValues()).toEqual([{id: 5}, {id: 54}]);
     });
 });

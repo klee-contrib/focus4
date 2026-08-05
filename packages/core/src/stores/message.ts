@@ -13,11 +13,16 @@ export type MessageListener = (type: string, message: Message) => void;
 
 /** Store de messages */
 export class MessageStore {
-    private readonly messages = observable.map<string, Message[]>();
-    private readonly listeners = new Map<string, MessageListener[]>();
+    private readonly _listeners = new Map<string, MessageListener[]>();
+    private readonly _messages = observable.map<string, Message[]>();
 
     /** Types de messages à traiter dans un appel à `addMessages`.  */
     messageTypes = ["success", "error", "info", "warning"];
+
+    /** Retourne tous les messages enregistrés dans le store. */
+    get messages() {
+        return new Map(this._messages);
+    }
 
     /**
      * Ajoute un message.
@@ -28,16 +33,16 @@ export class MessageStore {
     addMessage(type: string, message: Message): void;
     @action.bound
     addMessage(type: string, message: Message | string) {
-        if (!this.messages.get(type)) {
-            this.messages.set(type, []);
+        if (!this._messages.get(type)) {
+            this._messages.set(type, []);
         }
 
         if (typeof message === "string") {
             message = {label: message};
         }
 
-        this.messages.get(type)!.push(message);
-        for (const listener of this.listeners.get(type) ?? []) {
+        this._messages.get(type)!.push(message);
+        for (const listener of this._listeners.get(type) ?? []) {
             listener(type, message);
         }
     }
@@ -127,23 +132,35 @@ export class MessageStore {
      */
     addMessageListener(types: string[], listener: MessageListener) {
         for (const type of types) {
-            if (!this.listeners.get(type)) {
-                this.listeners.set(type, []);
+            if (!this._listeners.get(type)) {
+                this._listeners.set(type, []);
             }
 
-            this.listeners.get(type)!.push(listener);
+            this._listeners.get(type)!.push(listener);
         }
 
         return () => {
             for (const type of types) {
-                this.listeners.set(type, this.listeners.get(type)?.filter(l => l !== listener) ?? []);
+                this._listeners.set(type, this._listeners.get(type)?.filter(l => l !== listener) ?? []);
             }
         };
     }
 
+    /**
+     * Vide les messages du store.
+     * @param type Type de message à vider. Si non renseigné : vide tous les messages.
+     */
+    clearMessages(type?: string) {
+        if (!type) {
+            this._messages.clear();
+        } else {
+            this._messages.set(type, []);
+        }
+    }
+
     /** Récupère le dernier message du type demandé. */
     getLatestMessage(type: string) {
-        return (this.messages.get(type) ?? []).at(-1);
+        return (this._messages.get(type) ?? []).at(-1);
     }
 }
 

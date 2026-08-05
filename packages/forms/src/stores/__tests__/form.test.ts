@@ -50,21 +50,30 @@ describe("useFormNode", () => {
             expect(result.current.form.isEmpty).toBe(false);
         });
 
-        test("initialise avec initialData = true", () => {
+        test.each([
+            {
+                label: "initialData = true",
+                setup: (store: ReturnType<typeof makeStoreNode<{test: typeof TestEntity}>>) => {
+                    store.test.replace({id: 1, name: "Test"});
+                },
+                initialData: true as const,
+                expected: {id: 1, name: "Test"}
+            },
+            {
+                label: "fonction initialData",
+                setup: () => {
+                    /** */
+                },
+                initialData: () => ({id: 2, name: "Test2"}),
+                expected: {id: 2, name: "Test2"}
+            }
+        ])("initialise avec $label", ({setup, initialData, expected}) => {
             const store = makeStoreNode({test: TestEntity});
-            store.test.replace({id: 1, name: "Test"});
-            const {result} = renderHook(() => useFormNode(store.test, undefined, true));
+            setup(store);
+            const {result} = renderHook(() => useFormNode(store.test, undefined, initialData));
 
-            expect(result.current.id.value).toBe(1);
-            expect(result.current.name.value).toBe("Test");
-        });
-
-        test("initialise avec fonction initialData", () => {
-            const store = makeStoreNode({test: TestEntity});
-            const {result} = renderHook(() => useFormNode(store.test, undefined, () => ({id: 2, name: "Test2"})));
-
-            expect(result.current.id.value).toBe(2);
-            expect(result.current.name.value).toBe("Test2");
+            expect(result.current.id.value).toBe(expected.id);
+            expect(result.current.name.value).toBe(expected.name);
         });
     });
 

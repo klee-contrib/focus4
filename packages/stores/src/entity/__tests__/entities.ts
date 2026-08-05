@@ -2,23 +2,10 @@ import z from "zod";
 
 import {e, entity} from "@focus4/entities";
 
-export const DO_NUMBER = {
-    schema: z.number(),
-    AutocompleteComponent: () => null,
-    DisplayComponent: () => null,
-    LabelComponent: () => null,
-    InputComponent: () => null,
-    SelectComponent: () => null
-};
+import {domain} from "../../__tests__/test-utils";
 
-export const DO_STRING = {
-    schema: z.string(),
-    AutocompleteComponent: () => null,
-    DisplayComponent: () => null,
-    LabelComponent: () => null,
-    InputComponent: () => null,
-    SelectComponent: () => null
-};
+export const DO_NUMBER = domain(z.number());
+export const DO_STRING = domain(z.string());
 
 export const StructureEntity = entity({
     id: e.field(DO_NUMBER, f => f.optional()),

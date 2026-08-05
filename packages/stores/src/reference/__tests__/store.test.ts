@@ -1,4 +1,4 @@
-import {describe, expect, test} from "vitest";
+import {describe, expect, test, vi} from "vitest";
 
 import {makeReferenceStore} from "../store";
 
@@ -165,5 +165,62 @@ describe("makeReferenceStore", () => {
         expect(referenceStore.priority.length).toBe(2);
         expect(referenceStore.status.getLabel("A")).toBe("Alpha");
         expect(referenceStore.priority.getLabel(1)).toBe("High");
+    });
+
+    test("reload(refName) appelle referenceClearer avec le nom", async () => {
+        const clearer = vi.fn().mockResolvedValue(undefined);
+        const store = makeReferenceStore(
+            referenceLoader,
+            {
+                status: {
+                    valueKey: "code" as const,
+                    labelKey: "label" as const,
+                    type: {} as {code: string; label: string}
+                }
+            },
+            clearer
+        );
+        await store.get("status");
+        await store.reload("status");
+        expect(clearer).toHaveBeenCalledWith("status");
+    });
+
+    test("reload() sans argument appelle referenceClearer sans argument", async () => {
+        const clearer = vi.fn().mockResolvedValue(undefined);
+        const store = makeReferenceStore(
+            referenceLoader,
+            {
+                status: {
+                    valueKey: "code" as const,
+                    labelKey: "label" as const,
+                    type: {} as {code: string; label: string}
+                }
+            },
+            clearer
+        );
+        await store.get("status");
+        await store.reload();
+        expect(clearer).toHaveBeenCalledWith();
+    });
+
+    test("valueKey et labelKey utilisent les valeurs par défaut", () => {
+        const store = makeReferenceStore(referenceLoader, {
+            status: {
+                valueKey: "code" as const,
+                labelKey: "label" as const,
+                type: {} as {code: string; label: string}
+            }
+        });
+        expect((store.status as any).$valueKey).toBe("code");
+        expect((store.status as any).$labelKey).toBe("label");
+    });
+
+    test("filter() filtre les entrées de la liste et conserve les métadonnées", async () => {
+        const store = getStore();
+        await store.get("status");
+        const filtered = store.status.filter((entry: any) => entry.code === "A");
+        expect(filtered).toHaveLength(1);
+        expect(filtered.$valueKey).toBe("code");
+        expect(filtered.$labelKey).toBe("label");
     });
 });

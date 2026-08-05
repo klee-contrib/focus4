@@ -1,4 +1,3 @@
-// Libs
 import {render} from "@testing-library/react";
 import i18next from "i18next";
 import {initReactI18next} from "react-i18next";
@@ -20,29 +19,31 @@ const panelTheme = {
     "title--top": "top"
 };
 
-// Components
-describe("Title", () => {
-    test("with title", () => {
-        // Arrange/Act
+describe("Panel", () => {
+    test("Le titre est rendu dans une balise <h3> unique", () => {
         const panelTitle = "A title for a test";
         const {container} = render(<Panel title={panelTitle} theme={panelTheme} />);
 
-        // Assert that the title is present
         const h3List = container.querySelectorAll("h3");
         expect(h3List).toHaveLength(1);
         expect(h3List[0].textContent).toContain(panelTitle);
     });
-});
 
-// Top div wrapper is always present because the title is wrapped in it
+    test.each([
+        {position: "none", top: 1, bottom: 0},
+        {position: "top", top: 1, bottom: 0},
+        {position: "bottom", top: 1, bottom: 1},
+        {position: "both", top: 1, bottom: 1}
+    ])("Avec buttonsPosition=$position, on a $top zone haute et $bottom zone basse", ({position, top, bottom}) => {
+        const {container} = render(
+            <Panel
+                title="my panel"
+                buttonsPosition={position as "none" | "top" | "bottom" | "both"}
+                theme={panelTheme}
+            />
+        );
 
-test.each([
-    ["none", 1, 0],
-    ["top", 1, 0],
-    ["bottom", 1, 1],
-    ["both", 1, 1]
-])("Buttons positions %s / expectedTop : %i / expectedBottom : %i", (position: any, expectedTop, expectedBottom) => {
-    const {container} = render(<Panel title="my panel" buttonsPosition={position} theme={panelTheme} />);
-    expect(container.querySelectorAll(".top").length).toBe(expectedTop);
-    expect(container.querySelectorAll(".bottom").length).toBe(expectedBottom);
+        expect(container.querySelectorAll(".top").length).toBe(top);
+        expect(container.querySelectorAll(".bottom").length).toBe(bottom);
+    });
 });

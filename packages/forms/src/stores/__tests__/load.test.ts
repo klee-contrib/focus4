@@ -1,11 +1,11 @@
 import {renderHook, waitFor} from "@testing-library/react";
-import {describe, expect, test} from "vitest";
+import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
 import {e, entity} from "@focus4/entities";
-import {makeStoreNode} from "@focus4/stores";
+import {makeStoreNode, ReferenceDefinition, ReferenceStore} from "@focus4/stores";
 
-import {useLoad} from "../load";
+import {useLoad, useReferenceTracking} from "../load";
 
 const DO_STRING = {
     schema: z.string()
@@ -42,5 +42,64 @@ describe("useLoad", () => {
             expect(store.test.id.value).toBe(1);
             expect(store.test.name.value).toBe("Test");
         });
+    });
+
+    test("reconfigure le load quand les dépendances changent", async () => {
+        const store = makeStoreNode({test: TestEntity});
+        const loadService = vi.fn(async (name: string) => ({id: 1, name}));
+
+        const {rerender} = renderHook(
+            ({name}) => useLoad(store.test, b => b.params().load(() => loadService(name)), [name]),
+            {
+                initialProps: {name: "Test-1"}
+            }
+        );
+
+        await waitFor(() => {
+            expect(store.test.name.value).toBe("Test-1");
+        });
+
+        rerender({name: "Test-2"});
+
+        await waitFor(() => {
+            expect(store.test.name.value).toBe("Test-2");
+        });
+
+        expect(loadService).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe("useReferenceTracking", () => {
+    type TestReferenceStore = ReferenceStore<Record<string, ReferenceDefinition>>;
+
+    test("accepte un trackingId simple", () => {
+        const dispose = vi.fn();
+        const track = vi.fn(() => dispose);
+        const referenceStore = {track} as unknown as TestReferenceStore;
+
+        renderHook(() => useReferenceTracking("form", referenceStore));
+
+        expect(track).toHaveBeenCalledWith("form");
+    });
+
+    test("réenregistre le tracking avec ids multiples et références", () => {
+        const dispose1 = vi.fn();
+        const dispose2 = vi.fn();
+        const track = vi.fn().mockReturnValueOnce(dispose1).mockReturnValueOnce(dispose2);
+        const referenceStore = {track} as unknown as TestReferenceStore;
+
+        const {rerender} = renderHook(
+            ({ids, names}) => useReferenceTracking(ids, referenceStore, ...(names as ["roles"])),
+            {
+                initialProps: {ids: ["a", "b"], names: ["roles"]}
+            }
+        );
+
+        expect(track).toHaveBeenCalledWith(["a", "b"], "roles");
+
+        rerender({ids: ["a", "c"], names: ["roles"]});
+
+        expect(dispose1).toHaveBeenCalledTimes(1);
+        expect(track).toHaveBeenLastCalledWith(["a", "c"], "roles");
     });
 });
