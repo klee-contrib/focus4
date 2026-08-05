@@ -41,7 +41,7 @@ export interface ScrollableProps {
     hideBackToTop?: boolean;
     /** Comportement du scroll. Par défaut : "smooth" */
     scrollBehaviour?: ScrollBehavior;
-    /** Si renseigné, affiche également l'overlay des `Popin` et des `Dialog` au dessus du `Scrollable`. */
+    /** Si renseigné, affiche également l'overlay des `Popin` et des `Dialog` au-dessus du `Scrollable`. */
     showOverlay?: boolean;
     /** Reset le scroll (à 0) dès que les children du scrollable changent.  */
     resetScrollOnChildrenChange?: boolean;
@@ -54,7 +54,7 @@ export interface ScrollableProps {
 /**
  * Le composant **`Scrollable`**, qui pose un **`ScrollableContext`**, est le composant central du système de présentation et mise en page de Focus.
  *
- * C'est un composant que vous n'utiliserez jamais directement (où alors avec une très bonne raison), mais il est posé par le [`Layout`](/docs/mise-en-page-layout--docs) et la [`Popin`](/docs/mise-en-page-popin--docs), qui sont des constituants basiques de votre application.
+ * C'est un composant que vous n'utiliserez jamais directement (ou alors avec une très bonne raison), mais il est posé par le [`Layout`](/docs/mise-en-page-layout--docs) et la [`Popin`](/docs/mise-en-page-popin--docs), qui sont des constituants basiques de votre application.
  *
  * Le `Scrollable` permet de :
  *
@@ -62,7 +62,7 @@ export interface ScrollableProps {
  * - Gérer un "portal" vers l'élément racine, pour poser des popins par exemple.
  * - Poser un bouton de retour vers le haut une fois qu'on a scrollé un peu.
  *
- * Le `Scrollable` **pose son propre contexte de scroll sur la page**. En particulier, pour celui du [`Layout`](/docs/mise-en-page-layout--docs), il faut bien comprendre que le scroll général de l'application n'est pas celui de le page mais celui du `Scrollable` qui prend 100% de l'espace de l'écran (sauf la partie dédiée au [`MainMenu`](/docs/mise-en-page-menu-principal--docs) s'il y'en a un). Il faut bien prendre cela en compte lorsque vous essaierez de personnaliser le CSS général de votre application.
+ * Le `Scrollable` **pose son propre contexte de scroll sur la page**. En particulier, pour celui du [`Layout`](/docs/mise-en-page-layout--docs), il faut bien comprendre que le scroll général de l'application n'est pas celui de la page mais celui du `Scrollable` qui prend 100% de l'espace de l'écran (sauf la partie dédiée au [`MainMenu`](/docs/mise-en-page-menu-principal--docs) s'il y en a un). Il faut bien prendre cela en compte lorsque vous essayerez de personnaliser le CSS général de votre application.
  */
 export function Scrollable({
     backToTopOffset = 300,

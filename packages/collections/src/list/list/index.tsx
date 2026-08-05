@@ -72,8 +72,8 @@ export type ListProps<T extends object> = ListBaseProps<T> & {
  * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
  * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.
  *
- * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posée sur la droite de chaque élément
- * au dessus du `LineComponent`.
+ * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posées sur la droite de chaque élément
+ * au-dessus du `LineComponent`.
  *
  * Lorsqu'elle est interfacée avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), la liste peut aussi gérer de la sélection d'éléments, en renseignant `hasSelection`.
  *
@@ -326,8 +326,8 @@ export function List<T extends object>({
  * La liste se base sur le `LineComponent` passé en props pour afficher les éléments de la liste, qui recevra dans sa prop `data` l'élément à afficher. La liste n'a
  * aucune mise en forme pré-définie pour ses éléments : l'ensemble du CSS nécessaire pour un affichage correct devra donc être porté par le `LineComponent`.
  *
- * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posée sur la droite de chaque élément
- * au dessus du `LineComponent`.
+ * Il est en revanche possible de définir des actions pour chaque ligne de la liste via `operationList` : ces actions seront posées sur la droite de chaque élément
+ * au-dessus du `LineComponent`.
  *
  * Lorsqu'elle est interfacée avec un [`CollectionStore`](/docs/listes-store-de-collection--docs), la liste peut aussi gérer de la sélection d'éléments, en renseignant `hasSelection`.
  *

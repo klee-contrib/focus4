@@ -24,7 +24,7 @@ export const HeaderContext = createContext({
  * Utilisé par le `MainMenu` et le `Layout` pour poser l'`Overlay` et par `useOverlay` pour l'activer.
  */
 export const OverlayContext = createContext<{
-    /** Niveau de scrollable à partir du quel il faut afficher l'overlay. */
+    /** Niveau de scrollable à partir duquel il faut afficher l'overlay. */
     activeLevel: number;
     /** Pour fermer l'overlay. Correspond au `close` passé par le dernier `useOverlay` (via `toggle`) de la pile. */
     close(): void;

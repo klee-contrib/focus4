@@ -23,7 +23,7 @@ export interface PopinProps {
     closePopin: () => void;
     /** Cache le bouton de retour en haut. */
     hideBackToTop?: boolean;
-    /** Appelé une fois que la Popin est effectivement fermée (après l'animtation). */
+    /** Appelé une fois que la Popin est effectivement fermée (après l'animation). */
     onClosed?: () => void;
     /** Popin ouverte (ou fermée). */
     opened: boolean;

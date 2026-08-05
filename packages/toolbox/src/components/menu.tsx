@@ -31,7 +31,7 @@ export const menuCss: MenuCss = css;
 export type {MenuCss};
 
 export interface MenuControls<T extends HTMLElement = HTMLDivElement> {
-    /** Element HTML parent du menu sur lequel le menu s'attachera (au dessus ou en dessous, selon la position).  */
+    /** Élément HTML parent du menu sur lequel le menu s'attachera (au-dessus ou en dessous, selon la position).  */
     anchor: RefObject<T | null>;
     /** Affiche le menu. */
     active: boolean;
@@ -79,14 +79,14 @@ export interface MenuProps extends MenuControls {
     noRing?: boolean;
     /** Désactive complètement la sélection d'items dans le Menu (en particulier au clavier). */
     noSelection?: boolean;
-    /** Handler optionel appelé au clic (y compris au clavier) d'un élément du Menu. La `key` de l'enfant sera passée en paramètre. */
+    /** Handler optionnel appelé au clic (y compris au clavier) d'un élément du Menu. La `key` de l'enfant sera passée en paramètre. */
     onItemClick?: (key: string, from: "click" | "keyboard") => void;
     /** Handler appelé lorsque l'élément sélectionné par le Menu change (au hover ou au clavier).  */
     onSelectedChange?: (key?: string) => void;
     /**
      * Détermine la position du Menu par rapport à son élément ancre.
      *
-     * Le Menu peut être placé au dessus (`top`) ou en dessous (`bottom`) en prenant toute la largeur de l'ancre,
+     * Le Menu peut être placé au-dessus (`top`) ou en dessous (`bottom`) en prenant toute la largeur de l'ancre,
      * ou bien en gardant la taille de son contenu l'alignant à gauche (`top-left` et `bottom-left`) ou à droite (`top-right` et `bottom-right`).
      *
      * La position peut être déterminée automatiquement selon la position de l'ancre sur la page au moment de son ouverture.
@@ -315,8 +315,8 @@ export function Menu({
                 !ref.current.contains(event.target as Node)
             ) {
                 /*
-                 * Si jamais on est attaché à un input et qu'on clic sur son label alors il ne faut pas fermer,
-                 * sinon la réouverture immédiate du menu au refocus de l'input liée au clic sur le label fait tout planter...
+                 * Si jamais on est attaché à un input et qu'on clique sur son label alors il ne faut pas fermer,
+                 * sinon la réouverture immédiate du menu au refocus de l'input lié au clic sur le label fait tout planter...
                  */
                 const input = anchor.current.querySelector("input");
                 if (!input?.id || document.querySelector(`label[for="${input.id}"]`) !== event.target) {

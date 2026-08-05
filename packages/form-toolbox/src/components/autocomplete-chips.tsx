@@ -91,7 +91,7 @@ const defaultGetLabel = (x: any) => x.label;
 /**
  * Un [`AutocompleteSearch`](/docs/composants-focus4∕form-toolbox-autocompletesearch--docs) qui permet de sélectionner plusieurs valeurs, affichées dans des [`Chips`](/docs/composants-focus4∕toolbox-chip--docs) positionnés sous le champ.
  *
- * Il s'agit du [composant par défaut de tous les domaines de type `array` de primitives](/docs/docs/composants-composants-par-défaut--docs) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `array` de primitives](/docs/composants-composants-par-défaut--docs) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
 export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {key: string; label: string}>({
     chipTheme,

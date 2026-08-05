@@ -18,9 +18,9 @@ export type {MainMenuCss, MainMenuItemProps, MainMenuListProps};
 
 /** Props du Menu. */
 export interface MainMenuProps {
-    /** Précise à la route active, à comparer avec la `route` déclarée dans chaque `MainMenuItem` pour savoir s'il doit être affiché comme actif ou non. */
+    /** Précise la route active, à comparer avec la `route` déclarée dans chaque `MainMenuItem` pour savoir s'il doit être affiché comme actif ou non. */
     activeRoute?: string;
-    /** Si renseigné, affiche également l'overlay des `Popin` et des `Dialog` au dessus du `MainMenu`. */
+    /** Si renseigné, affiche également l'overlay des `Popin` et des `Dialog` au-dessus du `MainMenu`. */
     showOverlay?: boolean;
     /** CSS. */
     theme?: CSSProp<MainMenuCss>;
@@ -31,7 +31,7 @@ export interface MainMenuProps {
  *
  * Ce composant s'attend à ce qu'on lui pose des `MainMenuItem` comme enfants pour gérer les différents liens du menu, mais il est également possible de passer d'autres enfants pour qu'ils soient également affichés dans le menu (par exemple un logo).
  *
- * Chaque `MainMenuItem` doit être rattaché à une route, qui sera comparé à la valeur de la prop `activeRoute` qui est passée au `MainMenu`. Si `route === activeRoute`, alors l'item sera affiché comme "actif" dans le menu.
+ * Chaque `MainMenuItem` doit être rattaché à une route, qui sera comparée à la valeur de la prop `activeRoute` qui est passée au `MainMenu`. Si `route === activeRoute`, alors l'item sera affiché comme "actif" dans le menu.
  *
  * Il est possible de gérer des sous menus : pour se faire, il suffit de passer d'autres `MainMenuItem` en enfants d'un `MainMenuItem`. Comme pour le `MainMenu`, il est possible également de passer d'autres éléments en enfant d'un `MainMenuItem`.
  */

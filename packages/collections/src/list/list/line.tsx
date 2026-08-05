@@ -26,7 +26,7 @@ export interface LineWrapperProps<T extends object> {
     domRef?: (element: HTMLLIElement | null) => void;
     /** Affiche ou non la checkbox de sélection. */
     hasSelection?: boolean;
-    /** Composant de ligne (ligne, mosaïque, row ou timeline à priori). */
+    /** Composant de ligne (ligne, mosaïque, row ou timeline, a priori). */
     LineComponent: ComponentType<LineProps<T> & {ref?: Ref<any>}>;
     /** Configuration de la mosaïque (si applicable). */
     mosaic?: {width: number; height: number};

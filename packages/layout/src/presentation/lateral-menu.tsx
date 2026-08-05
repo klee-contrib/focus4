@@ -22,7 +22,7 @@ export interface LateralMenuProps {
 }
 
 /**
- * Le `LateralMenu` permet de créer un menu latéral (à priori à gauche), qui restera sticky au scroll en haut de la page.
+ * Le `LateralMenu` permet de créer un menu latéral (a priori à gauche), qui restera sticky au scroll en haut de la page.
  *
  * Il doit être posé dans un conteneur avec un `display: flex`, et s'il est rétractable, alors son contenu devrait idéalement avoir une taille fixe.
  */

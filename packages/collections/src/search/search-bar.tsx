@@ -184,7 +184,7 @@ export function SearchBar<T extends object>({
         input.current?.focus();
         input.current?.setSelectionRange(state.text.length, state.text.length);
 
-        /** Ferme le panel lorsqu'on clic à l'extérieur de la search bar. */
+        /** Ferme le panel lorsqu'on clique à l'extérieur de la search bar. */
         function onDocumentClick({target}: Event) {
             let parent = target as HTMLElement | null;
 

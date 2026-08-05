@@ -27,11 +27,11 @@ export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTM
     children?: ReactNode;
     /** Si renseigné, pose une balise `<a>` à la place du `<button>`. */
     href?: string;
-    /** Icône a afficher dans l'item de menu. */
+    /** Icône à afficher dans l'item de menu. */
     icon?: Icon;
     /**  Libellé de l'item de menu. */
     label?: string;
-    /** Au clic sur le l'item de menu. */
+    /** Au clic sur l'item de menu. */
     onClick?: MouseEventHandler<HTMLButtonElement | HTMLLinkElement>;
     /** La route associée, pour comparaison avec la route active définie dans le `MainMenu`. */
     route?: string;

@@ -19,7 +19,7 @@ export interface SliderProps extends PointerEvents<HTMLDivElement> {
     className?: string;
     /** Désactive le Slider. */
     disabled?: boolean;
-    /** Affiche un libellé au dessus de la poignée au survol avec la valeur exacte du Slider. */
+    /** Affiche un libellé au-dessus de la poignée au survol avec la valeur exacte du Slider. */
     labeled?: boolean;
     /** Valeur (entière) maximale du Slider. Par défaut : 100. */
     max?: number;

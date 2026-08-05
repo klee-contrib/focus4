@@ -34,7 +34,7 @@ export interface DisplayProps<S extends ZodType> extends UseDisplayProps<S> {
  * - Résout les traductions i18n.
  * - Peut afficher des listes de valeurs.
  *
- * Il s'agit du [composant d'affichage par défaut de tous les domaines](/docs/docs/composants-composants-par-défaut--docs)  (`DisplayComponent`).
+ * Il s'agit du [composant d'affichage par défaut de tous les domaines](/docs/composants-composants-par-défaut--docs)  (`DisplayComponent`).
  */
 export function Display<S extends ZodType>({
     listChunkSize,

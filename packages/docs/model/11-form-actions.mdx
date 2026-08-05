@@ -29,7 +29,7 @@ const actions = useFormActions(
 - `isLoading` : Précise si le formulaire est en cours de chargement ou de sauvegarde (`trackingId` est ajouté à tous les services).
 - `errorDisplay` : Le mode d'affichage des erreurs pour les champs du formulaire (décrit plus bas).
 - `init()` : Appelle l'initialisation du formulaire.
-- `load()` : Apelle le service de chargement du formulaire.
+- `load()` : Appelle le service de chargement du formulaire.
 - `onClickEdit()` : Passe le formulaire en édition.
 - `onClickCancel()` : Repasse le formulaire en consultation et annule toutes les modifications.
 - `save()` : Sauvegarde les données du formulaire. Voir plus bas pour le détail.
@@ -76,7 +76,7 @@ Dans tous les cas, la sauvegarde est appelée avec la méthode **`actions.save()
 
 - Vérifie que le formulaire est valide (et jette une exception dans le cas contraire avec le détail)
 - Appelle le service de sauvegarde correspondant au cas courant (`create`, `update`, ou `save`).
-- Si le service a retourné des données, le noeud source est mis à jour avec ce que le service à renvoyé, sinon on le met à jour avec les données du formulaire.
+- Si le service a retourné des données, le noeud source est mis à jour avec ce que le service a renvoyé, sinon on le met à jour avec les données du formulaire.
 - On enregistre le message du succès dans le `messageStore`.
 - On appelle les handlers d'évènements correspondants au cas courant.
 
@@ -89,7 +89,7 @@ Il hérite directement de [`NodeLoadBuilder`](/docs/modèle-métier-chargement-d
 
 Permet d'enregistrer un service de sauvegarde. Vous ne pouvez pas utiliser `save` avec `create` ou `update`.
 
-La signature du service d'`update` doit inclure les `params` en premiers paramètres, puis le type du formulaire.
+La signature du service d'`update` doit inclure les `params` en premier paramètre, puis le type du formulaire.
 
 ### `init(service?)`
 
@@ -105,7 +105,7 @@ Idéalement, tout formulaire utilisé sans `load` devrait appeler `init`. Il est
 
 ### `on(events, handler)`
 
-La fonction `on` est étendue pour les actions de formulaires et propose de définir des handlers pour les évènements suivant en plus de `"load"` :
+La fonction `on` est étendue pour les actions de formulaires et propose de définir des handlers pour les événements suivants en plus de `"load"` :
 
 - `"init"` : appelé après l'appel à `init()`
 - `"error"` : appelé en cas d'erreur retournée par le serveur lors du chargement ou de la sauvegarde.

@@ -35,7 +35,7 @@ export interface BooleanRadioProps {
 /**
  * Un [`RadioGroup`](/docs/composants-focus4∕toolbox-radiobutton--docs) avec 2 [`RadioButtons`](/docs/composants-focus4∕toolbox-radiobutton--docs) pour sélectionner un booléen (Oui/Non).
  *
- * Il s'agit du [composant par défaut de tous les domaines de type `boolean`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de type `boolean`](/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function BooleanRadio({
     allowUndefined = false,

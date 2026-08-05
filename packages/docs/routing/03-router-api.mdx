@@ -15,7 +15,7 @@ Généralement, le fichier racine de la SPA ressemble à quelque chose du style 
 ```ts
 router.start().then(() => {
     import("./init"); // Initialisation des locales et autres...
-    import("./views"); // Fichier racine des vues, où il y a le "ReactDOM.render()" par exemple.
+    import("./views"); // Fichier racine des vues, où il y a le `createRoot(...).render(...)` par exemple.
 });
 ```
 
@@ -44,9 +44,9 @@ interface State {
 }
 ```
 
-_Remarque : ne vous fiez pas un caractère "non-nullable" des paramètres, ils sont évidemment tous nullables mais c'est difficile à représenter correctement._
+_Remarque : ne vous fiez pas au caractère "non-nullable" des paramètres, ils sont évidemment tous nullables mais c'est difficile à représenter correctement._
 
-_Remarque 2 : Si un même paramètre apparaît plusieurs fois dans le routeur, alors il sera renseigné dans toutes ses occurences dans `state`, d'où l'intérêt de faire en sorte qu'il s'agit bien toujours de la même chose._
+_Remarque 2 : Si un même paramètre apparaît plusieurs fois dans le routeur, alors il sera renseigné dans toutes ses occurrences dans `state`, d'où l'intérêt de faire en sorte qu'il s'agisse bien toujours de la même chose._
 
 Il est possible de modifier une valeur de paramètre manuellement, par exemple `router.state.operation.ofaId = 2`, mais cela ne sera pris en compte que si la route active commence par `/operation/:ofaId`. Cela sera également interprété comme un `replace` pour la navigation (il ne sera pas possible de faire "précédent" pour revenir à la valeur d'avant). De manière générale, l'objet `state` est principalement utilisé en lecture.
 
@@ -60,7 +60,7 @@ Naturellement, les valeurs des query params sont observables.
 
 ## `is(url?)`
 
-La méthode `is` permet de vérifier si **la section d'URL demandée est active** (= l'URL courante contient cette section). Pour décrire une section d'URL, au lieu d'écrire simplement l'URL, on utilise un construction de lambdas qui permet de décrire l'URL morceau par morceau de façon **typée** (et avec de la complétion), en fonction de la définition du routeur.
+La méthode `is` permet de vérifier si **la section d'URL demandée est active** (= l'URL courante contient cette section). Pour décrire une section d'URL, au lieu d'écrire simplement l'URL, on utilise une construction de lambdas qui permet de décrire l'URL morceau par morceau de façon **typée** (et avec de la complétion), en fonction de la définition du routeur.
 
 Exemples :
 
@@ -69,9 +69,9 @@ router.is(a => a("operation")("ofaId"));
 router.is(a => a("operation")("ofaId")("echeance")("echId")("reglement")("regId"));
 ```
 
-`is` vérifiant que la **section** demandée est active, ce qui veut dire que dans l'exemple du dessus, si la deuxième condition est vraie alors la première l'est aussi. `is` ne vérifie pas la valeur des paramètres, il vérifie simplement qu'ils sont renseignés (car actifs dans l'URL avec une valeur quelconque).
+`is` vérifie que la **section** demandée est active, ce qui veut dire que dans l'exemple ci-dessus, si la deuxième condition est vraie alors la première l'est aussi. `is` ne vérifie pas la valeur des paramètres, il vérifie simplement qu'ils sont renseignés (car actifs dans l'URL avec une valeur quelconque).
 
-`is` est une fonction "computed", ce qui veut dire qu'elle a vocation a être utilisée dans des réactions (y compris dans le rendu d'un composant) et donc que tout changement de résultat (true > false ou false > true) relancera la réaction.
+`is` est une fonction "computed", ce qui veut dire qu'elle a vocation à être utilisée dans des réactions (y compris dans le rendu d'un composant) et donc que tout changement de résultat (true > false ou false > true) relancera la réaction.
 
 ## `get(url?)`
 
@@ -128,7 +128,7 @@ echRouter.state.echId = 8;
 echRouter.state.reglement.regId = 1;
 ```
 
-`is` et `get` d'un sous-routeur appeleront `is` et `get` du routeur en y ajoutant la route de base du sous-routeur. `to` appellera `to` du routeur en y ajoutant la route de base, en remplaçant les paramètres de cette route par leur valeur actuelle (c'est le seul usage qui force le sous-routeur a n'être utilisé que lorsque sa route de base est active, mais en pratique ça devrait toujours être le cas par construction).
+`is` et `get` d'un sous-routeur appelleront `is` et `get` du routeur en y ajoutant la route de base du sous-routeur. `to` appellera `to` du routeur en y ajoutant la route de base, en remplaçant les paramètres de cette route par leur valeur actuelle (c'est le seul usage qui force le sous-routeur à n'être utilisé que lorsque sa route de base est active, mais en pratique ça devrait toujours être le cas par construction).
 
 Si on remonte à la description initiale du routeur, on peut voir que la section `"echeance"` a initialement été décrite via un objet séparé `echeance`. Cela nous permet donc de typer simplement notre sous-routeur via le type **`Router<typeof echeance>`**, qui est un type simple à manipuler, et qui peut être utilisé comme une `prop` du composant racine du "module" échéance. Par conséquent, il est facile de retrouver l'indépendance des différents "modules" malgré le routeur commun : chaque module décrit sa section de routeur, son composant racine attend un routeur du type de la section dans ses `props`, et le tout est assemblé à la racine de l'application.
 

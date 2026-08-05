@@ -25,9 +25,9 @@ export interface DialogProps {
     children?: ReactNode;
     /** Classe CSS pour le composant racine. */
     className?: string;
-    /** Appelé une fois que le Dialog est effectivement fermé (après l'animtation). */
+    /** Appelé une fois que le Dialog est effectivement fermé (après l'animation). */
     onClosed?: () => void;
-    /** Au click sur l'overlay du Dialog, à priori pour le fermer. Si non renseigné, le Dialog ne se fermera pas au clic sur l'overlay. */
+    /** Au clic sur l'overlay du Dialog, a priori pour le fermer. Si non renseigné, le Dialog ne se fermera pas au clic sur l'overlay. */
     onOverlayClick?: () => void;
     /** Titre du Dialog. */
     title?: string;

@@ -33,7 +33,7 @@ const typeDroit = {type: {} as TypeDroit, valueKey: "code", labelKey: "libelle"}
 La fonction `makeReferenceStore(referenceLoader, refConfig, referenceClearer?)` permet de créer un **store de listes de référence**, pour contenir des listes à charger depuis le serveur. Elle prend comme paramètres :
 
 - `referenceLoader`, une fonction qui prend en paramètre un nom de référence et renvoie la liste de référence (dans une Promise).
-- `refConfig`, un objet dont les propriétés sont des définitions de listes de référence, dont le format est vu au dessus (`{type, valueKey, labelKey}`).
+- `refConfig`, un objet dont les propriétés sont des définitions de listes de référence, dont le format est vu au-dessus (`{type, valueKey, labelKey}`).
 - `referenceClearer`, une fonction facultative qui permet de réinitialiser un éventuel cache côté serveur pour une liste de référence.
 
 Exemple de store de référence :

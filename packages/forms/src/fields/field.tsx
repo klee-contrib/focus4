@@ -25,7 +25,7 @@ declare global {
          * - `"after-focus"` : L'erreur est affichée après avoir focus le champ au moins une fois.
          * - `"always"` : L'erreur est toujours affichée.
          *
-         * Dans tous les cas, l'erreur n'est pas affichée si le champ à le focus.
+         * Dans tous les cas, l'erreur n'est pas affichée si le champ a le focus.
          *
          * @default "after-focus"
          */
@@ -34,7 +34,7 @@ declare global {
         hasLabel?: boolean;
         /** Ref à poser sur le component de saisie (Autocomplete, Input, Select). */
         inputRef?: Ref<any>;
-        /** Surcharge du libellé du champ (il devrait à priori déjà être défini dans l'entité). */
+        /** Surcharge du libellé du champ (il devrait a priori déjà être défini dans l'entité). */
         label?: string;
         /** Handler de modification de la valeur. */
         onChange?: (value: F["fieldType"]) => void;

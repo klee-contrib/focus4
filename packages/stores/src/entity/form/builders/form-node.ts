@@ -214,7 +214,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E, R extends 
                 return true;
             }
 
-            // Pour garder une entrée champ de la source, il faut que l'entrée soit aussi un champ et qu'il n'est pas encore été patché.
+            // Pour garder une entrée champ de la source, il faut que l'entrée soit aussi un champ et qu'elle n'ait pas encore été patchée.
             if (isEntityField(sourceEntry) && targetEntry.type === "field" && !("_domain" in sourceEntry)) {
                 return true;
             }

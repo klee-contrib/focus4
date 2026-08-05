@@ -10,7 +10,7 @@ import {PointerEvents} from "../utils/pointer-events";
  * Définition d'une icône. Peut être :
  *
  * - Le nom d'une icône, utilisera la classe CSS définie dans `uiConfig.defaultIconClassName` (par défaut : `"material-symbols-outlined"`).
- * - Un objet `{name, className?}`, décrivant le nom le icône et sa classe CSS associée (la classe par défaut sera sélectionnée si `className` n'est pas renseigné).
+ * - Un objet `{name, className?}`, décrivant le nom de l'icône et sa classe CSS associée (la classe par défaut sera sélectionnée si `className` n'est pas renseigné).
  * - Une clé i18n pointant vers un objet `{name, className?}`.
  *
  * La classe CSS sera interprétée comme un template du nom si elle contient `{name}` dans sa définition.

@@ -27,7 +27,7 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
     extended?: boolean;
     /** Si renseigné, pose une balise `<a>` à la place du `<button>`. */
     href?: string;
-    /** Icône a afficher dans le bouton. */
+    /** Icône à afficher dans le bouton. */
     icon?: Icon;
     /**  Libellé du bouton. */
     label?: string;
@@ -45,7 +45,7 @@ export interface FloatingActionButtonProps extends PointerEvents<HTMLButtonEleme
     style?: CSSProperties;
     /** "tabindex" pour l'élément HTML. */
     tabIndex?: number;
-    /** "target" pour le `<a>`, si `href` est rensigné. */
+    /** "target" pour le `<a>`, si `href` est renseigné. */
     target?: string;
     /** CSS. */
     theme?: CSSProp<FloatingActionButtonCss>;

@@ -8,7 +8,7 @@ import {Meta} from "@storybook/addon-docs/blocks";
 
 En général, un fichier CSS ne contient pas que des noms de classes "simples". Une pratique courante en CSS est d'utiliser la convention [**BEM**](https://getbem.com/naming/), pour "**B**lock - **E**lement - **M**odifier", qui est une règle de nommage des classes CSS où chaque classe se divise jusqu'en 3 morceaux :
 
-Supposons que l'on ait un composant `panel`, qui à un `content`, un `title`, dont le dernier peut être positionné en haut (`top`) ou en bas (`bottom`) :
+Supposons que l'on ait un composant `panel`, qui a un `content` et un `title`, dont ce dernier peut être positionné en haut (`top`) ou en bas (`bottom`) :
 
 - Le "Block", qui correspondrait ici à `panel`
 - Les "Elements", qui correspondraient ici à `content` et à `title`
@@ -33,7 +33,7 @@ Si on ajoute les cas de modifiers en revanche, ça devient tout de suite un peu 
 - `panel.css : .title--top` -> `.panel_title--top` -> `panelCss['title--top']`
 - `panel.css : .title--bottom` -> `.panel_title--bottom` -> `panelCss['title--bottom']`
 
-_Remarque : malgré l'usage de l'indexeur d'objet, Typescript valide quand même le nom de la classe_
+_Remarque : malgré l'usage de l'indexeur d'objet, TypeScript valide quand même le nom de la classe._
 
 De plus, l'utilisation des modifiers est un peu pénible sans aide extérieure :
 
@@ -51,7 +51,7 @@ function Panel({tPos}: {tPos?: "top" | "bottom"}) {
 
 ## `toBem` (et `fromBem`)
 
-Pour simplifier l'usage des modificateurs et garder le typage fort que les CSS Modules et Typescript nous apporte, le [générateur de types de Focus](/docs/css-modules-css--docs#typage-des-modules-css) **comprend ce qu'est un modifier** :
+Pour simplifier l'usage des modificateurs et garder le typage fort que les CSS Modules et TypeScript nous apportent, le [générateur de types de Focus](/docs/css-modules-css--docs#typage-des-modules-css) **comprend ce qu'est un modificateur** :
 
 Au lieu de générer le type précédent comme :
 

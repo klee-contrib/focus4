@@ -269,7 +269,7 @@ export class ServerCollectionStore<
  * Crée un store de collection serveur, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
- * @param initialQuery Les paramètres de recherche à l'initilisation.
+ * @param initialQuery Les paramètres de recherche à l'initialisation.
  */
 export function makeServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
     service: SearchService<T, C>,
@@ -278,7 +278,7 @@ export function makeServerCollectionStore<T extends object, C extends Entity, NC
 ): ServerCollectionStore<T, C, NC>;
 /**
  * Crée un store de collection serveur, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
- * @param initialQuery Les paramètres de recherche à l'initilisation.
+ * @param initialQuery Les paramètres de recherche à l'initialisation.
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
  */

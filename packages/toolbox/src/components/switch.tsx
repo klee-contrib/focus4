@@ -22,9 +22,9 @@ export interface SwitchProps extends PointerEvents<HTMLLabelElement> {
     disabled?: boolean;
     /** Si renseigné, le Switch sera affiché en rouge. */
     error?: boolean;
-    /** Icône a afficher dans le Switch quand il est "off". */
+    /** Icône à afficher dans le Switch quand il est "off". */
     iconOff?: Icon;
-    /** Icône a afficher dans le Switch quand il est "on". */
+    /** Icône à afficher dans le Switch quand il est "on". */
     iconOn?: Icon;
     /** Id pour l'input[type=checkbox] posé par le Switch. */
     id?: string;

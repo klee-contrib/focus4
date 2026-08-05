@@ -37,15 +37,7 @@ export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {
      * Par défaut : `left`.
      */
     calendarPosition?:
-        | "auto"
-        | "bottom-left"
-        | "bottom-right"
-        | "bottom"
-        | "left"
-        | "right"
-        | "top-left"
-        | "top-right"
-        | "top";
+        "auto" | "bottom-left" | "bottom-right" | "bottom" | "left" | "right" | "top-left" | "top-right" | "top";
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** N'affiche pas la valeur de référence sur la calendrier. */
@@ -105,7 +97,7 @@ export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {
 }
 
 /**
- * Un champ de saisie de date avec double saisie en texte (avec un [`Input`](/docs/composants-focus4∕form-toolbox-input--docs)) et un calendrier ([`Calendar`](/docs/composants-focus4∕toolbox-calendar--docs)), qui s'affiche dans un [`Menu`](/docs/composants-focus4∕toolbox-menu--docs) en dessous ou au dessus.
+ * Un champ de saisie de date avec double saisie en texte (avec un [`Input`](/docs/composants-focus4∕form-toolbox-input--docs)) et un calendrier ([`Calendar`](/docs/composants-focus4∕toolbox-calendar--docs)), qui s'affiche dans un [`Menu`](/docs/composants-focus4∕toolbox-menu--docs) en dessous ou au-dessus.
  *
  * - Réexpose toutes les options du `TextField` et du `Calendar`.
  * - Affiche un masque de saisie sur le champ texte.
@@ -114,7 +106,7 @@ export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {
  *
  * La locale du composant est synchronisée avec celle configurée dans i18next.
  *
- * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
+ * Il s'agit du [composant par défaut de tous les domaines de schéma `z.iso.date()`](/docs/composants-composants-par-défaut--docs) pour [`fieldFor`](/docs/modèle-métier-afficher-des-champs--docs#fieldforfield-options) (`InputComponent`).
  */
 export function InputDate<S extends z.ZodISODate | z.ZodISODateTime>({
     schema,

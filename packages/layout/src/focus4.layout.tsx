@@ -64,7 +64,7 @@ export type {
 export type {MessageCenterProps, PanelDescriptor} from "./utils";
 
 /**
- * Le `Layout` est le composant racine d'une application Focus. Tous vos composants seront à priori posé dans le `Layout`.
+ * Le `Layout` est le composant racine d'une application Focus. Tous vos composants seront a priori posés dans le `Layout`.
  *
  * Le `Layout` :
  * - Pose un [`Scrollable`](/docs/mise-en-page-scrollable--docs), qui prend tout l'écran (100wh x 100vh) et "remplace" la scrollbar native de la page.

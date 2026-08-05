@@ -18,7 +18,7 @@ export interface HeaderItemProps {
 }
 
 /**
- * Elément à poser dans `HeaderTopRow`, pour représenter les différentes section de la partie fixe du Header.
+ * Élément à poser dans `HeaderTopRow`, pour représenter les différentes sections de la partie fixe du Header.
  *
  * On peut en mettre en nombre arbitraire, et ils peuvent être affichés ou non si le `HeaderContent` est visible via la prop `stickyOnly`.
  */

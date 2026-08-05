@@ -11,8 +11,8 @@ import {
 } from "@focus4/stores";
 
 /**
- * Crée un store de collection local stocké dans un state du component, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes côté client.
- * La liste pourra être renseignée manuellement via une affectation à la propriété `list` du store, ou vient en utilisant `useLoad`.
+ * Crée un store de collection local stocké dans un state du composant, pour pouvoir gérer de la sélection, ainsi que du tri, des filtres et/ou des facettes côté client.
+ * La liste pourra être renseignée manuellement via une affectation à la propriété `list` du store, ou via `useLoad`.
  * @param config Configuration du store local.
  */
 export function useLocalCollectionStore<T extends object>(config?: Partial<LocalCollectionStoreConfig<T>>) {
@@ -21,10 +21,10 @@ export function useLocalCollectionStore<T extends object>(config?: Partial<Local
 }
 
 /**
- * Crée un store de collection serveur stocké dans un state du component, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
+ * Crée un store de collection serveur stocké dans un state du composant, pour pouvoir gérer de la sélection, ainsi que du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
- * @param initialQuery Les paramètres de recherche à l'initilisation.
+ * @param initialQuery Les paramètres de recherche à l'initialisation.
  */
 export function useServerCollectionStore<T extends object, C extends Entity, NC extends Entity = C>(
     service: SearchService<T, C>,
@@ -32,8 +32,8 @@ export function useServerCollectionStore<T extends object, C extends Entity, NC 
     initialQuery?: ServerCollectionStoreInitProperties<C, NC>
 ): ServerCollectionStore<T, C, NC>;
 /**
- * Crée un store de collection serveur stocké dans un state du component, pour pouvoir gérer de la sélection, ainsi du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
- * @param initialQuery Les paramètres de recherche à l'initilisation.
+ * Crée un store de collection serveur stocké dans un state du composant, pour pouvoir gérer de la sélection, ainsi que du tri, des filtres et/ou des facettes via une API dédiée à implémenter sur votre serveur.
+ * @param initialQuery Les paramètres de recherche à l'initialisation.
  * @param service Le service de recherche.
  * @param criteria La description du critère de recherche personnalisé.
  */

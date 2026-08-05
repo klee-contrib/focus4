@@ -50,7 +50,7 @@ La fonction `autocompleteFor` est une version spécialisée de `fieldFor` pour l
 - `field`, le champ contenant le code
 - `options`, comme `fieldFor`, où on pourra également préciser :
     - Le `keyResolver`, qui permet de récupérer le libellé correspondant à la valeur du champ. Il est nécessaire dès lors que le champ sera utilisé avec des données préchargées. Sa signature est `(value: string) => Promise<string | undefined>`.
-    - Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie à faire. Il doit renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est `(query: string) => Promise<{key: string, label: string}[]>`.
+    - Le `querySearcher`, qui permet d'effectuer la recherche dans le champ d'autocomplétion. Il est nécessaire dès lors qu'il y a une saisie. Il doit renvoyer une liste d'objets contenant au moins `key` et `label` avec les valeurs et les libellés. Sa signature est `(query: string) => Promise<{key: string, label: string}[]>`.
 
 ## `FieldOptions`
 

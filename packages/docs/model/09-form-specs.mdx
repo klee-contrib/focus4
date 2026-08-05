@@ -4,7 +4,7 @@ import {Meta} from "@storybook/addon-docs/blocks";
 
 # Spécifications de formulaire
 
-Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières à priori générées), on a très souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
+Puisque les définitions de domaines, champs et entités sont définies globalement dans l'application (et pour les deux dernières a priori générées), on a très souvent besoin de pouvoir **modifier ces définitions** lors de la création du formulaire. On pourrait par exemple avoir besoin de :
 
 - Définir un état d'édition initial
 - Désactiver l'édition sur un ou plusieurs champs
@@ -84,9 +84,9 @@ const formNode = useFormNode(
 );
 ```
 
-Un membre ajouté dans un noeud de formulaire se comportera comme un membre classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un membre correspondant dans le noeud source, **il ne sera pas affecté par les modifications de noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce membre.
+Un membre ajouté dans un noeud de formulaire se comportera comme un membre classique au sein du noeud de formulaire, et sera mis à jour par les actions de ce noeud (`set`, `replace` et `clear`). En revanche, n'étant pas lié à un membre correspondant dans le noeud source, **il ne sera pas affecté par les modifications du noeud source**. En particulier, un appel de `replace` ou `clear` sur le noeud source ne videra **pas** ce membre.
 
-De plus, un membre ajouté sera **omis par défaut du résultat de [`getValues`](/docs/modèle-métier-stores-d-entité--docs#apis-de-storenode-et-storelistnode)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistence dans la modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `getValues` à `true`.
+De plus, un membre ajouté sera **omis par défaut du résultat de [`getValues`](/docs/modèle-métier-stores-d-entité--docs#apis-de-storenode-et-storelistnode)**. L'usage principal étant porté par le service de sauvegarde des formulaires, il est plus cohérent d'omettre ces champs qui n'ont par définition pas de persistance dans le modèle. Il est possible cependant de les inclure en renseignant le second paramètre (optionnel) de `getValues` à `true`.
 
 Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud parent, et la valeur de son `hasChanged` sera toujours `false`.
 
@@ -95,13 +95,13 @@ Il ne sera pas non plus pris en compte dans le calcul de `isEmpty` sur le noeud 
 La fonction `patch` permet de modifier un membre du `FormNode`, que ça soit un champ, une sous-liste ou un sous-objet. Elle prend comme paramètres :
 
 - `name`, qui est le nom du champ/sous-objet/sous-liste. **Ce nom est typé et changera la signature en fonction de ce à quoi il correspond**.
-- `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelé avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
+- `builder`, qui peut être un `fieldBuilder`, `listBuilder` ou un `objectBuilder` en fonction du membre choisi. Ces fonctions seront appelées avec le builder correspondant (`EntityFieldBuilder`, `FormNodeBuilder` ou `FormListNodeBuilder`), ainsi que le `FormNode` courant.
 
 ### `remove(...fields)`
 
 La fonction `remove` permet de supprimer les membres passés en paramètres du `FormNode`. Les membres supprimés existeront toujours sur le noeud source.
 
-La suppression de membres permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyé au service de sauvegarde**. Vous pouvez toujours retrouver les membres origniaux supprimés du formulaire dans le `sourceNode`.
+La suppression de membres permet de créer un formulaire qui ne concerne qu'une partie des champs d'une entité "complexe", **qui ne seront pas envoyés au service de sauvegarde**. Vous pouvez toujours retrouver les membres originaux supprimés du formulaire dans le `sourceNode`.
 
 Par exemple :
 
@@ -117,7 +117,7 @@ return (
 );
 ```
 
-De cette façon, n'aurez même pas besoin de définir les champs supprimés comme non éditables puisqu'ils ne sont même pas dans le formulaire.
+De cette façon, vous n'aurez même pas besoin de définir les champs supprimés comme non éditables puisqu'ils ne sont même pas dans le formulaire.
 
 ### `removeAllBut(...fields)`
 
@@ -138,7 +138,7 @@ Par exemple :
 ```ts
 // Le type du formNode ici sera FormNode<ProfilWriteEntity, ProfilReadEntity>
 const formNode = useFormNode(ProfilReadEntity, e => e.patchAllTo(ProfilWriteEntity));
-// Le formNode n'aura ici no plus les champs `dateCreation` ou `dateModification` de l'entité de lecture (comme avec `remove`, mais de manière implicite).
+// Le formNode n'aura ici non plus les champs `dateCreation` ou `dateModification` de l'entité de lecture (comme avec `remove`, mais de manière implicite).
 ```
 
 ## `FormListNodeBuilder`
@@ -188,7 +188,7 @@ const entity = useFormNode(utilisateurStore.utilisateur, e =>
 
 ## Spécifications dynamiques
 
-L'ensemble de ces personnalisation peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autre état observable externe (et **observable uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en particulier).
+L'ensemble de ces personnalisations peut aussi être **dynamique**, en référençant d'autres champs du formulaire ou d'autres états observables externes (et **observables uniquement**). Il faudra donc bien utiliser les versions des méthodes qui prennent des **dérivations** en paramètre (pour `edit()`, `metadata()` et `value()` en particulier).
 
 _Remarque : La limitation sur les dépendances à des états observables dans la personnalisation vous forcera donc à utiliser `useLocalObservable()` plutôt que `useState()` dans vos composants, si vous avez besoin d'y référencer un état local._
 
@@ -220,9 +220,9 @@ useFormNode(utilisateurStore.utilisateur, f =>
 
 ## Valeurs initiales
 
-A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir du quel il a été créé par défaut. Il est cependant possible de renseigner des valeurs initiales :
+À la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier, il ne recopie **pas** le contenu du store à partir duquel il a été créé par défaut. Il est cependant possible de renseigner des valeurs initiales :
 
-- En renseignant les divers `value()` des champs qui le compose avec des `add()` ou des `patch()`
+- En renseignant les divers `value()` des champs qui le composent avec des `add()` ou des `patch()`
 - En renseignant **le troisième paramètre de `useFormNode`** avec :
     - Un objet contenant les valeurs initiales du formulaire.
     - Une fonction retournant les valeurs initiales du formulaire (comme pour `useState` dans React).
@@ -230,6 +230,6 @@ A la création du `FormNode` ou `FormListNode`, **il est vide**. En particulier,
 
     _Remarque : Ces valeurs s'appliqueront après celles définies dans les `value()`._
 
-L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelques soient les modifications effectuées sur le store.
+L'appel à `reset()` sur le `FormNode` ou `FormListNode` restaurera cet état initial, quelles que soient les modifications effectuées sur le store.
 
 En général, si vous avez besoin d'initialiser le store avec les données issues du serveur, le chargement se fera dans le même composant qui définit le formulaire (et donc **après** qu'il soit construit). Par conséquent, le chargement qui mettra à jour le `StoreNode` ou `StoreListNode` mettra aussi à jour le `FormNode` ou `FormListNode` associé via la synchronisation assurée par `useFormNode`.

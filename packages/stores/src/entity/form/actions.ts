@@ -247,7 +247,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
         return loadDisposer;
     }
 
-    /** Appelle le service d'initilisation enregistré sur le `FormActions`, si aucun `load` ne peut être appelé. */
+    /** Appelle le service d'initialisation enregistré sur le `FormActions`, si aucun `load` ne peut être appelé. */
     @action.bound
     async init() {
         if (this.builder.hasInit && (!this.params || !this.builder.loadService)) {

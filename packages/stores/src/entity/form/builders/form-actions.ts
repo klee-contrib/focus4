@@ -74,8 +74,8 @@ export class FormActionsBuilder<
     }
 
     /**
-     * Enregistre un service d'initilisation du formulaire, qui sera appelé au premier rendu pour compléter les données
-     * déjà présentes dans le `formNode`, s'il n'y a pas de `load` a appeler.
+     * Enregistre un service d'initialisation du formulaire, qui sera appelé au premier rendu pour compléter les données
+     * déjà présentes dans le `formNode`, s'il n'y a pas de `load` à appeler.
      *
      * Les données seront ensuite recopiées dans le noeud source, afin de pouvoir correctement identifier les données
      * qui ont été saisies par l'utilisateur dans le formulaire (via `formNode.form.hasChanged`).

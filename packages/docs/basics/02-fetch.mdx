@@ -16,14 +16,14 @@ Cette configuration par défaut permet de :
 
 ### Gestion des erreurs
 
-Si `coreFetch` reçoit une **réponse avec un code de statut en erreur** (4xx-5xx), et si le serveur renvoie une réponse structurée en JSON, alors elle sera interprétée afin de pouvoir **enregistrer automatiquement des messages d'erreur** (à priori) dans le [`messageStore`](/docs/les-bases-gestion-des-messages--docs).
+Si `coreFetch` reçoit une **réponse avec un code de statut en erreur** (4xx-5xx), et si le serveur renvoie une réponse structurée en JSON, alors elle sera interprétée afin de pouvoir **enregistrer automatiquement des messages d'erreur** (a priori) dans le [`messageStore`](/docs/les-bases-gestion-des-messages--docs).
 
 Focus supporte nativement les erreurs qui utilisent la spécification [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807), mais acceptera aussi des réponses dans un format JSON arbitraire.
 
 Les messages suivants seront générés :
 
 - Si `detail` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
-- La méthode `addMessages` du `messageStore` est appelée avec tous les champs non standard présent dans la réponse (`type`, `status`, `title`,
+- La méthode `addMessages` du `messageStore` est appelée avec tous les champs non standard présents dans la réponse (`type`, `status`, `title`,
   `detail` et `instance`). Ces champs peuvent être typés :
     - `string` : enregistre un message de la catégorie du nom du champ.
     - `string[]` : enregistre plusieurs messages de la catégorie du nom du champ.
@@ -32,7 +32,7 @@ Les messages suivants seront générés :
     - `Record<string, string[]>` : combinaison des deux cas précédents.
 - Si aucun message n'a été enregistré et que `title` est renseigné, alors un message de catégorie `error` avec sa valeur sera ajouté.
 
-Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que `error`, `info` ou `warning`. Ce mécanisme permet en revanche de pouvoir gérer des types de messages personnalisés à partir de erreurs serveur personnalisées. Cela peut par la suite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au delà du `MessageCenter` par défaut) par exemple.
+Pour rappel, les catégories de messages supportées par le `messageStore` doivent avoir été définies au préalable, si vous voulez gérer autre chose que `error`, `info` ou `warning`. Ce mécanisme permet en revanche de gérer des types de messages personnalisés à partir d'erreurs serveur personnalisées. Cela peut ensuite être utilisé pour différencier la façon dont les erreurs sont restituées à l'utilisateur (au-delà du `MessageCenter` par défaut), par exemple.
 
 Après traitement des erreurs, `coreFetch` renverra une `HTTPDetailedError`, une version complétée de l'`HTTPError` de `ky` avec :
 
@@ -47,14 +47,14 @@ Le `RequestStore` est un store dédié au suivi des requêtes en cours dans l'ap
 
 ### Suivi automatique des requêtes
 
-Par défaut, toute requête faite avec `coreFetch` est automatiquement suivie dans ce store. Les requêtes en cours peuvent se récupérer dans `requestStore.pending` et la propriété `requestStore.loading` permet de savoir s'il y au moins une requête encore en cours. Cette propriété peut être utilisée directement pour poser un "spinner" global sur votre application à moindre frais.
+Par défaut, toute requête faite avec `coreFetch` est automatiquement suivie dans ce store. Les requêtes en cours peuvent être récupérées dans `requestStore.pending`, et la propriété `requestStore.loading` permet de savoir s'il y a au moins une requête encore en cours. Cette propriété peut être utilisée directement pour poser un "spinner" global sur votre application à moindre frais.
 
 ### Suivi personnalisé de services
 
 Le `requestStore` dispose également d'une API pour suivre le statut de vos propres services (n'importe quelle fonction retournant une `Promise`) via `requestStore.track` :
 
 ```ts
-const id = useId(); // ou Math.random().toString() si vous n'est pas dans un composant
+const id = useId(); // ou Math.random().toString() si vous n'êtes pas dans un composant
 
 /* ---- */
 
@@ -65,7 +65,7 @@ const user = await requestStore.track(id, () => getUser(id)); // Enregistre le s
 requestStore.isLoading(id); // La requête est-elle en cours ?
 ```
 
-**Plusieurs services peuvent être enregistré sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la fois.
+**Plusieurs services peuvent être enregistrés sur le même ID de suivi**, ce qui permet de récupérer facilement un état de chargement sur plusieurs services à la fois.
 
 Ce suivi est automatiquement intégré à [`useLoad`](/docs/modèle-métier-chargement-des-données--docs#useload-et-nodeload) et `useFormActions`, qui génèrent un ID de suivi pour leurs services et peuvent y associer d'autres IDs.
 

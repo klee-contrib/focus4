@@ -24,7 +24,7 @@ export interface LabelProps {
     label?: string;
     /** Id du champ associé */
     id?: string;
-    /** Au click sur la tooltip. */
+    /** Au clic sur la tooltip. */
     onTooltipClick?: () => void;
     /** Si le champ est obligatoire. */
     required?: boolean;
@@ -42,7 +42,7 @@ export interface LabelProps {
  * - Résout les traductions i18n.
  * - Peut afficher le commentaire du champ en tooltip.
  *
- * Il s'agit du [composant de libellé par défaut de tous les domaines](/docs/docs/composants-composants-par-défaut--docs) (`LabelComponent`).
+ * Il s'agit du [composant de libellé par défaut de tous les domaines](/docs/composants-composants-par-défaut--docs) (`LabelComponent`).
  */
 export function Label({
     comment,
