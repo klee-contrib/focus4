@@ -4,6 +4,7 @@ import {extendObservable, observable} from "mobx";
 import {
     Entity,
     EntryToEntity,
+    EntryToRequired,
     FieldEntry,
     FieldsOf,
     ListEntry,
@@ -21,6 +22,7 @@ import {FormListNodeBuilder} from "./form-list-node";
 
 const reservedKeys = [
     "clear",
+    "getValues",
     "replace",
     "set",
     "sourceNode",
@@ -32,7 +34,7 @@ const reservedKeys = [
     "$required"
 ];
 
-export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
+export class FormNodeBuilder<E extends Entity, E0 extends Entity = E, R extends boolean = boolean> {
     /** @internal */
     node: StoreNode<E>;
 
@@ -47,23 +49,23 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
     add<FE extends string, NFE extends FieldEntry>(
         name: FE,
         builder: (b: FormEntryBuilder, node: StoreNode<E>) => EntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E & {[P in FE]: NFE}, E0>;
+    ): FormNodeBuilder<E & {[P in FE]: NFE}, E0, R>;
     /**
      * Ajoute un nouveau sous-noeud dans le FormNode.
      * @param name Nom du sous-noeud.
      */
-    add<FE extends string, NE extends Entity>(
-        name: FE,
-        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormNodeBuilder<NE>
-    ): FormNodeBuilder<E & {[P in FE]: ObjectEntry<NE>}, E0>;
+    add<OE extends string, NE extends Entity, NR extends boolean>(
+        name: OE,
+        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormNodeBuilder<NE, NE, NR>
+    ): FormNodeBuilder<E & {[P in OE]: ObjectEntry<NE, NR>}, E0, R>;
     /**
      * Ajoute un nouveau sous-noeud liste dans le FormNode.
      * @param name Nom du sous-noeud.
      */
-    add<FE extends string, NE extends Entity>(
-        name: FE,
-        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormListNodeBuilder<NE>
-    ): FormNodeBuilder<E & {[P in FE]: ListEntry<NE>}, E0>;
+    add<LE extends string, NE extends Entity, NR extends boolean>(
+        name: LE,
+        builder: (b: FormEntryBuilder, node: StoreNode<E>) => FormListNodeBuilder<NE, NE, NR>
+    ): FormNodeBuilder<E & {[P in LE]: ListEntry<NE, NR>}, E0, R>;
     add<FE extends string>(name: FE, builder: (b: FormEntryBuilder, node: StoreNode<E>) => any): any {
         this.node[name] = builder(new FormEntryBuilder(name), this.node).collect();
         return this;
@@ -85,25 +87,25 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      * Initialise l'état d'édition du FormNode.
      * @param value Etat d'édition initial.
      */
-    edit(value: boolean): FormNodeBuilder<E, E0>;
+    edit(value: boolean): FormNodeBuilder<E, E0, R>;
     /**
      * Force l'état d'édition du FormNode.
      * @param value Condition d'édition.
      */
-    edit(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0>;
+    edit(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0, R>;
     /**
      * Initialise l'état d'édition de plusieurs champs/noeuds du FormNode.
      * @param value Etat d'édition initial.
      * @param params Les champs.
      */
-    edit(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
+    edit(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0, R>;
     /**
      * Force l'état d'édition de plusieurs champs/noeuds du FormNode.
      * @param value Condition d'édition.
      * @param params Les champs.
      */
-    edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
+    edit(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0, R>;
+    edit(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0, R> {
         const isEdit = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         if (!params.length) {
             this.node.$edit = isEdit;
@@ -134,31 +136,31 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
         field: F,
         // @ts-expect-error - Impossible de valider le type générique.
         builder: (b: EntityFieldBuilder<E[F]>, node: StoreNode<E>) => EntityFieldBuilder<NFE>
-    ): FormNodeBuilder<E[F] extends NFE ? E : Patch<E, {[_ in F]: NFE}>, E0>;
+    ): FormNodeBuilder<E[F] extends NFE ? E : Patch<E, {[_ in F]: NFE}>, E0, R>;
     /**
      * Modifie un noeud du FormNode.
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<L extends ListsOf<E>, NE extends Entity>(
+    patch<L extends ListsOf<E>, NE extends Entity, NR extends boolean>(
         node: L,
         builder: (
-            b: FormListNodeBuilder<EntryToEntity<E[L]>>,
+            b: FormListNodeBuilder<EntryToEntity<E[L]>, EntryToEntity<E[L]>, EntryToRequired<E[L]>>,
             node: StoreNode<E>
-        ) => FormListNodeBuilder<NE, EntryToEntity<E[L]>>
-    ): FormNodeBuilder<E[L] extends ListEntry<NE> ? E : Patch<E, {[_ in L]: ListEntry<NE>}>, E0>;
+        ) => FormListNodeBuilder<NE, EntryToEntity<E[L]>, NR>
+    ): FormNodeBuilder<E[L] extends ListEntry<NE> ? E : Patch<E, {[_ in L]: ListEntry<NE, NR>}>, E0, R>;
     /**
      * Modifie un noeud du FormNode.
      * @param node Nom du noeud.
      * @param builder Configurateur de noeud.
      */
-    patch<O extends ObjectsOf<E>, NE extends Entity>(
+    patch<O extends ObjectsOf<E>, NE extends Entity, NR extends boolean>(
         node: O,
         builder: (
-            b: FormNodeBuilder<EntryToEntity<E[O]>>,
+            b: FormNodeBuilder<EntryToEntity<E[O]>, EntryToEntity<E[O]>, EntryToRequired<E[O]>>,
             node: StoreNode<E>
-        ) => FormNodeBuilder<NE, EntryToEntity<E[O]>>
-    ): FormNodeBuilder<E[O] extends ObjectEntry<NE> ? E : Patch<E, {[_ in O]: ObjectEntry<NE>}>, E0>;
+        ) => FormNodeBuilder<NE, EntryToEntity<E[O]>, NR>
+    ): FormNodeBuilder<E[O] extends ObjectEntry<NE> ? E : Patch<E, {[_ in O]: ObjectEntry<NE, NR>}>, E0, R>;
     patch(node: keyof E, builder: (builder: any, node: any) => any): any {
         const child = this.node[node];
         if (isStoreListNode(child)) {
@@ -177,7 +179,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      * Les membres en commun ne seront patchés que s'ils sont compatibles (même type de chaque côté, et si c'est un sous-noeud, cela doit être de la même classe). Dans le cas contraire, ces membres seront supprimés et recréés (sans lien avec le noeud source donc).
      * @param targetEntity Entité cible.
      */
-    patchAllTo<NE extends Entity>(targetEntity: NE): FormNodeBuilder<NE, E0> {
+    patchAllTo<NE extends Entity>(targetEntity: NE): FormNodeBuilder<NE, E0, R> {
         // On récupère en premier lieu les noms d'entrée en commun.
         const commonKeys = intersection(Object.keys(this.node), Object.keys(targetEntity)).filter(
             key => !reservedKeys.includes(key)
@@ -254,11 +256,9 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
             const targetEntry = targetEntity[commonKey as string as FieldsOf<NE> | ObjectsOf<NE> | ListsOf<NE>];
 
             if (isStoreListNode(sourceEntry)) {
-                sourceEntry.$required = Array.isArray(targetEntry)
-                    ? true
-                    : ((targetEntry as ListEntry).isRequired ?? true);
+                sourceEntry.$required = Array.isArray(targetEntry) ? true : (targetEntry as ListEntry).isRequired;
             } else if (isStoreNode(sourceEntry) && !Array.isArray(targetEntry)) {
-                sourceEntry.$required = targetEntry.type === "object" ? (targetEntry.isRequired ?? true) : true;
+                sourceEntry.$required = targetEntry.type === "object" ? targetEntry.isRequired : true;
             } else if (isEntityField(sourceEntry) && !Array.isArray(targetEntry) && targetEntry.type === "field") {
                 (sourceEntry as any).$field = targetEntry;
             }
@@ -272,7 +272,7 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      * Supprime les champs demandés du FormNode.
      * @param fields Les champs à supprimer.
      */
-    remove<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0> {
+    remove<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Omit<E, F>, E0, R> {
         for (const field of fields) {
             delete this.node[field];
         }
@@ -284,7 +284,9 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      * Supprime tous les champs du FormNode, sauf ceux demandés.
      * @param fields Les champs à garder.
      */
-    removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(...fields: F[]): FormNodeBuilder<Pick<E, F>, E0> {
+    removeAllBut<F extends FieldsOf<E> | ListsOf<E> | ObjectsOf<E>>(
+        ...fields: F[]
+    ): FormNodeBuilder<Pick<E, F>, E0, R> {
         for (const key in this.node) {
             if (!fields.includes(key as F) && !reservedKeys.includes(key)) {
                 delete this.node[key as F];
@@ -298,25 +300,25 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
      * Surcharge le caractère obligatoire du noeud.
      * @param value Valeur fixe.
      */
-    required(value: boolean): FormNodeBuilder<E, E0>;
+    required<NR extends boolean>(value: NR): FormNodeBuilder<E, E0, NR>;
     /**
      * Surcharge le caractère obligatoire du noeud.
      * @param value Valeur calculée.
      */
-    required(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0>;
+    required(value: (node: StoreNode<E>) => boolean): FormNodeBuilder<E, E0, false>;
     /**
      * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
      * @param value Valeur fixe.
      * @param params Les champs.
      */
-    required(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
+    required(value: boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0, R>;
     /**
      * Surcharge le caractère obligatoire de plusieurs champs/noeuds du FormNode.
      * @param value Valeur fixe.
      * @param params Les champs.
      */
-    required(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0>;
-    required(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]): FormNodeBuilder<E, E0> {
+    required(value: (node: StoreNode<E>) => boolean, ...params: (keyof E)[]): FormNodeBuilder<E, E0, R>;
+    required(value: boolean | ((node: StoreNode<E>) => boolean), ...params: (keyof E)[]) {
         const isRequired = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         if (!params.length) {
             this.node.$required = isRequired;
@@ -356,6 +358,7 @@ export function initFormNode(source: any): any {
 
         // @ts-expect-error - Le champ est readonly dans l'API.
         res.$entity = source.$entity;
+        res.getValues = source.getValues;
         res.load = source.load;
         res.pushNode = source.pushNode;
         res.replaceNodes = source.replaceNodes;

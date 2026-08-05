@@ -4,8 +4,7 @@ import {action, autorun, computed, observable} from "mobx";
 import {messageStore, requestStore} from "@focus4/core";
 
 import {LoadRegistration} from "../store";
-import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodeType} from "../types";
-import {toFlatValues} from "../utils";
+import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodePartialType} from "../types";
 
 import {FormActionsBuilder} from "./builders";
 
@@ -152,7 +151,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
             const data = await requestStore.track<object>(
                 [this.trackingId, ...this.builder.trackingIds],
                 () => {
-                    const d = toFlatValues(this.formNode);
+                    const d = this.formNode.getValues();
                     if (this.builder.saveService) {
                         return this.builder.saveService(d);
                     } else if (this.params && this.builder.updateService) {
@@ -257,7 +256,7 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                     ? await requestStore.track([this.trackingId, ...this.builder.trackingIds], () =>
                           this.builder.initService!()
                       )
-                    : ({} as SourceNodeType<FormListNode | FormNode>);
+                    : ({} as SourceNodePartialType<FormListNode | FormNode>);
 
                 this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
 

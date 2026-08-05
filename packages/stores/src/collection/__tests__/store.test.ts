@@ -1,5 +1,8 @@
 import {runInAction} from "mobx";
 import {describe, expect, test, vi} from "vitest";
+import z from "zod";
+
+import {e, entity} from "@focus4/entities";
 
 import {makeLocalCollectionStore} from "../local";
 import {makeServerCollectionStore} from "../server";
@@ -13,6 +16,15 @@ interface TestItem {
     status: "active" | "inactive";
     tags?: string[];
 }
+
+const domain = {
+    schema: z.string().max(1),
+    AutocompleteComponent: () => null,
+    DisplayComponent: () => null,
+    LabelComponent: () => null,
+    InputComponent: () => null,
+    SelectComponent: () => null
+};
 
 describe("CollectionStore", () => {
     describe("Constructeur - Mode local", () => {
@@ -467,6 +479,46 @@ describe("CollectionStore", () => {
             await store.search();
 
             expect(store.selectedItems.size).toBe(0);
+        });
+
+        test("search ignore les critères invalides dans les critères personnalisés", async () => {
+            const service = vi.fn().mockResolvedValue({
+                list: [],
+                facets: [],
+                totalCount: 0
+            });
+
+            const criteriaEntity = entity({
+                name: e.field(domain, f => f.optional()),
+                category: e.field(domain, f => f.optional())
+            });
+
+            const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
+            store.criteria.name.value = "ab";
+            store.criteria.category.value = "A";
+
+            await store.search();
+
+            expect(service).toHaveBeenCalled();
+            const callArgs = service.mock.calls[0][0] as QueryInput;
+            expect(callArgs.criteria).toMatchObject({category: "A"});
+            expect(callArgs.criteria).not.toHaveProperty("name");
+        });
+
+        test("search bloque l'appel si un critère requis est invalide", async () => {
+            const service = vi.fn().mockResolvedValue({
+                list: [],
+                facets: [],
+                totalCount: 0
+            });
+            const criteriaEntity = entity({name: e.field(domain)});
+
+            const store = makeServerCollectionStore(service, {criteriaMode: "manual"}, criteriaEntity);
+            store.criteria.name.value = undefined;
+
+            await store.search();
+
+            expect(service).not.toHaveBeenCalled();
         });
 
         test("clear vide tout", async () => {

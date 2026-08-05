@@ -146,7 +146,7 @@ export class EntityFieldBuilder<F extends FieldEntry> {
      * Modifie le domaine du champ.
      * @param domain Le domaine.
      */
-    domain<D extends Domain>(domain: D): EntityFieldBuilder<FieldEntry<D>> {
+    domain<D extends Domain>(domain: D): EntityFieldBuilder<FieldEntry<D, z.output<D["schema"]>, F["isRequired"]>> {
         this.field._domain = domain;
         return this;
     }
@@ -205,7 +205,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
     ): EntityFieldBuilder<
         FieldEntry<
             Domain<F["domain"]["schema"], ICProps, SCProps, ACProps, DCProps, LCProps, DomainFieldProps<F["domain"]>>,
-            NonNullable<F["fieldType"]>
+            NonNullable<F["fieldType"]>,
+            F["isRequired"]
         >
     > {
         this.field._metadatas.push($field);
@@ -229,7 +230,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 DomainLabelProps<F["domain"]>,
                 DomainFieldProps<F["domain"]>
             >,
-            T
+            T,
+            F["isRequired"]
         >
     >;
     /**
@@ -251,7 +253,8 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 DomainLabelProps<F["domain"]>,
                 DomainFieldProps<F["domain"]>
             >,
-            T
+            T,
+            F["isRequired"]
         >
     >;
     value<T extends z.output<F["domain"]["schema"]>>(

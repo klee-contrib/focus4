@@ -101,7 +101,7 @@ const store = makeStoreNode({
 
 `makeStoreNode` peut également être appelé avec un objet contenant les données initiales, qui seront utilisées pour initialiser les champs du store.
 
-#### `useStoreNode(entity, initialData?)`
+### `useStoreNode(entity, initialData?)`
 
 Dans un composant React, la fonction `useStoreNode` peut également être utilisée : elle appelle `makeStoreNode` et stocke le store dans un `useState` du composant.
 
@@ -109,12 +109,6 @@ Selon l'usage de votre store, les deux méthodes peuvent être adaptées :
 
 - Si vous avez besoin d'un store pour gérer un **état local** à votre composant, utilisez **`useStoreNode`**.
 - Si vous avez besoin de créer un store à partir de **données provenant d'un état externe** (depuis les props, ou depuis [un store de collection](/docs/listes-store-de-collection--docs) par exemple), utilisez directement **`makeStoreNode`** pour (re)créer le store à la volée à partir des données (on ne veut justement pas persister le store dans le composant ici).
-
-### `toFlatValues(node, includeAddedFields?)`
-
-Cette fonction prend un noeud quelconque en paramètre et récupère toutes les valeurs de champs dans son objet "JSON" équivalent. Elle permet par exemple de récupérer les valeurs avant de les envoyer au serveur, ou de les ajouter dans un autre store.
-
-Pour un `FormNode` avec des champs ajoutés, `toFlatValues` les retirera de l'objet résultant par défaut, sauf si le second paramètre `includeAddedFields` est renseigné.
 
 ---
 
@@ -129,6 +123,10 @@ Le `StoreNode` expose les APIs suivantes :
 - **`node.set(data)`** pour mettre à jour les champs définis dans l'objet `data` (au format "normal") dans le store.
 
     _Remarque : Vous n'êtes pas obligés d'utiliser `set()` pour mettre à jour une valeur, `field.value = value` fonctionne tout aussi bien. En revanche, `set()` à l'avantage de poser une action MobX, ce qui est idéal lorsque l'on veut mettre à jour **plusieurs** champs à la fois._
+
+- **`getValues(allowUndefined?)`**, pour récupérer toutes les valeurs de champs dans son objet "JSON" équivalent. Elle permet par exemple de récupérer les valeurs avant de les envoyer au serveur, ou de les ajouter dans un autre store. Par défaut, **le type de retour de `getValues` prend en compte le caractère obligatoire des champs** (les champs requis seront non optionnels), et affiche des logs d'erreurs en console pour chaque champ requis non renseigné. Vous pouvez désactiver ce comportement en renseignant `allowUndefined` à `true` (et le type de retour aura tous ses champs optionnels).
+
+    Pour un `FormNode` avec des champs ajoutés, `getValues` les retirera de l'objet résultant par défaut, et la méthode contient un paramètre supplémentaire, `includeAddedFields`, pour les inclure.
 
 Le `StoreListNode` expose les mêmes APIs, à la distinction près que `node.replace` devient **`list.replaceNodes`** et `list.set` devient **`node.setNodes`**.
 
