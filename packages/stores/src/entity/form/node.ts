@@ -1,6 +1,6 @@
 import {isBoolean, isEqual, isFunction} from "es-toolkit";
 import i18next from "i18next";
-import {action, extendObservable, IArrayDidChange, intercept, observable, observe} from "mobx";
+import {action, extendObservable, IArrayDidChange, intercept, observe} from "mobx";
 
 import {Entity} from "@focus4/entities";
 
@@ -67,7 +67,15 @@ export function nodeToFormNode<E extends Entity = any>(
         return node;
     });
 
-    (node as any).form = observable(
+    (node as any).form = extendObservable(
+        {
+            get _added() {
+                return $added || parentNode?.form._added;
+            },
+            get _addedListItem() {
+                return $addedListItem || parentNode?.form._addedListItem;
+            }
+        },
         {
             _isEdit: isBoolean($edit) ? $edit : true,
             get isEdit() {
@@ -81,16 +89,8 @@ export function nodeToFormNode<E extends Entity = any>(
                     return false;
                 }
                 return isFunction($required) ? $required() : ($required ?? true);
-            },
-            get _added() {
-                return $added || parentNode?.form._added;
-            },
-            get _addedListItem() {
-                return $addedListItem || parentNode?.form._addedListItem;
             }
-        },
-        {},
-        {proxy: false}
+        }
     );
 
     (node as any).dispose = function dispose() {

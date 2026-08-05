@@ -116,11 +116,13 @@ export class EntityFieldBuilder<F extends FieldEntry> {
         }
 
         const {domain, isRequired, label, name, type, comment, defaultValue} = source.$field;
-        this.field = observable(
+        this.field = extendObservable(
             {
-                _added: typeof field === "string",
-                _isEdit: true,
+                _added: typeof field === "string"
+            },
+            {
                 _domain: domain,
+                _isEdit: true,
                 _metadatas: [{comment, isRequired, label}],
                 get $field() {
                     return {
@@ -136,9 +138,6 @@ export class EntityFieldBuilder<F extends FieldEntry> {
                 _domain: observable.ref,
                 $field: computed.struct,
                 value: observable.ref
-            },
-            {
-                proxy: false
             }
         );
     }

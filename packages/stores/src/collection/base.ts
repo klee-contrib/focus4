@@ -1,4 +1,4 @@
-import {action, computed, IObservableArray, observable, remove, set, toJS} from "mobx";
+import {action, computed, extendObservable, IObservableArray, observable, remove, set, toJS} from "mobx";
 
 import {requestStore} from "@focus4/core";
 
@@ -236,10 +236,13 @@ export abstract class CollectionStore<T extends object = any> {
      * Construit un store de recherche partiel pour l'affichage en groupe : utilisé par l'ActionBar du groupe ainsi que sa liste.
      * @param groupCode Le code de la valeur de groupe en cours.
      */
-    getSearchGroupStore(groupCode: string): CollectionStore<T> {
+    getSearchGroupStore(groupCode: string) {
         // oxlint-disable-next-line no-this-assignment no-this-alias
         const self = this;
-        return observable(
+        return extendObservable(
+            {
+                isItemSelectionnable: self.isItemSelectionnable
+            },
             {
                 get currentCount() {
                     return self.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
@@ -248,8 +251,6 @@ export abstract class CollectionStore<T extends object = any> {
                 get totalCount() {
                     return self.groups.find(result => result.code === groupCode)?.totalCount ?? 0;
                 },
-
-                isItemSelectionnable: self.isItemSelectionnable,
 
                 get list() {
                     return self.groups.find(result => result.code === groupCode)?.list ?? [];
@@ -293,12 +294,11 @@ export abstract class CollectionStore<T extends object = any> {
                         }
                     }
                 }
-            },
+            } as CollectionStore<T>,
             {
                 toggle: action.bound,
                 toggleAll: action.bound
-            },
-            {proxy: false}
-        ) as any;
+            }
+        );
     }
 }
