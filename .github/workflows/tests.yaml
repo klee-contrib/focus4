@@ -10,10 +10,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: node 22
+      - name: node 24
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - name: install
         run: npm ci
 
