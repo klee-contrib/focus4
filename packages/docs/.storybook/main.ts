@@ -8,8 +8,7 @@ export default {
     addons: [
         getAbsolutePath("@storybook/addon-docs"),
         getAbsolutePath("@vueless/storybook-dark-mode"),
-        getAbsolutePath("storybook-react-i18next"),
-        getAbsolutePath("@storybook/addon-vitest")
+        getAbsolutePath("storybook-react-i18next")
     ],
     staticDirs: ["./public"],
 

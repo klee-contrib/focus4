@@ -29,7 +29,7 @@ export class FormEntryBuilder {
      * Crée un champ à partir de la définition de champ donnée.
      * @param field La définition du champ.
      */
-    field<F extends FieldEntry>({domain, name: _, ...metadata}: F) {
+    field<F extends FieldEntry>({domain, name, ...metadata}: F) {
         return new EntityFieldBuilder<F>(this.name).domain(domain).metadata(metadata);
     }
 

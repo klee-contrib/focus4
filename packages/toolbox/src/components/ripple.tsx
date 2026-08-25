@@ -117,7 +117,7 @@ export function Ripple<T extends HTMLElement = HTMLElement>({
             element.style.overflow = "hidden";
             element.append(ripple);
 
-            const {opacity: _, ...options} = getOptions(ripple);
+            const {opacity, ...options} = getOptions(ripple);
             const animation = ripple.animate(
                 [
                     {

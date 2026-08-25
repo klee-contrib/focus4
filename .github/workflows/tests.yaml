@@ -8,17 +8,15 @@ jobs:
     name: Test JS frontend
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: node 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
+
       - name: install
         run: npm ci
-
-      - name: install playwright
-        run: npx playwright install chromium --with-deps
 
       - name: build
         run: npm run build

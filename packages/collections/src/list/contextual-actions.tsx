@@ -161,7 +161,7 @@ export function ContextualActions<T>({
             <Menu {...menu}>
                 {secondaryActions
                     .filter(a => !a.hidden)
-                    .map(({hidden: _, ...a}, i) => (
+                    .map(({hidden, ...a}, i) => (
                         <MenuItem key={i} {...a} />
                     ))}
             </Menu>
