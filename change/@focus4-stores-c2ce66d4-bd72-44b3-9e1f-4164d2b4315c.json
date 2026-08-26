@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix LoadData qui peut retourner un type partiel",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

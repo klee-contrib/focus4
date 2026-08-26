@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "12.13.0",
+    "version": "12.13.1",
     "description": "Focus v4, collections module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/collections",
     "license": "MIT",
@@ -16,10 +16,10 @@
     },
     "dependencies": {
         "@focus4/entities": "12.13.0",
-        "@focus4/form-toolbox": "12.13.0",
-        "@focus4/forms": "12.13.0",
+        "@focus4/form-toolbox": "12.13.1",
+        "@focus4/forms": "12.13.1",
         "@focus4/layout": "12.11.9",
-        "@focus4/stores": "12.13.0",
+        "@focus4/stores": "12.13.1",
         "@focus4/styling": "12.11.1",
         "@focus4/toolbox": "12.11.4",
         "classnames": "^2.5.1",
@@ -28,7 +28,7 @@
         "tslib": "^2.8.1"
     },
     "devDependencies": {
-        "@focus4/tooling": "12.13.0"
+        "@focus4/tooling": "12.13.1"
     },
     "peerDependencies": {
         "mobx": ">= 6.13 < 7",

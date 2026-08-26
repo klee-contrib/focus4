@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Règles oxlint désactivées en plus",
-    "packageName": "@focus4/tooling",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "none"
-}
