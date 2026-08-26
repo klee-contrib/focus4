@@ -1,26 +1,25 @@
 {
     "name": "@focus4/tooling",
-    "version": "12.11.7",
+    "version": "12.13.0",
     "description": "Focus v4, tooling module",
-    "main": "lib/focus4.tooling.mjs",
-    "type": "module",
+    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/tooling",
+    "license": "MIT",
+    "author": "damien.frikha@kleegroup.com",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"
     },
-    "author": "damien.frikha@kleegroup.com",
-    "license": "MIT",
-    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/tooling",
     "bin": {
         "focus4": "lib/focus4.tooling.mjs"
     },
+    "type": "module",
+    "main": "lib/focus4.tooling.mjs",
     "scripts": {
         "build": "tsdown"
     },
     "dependencies": {
         "@rollup/plugin-swc": "^0.4.1",
         "@swc/core": "^1.16.1",
-        "@trivago/prettier-plugin-sort-imports": "^6.0.2",
         "@types/node": "26.3.0",
         "@types/postcss-modules-extract-imports": "^3.0.5",
         "@types/postcss-modules-local-by-default": "^4.0.2",
@@ -36,6 +35,7 @@
     },
     "peerDependencies": {
         "@vitejs/plugin-react": ">= 6 < 7",
+        "oxfmt": "< 1",
         "oxlint": ">= 1.4 < 2",
         "typescript": ">= 6",
         "vite": ">= 8 < 9",

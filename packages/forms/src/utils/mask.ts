@@ -341,14 +341,16 @@ export function useMask({
                 if (isCut) {
                     navigator.clipboard.writeText(selectedText);
                 }
-            } else if (!(
-                e.metaKey ||
-                e.altKey ||
-                e.ctrlKey ||
-                e.key === "Enter" ||
-                e.key === "Tab" ||
-                e.key.startsWith("Arrow")
-            )) {
+            } else if (
+                !(
+                    e.metaKey ||
+                    e.altKey ||
+                    e.ctrlKey ||
+                    e.key === "Enter" ||
+                    e.key === "Tab" ||
+                    e.key.startsWith("Arrow")
+                )
+            ) {
                 e.preventDefault();
                 result = input(e.key || (e as any).data, characters, selection);
             }

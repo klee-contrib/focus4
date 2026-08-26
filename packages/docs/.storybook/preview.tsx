@@ -4,7 +4,6 @@ import "@focus4/layout/lib/focus4.layout.css";
 import "@focus4/styling/lib/focus4.styling.css";
 import "@focus4/toolbox/lib/focus4.toolbox.css";
 import "./preview.css";
-
 import {Controls, Description, Primary, Subtitle, Title} from "@storybook/addon-docs/blocks";
 import type {Preview} from "@storybook/react";
 import {DARK_MODE_EVENT_NAME} from "@vueless/storybook-dark-mode";

@@ -120,4 +120,3 @@ describe("Radio components", () => {
         expect(container.textContent).toContain("Beta");
     });
 });
-

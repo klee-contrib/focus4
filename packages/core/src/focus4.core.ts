@@ -1,5 +1,4 @@
 import "i18next";
-
 import {configure} from "mobx";
 
 configure({enforceActions: "never"});

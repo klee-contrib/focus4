@@ -2,8 +2,13 @@
     "name": "focus4-packages",
     "version": "12.0.0",
     "description": "Focus v4 (Typescript + MobX)",
-    "main": "",
-    "type": "module",
+    "homepage": "https://github.com/klee-contrib/focus4",
+    "license": "MIT",
+    "author": "damien.frikha@kleegroup.com",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/klee-contrib/focus4.git"
+    },
     "workspaces": [
         "packages/tooling",
         "packages/core",
@@ -18,13 +23,8 @@
         "packages/legacy",
         "packages/docs"
     ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/klee-contrib/focus4.git"
-    },
-    "author": "damien.frikha@kleegroup.com",
-    "license": "MIT",
-    "homepage": "https://github.com/klee-contrib/focus4",
+    "type": "module",
+    "main": "",
     "scripts": {
         "build": "npm run build --workspaces --if-present",
         "clean": "node scripts/clean.mjs",

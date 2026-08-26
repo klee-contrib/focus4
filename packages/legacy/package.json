@@ -2,15 +2,15 @@
     "name": "@focus4/legacy",
     "version": "12.13.0",
     "description": "Focus v4, legacy module",
-    "main": "lib/focus4.legacy.js",
-    "type": "module",
+    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/legacy",
+    "license": "MIT",
+    "author": "damien.frikha@kleegroup.com",
     "repository": {
         "type": "git",
         "url": "https://github.com/klee-contrib/focus4.git"
     },
-    "author": "damien.frikha@kleegroup.com",
-    "license": "MIT",
-    "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/legacy",
+    "type": "module",
+    "main": "lib/focus4.legacy.js",
     "scripts": {
         "build": "tsdown"
     },

@@ -207,4 +207,3 @@ describe("AutocompleteSearch component", () => {
         expect(container.textContent).toContain("Aide");
     });
 });
-

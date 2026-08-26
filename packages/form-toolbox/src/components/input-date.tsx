@@ -37,7 +37,15 @@ export interface InputDateProps<S extends z.ZodISODate | z.ZodISODateTime> {
      * Par défaut : `left`.
      */
     calendarPosition?:
-        "auto" | "bottom-left" | "bottom-right" | "bottom" | "left" | "right" | "top-left" | "top-right" | "top";
+        | "auto"
+        | "bottom-left"
+        | "bottom-right"
+        | "bottom"
+        | "left"
+        | "right"
+        | "top-left"
+        | "top-right"
+        | "top";
     /** Erreur à afficher sous le champ. */
     error?: string;
     /** N'affiche pas la valeur de référence sur la calendrier. */

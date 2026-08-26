@@ -20,7 +20,8 @@
         "declarationMap": true,
         "inlineSources": true,
         "stripInternal": true,
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "paths": {"rollup": ["./node_modules/rolldown"]}
     },
     "exclude": ["**/lib/**"]
 }

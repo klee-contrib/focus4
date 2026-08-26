@@ -1,0 +1,38 @@
+{
+    "bracketSpacing": false,
+    "trailingComma": "none",
+    "arrowParens": "avoid",
+    "endOfLine": "crlf",
+    "tabWidth": 4,
+    "printWidth": 120,
+    "overrides": [
+        {
+            "files": ["package.json"],
+            "options": {
+                "printWidth": 320
+            }
+        },
+        {
+            "files": ["*.yaml"],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ],
+    "sortImports": {
+        "customGroups": [
+            {
+                "groupName": "focus",
+                "elementNamePattern": ["@focus4/*"]
+            },
+            {
+                "groupName": "css",
+                "elementNamePattern": ["**/*.css", "**/*.css.d.ts"]
+            }
+        ],
+        "groups": [["builtin", "external"], "focus", ["internal", "subpath"], "parent", ["sibling", "index"], "css"]
+    },
+    "sortPackageJson": {
+        "sortScripts": true
+    }
+}
