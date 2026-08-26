@@ -7,7 +7,7 @@ import {FormListNode, FormNode, SourceNodePartialType, SourceNodeType} from "../
 type LoadData<FN extends FormNode | FormListNode | LocalCollectionStore> = FN extends LocalCollectionStore
     ? FN["list"]
     : // @ts-expect-error - Impossible de vérifier le type générique.
-      SourceNodeType<FN>;
+      SourceNodePartialType<FN>;
 
 interface FormActionHandlers<
     FN extends FormNode | FormListNode,

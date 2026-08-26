@@ -74,6 +74,7 @@
         "eslint/prefer-named-capture-group": "off",
         "eslint/radix": "off",
         "eslint/require-await": "off",
+        "eslint/require-unicode-regexp": "off",
         "eslint/sort-imports": [
             "warn",
             {
@@ -101,6 +102,7 @@
         "react/hook-use-state": "off",
         "react/hooks": "off",
         "react/immutability": "off",
+        "react/invariant": "off",
         "react/jsx-filename-extension": "off",
         "react/jsx-handler-names": "off",
         "react/jsx-max-depth": "off",
