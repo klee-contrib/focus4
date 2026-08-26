@@ -1,9 +1,9 @@
-import babel from "@rolldown/plugin-babel";
+import swc from "@rollup/plugin-swc";
 import {createHash} from "node:crypto";
 import dns from "node:dns";
 import {existsSync, promises as fs} from "node:fs";
 import path from "node:path";
-import {PluginOption, UserConfigExport} from "vite";
+import {PluginOption, UserConfigExport, withFilter} from "vite";
 
 dns.setDefaultResultOrder("verbatim");
 
@@ -97,16 +97,15 @@ export function ssiVariables(vars: Record<string, string>) {
  * Plugin Vite pour compiler les décorateurs.
  */
 export function decorators() {
-    return babel({
-        presets: [
-            {
-                preset: () => ({
-                    plugins: [["@babel/plugin-proposal-decorators", {version: "2023-11"}]]
-                }),
-                rolldown: {
-                    filter: {code: "@"}
+    return withFilter(
+        swc({
+            swc: {
+                jsc: {
+                    parser: {decorators: true, syntax: "typescript"},
+                    transform: {decoratorVersion: "2023-11"}
                 }
             }
-        ]
-    });
+        }),
+        {transform: {code: "@"}}
+    );
 }

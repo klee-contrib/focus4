@@ -38,9 +38,6 @@
         "tsc": "tsc --noEmit"
     },
     "devDependencies": {
-        "@babel/core": "^7.29.7",
-        "@babel/generator": "^7.29.7",
-        "@babel/plugin-transform-runtime": "^7.29.7",
         "@tsdown/css": "0.22.14",
         "@types/css-tree": "3.2.0",
         "@vitest/coverage-v8": "4.1.11",
