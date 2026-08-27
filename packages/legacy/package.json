@@ -1,6 +1,6 @@
 {
     "name": "@focus4/legacy",
-    "version": "12.13.1",
+    "version": "12.13.2",
     "description": "Focus v4, legacy module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/legacy",
     "license": "MIT",
@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@focus4/entities": "12.13.0",
-        "@focus4/stores": "12.13.1",
+        "@focus4/stores": "12.13.2",
         "es-toolkit": "^1.51.0"
     },
     "peerDependencies": {

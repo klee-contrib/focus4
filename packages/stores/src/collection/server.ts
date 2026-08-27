@@ -2,7 +2,7 @@ import {debounce, flatten} from "es-toolkit";
 import {action, computed, IObservableArray, observable, reaction} from "mobx";
 
 import {isAbortError, requestStore} from "@focus4/core";
-import {Entity, EntityToType} from "@focus4/entities";
+import {Entity, EntityToPartialType, EntityToType} from "@focus4/entities";
 
 import {FormNode, FormNodeBuilder, isEmpty, isRequired, makeStoreNode} from "../entity";
 
@@ -141,7 +141,9 @@ export class ServerCollectionStore<
     get flatCriteria() {
         const criteria =
             this.criteria &&
-            (this.criteriaMode === "manual" ? this.criteria.sourceNode : this.criteria).getValues(true);
+            ((this.criteriaMode === "manual" ? this.criteria.sourceNode : this.criteria).getValues(
+                true
+            ) as EntityToPartialType<C>);
 
         if (criteria) {
             // On enlève les critères en erreur.
@@ -193,7 +195,7 @@ export class ServerCollectionStore<
         const {query, inputFacets, groupingKey, sort, list, top, skipToken} = this;
 
         if (this.criteriaMode === "manual" && !isScroll) {
-            this.criteria.sourceNode.replace(this.criteria.getValues(true));
+            this.criteria.sourceNode.replace(this.criteria.getValues(true) as EntityToPartialType<C>);
         }
 
         const data = {

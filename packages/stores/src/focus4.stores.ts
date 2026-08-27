@@ -1,18 +1,21 @@
 export {
     CollectionStore,
     LocalCollectionStore,
+    ServerCollectionStore,
     makeLocalCollectionStore,
-    makeServerCollectionStore,
-    ServerCollectionStore
+    makeServerCollectionStore
 } from "./collection";
 export {
-    cloneField,
     EntityFieldBuilder,
     FormActions,
     FormActionsBuilder,
     FormEntryBuilder,
     FormListNodeBuilder,
     FormNodeBuilder,
+    LoadRegistration,
+    NodeLoadBuilder,
+    UndefinedComponent,
+    cloneField,
     fromField,
     getDefaultFormatter,
     isAnyFormNode,
@@ -23,14 +26,11 @@ export {
     isFormNode,
     isStoreListNode,
     isStoreNode,
-    LoadRegistration,
     makeField,
     makeStoreNode,
-    NodeLoadBuilder,
     stringFor,
     themeable,
-    toFlatValues,
-    UndefinedComponent
+    toFlatValues
 } from "./entity";
 export {emptyReferenceList, makeReferenceList, makeReferenceStore, referenceTrackingId} from "./reference";
 export {i18nStores} from "./translation";
@@ -58,6 +58,8 @@ export type {
     BaseLabelProps,
     BaseSelectProps,
     EntityField,
+    EntityToPartialTypeNoAdded,
+    EntityToTypeNoAdded,
     FieldComponents,
     FormEntityField,
     FormListNode,
@@ -69,11 +71,11 @@ export type {
     Patch,
     PatchAutocomplete,
     PatchDisplay,
-    PatchedFormListNode,
-    PatchedFormNode,
     PatchInput,
     PatchLabel,
     PatchSelect,
+    PatchedFormListNode,
+    PatchedFormNode,
     SelectComponents,
     SourceNodePartialType,
     SourceNodeType,

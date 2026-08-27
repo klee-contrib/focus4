@@ -6,7 +6,7 @@ export {
     FormListNodeBuilder,
     FormNodeBuilder
 } from "./form";
-export {LoadRegistration, makeStoreNode, NodeLoadBuilder} from "./store";
+export {LoadRegistration, NodeLoadBuilder, makeStoreNode} from "./store";
 export {
     isAnyFormNode,
     isAnyStoreNode,
@@ -18,6 +18,7 @@ export {
     isStoreNode
 } from "./types";
 export {
+    UndefinedComponent,
     cloneField,
     fromField,
     getDefaultFormatter,
@@ -27,8 +28,7 @@ export {
     makeField,
     stringFor,
     themeable,
-    toFlatValues,
-    UndefinedComponent
+    toFlatValues
 } from "./utils";
 
 export type {ActionsFormProps, ActionsPanelProps, Metadata} from "./form";
@@ -41,6 +41,8 @@ export type {
     BaseLabelProps,
     BaseSelectProps,
     EntityField,
+    EntityToPartialTypeNoAdded,
+    EntityToTypeNoAdded,
     FieldComponents,
     FormEntityField,
     FormListNode,
@@ -51,11 +53,11 @@ export type {
     Patch,
     PatchAutocomplete,
     PatchDisplay,
-    PatchedFormListNode,
-    PatchedFormNode,
     PatchInput,
     PatchLabel,
     PatchSelect,
+    PatchedFormListNode,
+    PatchedFormNode,
     SelectComponents,
     SourceNodePartialType,
     SourceNodeType,

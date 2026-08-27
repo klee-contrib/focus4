@@ -34,7 +34,7 @@ export type {
     InputComponents,
     SelectComponents
 } from "./components";
-export type {FormEntityField, FormListNode, FormNode} from "./form";
+export type {EntityToPartialTypeNoAdded, EntityToTypeNoAdded, FormEntityField, FormListNode, FormNode} from "./form";
 export type {
     Patch,
     PatchAutocomplete,
