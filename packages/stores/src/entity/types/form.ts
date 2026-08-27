@@ -4,6 +4,7 @@ import {
     Entity,
     EntityToPartialType,
     EntityToType,
+    EntryToRequired,
     FieldEntry,
     ListEntry,
     ObjectEntry,
@@ -11,39 +12,6 @@ import {
 } from "@focus4/entities";
 
 import {EntityField, StoreListNode, StoreNode} from "./store";
-
-type SourceNode<P, T, E0> = P extends keyof E0
-    ? E0[P] extends ObjectEntry<infer OE0>
-        ? OE0
-        : E0[P] extends Entity
-          ? E0[P]
-          : T
-    : T;
-
-type SourceListNode<P, T, E0> = P extends keyof E0
-    ? E0[P] extends ListEntry<infer OE0>
-        ? OE0
-        : E0[P] extends [Entity]
-          ? E0[P][0]
-          : T
-    : T;
-
-/** Génère les entrées de noeud de formulaire équivalent à une entité. */
-export type EntityToForm<E extends Entity, E0 extends Entity = E> = {
-    readonly [P in keyof E]: E[P] extends FieldEntry
-        ? FormEntityField<E[P]>
-        : E[P] extends ObjectEntry<infer OE>
-          ? FormNode<OE, SourceNode<P, OE, E0>>
-          : E[P] extends ListEntry<infer LE>
-            ? FormListNode<LE, SourceListNode<P, LE, E0>>
-            : E[P] extends RecursiveListEntry
-              ? FormListNode<E, E0>
-              : E[P] extends [Entity]
-                ? FormListNode<E[P][0], SourceListNode<P, E[P][0], E0>>
-                : E[P] extends Entity
-                  ? FormNode<E[P], SourceNode<P, E[P], E0>>
-                  : never;
-};
 
 /** Champs additionnels pour un noeud de formulaire. */
 export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToForm<E, E0> & {
@@ -94,9 +62,9 @@ export type FormNode<E extends Entity = any, E0 extends Entity = E> = EntityToFo
      * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
      * @param includeAddedFields Si `true`, inclue les champs ajoutés dans le formulaire.
      */
-    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToType<E0>;
+    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToTypeNoAdded<E, E0>;
     getValues(allowUndefined: false, includeAddedFields: true): EntityToType<E>;
-    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialType<E0>;
+    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialTypeNoAdded<E, E0>;
     getValues(allowUndefined: true, includeAddedFields: true): EntityToPartialType<E>;
 
     /** Appelle le service de chargement enregistré du noeud source. */
@@ -171,9 +139,9 @@ export interface FormListNode<E extends Entity = any, E0 extends Entity = E> ext
      * @param allowUndefined Si `true`, ne vérifie pas que tous les champs obligatoires sont remplis, et renvoie un type partiel.
      * @param includeAddedFields Si `true`, inclue les champs ajoutés dans le formulaire.
      */
-    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToType<E0>[];
+    getValues(allowUndefined?: false, includeAddedFields?: false): EntityToTypeNoAdded<E, E0>[];
     getValues(allowUndefined: false, includeAddedFields: true): EntityToType<E>[];
-    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialType<E0>[];
+    getValues(allowUndefined: true, includeAddedFields?: false): EntityToPartialTypeNoAdded<E, E0>[];
     getValues(allowUndefined: true, includeAddedFields: true): EntityToPartialType<E>[];
 
     /** Ajoute un élément à la liste. */
@@ -217,3 +185,93 @@ export interface FormEntityField<F extends FieldEntry = FieldEntry> extends Enti
     /** Précise si le champ associé est valide (pas d'erreur ou pas en édition). */
     readonly isValid: boolean;
 }
+
+/** Récupère le noeud source correspondant à une entrée objet donnée. */
+type SourceNode<P, E, E0> = P extends keyof E0
+    ? E0[P] extends ObjectEntry<infer OE0>
+        ? OE0
+        : E0[P] extends Entity
+          ? E0[P]
+          : E
+    : E;
+
+/** Récupère le noeud source correspondant à une entrée liste donnée. */
+type SourceListNode<P, E, E0> = P extends keyof E0
+    ? E0[P] extends ListEntry<infer OE0>
+        ? OE0
+        : E0[P] extends [Entity]
+          ? E0[P][0]
+          : E
+    : E;
+
+/** Génère les entrées de noeud de formulaire équivalent à une entité. */
+type EntityToForm<E extends Entity, E0 extends Entity = E> = {
+    readonly [P in keyof E]: E[P] extends FieldEntry
+        ? FormEntityField<E[P]>
+        : E[P] extends ObjectEntry<infer OE>
+          ? FormNode<OE, SourceNode<P, OE, E0>>
+          : E[P] extends ListEntry<infer LE>
+            ? FormListNode<LE, SourceListNode<P, LE, E0>>
+            : E[P] extends RecursiveListEntry
+              ? FormListNode<E, E0>
+              : E[P] extends [Entity]
+                ? FormListNode<E[P][0], SourceListNode<P, E[P][0], E0>>
+                : E[P] extends Entity
+                  ? FormNode<E[P], SourceNode<P, E[P], E0>>
+                  : never;
+};
+
+/** Variante de `EntityToPartialType` sans le champs ajoutés pour un formulaire. */
+type EntityToPartialTypeNoAdded<E extends Entity, E0 extends Entity> = {
+    -readonly [P in keyof E & keyof E0]?: E[P] extends FieldEntry<infer _, infer T>
+        ? T
+        : [E[P], E0[P]] extends [ObjectEntry<infer OE>, ObjectEntry<infer OE0>]
+          ? EntityToPartialTypeNoAdded<OE, OE0>
+          : [E[P], E0[P]] extends [ListEntry<infer LE>, ListEntry<infer LE0>]
+            ? EntityToPartialTypeNoAdded<LE, LE0>[]
+            : E[P] extends RecursiveListEntry
+              ? EntityToPartialTypeNoAdded<E, E>[]
+              : E[P] extends [Entity]
+                ? E0[P] extends [Entity]
+                    ? EntityToPartialTypeNoAdded<E[P][0], E0[P][0]>[]
+                    : never
+                : E[P] extends Entity
+                  ? E0[P] extends Entity
+                      ? EntityToPartialTypeNoAdded<E[P], E0[P]>
+                      : never
+                  : never;
+};
+
+/** Variante de `EntityToType` sans le champs ajoutés pour un formulaire. */
+type EntityToTypeNoAdded<E extends Entity, E0 extends Entity> = {
+    -readonly [P in keyof E & keyof E0 as EntryToRequired<E[P]> extends true ? P : never]: EntityEntryToTypeNoAdded<
+        E,
+        E0,
+        P
+    >;
+} & {
+    -readonly [P in keyof E & keyof E0 as EntryToRequired<E[P]> extends false ? P : never]?: EntityEntryToTypeNoAdded<
+        E,
+        E0,
+        P
+    >;
+};
+
+type EntityEntryToTypeNoAdded<E extends Entity, E0 extends Entity, P extends keyof E & keyof E0> =
+    E[P] extends FieldEntry<infer _, infer T>
+        ? T
+        : [E[P], E0[P]] extends [ObjectEntry<infer OE>, ObjectEntry<infer OE0>]
+          ? EntityToTypeNoAdded<OE, OE0>
+          : [E[P], E0[P]] extends [ListEntry<infer LE>, ListEntry<infer LE0>]
+            ? EntityToTypeNoAdded<LE, LE0>[]
+            : E[P] extends RecursiveListEntry
+              ? EntityToTypeNoAdded<E, E>[]
+              : E[P] extends [Entity]
+                ? E0[P] extends [Entity]
+                    ? EntityToTypeNoAdded<E[P][0], E0[P][0]>[]
+                    : never
+                : E[P] extends Entity
+                  ? E0[P] extends Entity
+                      ? EntityToTypeNoAdded<E[P], E0[P]>
+                      : never
+                  : never;
