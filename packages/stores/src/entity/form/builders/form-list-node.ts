@@ -7,7 +7,7 @@ import {nodeToFormNode} from "../node";
 
 import {FormNodeBuilder, initFormNode} from "./form-node";
 
-export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E, R extends boolean = boolean> {
+export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
     /** @internal */
     node: StoreListNode<E>;
 
@@ -31,13 +31,13 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E, R exte
      * Initialise l'état d'édition du FormListNode.
      * @param value Etat d'édition initial.
      */
-    edit(value: boolean): FormListNodeBuilder<E, E0, R>;
+    edit(value: boolean): FormListNodeBuilder<E, E0>;
     /**
      * Force l'état d'édition du FormListNode.
      * @param value Condition d'édition.
      */
-    edit(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0, R>;
-    edit(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0, R> {
+    edit(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
+    edit(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
         this.node.$edit = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         return this;
     }
@@ -47,8 +47,8 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E, R exte
      * @param builder Configurateur de noeud.
      */
     items<NE extends Entity>(
-        builder: (b: FormNodeBuilder<E, E0, true>, node: StoreListNode<E>) => FormNodeBuilder<NE, E0, true>
-    ): FormListNodeBuilder<NE, E0, R> {
+        builder: (b: FormNodeBuilder<E, E0>, node: StoreListNode<E>) => FormNodeBuilder<NE, E0>
+    ): FormListNodeBuilder<NE, E0> {
         // @ts-expect-error - Impossible de vérifier le type générique.
         this.node.$nodeBuilder = node => builder(new FormNodeBuilder(node), this.node).collect();
         // @ts-expect-error - Impossible de vérifier le type générique.
@@ -59,13 +59,13 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E, R exte
      * Surcharge le caractère obligatoire du noeud.
      * @param value Valeur fixe.
      */
-    required<NR extends boolean>(value: NR): FormListNodeBuilder<E, E0, NR>;
+    required(value: boolean): FormListNodeBuilder<E, E0>;
     /**
      * Surcharge le caractère obligatoire du noeud.
      * @param value Valeur calculée.
      */
-    required(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0, false>;
-    required(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0, false> {
+    required(value: (node: StoreListNode<E>) => boolean): FormListNodeBuilder<E, E0>;
+    required(value: boolean | ((node: StoreListNode<E>) => boolean)): FormListNodeBuilder<E, E0> {
         this.node.$required = (isFunction(value) ? () => value(this.node) : value) as () => boolean;
         return this;
     }

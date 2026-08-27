@@ -48,16 +48,10 @@ export type PatchedFormListNode<
  * Exemple : `PatchInput<MyFieldEntry, MyInputComponentProps>`
  */
 export type PatchInput<F extends FieldEntry, ICProps extends BaseInputProps<F["domain"]["schema"]>> =
-    F["domain"] extends Domain<
-        infer S,
-        infer _,
-        infer SCProps,
-        infer ACProps,
-        infer DCProps,
-        infer LCProps,
-        infer FCProps
-    >
-        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
+    F extends FieldEntry<infer D, infer T, infer R>
+        ? D extends Domain<infer S, infer _, infer SCProps, infer ACProps, infer DCProps, infer LCProps, infer FCProps>
+            ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, T, R>
+            : never
         : never;
 
 /**
@@ -66,16 +60,10 @@ export type PatchInput<F extends FieldEntry, ICProps extends BaseInputProps<F["d
  * Exemple : `PatchSelect<MyFieldEntry, MySelectComponentProps>`
  */
 export type PatchSelect<F extends FieldEntry, SCProps extends BaseSelectProps<F["domain"]["schema"]>> =
-    F["domain"] extends Domain<
-        infer S,
-        infer ICProps,
-        infer _,
-        infer ACProps,
-        infer DCProps,
-        infer LCProps,
-        infer FCProps
-    >
-        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
+    F extends FieldEntry<infer D, infer T, infer R>
+        ? D extends Domain<infer S, infer ICProps, infer _, infer ACProps, infer DCProps, infer LCProps, infer FCProps>
+            ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, T, R>
+            : never
         : never;
 
 /**
@@ -84,16 +72,10 @@ export type PatchSelect<F extends FieldEntry, SCProps extends BaseSelectProps<F[
  * Exemple : `PatchAutocomplete<MyFieldEntry, MyAutocompleteComponentProps>`
  */
 export type PatchAutocomplete<F extends FieldEntry, ACProps extends BaseAutocompleteProps<F["domain"]["schema"]>> =
-    F["domain"] extends Domain<
-        infer S,
-        infer ICProps,
-        infer SCProps,
-        infer _,
-        infer DCProps,
-        infer LCProps,
-        infer FCProps
-    >
-        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
+    F extends FieldEntry<infer D, infer T, infer R>
+        ? D extends Domain<infer S, infer ICProps, infer SCProps, infer _, infer DCProps, infer LCProps, infer FCProps>
+            ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, T, R>
+            : never
         : never;
 
 /**
@@ -102,16 +84,10 @@ export type PatchAutocomplete<F extends FieldEntry, ACProps extends BaseAutocomp
  * Exemple : `PatchDisplay<MyFieldEntry, MyDisplayComponentProps>`
  */
 export type PatchDisplay<F extends FieldEntry, DCProps extends BaseDisplayProps<F["domain"]["schema"]>> =
-    F["domain"] extends Domain<
-        infer S,
-        infer ICProps,
-        infer SCProps,
-        infer ACProps,
-        infer _,
-        infer LCProps,
-        infer FCProps
-    >
-        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
+    F extends FieldEntry<infer D, infer T, infer R>
+        ? D extends Domain<infer S, infer ICProps, infer SCProps, infer ACProps, infer _, infer LCProps, infer FCProps>
+            ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, T, R>
+            : never
         : never;
 
 /**
@@ -120,14 +96,8 @@ export type PatchDisplay<F extends FieldEntry, DCProps extends BaseDisplayProps<
  * Exemple : `PatchLabel<MyFieldEntry, MyLabelComponentProps>`
  */
 export type PatchLabel<F extends FieldEntry, LCProps extends BaseLabelProps> =
-    F["domain"] extends Domain<
-        infer S,
-        infer ICProps,
-        infer SCProps,
-        infer ACProps,
-        infer DCProps,
-        infer _,
-        infer FCProps
-    >
-        ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, NonNullable<F["fieldType"]>>
+    F extends FieldEntry<infer D, infer T, infer R>
+        ? D extends Domain<infer S, infer ICProps, infer SCProps, infer ACProps, infer DCProps, infer _, infer FCProps>
+            ? FieldEntry<Domain<S, ICProps, SCProps, ACProps, DCProps, LCProps, FCProps>, T, R>
+            : never
         : never;

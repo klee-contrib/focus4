@@ -1,6 +1,6 @@
 import {output} from "zod";
 
-import {Entity, EntryToEntity, EntryToRequired, FieldEntry, ListEntry, ObjectEntry} from "@focus4/entities";
+import {Entity, EntryToEntity, FieldEntry, ListEntry, ObjectEntry} from "@focus4/entities";
 
 import {makeStoreNode} from "../../store";
 
@@ -29,22 +29,21 @@ export class FormEntryBuilder {
      * Crée un champ à partir de la définition de champ donnée.
      * @param field La définition du champ.
      */
-    field<F extends FieldEntry>({domain, name, ...metadata}: F) {
-        return new EntityFieldBuilder<F>(this.name).domain(domain).metadata(metadata);
+    field<F extends FieldEntry>({domain, name, ...metadata}: F): EntityFieldBuilder<F> {
+        // @ts-expect-error - Impossible de valider le type générique.
+        return new EntityFieldBuilder(this.name).domain(domain).metadata(metadata);
     }
 
     /**
      * Crée un sous-noeud de l'entité demandée.
      * @param entity La définition d'entité.
      */
-    object<E extends Entity>(entity: E): FormNodeBuilder<E, E, true>;
+    object<E extends Entity>(entity: E): FormNodeBuilder<E>;
     /**
      * Crée un sous-noeud de l'entité demandée.
      * @param entry La définition d'entrée objet.
      */
-    object<OE extends ObjectEntry>(
-        entry: OE
-    ): FormNodeBuilder<EntryToEntity<OE>, EntryToEntity<OE>, EntryToRequired<OE>>;
+    object<OE extends ObjectEntry>(entry: OE): FormNodeBuilder<EntryToEntity<OE>>;
     object<E extends Entity>(entity: E | ObjectEntry<E>) {
         const builder =
             "type" in entity && entity.type === "object"
@@ -60,14 +59,12 @@ export class FormEntryBuilder {
      * Crée un sous-noeud liste de l'entité demandée.
      * @param entity La définition d'entitée.
      */
-    list<E extends Entity>(entity: E): FormListNodeBuilder<E, E, true>;
+    list<E extends Entity>(entity: E): FormListNodeBuilder<E>;
     /**
      * Crée un sous-noeud liste de l'entité demandée.
      * @param entry La définition d'entrée liste.
      */
-    list<LE extends ListEntry>(
-        entry: LE
-    ): FormListNodeBuilder<EntryToEntity<LE>, EntryToEntity<LE>, EntryToRequired<LE>>;
+    list<LE extends ListEntry>(entry: LE): FormListNodeBuilder<EntryToEntity<LE>>;
     list<E extends Entity>(entity: E | ListEntry<E>) {
         const builder =
             "type" in entity && entity.type === "list"
