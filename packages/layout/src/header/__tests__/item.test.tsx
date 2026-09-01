@@ -18,8 +18,8 @@ describe("HeaderItem", () => {
     test("Rend ses enfants dans un item de header", () => {
         const {container} = render(<HeaderItem theme={headerTheme}>Titre</HeaderItem>);
 
-        expect(screen.getByText("Titre")).toBeTruthy();
-        expect(container.firstElementChild?.className).toContain("header-item");
+        expect(screen.getByText("Titre").textContent).toBe("Titre");
+        expect(container.firstElementChild?.classList.contains("header-item")).toBe(true);
     });
 
     test("Applique les classes de variantes", () => {
@@ -29,7 +29,7 @@ describe("HeaderItem", () => {
             </HeaderItem>
         );
 
-        expect(container.firstElementChild?.className).toContain("header-item-fill");
-        expect(container.firstElementChild?.className).toContain("header-item-sticky");
+        expect(container.firstElementChild?.classList.contains("header-item-fill")).toBe(true);
+        expect(container.firstElementChild?.classList.contains("header-item-sticky")).toBe(true);
     });
 });

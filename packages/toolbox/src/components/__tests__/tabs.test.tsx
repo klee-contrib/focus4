@@ -29,10 +29,12 @@ describe("Tabs component", () => {
             </Tabs>
         );
 
-        expect(screen.getByRole("tab", {name: "Premier"}).getAttribute("aria-selected")).toBe("false");
-        expect(screen.getByRole("tab", {name: "Deuxième"}).getAttribute("aria-selected")).toBe("true");
-        expect(screen.getByText("Contenu 1")).toBeTruthy();
-        expect(screen.getByText("Contenu 2")).toBeTruthy();
+        expect(screen.getByRole("tab", {name: "Premier"}).ariaSelected).toBe("false");
+        expect(screen.getByRole("tab", {name: "Deuxième"}).ariaSelected).toBe("true");
+        const panels = screen.getAllByRole("tabpanel");
+        expect(panels.map(panel => panel.textContent)).toEqual(["Contenu 1", "Contenu 2"]);
+        expect(panels.map(panel => panel.style.transform)).toEqual(["translateX(-100%)", "translateX(-100%)"]);
+        expect(panels[0].parentElement?.className).toBe("tabs-content");
     });
 
     test("Appelle onChange au clic et à Entrée", () => {
@@ -63,7 +65,8 @@ describe("Tabs component", () => {
         );
 
         const disabledTab = screen.getByRole("tab", {name: "Deuxième"});
-        expect(disabledTab.className).toContain("tab-disabled");
+        expect(disabledTab.classList.contains("tab-disabled")).toBe(true);
+        expect(disabledTab.hasAttribute("tabindex")).toBe(false);
 
         fireEvent.click(disabledTab);
         expect(onChange).not.toHaveBeenCalled();
@@ -86,6 +89,6 @@ describe("Tabs component", () => {
             </Tabs>
         );
 
-        expect(container.firstElementChild?.className).toContain("tabs-secondary");
+        expect(container.firstElementChild?.classList.contains("tabs-secondary")).toBe(true);
     });
 });

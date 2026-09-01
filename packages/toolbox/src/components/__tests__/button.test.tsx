@@ -19,17 +19,17 @@ describe("Button component", () => {
 
         const button = screen.getByRole("button", {name: "Valider"});
         expect(button.tagName).toBe("BUTTON");
-        expect(button.getAttribute("type")).toBe("button");
+        expect(button).toMatchObject({type: "button"});
     });
 
     test("Rend un <a> quand href est renseigné", () => {
-        const {container} = render(<Button href="/target" label="Lien" target="_blank" theme={buttonTheme} />);
+        render(<Button href="/target" label="Lien" target="_blank" theme={buttonTheme} />);
 
-        const link = container.querySelector("a")!;
-        expect(link).toBeTruthy();
-        expect(link.getAttribute("href")).toBe("/target");
-        expect(link.getAttribute("target")).toBe("_blank");
-        expect(link.hasAttribute("type")).toBe(false);
+        expect(screen.getByRole("link", {name: "Lien"})).toMatchObject({
+            pathname: "/target",
+            target: "_blank",
+            type: ""
+        });
     });
 
     test("Déclenche onClick au clic", () => {
@@ -53,8 +53,8 @@ describe("Button component", () => {
     test("Rend une icône quand icon est renseigné", () => {
         const {container} = render(<Button icon="save" label="Enregistrer" theme={buttonTheme} />);
 
-        expect(container.textContent).toContain("save");
-        expect(container.textContent).toContain("Enregistrer");
+        expect([...container.querySelectorAll(".btn-icon")].map(icon => icon.textContent)).toEqual(["save"]);
+        expect(screen.getByRole("button").textContent).toBe("saveEnregistrer");
     });
 
     test("Rend un espace insécable par défaut si label est absent", () => {
@@ -68,6 +68,6 @@ describe("Button component", () => {
     test("Propage type au <button>", () => {
         render(<Button label="Submit" theme={buttonTheme} type="submit" />);
 
-        expect(screen.getByRole("button", {name: "Submit"}).getAttribute("type")).toBe("submit");
+        expect(screen.getByRole("button", {name: "Submit"})).toMatchObject({type: "submit"});
     });
 });

@@ -20,8 +20,7 @@ describe("BooleanRadio component", () => {
     test("Rend deux boutons radio avec les libellés par défaut", () => {
         render(<BooleanRadio name="b" onChange={() => undefined} theme={booleanRadioTheme} />);
 
-        expect(screen.getByText("Oui")).toBeTruthy();
-        expect(screen.getByText("Non")).toBeTruthy();
+        expect(screen.getAllByRole("radio").map(radio => radio.parentElement?.textContent)).toEqual(["Oui", "Non"]);
     });
 
     test.each([
@@ -31,27 +30,22 @@ describe("BooleanRadio component", () => {
     ])("Coche le bon radio pour value=$value", ({value, expectedName}) => {
         render(<BooleanRadio name="b" onChange={() => undefined} theme={booleanRadioTheme} value={value} />);
 
-        const radios = screen.getAllByRole("radio") as HTMLInputElement[];
-        const checked = radios.find(r => r.checked);
-        expect(checked?.name ?? null).toBe(expectedName);
+        expect((screen.getAllByRole("radio") as HTMLInputElement[]).find(radio => radio.checked)?.name ?? null).toBe(
+            expectedName
+        );
     });
 
-    test("onChange reçoit true quand on clique sur Oui", () => {
+    test.each([
+        ["Oui", true],
+        ["Non", false]
+    ] as const)("Un clic sur %s transmet %s", (label, value) => {
         const onChange = vi.fn();
         render(<BooleanRadio name="b" onChange={onChange} theme={booleanRadioTheme} />);
 
-        fireEvent.click(screen.getByText("Oui"));
+        fireEvent.click(screen.getByText(label));
 
-        expect(onChange).toHaveBeenCalledWith(true);
-    });
-
-    test("onChange reçoit false quand on clique sur Non", () => {
-        const onChange = vi.fn();
-        render(<BooleanRadio name="b" onChange={onChange} theme={booleanRadioTheme} />);
-
-        fireEvent.click(screen.getByText("Non"));
-
-        expect(onChange).toHaveBeenCalledWith(false);
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith(value);
     });
 
     test("Utilise labelYes et labelNo personnalisés", () => {
@@ -65,16 +59,13 @@ describe("BooleanRadio component", () => {
             />
         );
 
-        expect(screen.getByText("Vrai")).toBeTruthy();
-        expect(screen.getByText("Faux")).toBeTruthy();
+        expect(screen.getAllByRole("radio").map(radio => radio.parentElement?.textContent)).toEqual(["Vrai", "Faux"]);
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
-            <BooleanRadio error="Requis" name="b" onChange={() => undefined} theme={booleanRadioTheme} />
-        );
+        render(<BooleanRadio error="Requis" name="b" onChange={() => undefined} theme={booleanRadioTheme} />);
 
-        expect(container.textContent).toContain("Requis");
+        expect(screen.getByText("Requis").textContent).toBe("Requis");
     });
 
     test("Désactive les radios quand disabled=true", () => {

@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import {afterEach, describe, expect, test, vi} from "vitest";
 
 const storage = new Map<string, string>();
@@ -43,7 +42,7 @@ describe("initColorScheme", () => {
         initColorScheme();
 
         expect(colorScheme.dark).toBe(true);
-        expect(document.documentElement.getAttribute("dark")).toBe("true");
+        expect(document.documentElement.hasAttribute("dark")).toBe(true);
         expect(localStorageMock.getItem("color-scheme")).toBe("dark");
     });
 
@@ -55,7 +54,7 @@ describe("initColorScheme", () => {
         initColorScheme();
 
         expect(colorScheme.dark).toBe(true);
-        expect(document.documentElement.getAttribute("dark")).toBe("true");
+        expect(document.documentElement.hasAttribute("dark")).toBe(true);
     });
 
     test("désactive l'auto dark mode quand demandé", async () => {

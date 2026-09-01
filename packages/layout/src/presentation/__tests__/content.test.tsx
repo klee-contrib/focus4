@@ -13,7 +13,7 @@ describe("Content", () => {
     test("Rend ses enfants dans le conteneur de contenu", () => {
         const {container} = render(<Content theme={layoutTheme}>Mon contenu</Content>);
 
-        expect(screen.getByText("Mon contenu")).toBeTruthy();
-        expect(container.firstElementChild?.className).toContain("layout-content");
+        expect(screen.getByText("Mon contenu").textContent).toBe("Mon contenu");
+        expect(container.firstElementChild?.classList.contains("layout-content")).toBe(true);
     });
 });

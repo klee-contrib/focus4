@@ -1,4 +1,4 @@
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
@@ -9,15 +9,13 @@ describe("AutocompleteSearch component", () => {
     setupComponentTest();
 
     test("Rend un input", () => {
-        const {container} = render(
-            <AutocompleteSearch onChange={() => undefined} querySearcher={async () => []} schema={z.string()} />
-        );
+        render(<AutocompleteSearch onChange={() => undefined} querySearcher={async () => []} schema={z.string()} />);
 
-        expect(container.querySelector("input")).toBeTruthy();
+        expect(screen.getByRole("combobox")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 error="Champ invalide"
                 onChange={() => undefined}
@@ -26,12 +24,12 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Champ invalide");
+        expect(screen.getByText("Champ invalide").textContent).toBe("Champ invalide");
     });
 
     test("querySearcher est appelé lors de la saisie", async () => {
         const querySearcher = vi.fn(async () => [{key: "A", label: "Alpha"}]);
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 querySearcher={querySearcher}
@@ -40,7 +38,7 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        const input = container.querySelector("input")!;
+        const input = screen.getByRole("combobox") as HTMLInputElement;
         fireEvent.change(input, {target: {value: "al"}});
 
         await new Promise(resolve => {
@@ -51,7 +49,7 @@ describe("AutocompleteSearch component", () => {
 
     test("onQueryChange est appelé lors de la saisie", () => {
         const onQueryChange = vi.fn();
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 onQueryChange={onQueryChange}
@@ -60,7 +58,7 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        const input = container.querySelector("input")!;
+        const input = screen.getByRole("combobox") as HTMLInputElement;
         fireEvent.change(input, {target: {value: "abc"}});
         expect(onQueryChange).toHaveBeenCalledWith("abc");
     });
@@ -84,7 +82,7 @@ describe("AutocompleteSearch component", () => {
     });
 
     test("Réinitialise la query quand value passe à undefined", async () => {
-        const {container, rerender} = render(
+        const {rerender} = render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 query="hello"
@@ -102,12 +100,12 @@ describe("AutocompleteSearch component", () => {
                 value={undefined}
             />
         );
-        expect(container.querySelector("input")?.value).toBe("");
+        expect((screen.getByRole("combobox") as HTMLInputElement).value).toBe("");
     });
 
     test("searchOnEmptyQuery lance la recherche au focus", async () => {
         const querySearcher = vi.fn(async () => []);
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 querySearcher={querySearcher}
@@ -117,7 +115,7 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        const input = container.querySelector("input")!;
+        const input = screen.getByRole("combobox") as HTMLInputElement;
         fireEvent.focus(input);
         await new Promise(resolve => {
             setTimeout(resolve, 30);
@@ -127,7 +125,7 @@ describe("AutocompleteSearch component", () => {
 
     test("Ne lance pas la recherche pour une query vide sans searchOnEmptyQuery", async () => {
         const querySearcher = vi.fn(async () => []);
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 querySearcher={querySearcher}
@@ -136,7 +134,7 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        const input = container.querySelector("input")!;
+        const input = screen.getByRole("combobox") as HTMLInputElement;
         fireEvent.change(input, {target: {value: "  "}});
         await new Promise(resolve => {
             setTimeout(resolve, 30);
@@ -144,36 +142,25 @@ describe("AutocompleteSearch component", () => {
         expect(querySearcher).not.toHaveBeenCalled();
     });
 
-    test("disabled peut être une liste de valeurs sans désactiver l'input global", () => {
-        const {container} = render(
+    test.each([
+        {disabled: ["A", "B"], expected: false},
+        {disabled: true, expected: true}
+    ])("disabled=$disabled définit l'état natif de l'input à $expected", ({disabled, expected}) => {
+        render(
             <AutocompleteSearch
-                disabled={["A", "B"]}
+                disabled={disabled}
                 onChange={() => undefined}
                 querySearcher={async () => []}
                 schema={z.string()}
             />
         );
 
-        // Une liste de valeurs désactivées ne rend pas l'input désactivé.
-        expect(container.querySelector("input")?.disabled).toBe(false);
-    });
-
-    test("disabled=true désactive l'input", () => {
-        const {container} = render(
-            <AutocompleteSearch
-                disabled
-                onChange={() => undefined}
-                querySearcher={async () => []}
-                schema={z.string()}
-            />
-        );
-
-        expect(container.querySelector("input")?.disabled).toBe(true);
+        expect((screen.getByRole("combobox") as HTMLInputElement).disabled).toBe(expected);
     });
 
     test("Query vide efface les résultats quand pas de searchOnEmptyQuery", async () => {
         const querySearcher = vi.fn(async () => [{key: "A", label: "Alpha"}]);
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 querySearcher={querySearcher}
@@ -182,7 +169,7 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        const input = container.querySelector("input")!;
+        const input = screen.getByRole("combobox") as HTMLInputElement;
         fireEvent.change(input, {target: {value: "a"}});
         await new Promise(resolve => {
             setTimeout(resolve, 30);
@@ -195,7 +182,7 @@ describe("AutocompleteSearch component", () => {
     });
 
     test("supportingText est affiché en l'absence d'erreur", () => {
-        const {container} = render(
+        render(
             <AutocompleteSearch
                 onChange={() => undefined}
                 querySearcher={async () => []}
@@ -204,6 +191,6 @@ describe("AutocompleteSearch component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Aide");
+        expect(screen.getByText("Aide").textContent).toBe("Aide");
     });
 });

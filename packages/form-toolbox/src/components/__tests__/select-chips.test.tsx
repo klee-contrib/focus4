@@ -1,4 +1,4 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, within} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
@@ -70,8 +70,7 @@ describe("SelectChips component", () => {
         );
 
         const chips = container.querySelectorAll(".select-chip");
-        const deleteButton = chips[0].querySelector("button")!;
-        expect(deleteButton).toBeTruthy();
+        const deleteButton = within(chips[0] as HTMLElement).getByRole("button");
         fireEvent.click(deleteButton);
 
         expect(onChange).toHaveBeenCalledWith(["B"]);
@@ -91,8 +90,7 @@ describe("SelectChips component", () => {
         );
 
         const chips = container.querySelectorAll(".select-chip");
-        const chipA = chips[0];
-        expect(chipA.querySelector("button, [role='button']")).toBeNull();
+        expect(within(chips[0] as HTMLElement).queryByRole("button")).toBeNull();
     });
 
     test("hasSelectAll affiche une action de sélection globale", () => {
@@ -110,7 +108,7 @@ describe("SelectChips component", () => {
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
+        render(
             <SelectChips
                 error="Requis"
                 onChange={() => undefined}
@@ -120,7 +118,7 @@ describe("SelectChips component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Requis");
+        expect(screen.getByText("Requis").textContent).toBe("Requis");
     });
 
     test("Désactive les chips quand disabled=true", () => {
@@ -135,11 +133,12 @@ describe("SelectChips component", () => {
             />
         );
 
-        expect(container.querySelector(".select-chip")).toBeTruthy();
+        const chip = container.querySelector(".select-chip") as HTMLElement;
+        expect((within(chip).getByRole("button") as HTMLButtonElement).disabled).toBe(true);
     });
 
     test("En mode autocomplete, rend un input de recherche à la place du dropdown standard", () => {
-        const {container} = render(
+        render(
             <SelectChips
                 autocomplete
                 onChange={() => undefined}
@@ -149,7 +148,7 @@ describe("SelectChips component", () => {
             />
         );
 
-        expect(container.querySelector("input")).toBeTruthy();
+        expect(screen.getByRole("combobox")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("keepSelectedValuesInSelect maintient toutes les options dans la liste", () => {
@@ -168,7 +167,7 @@ describe("SelectChips component", () => {
     });
 
     test("unselectable retire des options des valeurs sélectionnables", () => {
-        const {container} = render(
+        render(
             <SelectChips
                 onChange={() => undefined}
                 schema={z.array(z.string())}
@@ -178,7 +177,9 @@ describe("SelectChips component", () => {
             />
         );
 
-        expect(container.querySelector("input, [role='listbox']")).toBeTruthy();
+        expect(screen.queryByRole("option", {name: "Beta"})).toBeNull();
+        expect(screen.getByRole("option", {name: "Alpha"})).toBeInstanceOf(HTMLElement);
+        expect(screen.getByRole("option", {name: "Charlie"})).toBeInstanceOf(HTMLElement);
     });
 
     test("maxSelectable=1 ignore l'ajout d'une nouvelle valeur", () => {

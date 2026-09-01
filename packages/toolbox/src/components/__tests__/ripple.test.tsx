@@ -39,7 +39,7 @@ describe("Ripple component", () => {
 
         expect(onPointerDown).toHaveBeenCalledTimes(1);
         expect(onPointerUp).toHaveBeenCalledTimes(1);
-        expect(button.querySelector(".custom-ripple")).toBeTruthy();
+        expect(button.querySelector(".custom-ripple")).not.toBeNull();
     });
 
     test("Ne pose pas de ripple quand il est disabled", () => {

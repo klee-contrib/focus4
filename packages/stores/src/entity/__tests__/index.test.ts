@@ -330,9 +330,9 @@ describe("FormNode — Création et structure", () => {
 
         expect(formNode.numero.$field).toEqual(entry.numero.$field);
         expect(formNode.structure.getValues()).toEqual(entry.structure.getValues());
-        expect(isObservableArray(formNode2.ligneList)).toBeTruthy();
+        expect(isObservableArray(formNode2.ligneList)).toBe(true);
         expect(formNode2.ligneList.$entity).toEqual(entry2.ligneList.$entity);
-        expect(formNode2.ligneList.setNodes).toBeTruthy();
+        expect(formNode2.ligneList.setNodes).toBe(entry2.ligneList.setNodes);
         expect(formNode.sourceNode).toEqual(entry);
         expect(formNode.structure.sourceNode).toEqual(entry.structure);
         expect(formNode2.ligneList.sourceNode).toEqual(entry2.ligneList);
@@ -345,7 +345,7 @@ describe("FormNode — Création et structure", () => {
         expect(formNode.form.isEdit).toBe(false);
         expect((formNode.montant as unknown as {_isEdit: boolean})._isEdit).toBe(true);
         expect(formNode.montant.isEdit).toBe(false);
-        expect(formNode.numero.hasOwnProperty("error")).toBeTruthy();
+        expect(Object.hasOwn(formNode.numero, "error")).toBe(true);
         expect(formNode.form.isValid).toBe(true);
         expect(formNode.form.isRequired).toBe(true);
         expect(formNode.form.isEmpty).toBe(true);
@@ -694,7 +694,7 @@ describe("FormNode — Validation et propagation", () => {
         formNode.form.isEdit = true;
         formNode.structure.nom.value = undefined;
 
-        expect(!!formNode.structure.nom.error).toBeTruthy();
+        expect(formNode.structure.nom.error).toBe("focus.validation.required");
         expect(formNode.form.isValid).toBe(false);
         expect(formNode.form.errors).toEqual({structure: {nom: "focus.validation.required"}});
         expect(formNode.structure.form.errors).toEqual(

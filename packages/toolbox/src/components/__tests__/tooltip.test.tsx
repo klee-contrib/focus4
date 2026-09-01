@@ -50,10 +50,13 @@ describe("Tooltip component", () => {
 
         fireEvent.pointerEnter(button);
 
-        expect(screen.getByText("Aide")).toBeTruthy();
+        expect(screen.getByText("Aide").textContent).toBe("Aide");
         await act(() => vi.advanceTimersByTime(100));
-        expect(screen.getByText("Aide").parentElement?.className).toContain("tooltip-bottom");
-        expect(screen.getByText("Aide").parentElement?.className).toContain("tooltip-active");
+        const tooltip = screen.getByText("Aide").parentElement!;
+        expect([tooltip.classList.contains("tooltip-bottom"), tooltip.classList.contains("tooltip-active")]).toEqual([
+            true,
+            true
+        ]);
     });
 
     test("Choisit gauche ou droite pour la position horizontale automatique", async () => {
@@ -68,7 +71,7 @@ describe("Tooltip component", () => {
 
         fireEvent.pointerEnter(button);
         await act(() => vi.advanceTimersByTime(100));
-        expect(screen.getByText("Aide droite").parentElement?.className).toContain("tooltip-right");
+        expect(screen.getByText("Aide droite").parentElement!.classList.contains("tooltip-right")).toBe(true);
 
         fireEvent.pointerLeave(button);
         rerender(
@@ -81,7 +84,7 @@ describe("Tooltip component", () => {
 
         fireEvent.pointerEnter(nextButton);
         await act(() => vi.advanceTimersByTime(100));
-        expect(screen.getByText("Aide gauche").parentElement?.className).toContain("tooltip-left");
+        expect(screen.getByText("Aide gauche").parentElement!.classList.contains("tooltip-left")).toBe(true);
     });
 
     test("Peut être affichée au clic quand clickBehavior=show", async () => {
@@ -102,6 +105,6 @@ describe("Tooltip component", () => {
         await act(() => vi.advanceTimersByTime(100));
 
         expect(onPointerUp).toHaveBeenCalledTimes(1);
-        expect(screen.getByText("Aide").parentElement?.className).toContain("tooltip-top");
+        expect(screen.getByText("Aide").parentElement!.classList.contains("tooltip-top")).toBe(true);
     });
 });

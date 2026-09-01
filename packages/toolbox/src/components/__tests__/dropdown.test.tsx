@@ -60,14 +60,12 @@ describe("Dropdown component", () => {
     setupComponentTest();
 
     test("Rend la valeur sélectionnée et l'option undefined", () => {
-        const {container} = renderDropdown(
-            <Dropdown theme={dropdownTheme} undefinedLabel="Aucune" value="one" values={values} />
-        );
+        renderDropdown(<Dropdown theme={dropdownTheme} undefinedLabel="Aucune" value="one" values={values} />);
 
-        expect((container.querySelector("[role='listbox']") as HTMLElement | null)?.dataset.value).toBe("one");
+        expect(screen.getByRole("listbox").dataset.value).toBe("one");
         expect(screen.getAllByText("Un")).toHaveLength(2);
-        expect(screen.getByText("Aucune")).toBeTruthy();
-        expect(screen.getByRole("option", {name: "Un"}).className).toContain("dropdown-value-selected");
+        expect(screen.getByText("Aucune").textContent).toBe("Aucune");
+        expect(screen.getByRole("option", {name: "Un"}).classList.contains("dropdown-value-selected")).toBe(true);
     });
 
     test("Affiche le libellé undefined comme hint quand hasUndefined=false", () => {
@@ -75,7 +73,7 @@ describe("Dropdown component", () => {
             <Dropdown hasUndefined={false} theme={dropdownTheme} undefinedLabel="Choisir" values={values} />
         );
 
-        expect(screen.getByText("Choisir").className).toContain("dropdown-hint");
+        expect(screen.getByText("Choisir").classList.contains("dropdown-hint")).toBe(true);
         expect(container.querySelectorAll("[role='option']")).toHaveLength(2);
     });
 
@@ -115,12 +113,13 @@ describe("Dropdown component", () => {
     });
 
     test("Marque les options désactivées sans désactiver toute la dropdown", () => {
-        const {container} = renderDropdown(
+        renderDropdown(
             <Dropdown disabled={["two"]} sizing="no-fit-single-line" theme={dropdownTheme} values={values} />
         );
 
-        expect(container.querySelector("[role='listbox']")?.getAttribute("aria-disabled")).toBe("false");
-        expect(screen.getByRole("option", {name: "Deux"}).className).toContain("dropdown-value-disabled");
-        expect(container.querySelector("[role='listbox']")?.className).toContain("dropdown-single-line");
+        const listbox = screen.getByRole("listbox");
+        expect(listbox.ariaDisabled).toBe("false");
+        expect(screen.getByRole("option", {name: "Deux"}).classList.contains("dropdown-value-disabled")).toBe(true);
+        expect(listbox.classList.contains("dropdown-single-line")).toBe(true);
     });
 });

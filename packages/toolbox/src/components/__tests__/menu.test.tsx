@@ -30,22 +30,24 @@ describe("Menu component", () => {
             <MenuItem caption="Supprimer" disabled iconLeft="delete" iconRight="chevron_right" theme={menuTheme} />
         );
 
-        expect(container.textContent).toContain("delete");
-        expect(container.textContent).toContain("Supprimer");
-        expect(container.textContent).toContain("chevron_right");
-        expect(container.firstElementChild?.className).toContain("menu-menu-item-disabled");
+        expect(["delete", "Supprimer", "chevron_right"].map(text => screen.getByText(text).textContent)).toEqual([
+            "delete",
+            "Supprimer",
+            "chevron_right"
+        ]);
+        expect(container.firstElementChild!.classList.contains("menu-menu-item-disabled")).toBe(true);
     });
 
     test("Rend un menu actif en liste complète", () => {
-        const {container} = render(
+        render(
             <Menu {...createMenu()} position="bottom" theme={menuTheme}>
                 <MenuItem key="one" caption="Un" theme={menuTheme} />
             </Menu>
         );
 
-        expect(container.querySelector("ul")?.className).toContain("menu-active");
-        expect(container.querySelector("ul")?.className).toContain("menu-full");
-        expect(screen.getByText("Un")).toBeTruthy();
+        const list = screen.getByRole("list");
+        expect([list.classList.contains("menu-active"), list.classList.contains("menu-full")]).toEqual([true, true]);
+        expect(screen.getByText("Un").textContent).toBe("Un");
     });
 
     test("Appelle l'item et ferme le menu au clic", () => {

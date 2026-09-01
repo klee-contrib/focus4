@@ -23,7 +23,7 @@
         "@focus4/styling": "12.11.1",
         "@focus4/toolbox": "12.11.4",
         "classnames": "^2.5.1",
-        "es-toolkit": "^1.51.0",
+        "es-toolkit": "^1.52.0",
         "motion": "^13.1.1",
         "tslib": "^2.8.1"
     },

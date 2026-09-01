@@ -19,7 +19,7 @@ describe("Chip component", () => {
 
         const span = container.querySelector("span")!;
         expect(span.tagName).toBe("SPAN");
-        expect(container.textContent).toContain("Tag");
+        expect(span.textContent).toBe("Tag");
     });
 
     test("Rend un <button> quand onClick est passé", () => {
@@ -29,9 +29,9 @@ describe("Chip component", () => {
     });
 
     test("Rend un <a> quand href est passé", () => {
-        const {container} = render(<Chip href="/x" label="Lien" theme={chipTheme} />);
+        render(<Chip href="/x" label="Lien" theme={chipTheme} />);
 
-        expect(container.querySelector("a")?.getAttribute("href")).toBe("/x");
+        expect((screen.getByRole("link", {name: "Lien"}) as HTMLAnchorElement).pathname).toBe("/x");
     });
 
     test("Déclenche onClick au clic sur le chip", () => {
@@ -43,17 +43,19 @@ describe("Chip component", () => {
     });
 
     test("Affiche l'icône passée en prop", () => {
-        const {container} = render(<Chip icon="star" label="Favori" theme={chipTheme} />);
+        render(<Chip icon="star" label="Favori" theme={chipTheme} />);
 
-        expect(container.textContent).toContain("star");
+        expect([screen.getByText("star").textContent, screen.getByText("Favori").textContent]).toEqual([
+            "star",
+            "Favori"
+        ]);
     });
 
     test("Affiche le bouton de suppression quand onDeleteClick est passé", () => {
         const onDelete = vi.fn();
-        const {container} = renderWithTheme(<Chip label="Removable" onDeleteClick={onDelete} theme={chipTheme} />);
+        renderWithTheme(<Chip label="Removable" onDeleteClick={onDelete} theme={chipTheme} />);
 
-        const deleteButton = container.querySelector("button")!;
-        expect(deleteButton).toBeTruthy();
+        const deleteButton = screen.getByRole("button");
         fireEvent.click(deleteButton);
         expect(onDelete).toHaveBeenCalledTimes(1);
     });

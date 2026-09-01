@@ -32,17 +32,18 @@ describe("Display component", () => {
             wrapper
         });
 
-        expect(container.querySelector("[data-name='mon-champ']")).toBeTruthy();
+        expect((container.firstElementChild as HTMLElement).dataset.name).toBe("mon-champ");
     });
 
     test.each([
-        {mode: "lists" as const, values: ["a", "b"], expectHasUl: true},
-        {mode: "lists-if-multiple" as const, values: ["a", "b"], expectHasUl: true},
-        {mode: "lists-if-multiple" as const, values: ["a"], expectHasUl: false},
-        {mode: "inline" as const, values: ["a", "b"], expectHasUl: false}
+        {mode: "lists" as const, values: ["a", "b"], expectedLists: 1},
+        {mode: "lists" as const, values: [], expectedLists: 0},
+        {mode: "lists-if-multiple" as const, values: ["a", "b"], expectedLists: 1},
+        {mode: "lists-if-multiple" as const, values: ["a"], expectedLists: 0},
+        {mode: "inline" as const, values: ["a", "b"], expectedLists: 0}
     ])(
-        "Affiche les valeurs multiples en $mode (avec $values.length éléments) — <ul> présent: $expectHasUl",
-        ({mode, values, expectHasUl}) => {
+        "Affiche les valeurs multiples en $mode (avec $values.length éléments) — listes: $expectedLists",
+        ({mode, values, expectedLists}) => {
             const {container} = render(
                 <Display
                     formatter={v => v as string}
@@ -54,7 +55,7 @@ describe("Display component", () => {
                 {wrapper}
             );
 
-            expect(container.querySelector("ul") !== null).toBe(expectHasUl);
+            expect(container.querySelectorAll("ul")).toHaveLength(expectedLists);
         }
     );
 
@@ -71,21 +72,6 @@ describe("Display component", () => {
         );
 
         expect(container.textContent).toBe("x, y, z");
-    });
-
-    test("En mode lists avec liste vide, aucune <ul> n'est rendue", () => {
-        const {container} = render(
-            <Display
-                formatter={v => v as string}
-                multiValueDisplay="lists"
-                schema={z.array(z.string())}
-                theme={displayTheme}
-                value={[] as any}
-            />,
-            {wrapper}
-        );
-
-        expect(container.querySelector("ul")).toBeNull();
     });
 
     test("listChunkSize découpe la liste en plusieurs <ul>", () => {

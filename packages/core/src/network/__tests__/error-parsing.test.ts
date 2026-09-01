@@ -22,20 +22,7 @@ function createHTTPError(status: number, url = "https://example.com/api"): HTTPE
         }
     );
     const request = new Request(url);
-    const options: NormalizedOptions = {
-        method: "GET",
-        retry: {},
-        prefix: "",
-        onDownloadProgress: () => {
-            /** */
-        },
-        onUploadProgress: () => {
-            /** */
-        },
-        context: {}
-    };
-
-    return new HTTPError(response, request, options);
+    return new HTTPError(response, request, {} as NormalizedOptions);
 }
 
 describe("error-parsing", () => {
@@ -165,10 +152,7 @@ describe("error-parsing", () => {
             const error = createHTTPError(422);
             const result = handleProblemDetails(error, {status: 422, errors});
 
-            expect(result.$messages).toHaveLength(expectedMessages.length);
-            for (const message of expectedMessages) {
-                expect(result.$messages.find(m => m.message === message)).toBeDefined();
-            }
+            expect(result.$messages).toEqual(expectedMessages.map(message => ({type: "error", message})));
         });
 
         test("Traite des champs personnalisés comme string", () => {
@@ -181,13 +165,10 @@ describe("error-parsing", () => {
 
             const result = handleProblemDetails(error, problemDetails);
 
-            expect(result.$messages).toHaveLength(2);
-            expect(
-                result.$messages.find(m => m.type === "warning" && m.message === "Avertissement personnalisé")
-            ).toBeDefined();
-            expect(
-                result.$messages.find(m => m.type === "info" && m.message === "Information personnalisée")
-            ).toBeDefined();
+            expect(result.$messages).toEqual([
+                {type: "warning", message: "Avertissement personnalisé"},
+                {type: "info", message: "Information personnalisée"}
+            ]);
         });
 
         test("Traite des champs personnalisés comme string[]", () => {
@@ -199,8 +180,10 @@ describe("error-parsing", () => {
 
             const result = handleProblemDetails(error, problemDetails);
 
-            expect(result.$messages).toHaveLength(2);
-            expect(result.$messages.filter(m => m.type === "success")).toHaveLength(2);
+            expect(result.$messages).toEqual([
+                {type: "success", message: "Succès 1"},
+                {type: "success", message: "Succès 2"}
+            ]);
         });
 
         test("Traite des champs personnalisés comme Record<string, string>", () => {
@@ -215,9 +198,10 @@ describe("error-parsing", () => {
 
             const result = handleProblemDetails(error, problemDetails);
 
-            expect(result.$messages).toHaveLength(2);
-            expect(result.$messages.find(m => m.message === "field1: Avertissement 1")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "Avertissement global")).toBeDefined();
+            expect(result.$messages).toEqual([
+                {type: "warning", message: "field1: Avertissement 1"},
+                {type: "warning", message: "Avertissement global"}
+            ]);
         });
 
         test("Traite des champs personnalisés comme Record<string, string[]>", () => {
@@ -232,10 +216,11 @@ describe("error-parsing", () => {
 
             const result = handleProblemDetails(error, problemDetails);
 
-            expect(result.$messages).toHaveLength(3);
-            expect(result.$messages.find(m => m.message === "field1: Info 1")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "field1: Info 2")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "Info globale")).toBeDefined();
+            expect(result.$messages).toEqual([
+                {type: "info", message: "field1: Info 1"},
+                {type: "info", message: "field1: Info 2"},
+                {type: "info", message: "Info globale"}
+            ]);
         });
 
         test("Ignore les champs standards (type, status, title, detail, instance)", () => {
@@ -251,10 +236,10 @@ describe("error-parsing", () => {
 
             const result = handleProblemDetails(error, problemDetails);
 
-            // Seul errors et detail devraient être traités
-            expect(result.$messages).toHaveLength(2);
-            expect(result.$messages.find(m => m.message === "Détail")).toBeDefined();
-            expect(result.$messages.find(m => m.message === "Erreur")).toBeDefined();
+            expect(result.$messages).toEqual([
+                {type: "error", message: "Détail"},
+                {type: "error", message: "Erreur"}
+            ]);
         });
 
         test("Ignore les tableaux vides", () => {

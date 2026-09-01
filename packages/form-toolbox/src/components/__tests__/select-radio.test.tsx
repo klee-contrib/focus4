@@ -33,10 +33,11 @@ describe("SelectRadio component", () => {
     test("Rend un radio par valeur de la liste de référence", () => {
         render(<SelectRadio onChange={() => undefined} schema={z.string()} theme={selectRadioTheme} values={refs()} />);
 
-        expect(screen.getAllByRole("radio")).toHaveLength(3);
-        expect(screen.getByText("Alpha")).toBeTruthy();
-        expect(screen.getByText("Beta")).toBeTruthy();
-        expect(screen.getByText("Charlie")).toBeTruthy();
+        expect(screen.getAllByRole("radio").map(radio => radio.parentElement?.textContent)).toEqual([
+            "Alpha",
+            "Beta",
+            "Charlie"
+        ]);
     });
 
     test("Coche l'option correspondant à value", () => {
@@ -50,8 +51,16 @@ describe("SelectRadio component", () => {
             />
         );
 
-        const radios = screen.getAllByRole("radio") as HTMLInputElement[];
-        expect(radios.filter(r => r.checked)).toHaveLength(1);
+        expect(
+            (screen.getAllByRole("radio") as HTMLInputElement[]).map(radio => ({
+                label: radio.parentElement?.textContent,
+                checked: radio.checked
+            }))
+        ).toEqual([
+            {label: "Alpha", checked: false},
+            {label: "Beta", checked: true},
+            {label: "Charlie", checked: false}
+        ]);
     });
 
     test("Appelle onChange avec la valeur sélectionnée", () => {
@@ -63,10 +72,13 @@ describe("SelectRadio component", () => {
         expect(onChange).toHaveBeenCalledWith("B");
     });
 
-    test("Ajoute une option 'Aucun' en début de liste avec hasUndefined='first-option'", () => {
+    test.each([
+        ["first-option", 0],
+        ["last-option", 3]
+    ] as const)("Place l'option 'Aucun' à la position %s", (hasUndefined, expectedIndex) => {
         render(
             <SelectRadio
-                hasUndefined="first-option"
+                hasUndefined={hasUndefined}
                 onChange={() => undefined}
                 schema={z.string()}
                 theme={selectRadioTheme}
@@ -74,23 +86,9 @@ describe("SelectRadio component", () => {
             />
         );
 
-        expect(screen.getAllByRole("radio")).toHaveLength(4);
-        expect(screen.getByText("Aucun")).toBeTruthy();
-    });
-
-    test("Ajoute une option 'Aucun' en fin de liste avec hasUndefined='last-option'", () => {
-        const {container} = render(
-            <SelectRadio
-                hasUndefined="last-option"
-                onChange={() => undefined}
-                schema={z.string()}
-                theme={selectRadioTheme}
-                values={refs()}
-            />
-        );
-
-        const labels = [...container.querySelectorAll("label")].map(l => l.textContent);
-        expect(labels.at(-1)).toContain("Aucun");
+        const radios = screen.getAllByRole("radio");
+        expect(radios).toHaveLength(4);
+        expect(radios[expectedIndex].parentElement?.textContent).toBe("Aucun");
     });
 
     test("onChange reçoit undefined quand on clique sur l'option 'Aucun'", () => {
@@ -126,7 +124,7 @@ describe("SelectRadio component", () => {
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
+        render(
             <SelectRadio
                 error="Champ requis"
                 onChange={() => undefined}
@@ -136,6 +134,6 @@ describe("SelectRadio component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Champ requis");
+        expect(screen.getByText("Champ requis").textContent).toBe("Champ requis");
     });
 });

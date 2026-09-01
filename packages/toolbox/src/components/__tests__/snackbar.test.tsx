@@ -20,20 +20,19 @@ describe("Snackbar component", () => {
     test("Rend un message de statut quand elle est active", () => {
         renderWithTheme(<Snackbar active message="Opération terminée" theme={snackbarTheme} />);
 
-        expect(screen.getByRole("status")).toBeTruthy();
-        expect(screen.getByText("Opération terminée")).toBeTruthy();
+        expect(screen.getByRole("status").textContent).toBe("Opération terminée");
     });
 
-    test("Rend une alerte pour les niveaux warning et error", () => {
-        const {rerender} = renderWithTheme(
-            <Snackbar active level="warning" message="Attention" theme={snackbarTheme} />
-        );
+    test.each([
+        ["warning", "Attention", "snackbar-warning"],
+        ["error", "Erreur", "snackbar-error"]
+    ] as const)("Rend une alerte pour le niveau %s", (level, message, className) => {
+        renderWithTheme(<Snackbar active level={level} message={message} theme={snackbarTheme} />);
 
-        expect(screen.getByRole("alert").getAttribute("aria-live")).toBe("assertive");
-        expect(screen.getByRole("alert").className).toContain("snackbar-warning");
-
-        rerender(<Snackbar active level="error" message="Erreur" theme={snackbarTheme} />);
-        expect(screen.getByRole("alert").className).toContain("snackbar-error");
+        const alert = screen.getByRole("alert");
+        expect(alert.ariaLive).toBe("assertive");
+        expect(alert.classList.contains(className)).toBe(true);
+        expect(alert.textContent).toBe(message);
     });
 
     test("Déclenche l'action puis la fermeture", () => {

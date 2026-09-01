@@ -59,11 +59,11 @@ describe("Field", () => {
         const {container} = render(<Field field={field} labelWidth="120px" theme={fieldTheme} valueWidth="240px" />);
 
         const root = container.firstElementChild as HTMLElement;
-        expect(root.className).toContain("domain-class");
+        expect(root.classList.contains("domain-class")).toBe(true);
         expect(root.style.getPropertyValue("--field-label-width")).toBe("120px");
         expect(root.style.getPropertyValue("--field-value-width")).toBe("240px");
         expect(screen.getByTestId("label-name").textContent).toBe("Label");
-        expect(screen.getByTestId("field-input")).toBeTruthy();
+        expect(screen.getByTestId("field-input")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("utilise labelWidth/valueWidth depuis fieldProps", () => {
@@ -94,14 +94,14 @@ describe("FormCore", () => {
     test("render un form quand save est fourni et noForm=false", () => {
         const save = vi.fn();
 
-        render(
+        const {container} = render(
             <FormCore labelWidth="10rem" save={save} theme={formTheme} valueWidth="20rem">
                 <button type="submit">Submit</button>
             </FormCore>
         );
 
-        const form = document.querySelector("form") as HTMLFormElement;
-        expect(form).toBeTruthy();
+        const form = container.firstElementChild as HTMLFormElement;
+        expect(form).toBeInstanceOf(HTMLFormElement);
         expect(form.style.getPropertyValue("--field-label-width")).toBe("10rem");
         expect(form.style.getPropertyValue("--field-value-width")).toBe("20rem");
 
@@ -119,9 +119,8 @@ describe("FormCore", () => {
             </FormCore>
         );
 
-        expect(container.querySelector("form")).toBeNull();
-        expect(container.querySelector("div")).toBeTruthy();
-        expect(screen.getByTestId("content")).toBeTruthy();
+        expect(container.firstElementChild).toBeInstanceOf(HTMLDivElement);
+        expect(screen.getByTestId("content").textContent).toBe("x");
     });
 
     test("render un div quand save est absent", () => {
@@ -131,7 +130,6 @@ describe("FormCore", () => {
             </FormCore>
         );
 
-        expect(container.querySelector("form")).toBeNull();
-        expect(container.querySelector("div")).toBeTruthy();
+        expect(container.firstElementChild).toBeInstanceOf(HTMLDivElement);
     });
 });

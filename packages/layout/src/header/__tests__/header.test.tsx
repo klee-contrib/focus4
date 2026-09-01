@@ -39,8 +39,9 @@ describe("Header", () => {
             </HeaderScrolling>
         );
 
-        expect(screen.getByText("Top row")).toBeTruthy();
-        expect(container.querySelector("header")?.className).toContain("header-scrolling-sticky");
+        expect(screen.getByText("Top row").textContent).toBe("Top row");
+        expect(container.firstElementChild?.tagName).toBe("HEADER");
+        expect(container.firstElementChild?.classList.contains("header-scrolling-sticky")).toBe(true);
     });
 
     test("HeaderScrolling n'est pas sticky par défaut avec HeaderContent", () => {
@@ -50,8 +51,9 @@ describe("Header", () => {
             </HeaderScrolling>
         );
 
-        expect(screen.getByText("Contenu")).toBeTruthy();
-        expect(container.querySelector("header")?.className).not.toContain("header-scrolling-sticky");
+        expect(screen.getByText("Contenu").textContent).toBe("Contenu");
+        expect(container.firstElementChild?.tagName).toBe("HEADER");
+        expect(container.firstElementChild?.classList.contains("header-scrolling-sticky")).toBe(false);
     });
 
     test("HeaderTopRow enregistre son élément dans le Scrollable", () => {
@@ -64,7 +66,7 @@ describe("Header", () => {
         );
 
         expect(registerHeaderElement).toHaveBeenCalledTimes(1);
-        expect(registerHeaderElement.mock.calls[0]?.[0].className).toContain("header-top-row");
+        expect(registerHeaderElement.mock.calls[0][0].classList.contains("header-top-row")).toBe(true);
     });
 
     test("HeaderContent passe le header en sticky quand il sort de l'écran", () => {

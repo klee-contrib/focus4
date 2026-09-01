@@ -32,10 +32,10 @@ describe("downloadFile", () => {
         expect(createObjectURL).toHaveBeenCalledTimes(1);
         expect(clickSpy).toHaveBeenCalledTimes(1);
 
-        const anchor = document.querySelector("a");
-        expect(anchor).toBeTruthy();
-        expect(anchor?.getAttribute("href")).toBe("blob:test-url");
-        expect(anchor?.getAttribute("download")).toBe("mon fichier.txt");
+        const anchor = document.querySelector("a")!;
+        expect(anchor).toBeInstanceOf(HTMLAnchorElement);
+        expect(anchor.href).toBe("blob:test-url");
+        expect(anchor.download).toBe("mon fichier.txt");
 
         vi.advanceTimersByTime(100);
 
@@ -50,7 +50,8 @@ describe("downloadFile", () => {
 
         await downloadFile(response);
 
-        const anchor = document.querySelector("a");
-        expect(anchor?.getAttribute("download")).toBe("file");
+        const anchor = document.querySelector("a")!;
+        expect(anchor).toBeInstanceOf(HTMLAnchorElement);
+        expect(anchor.download).toBe("file");
     });
 });

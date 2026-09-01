@@ -894,8 +894,11 @@ describe("CollectionStore", () => {
 
             const {facets} = store;
             const nullFacet = facets[0].values.find(v => v.code === "<null>");
-            expect(nullFacet).toBeDefined();
-            expect(nullFacet?.count).toBe(1);
+            expect(nullFacet).toEqual({
+                code: "<null>",
+                label: "focus.search.results.missing",
+                count: 1
+            });
         });
 
         test("Fonctionne avec des tableaux dans les facettes", () => {

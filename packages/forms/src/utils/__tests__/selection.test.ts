@@ -1,10 +1,19 @@
-import {describe, expect, test, vi} from "vitest";
+import {afterEach, describe, expect, test, vi} from "vitest";
 
 import {getInputSelection, setInputSelection} from "../selection";
 
 import {createInput} from "./test-utils";
 
+function runAnimationFrameImmediately() {
+    return vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(callback => {
+        callback(0);
+        return 0;
+    });
+}
+
 describe("selection", () => {
+    afterEach(() => vi.restoreAllMocks());
+
     describe("getInputSelection", () => {
         test("retourne la sélection d'un input", () => {
             const input = createInput("test", 1, 3);
@@ -27,23 +36,19 @@ describe("selection", () => {
 
     describe("setInputSelection", () => {
         test("applique la sélection via setSelectionRange", () => {
-            const raf = vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(cb => {
-                cb(0);
-                return 0;
-            });
-
+            const requestAnimationFrame = runAnimationFrameImmediately();
             const input = createInput();
             const setSelectionRange = vi.spyOn(input, "setSelectionRange");
 
             setInputSelection(input, {start: 1, end: 3});
 
+            expect(requestAnimationFrame).toHaveBeenCalledOnce();
             expect(setSelectionRange).toHaveBeenCalledWith(1, 3);
-            raf.mockRestore();
         });
 
         test("ignore un second appel tant que le frame est en attente", () => {
             let scheduled: FrameRequestCallback | undefined;
-            const raf = vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(cb => {
+            vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(cb => {
                 scheduled = cb;
                 return 0;
             });
@@ -60,22 +65,16 @@ describe("selection", () => {
 
             expect(setSelectionRange).toHaveBeenCalledTimes(1);
             expect(setSelectionRange).toHaveBeenCalledWith(1, 2);
-            raf.mockRestore();
         });
 
         test("n'échoue pas si setSelectionRange lève une erreur", () => {
-            const raf = vi.spyOn(globalThis, "requestAnimationFrame").mockImplementation(cb => {
-                cb(0);
-                return 0;
-            });
-
+            runAnimationFrameImmediately();
             const input = createInput();
             vi.spyOn(input, "setSelectionRange").mockImplementation(() => {
                 throw new Error("not focused");
             });
 
             expect(() => setInputSelection(input, {start: 0, end: 1})).not.toThrow();
-            raf.mockRestore();
         });
     });
 });

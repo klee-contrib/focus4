@@ -27,11 +27,9 @@ describe("Select component", () => {
     });
 
     test("Affiche le libellé traduit de la valeur sélectionnée", () => {
-        const {container} = render(
-            <Select onChange={() => undefined} schema={z.string()} theme={selectTheme} value="A" values={refs()} />
-        );
+        render(<Select onChange={() => undefined} schema={z.string()} theme={selectTheme} value="A" values={refs()} />);
 
-        expect(container.textContent).toContain("Alpha");
+        expect(screen.getByRole("option", {name: "Alpha"}).ariaSelected).toBe("true");
     });
 
     test("data-value contient la clé brute de la valeur sélectionnée", () => {
@@ -84,7 +82,7 @@ describe("Select component", () => {
     });
 
     test("Utilise l'undefinedLabel personnalisé", () => {
-        const {container} = render(
+        render(
             <Select
                 onChange={() => undefined}
                 schema={z.string()}
@@ -95,7 +93,7 @@ describe("Select component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Aucun");
+        expect(screen.getAllByText("Aucun").map(element => element.textContent)).toEqual(["Aucun", "Aucun"]);
     });
 
     test("Affiche l'erreur en supportingText", () => {
@@ -103,19 +101,17 @@ describe("Select component", () => {
             <Select error="Requis" onChange={() => undefined} schema={z.string()} theme={selectTheme} values={refs()} />
         );
 
-        expect(screen.getByText("Requis")).toBeTruthy();
+        expect(screen.getByText("Requis").textContent).toBe("Requis");
     });
 
     test("Ajoute aria-disabled quand disabled=true", () => {
-        const {container} = render(
-            <Select disabled onChange={() => undefined} schema={z.string()} theme={selectTheme} values={refs()} />
-        );
+        render(<Select disabled onChange={() => undefined} schema={z.string()} theme={selectTheme} values={refs()} />);
 
-        expect(container.querySelector("[aria-disabled='true']")).not.toBeNull();
+        expect(screen.getByRole("listbox").ariaDisabled).toBe("true");
     });
 
     test("disabled sous forme de liste ne désactive pas le champ global", () => {
-        const {container} = render(
+        render(
             <Select
                 disabled={["A"]}
                 onChange={() => undefined}
@@ -125,6 +121,6 @@ describe("Select component", () => {
             />
         );
 
-        expect(container.querySelector("[aria-disabled='true']")).toBeNull();
+        expect(screen.getByRole("listbox").ariaDisabled).toBe("false");
     });
 });

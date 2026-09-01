@@ -26,11 +26,8 @@ export function setupComponentTest(translations: Record<string, unknown> = {}): 
 
     afterEach(() => {
         cleanup();
-        vi.restoreAllMocks();
-    });
-
-    afterAll(() => {
         document.body.innerHTML = "";
+        vi.restoreAllMocks();
     });
 }
 

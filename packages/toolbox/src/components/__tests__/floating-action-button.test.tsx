@@ -26,40 +26,38 @@ describe("FloatingActionButton component", () => {
         const {container} = render(<FloatingActionButton icon="add" label="Ajouter" theme={fabTheme} />);
 
         const button = screen.getByRole("button", {name: "Ajouter"});
-        expect(button.tagName).toBe("BUTTON");
-        expect(button.getAttribute("type")).toBe("button");
-        expect(container.textContent).toContain("add");
+        expect(button).toMatchObject({tagName: "BUTTON", type: "button"});
+        expect([...container.querySelectorAll(".fab-icon")].map(icon => icon.textContent)).toEqual(["add"]);
     });
 
     test("Rend un lien quand href est renseigné", () => {
         render(<FloatingActionButton href="/create" icon="add" label="Créer" target="_blank" theme={fabTheme} />);
 
-        const link = screen.getByRole("link", {name: "Créer"});
-        expect(link.getAttribute("href")).toBe("/create");
-        expect(link.getAttribute("target")).toBe("_blank");
-        expect(link.hasAttribute("type")).toBe(false);
+        expect(screen.getByRole("link", {name: "Créer"})).toMatchObject({
+            pathname: "/create",
+            target: "_blank",
+            type: ""
+        });
     });
 
     test("Etend automatiquement le bouton quand il n'a pas d'icône", () => {
-        const {container} = render(<FloatingActionButton color="accent" label="Créer" lowered theme={fabTheme} />);
+        render(<FloatingActionButton color="accent" label="Créer" lowered theme={fabTheme} />);
 
-        expect(screen.getByRole("button", {name: "Créer"})).toBeTruthy();
-        expect(container.querySelector("button")?.className).toContain("fab-extended");
-        expect(container.querySelector("button")?.className).toContain("fab-accent");
-        expect(container.querySelector("button")?.className).toContain("fab-lowered");
+        expect([...screen.getByRole("button", {name: "Créer"}).classList].sort()).toEqual(
+            ["fab", "fab-accent", "fab-extended", "fab-lowered"].sort()
+        );
     });
 
-    test("Déclenche onClick sauf quand disabled=true", () => {
+    test.each([
+        {disabled: false, callCount: 1},
+        {disabled: true, callCount: 0}
+    ])("Déclenche onClick avec disabled : $disabled", ({disabled, callCount}) => {
         const onClick = vi.fn();
-        const {rerender} = render(
-            <FloatingActionButton icon="add" label="Ajouter" onClick={onClick} theme={fabTheme} />
+        render(
+            <FloatingActionButton disabled={disabled} icon="add" label="Ajouter" onClick={onClick} theme={fabTheme} />
         );
 
         fireEvent.click(screen.getByRole("button", {name: "Ajouter"}));
-        expect(onClick).toHaveBeenCalledTimes(1);
-
-        rerender(<FloatingActionButton disabled icon="add" label="Ajouter" onClick={onClick} theme={fabTheme} />);
-        fireEvent.click(screen.getByRole("button", {name: "Ajouter"}));
-        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick).toHaveBeenCalledTimes(callCount);
     });
 });

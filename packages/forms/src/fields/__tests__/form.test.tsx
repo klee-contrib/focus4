@@ -26,8 +26,10 @@ describe("Form", () => {
 
         render(<Form errorDisplay="after-focus" />);
 
-        expect(screen.getByTestId("prop-value").textContent).toBe("after-focus");
-        expect(screen.getByTestId("context-value").textContent).toBe("after-focus");
+        expect(screen.getAllByText("after-focus").map(element => element.dataset.testid)).toEqual([
+            "prop-value",
+            "context-value"
+        ]);
     });
 
     test("laisse errorDisplay indéfini par défaut", () => {
@@ -42,7 +44,9 @@ describe("Form", () => {
 
         render(<Form />);
 
-        expect(screen.getByTestId("prop-default").textContent).toBe("undefined");
-        expect(screen.getByTestId("context-value").textContent).toBe("undefined");
+        expect(screen.getAllByText("undefined").map(element => element.dataset.testid)).toEqual([
+            "prop-default",
+            "context-value"
+        ]);
     });
 });

@@ -1,4 +1,4 @@
-import {render} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import i18next from "i18next";
 import {initReactI18next} from "react-i18next";
 import {describe, expect, test} from "vitest";
@@ -22,11 +22,9 @@ const panelTheme = {
 describe("Panel", () => {
     test("Le titre est rendu dans une balise <h3> unique", () => {
         const panelTitle = "A title for a test";
-        const {container} = render(<Panel title={panelTitle} theme={panelTheme} />);
+        render(<Panel title={panelTitle} theme={panelTheme} />);
 
-        const h3List = container.querySelectorAll("h3");
-        expect(h3List).toHaveLength(1);
-        expect(h3List[0].textContent).toContain(panelTitle);
+        expect(screen.getAllByRole("heading", {level: 3, name: panelTitle})).toHaveLength(1);
     });
 
     test.each([

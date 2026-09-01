@@ -1,4 +1,4 @@
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {setupComponentTest} from "../../__tests__/test-utils";
@@ -25,33 +25,26 @@ describe("Checkbox component", () => {
     });
 
     test("Rend une checkbox cochée quand value=true", () => {
-        const {container} = render(<Checkbox onChange={() => undefined} theme={checkboxTheme} value />);
+        render(<Checkbox onChange={() => undefined} theme={checkboxTheme} value />);
 
-        expect(container.querySelector("input")?.checked).toBe(true);
+        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
     });
 
     test("Affiche le libellé quand label est renseigné", () => {
-        const {container} = render(
-            <Checkbox label="Accepter les CGU" onChange={() => undefined} theme={checkboxTheme} value={false} />
-        );
+        render(<Checkbox label="Accepter les CGU" onChange={() => undefined} theme={checkboxTheme} value={false} />);
 
-        expect(container.textContent).toContain("Accepter les CGU");
+        expect(screen.getByText("Accepter les CGU").textContent).toBe("Accepter les CGU");
     });
 
-    test("Appelle onChange avec la valeur inverse au clic", () => {
+    test.each([
+        {expected: true, value: false},
+        {expected: false, value: true}
+    ])("Appelle onChange avec $expected au clic quand value=$value", ({expected, value}) => {
         const onChange = vi.fn();
-        const {container} = render(<Checkbox onChange={onChange} theme={checkboxTheme} value={false} />);
+        render(<Checkbox onChange={onChange} theme={checkboxTheme} value={value} />);
 
-        fireEvent.click(container.querySelector("input")!);
-        expect(onChange).toHaveBeenCalledWith(true, expect.any(Object));
-    });
-
-    test("Passe de true à false au clic", () => {
-        const onChange = vi.fn();
-        const {container} = render(<Checkbox onChange={onChange} theme={checkboxTheme} value />);
-
-        fireEvent.click(container.querySelector("input")!);
-        expect(onChange).toHaveBeenCalledWith(false, expect.any(Object));
+        fireEvent.click(screen.getByRole("checkbox"));
+        expect(onChange).toHaveBeenCalledWith(expected, expect.any(Object));
     });
 
     test("N'appelle pas onChange quand disabled=true", () => {
@@ -69,13 +62,13 @@ describe("Checkbox component", () => {
             <Checkbox indeterminate onChange={() => undefined} theme={checkboxTheme} value={false} />
         );
 
-        expect(container.textContent).toContain("remove");
+        expect(container.querySelector("span")!.textContent).toBe("remove");
     });
 
     test("Rend l'icône 'check' quand indeterminate=false", () => {
         const {container} = render(<Checkbox onChange={() => undefined} theme={checkboxTheme} value />);
 
-        expect(container.textContent).toContain("check");
+        expect(container.querySelector("span")!.textContent).toBe("check");
     });
 
     test("Propage l'id et name à l'input", () => {

@@ -72,8 +72,7 @@ describe("useInput", () => {
                 })
             );
 
-            expect(result.current.stringValue).toBeTruthy();
-            expect(result.current.stringValue).toContain("1234");
+            expect(result.current.stringValue).toBe("1234.56");
         });
 
         test.each([

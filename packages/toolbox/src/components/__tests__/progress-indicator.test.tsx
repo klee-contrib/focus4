@@ -1,4 +1,4 @@
-import {render} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 
 import {setupComponentTest} from "../../__tests__/test-utils";
@@ -15,35 +15,45 @@ describe("ProgressIndicator components", () => {
     setupComponentTest();
 
     test("CircularProgressIndicator: rôle 'progressbar' avec aria-valuenow", () => {
-        const {container} = render(<CircularProgressIndicator theme={progressTheme} value={30} />);
+        render(<CircularProgressIndicator theme={progressTheme} value={30} />);
 
-        const bar = container.querySelector("[role='progressbar']")!;
-        expect(bar.getAttribute("aria-valuenow")).toBe("30");
-        expect(bar.getAttribute("aria-valuemin")).toBe("0");
-        expect(bar.getAttribute("aria-valuemax")).toBe("100");
+        expect(screen.getByRole("progressbar")).toMatchObject({
+            ariaValueNow: "30",
+            ariaValueMin: "0",
+            ariaValueMax: "100"
+        });
     });
 
     test("CircularProgressIndicator: clamp la valeur entre min et max", () => {
-        const {container} = render(<CircularProgressIndicator max={50} min={10} theme={progressTheme} value={999} />);
+        render(<CircularProgressIndicator max={50} min={10} theme={progressTheme} value={999} />);
 
-        expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuenow")).toBe("50");
-    });
-
-    test("CircularProgressIndicator: indeterminate ne plante pas (animate stubbé)", () => {
-        const {container} = render(<CircularProgressIndicator indeterminate theme={progressTheme} />);
-
-        expect(container.querySelector("[role='progressbar']")).not.toBeNull();
+        expect(screen.getByRole("progressbar")).toMatchObject({
+            ariaValueNow: "50",
+            ariaValueMin: "10",
+            ariaValueMax: "50"
+        });
     });
 
     test("LinearProgressIndicator: rôle 'progressbar' avec aria-valuenow", () => {
-        const {container} = render(<LinearProgressIndicator theme={progressTheme} value={75} />);
+        render(<LinearProgressIndicator theme={progressTheme} value={75} />);
 
-        expect(container.querySelector("[role='progressbar']")?.getAttribute("aria-valuenow")).toBe("75");
+        expect(screen.getByRole("progressbar")).toMatchObject({
+            ariaValueNow: "75",
+            ariaValueMin: "0",
+            ariaValueMax: "100"
+        });
     });
 
-    test("LinearProgressIndicator: indeterminate ne plante pas (animate stubbé)", () => {
-        const {container} = render(<LinearProgressIndicator indeterminate theme={progressTheme} />);
+    test.each([
+        ["circulaire", CircularProgressIndicator],
+        ["linéaire", LinearProgressIndicator]
+    ])("L'indicateur %s indéterminé expose une progression nulle", (_label, Indicator) => {
+        render(<Indicator indeterminate theme={progressTheme} />);
 
-        expect(container.querySelector("[role='progressbar']")).not.toBeNull();
+        expect(screen.getByRole("progressbar")).toMatchObject({
+            ariaValueNow: "0",
+            ariaValueMin: "0",
+            ariaValueMax: "100"
+        });
     });
 });

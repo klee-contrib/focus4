@@ -1,4 +1,4 @@
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {setupComponentTest} from "../../__tests__/test-utils";
@@ -26,9 +26,9 @@ describe("Switch component", () => {
     });
 
     test("Rend un input coché quand value=true", () => {
-        const {container} = render(<Switch onChange={() => undefined} theme={switchTheme} value />);
+        render(<Switch onChange={() => undefined} theme={switchTheme} value />);
 
-        expect(container.querySelector("input")?.checked).toBe(true);
+        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
     });
 
     test("Appelle onChange avec la valeur inverse au clic", () => {
@@ -48,24 +48,20 @@ describe("Switch component", () => {
     });
 
     test("Affiche le libellé quand label est renseigné", () => {
-        const {container} = render(
-            <Switch label="Activer les notifications" onChange={() => undefined} theme={switchTheme} value />
-        );
+        render(<Switch label="Activer les notifications" onChange={() => undefined} theme={switchTheme} value />);
 
-        expect(container.textContent).toContain("Activer les notifications");
+        const input = screen.getByRole("checkbox", {name: "Activer les notifications"}) as HTMLInputElement;
+        expect(input.labels![0].textContent).toBe("Activer les notifications");
     });
 
-    test("Affiche iconOn quand value=true", () => {
-        const {container} = render(<Switch iconOn="check" onChange={() => undefined} theme={switchTheme} value />);
-
-        expect(container.textContent).toContain("check");
-    });
-
-    test("Affiche iconOff quand value=false", () => {
+    test.each([
+        {expected: "check", iconOff: undefined, iconOn: "check", value: true},
+        {expected: "close", iconOff: "close", iconOn: undefined, value: false}
+    ])("Affiche l'icône $expected pour value=$value", ({expected, iconOff, iconOn, value}) => {
         const {container} = render(
-            <Switch iconOff="close" onChange={() => undefined} theme={switchTheme} value={false} />
+            <Switch iconOff={iconOff} iconOn={iconOn} onChange={() => undefined} theme={switchTheme} value={value} />
         );
 
-        expect(container.textContent).toContain("close");
+        expect(container.querySelector("span")!.textContent).toBe(expected);
     });
 });

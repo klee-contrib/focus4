@@ -17,20 +17,20 @@ describe("FontIcon component", () => {
 
         const span = container.querySelector("span")!;
         expect(span.textContent).toBe("arrow_drop_down");
-        expect(span.className).toContain("material-symbols-outlined");
+        expect(span.classList.contains("material-symbols-outlined")).toBe(true);
     });
 
     test("Rend le nom via la prop icon quand elle est une chaîne", () => {
         const {container} = render(<FontIcon icon="menu" />);
 
-        expect(container.querySelector("span")?.textContent).toBe("menu");
+        expect(container.querySelector("span")!.textContent).toBe("menu");
     });
 
     test("Utilise className et name quand icon est un objet", () => {
         const {container} = render(<FontIcon icon={{className: "fa", name: "check"}} />);
 
         const span = container.querySelector("span")!;
-        expect(span.className).toContain("fa");
+        expect(span.classList.contains("fa")).toBe(true);
         expect(span.textContent).toBe("check");
     });
 
@@ -38,7 +38,7 @@ describe("FontIcon component", () => {
         const {container} = render(<FontIcon icon={{className: "icon-{name}", name: "save"}} />);
 
         const span = container.querySelector("span")!;
-        expect(span.className).toContain("icon-save");
+        expect(span.classList.contains("icon-save")).toBe(true);
         // Quand la classe est un template, le nom n'est pas posé comme enfant.
         expect(span.textContent).toBe("");
     });
@@ -48,12 +48,12 @@ describe("FontIcon component", () => {
 
         const span = container.querySelector("span")!;
         expect(span.textContent).toBe("star");
-        expect(span.className).toContain("custom-font");
+        expect(span.classList.contains("custom-font")).toBe(true);
     });
 
     test("Pose alt comme aria-label", () => {
         const {container} = render(<FontIcon alt="Icône Sauvegarder" icon="save" />);
 
-        expect(container.querySelector("span")?.getAttribute("aria-label")).toBe("Icône Sauvegarder");
+        expect(container.querySelector("span")!.ariaLabel).toBe("Icône Sauvegarder");
     });
 });

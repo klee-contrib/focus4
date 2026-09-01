@@ -1,4 +1,4 @@
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {setupComponentTest} from "../../__tests__/test-utils";
@@ -109,14 +109,16 @@ describe("Radio components", () => {
     });
 
     test("Affiche le libellé de chaque bouton", () => {
-        const {container} = render(
+        render(
             <RadioGroup onChange={() => undefined} value="A">
                 <RadioButton label="Alpha" theme={radioTheme} value="A" />
                 <RadioButton label="Beta" theme={radioTheme} value="B" />
             </RadioGroup>
         );
 
-        expect(container.textContent).toContain("Alpha");
-        expect(container.textContent).toContain("Beta");
+        expect(screen.getAllByRole<HTMLInputElement>("radio").map(radio => radio.labels![0].textContent)).toEqual([
+            "Alpha",
+            "Beta"
+        ]);
     });
 });

@@ -16,7 +16,7 @@ describe("FormSwitch component", () => {
     test("Rend un input de type checkbox (rôle switch en HTML natif)", () => {
         render(<FormSwitch onChange={() => undefined} theme={switchTheme} />);
 
-        expect(screen.getByRole("checkbox")).toBeTruthy();
+        expect(screen.getByRole("checkbox")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("Le switch est activé quand value=true", () => {
@@ -48,16 +48,14 @@ describe("FormSwitch component", () => {
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(<FormSwitch error="Requis" onChange={() => undefined} theme={switchTheme} />);
+        render(<FormSwitch error="Requis" onChange={() => undefined} theme={switchTheme} />);
 
-        expect(container.textContent).toContain("Requis");
+        expect(screen.getByText("Requis").textContent).toBe("Requis");
     });
 
     test("N'affiche pas de supportingText avec showSupportingText='never'", () => {
-        const {container} = render(
-            <FormSwitch error="Requis" onChange={() => undefined} showSupportingText="never" theme={switchTheme} />
-        );
+        render(<FormSwitch error="Requis" onChange={() => undefined} showSupportingText="never" theme={switchTheme} />);
 
-        expect(container.textContent).not.toContain("Requis");
+        expect(screen.queryByText("Requis")).toBeNull();
     });
 });

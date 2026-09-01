@@ -28,7 +28,7 @@ describe("InputDate component", () => {
             />
         );
 
-        expect(screen.getByRole("textbox")).toBeTruthy();
+        expect(screen.getByRole("textbox")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("formatte une valeur ISO initiale", () => {

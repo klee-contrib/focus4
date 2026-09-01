@@ -1,4 +1,4 @@
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, screen, within} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
@@ -56,16 +56,15 @@ describe("AutocompleteChips component", () => {
         );
 
         const chips = container.querySelectorAll(".select-chip");
-        const deleteButton = chips[1].querySelector("button");
-        expect(deleteButton).toBeTruthy();
+        const deleteButton = within(chips[1] as HTMLElement).getByRole("button");
 
-        fireEvent.click(deleteButton!);
+        fireEvent.click(deleteButton);
 
         expect(onChange).toHaveBeenCalledWith(["A", "C"]);
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
+        render(
             <AutocompleteChips
                 error="Requis"
                 onChange={() => undefined}
@@ -75,7 +74,7 @@ describe("AutocompleteChips component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Requis");
+        expect(screen.getByText("Requis").textContent).toBe("Requis");
     });
 
     test("undeletable empêche l'ajout du bouton de suppression sur les items filtrés", () => {
@@ -91,8 +90,8 @@ describe("AutocompleteChips component", () => {
         );
 
         const chips = container.querySelectorAll(".select-chip");
-        expect(chips[0].querySelector("button")).toBeNull();
-        expect(chips[1].querySelector("button")).toBeTruthy();
+        expect(within(chips[0] as HTMLElement).queryByRole("button")).toBeNull();
+        expect(within(chips[1] as HTMLElement).getByRole("button")).toBeInstanceOf(HTMLButtonElement);
     });
 
     test("Le bouton unselectAll vide toutes les valeurs sélectionnées", () => {
@@ -110,9 +109,9 @@ describe("AutocompleteChips component", () => {
         const trailingButtons = container.querySelectorAll("button");
         // Le premier bouton non associé à un chip est celui de trailings (unselectAll).
         const unselectAll = [...trailingButtons].find(b => !b.closest(".select-chip"));
-        expect(unselectAll).toBeTruthy();
+        expect(unselectAll).toBeInstanceOf(HTMLButtonElement);
 
-        fireEvent.click(unselectAll!);
+        fireEvent.click(unselectAll as HTMLButtonElement);
 
         expect(onChange).toHaveBeenCalledWith([]);
     });
@@ -129,10 +128,9 @@ describe("AutocompleteChips component", () => {
             />
         );
 
-        const chip = container.querySelector(".select-chip")!;
-        const deleteButton = chip.querySelector("button");
-        expect(deleteButton).toBeTruthy();
-        expect(deleteButton?.hasAttribute("disabled")).toBe(true);
+        const chip = container.querySelector(".select-chip") as HTMLElement;
+        const deleteButton = within(chip).getByRole("button") as HTMLButtonElement;
+        expect(deleteButton.disabled).toBe(true);
     });
 
     test("keyResolver alimente les libellés pour les valeurs initiales", async () => {

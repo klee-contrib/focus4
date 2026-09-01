@@ -16,7 +16,7 @@ describe("FormCheckbox component", () => {
     test("Rend un input de type checkbox", () => {
         render(<FormCheckbox onChange={() => undefined} theme={checkboxTheme} />);
 
-        expect(screen.getByRole("checkbox")).toBeTruthy();
+        expect(screen.getByRole("checkbox")).toBeInstanceOf(HTMLInputElement);
     });
 
     test("La checkbox est cochée quand value=true", () => {
@@ -48,15 +48,13 @@ describe("FormCheckbox component", () => {
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
-            <FormCheckbox error="Champ requis" onChange={() => undefined} theme={checkboxTheme} />
-        );
+        render(<FormCheckbox error="Champ requis" onChange={() => undefined} theme={checkboxTheme} />);
 
-        expect(container.textContent).toContain("Champ requis");
+        expect(screen.getByText("Champ requis").textContent).toBe("Champ requis");
     });
 
     test("N'affiche pas de supportingText avec showSupportingText='never'", () => {
-        const {container} = render(
+        render(
             <FormCheckbox
                 error="Champ requis"
                 onChange={() => undefined}
@@ -65,6 +63,6 @@ describe("FormCheckbox component", () => {
             />
         );
 
-        expect(container.textContent).not.toContain("Champ requis");
+        expect(screen.queryByText("Champ requis")).toBeNull();
     });
 });

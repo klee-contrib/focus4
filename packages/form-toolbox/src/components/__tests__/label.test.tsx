@@ -19,47 +19,50 @@ describe("Label component", () => {
     });
 
     test("Affiche le libellé traduit", () => {
-        const {container} = render(<Label label="form.name" theme={labelTheme} />);
+        render(<Label label="form.name" theme={labelTheme} />);
 
-        expect(container.querySelector("label")?.textContent).toBe("Nom");
+        expect(screen.getByText("Nom")).toBeInstanceOf(HTMLLabelElement);
     });
 
     test("Affiche une chaîne vide quand aucun libellé n'est fourni", () => {
         const {container} = render(<Label theme={labelTheme} />);
 
-        expect(container.querySelector("label")?.textContent).toBe("");
+        const labels = container.querySelectorAll("label");
+        expect(labels).toHaveLength(1);
+        expect(labels.item(0).textContent).toBe("");
     });
 
-    test("Associe le htmlFor à l'id du champ uniquement en édition", () => {
-        const {container, rerender} = render(<Label edit id="my-id" label="form.name" theme={labelTheme} />);
-        expect(container.querySelector("label")?.getAttribute("for")).toBe("my-id");
+    test.each([
+        {edit: true, expectedFor: "my-id"},
+        {edit: false, expectedFor: ""}
+    ])("Associe le champ en édition : $edit", ({edit, expectedFor}) => {
+        render(<Label edit={edit} id="my-id" label="form.name" theme={labelTheme} />);
 
-        rerender(<Label id="my-id" label="form.name" theme={labelTheme} />);
-        expect(container.querySelector("label")?.getAttribute("for")).toBeNull();
+        expect((screen.getByText("Nom") as HTMLLabelElement).htmlFor).toBe(expectedFor);
     });
 
-    test("Affiche le marqueur required uniquement en édition et si required", () => {
-        const {container, rerender} = render(<Label edit label="form.name" required theme={labelTheme} />);
-        expect(container.querySelector(".label-required")?.textContent).toBe("*");
+    test.each([
+        {edit: true, required: true, visible: true},
+        {edit: false, required: true, visible: false},
+        {edit: true, required: false, visible: false}
+    ])("Affiche le marqueur requis en édition : $edit, required : $required", ({edit, required, visible}) => {
+        const {container} = render(<Label edit={edit} label="form.name" required={required} theme={labelTheme} />);
 
-        rerender(<Label label="form.name" required theme={labelTheme} />);
-        expect(container.querySelector(".label-required")).toBeNull();
-
-        rerender(<Label edit label="form.name" theme={labelTheme} />);
-        expect(container.querySelector(".label-required")).toBeNull();
+        const markers = container.querySelectorAll(".label-required");
+        expect(markers).toHaveLength(Number(visible));
+        expect(markers.item(0)?.textContent).toBe(visible ? "*" : undefined);
     });
 
-    test("Affiche la tooltip uniquement quand un commentaire et showTooltip sont fournis", () => {
-        const {container, rerender} = render(
-            <Label comment="form.tooltip" label="form.name" showTooltip theme={labelTheme} />
+    test.each([
+        {comment: "form.tooltip", showTooltip: true, visible: true},
+        {comment: "form.tooltip", showTooltip: false, visible: false},
+        {comment: undefined, showTooltip: true, visible: false}
+    ])("Affiche la tooltip avec commentaire : $comment, visible : $showTooltip", ({comment, showTooltip, visible}) => {
+        const {container} = render(
+            <Label comment={comment} label="form.name" showTooltip={showTooltip} theme={labelTheme} />
         );
-        expect(container.querySelector(".label-icon")).toBeTruthy();
 
-        rerender(<Label comment="form.tooltip" label="form.name" theme={labelTheme} />);
-        expect(container.querySelector(".label-icon")).toBeNull();
-
-        rerender(<Label label="form.name" showTooltip theme={labelTheme} />);
-        expect(container.querySelector(".label-icon")).toBeNull();
+        expect(container.querySelectorAll(".label-icon")).toHaveLength(Number(visible));
     });
 
     test("Utilise un IconButton (bouton) quand onTooltipClick est fourni", () => {
@@ -74,7 +77,8 @@ describe("Label component", () => {
             />
         );
 
-        expect(screen.queryByRole("button")).toBeTruthy();
+        screen.getByRole("button").click();
+        expect(onTooltipClick).toHaveBeenCalledOnce();
     });
 
     test("Utilise un FontIcon (pas de bouton) quand onTooltipClick n'est pas fourni", () => {
@@ -83,14 +87,13 @@ describe("Label component", () => {
         expect(screen.queryByRole("button")).toBeNull();
     });
 
-    test("Marque le libellé en erreur uniquement quand edit et error sont présents", () => {
-        const {container, rerender} = render(<Label edit error="Champ requis" label="form.name" theme={labelTheme} />);
-        expect(container.firstElementChild?.className).toContain("label-error");
+    test.each([
+        {edit: true, error: "Champ requis", invalid: true},
+        {edit: false, error: "Champ requis", invalid: false},
+        {edit: true, error: undefined, invalid: false}
+    ])("Marque le libellé en erreur en édition : $edit, erreur : $error", ({edit, error, invalid}) => {
+        const {container} = render(<Label edit={edit} error={error} label="form.name" theme={labelTheme} />);
 
-        rerender(<Label error="Champ requis" label="form.name" theme={labelTheme} />);
-        expect(container.firstElementChild?.className).not.toContain("label-error");
-
-        rerender(<Label edit label="form.name" theme={labelTheme} />);
-        expect(container.firstElementChild?.className).not.toContain("label-error");
+        expect(container.firstElementChild?.classList.contains("label-error")).toBe(invalid);
     });
 });

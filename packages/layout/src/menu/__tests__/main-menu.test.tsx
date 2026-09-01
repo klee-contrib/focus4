@@ -1,7 +1,7 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
-import {MainMenuItem} from "../item";
+import {MainMenu, MainMenuItem} from "../index";
 import {MainMenuList} from "../list";
 
 const mainMenuTheme = {
@@ -18,14 +18,14 @@ const mainMenuTheme = {
 
 describe("MainMenu", () => {
     test("Rend une liste de menu", () => {
-        const {container} = render(
+        render(
             <MainMenuList theme={mainMenuTheme}>
                 <MainMenuItem label="Accueil" theme={mainMenuTheme} />
             </MainMenuList>
         );
 
-        expect(container.querySelector("ul")?.className).toContain("main-menu-list");
-        expect(screen.getByRole("button", {name: "Accueil"})).toBeTruthy();
+        expect(screen.getByRole("list").classList.contains("main-menu-list")).toBe(true);
+        expect(screen.getByRole("button", {name: "Accueil"}).tagName).toBe("BUTTON");
     });
 
     test("Rend un lien quand href est renseigné", () => {
@@ -35,8 +35,8 @@ describe("MainMenu", () => {
             </MainMenuList>
         );
 
-        const link = screen.getByRole("link", {name: "Profil"});
-        expect(link.getAttribute("href")).toBe("/profil");
+        const link = screen.getByRole<HTMLAnchorElement>("link", {name: "Profil"});
+        expect(link.pathname).toBe("/profil");
         expect(link.hasAttribute("type")).toBe(false);
     });
 
@@ -47,7 +47,7 @@ describe("MainMenu", () => {
             </MainMenuList>
         );
 
-        expect(screen.getByRole("button", {name: "Actif"}).className).toContain("main-menu-item-active");
+        expect(screen.getByRole("button", {name: "Actif"}).classList.contains("main-menu-item-active")).toBe(true);
     });
 
     test("Déclenche onClick au clic sur un item", () => {
@@ -75,11 +75,21 @@ describe("MainMenu", () => {
         const parent = screen.getByRole("button", {name: "Parent"});
         fireEvent.click(parent);
 
-        expect(parent.className).toContain("main-menu-item-opened");
-        expect(screen.getByRole("button", {name: "Enfant"})).toBeTruthy();
+        expect(parent.classList.contains("main-menu-item-opened")).toBe(true);
+        expect(screen.getByRole("button", {name: "Enfant"}).tagName).toBe("BUTTON");
 
         fireEvent.click(parent);
 
-        expect(parent.className).not.toContain("main-menu-item-opened");
+        expect(parent.classList.contains("main-menu-item-opened")).toBe(false);
+    });
+
+    test("affiche le menu principal avec son overlay", () => {
+        render(
+            <MainMenu showOverlay theme={mainMenuTheme}>
+                <MainMenuItem label="Accueil" theme={mainMenuTheme} />
+            </MainMenu>
+        );
+
+        expect(screen.getByRole("navigation").classList.contains("main-menu")).toBe(true);
     });
 });

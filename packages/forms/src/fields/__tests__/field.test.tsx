@@ -101,21 +101,21 @@ afterEach(() => {
 
 describe("useField", () => {
     test.each([
-        ["input", "input"],
-        ["select", "select"],
-        ["autocomplete", "autocomplete"]
-    ] as const)("render %s en mode édition", (inputType, testId) => {
+        ["input", "input", "INPUT"],
+        ["select", "select", "DIV"],
+        ["autocomplete", "autocomplete", "DIV"]
+    ] as const)("render %s en mode édition", (inputType, testId, tagName) => {
         const field = makeFormField("value", {isEdit: true});
         render(<Harness field={field} inputType={inputType} />);
 
-        expect(screen.getByTestId(testId)).toBeTruthy();
+        expect(screen.getByTestId(testId).tagName).toBe(tagName);
     });
 
     test("render display en mode consultation", () => {
         const field = makeFormField("value", {isEdit: false});
         render(<Harness field={field} inputType="input" />);
 
-        expect(screen.getByTestId("display")).toBeTruthy();
+        expect(screen.getByTestId("display").tagName).toBe("DIV");
     });
 
     test("masque le label si hasLabel=false", () => {
@@ -173,8 +173,10 @@ describe("useField", () => {
             </>
         );
 
-        expect(screen.getByTestId("label-shared")).toBeTruthy();
-        expect(screen.getByTestId("label-shared_2")).toBeTruthy();
+        expect(screen.getAllByText("Test").map(element => element.dataset.testid)).toEqual([
+            "label-shared",
+            "label-shared_2"
+        ]);
     });
 
     test("log des warnings quand les composants ne sont pas définis", () => {

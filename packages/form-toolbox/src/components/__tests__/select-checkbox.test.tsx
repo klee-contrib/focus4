@@ -174,7 +174,7 @@ describe("SelectCheckbox component", () => {
     });
 
     test("Affiche l'erreur en supportingText", () => {
-        const {container} = render(
+        render(
             <SelectCheckbox
                 error="Champ requis"
                 id="sel"
@@ -186,6 +186,6 @@ describe("SelectCheckbox component", () => {
             />
         );
 
-        expect(container.textContent).toContain("Champ requis");
+        expect(screen.getByText("Champ requis").textContent).toBe("Champ requis");
     });
 });
