@@ -123,6 +123,7 @@
         "react/set-state-in-effect": "off",
         "react/todo": "off",
         "react/use-memo": "off",
+        "typescript/ban-types": "off",
         "typescript/consistent-indexed-object-style": "off",
         "typescript/consistent-type-imports": "off",
         "typescript/explicit-function-return-type": "off",

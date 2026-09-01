@@ -106,6 +106,6 @@ export function decorators() {
                 }
             }
         }),
-        {transform: {code: "@"}}
+        {transform: {code: "@", id: /\.(j|t)sx?$/u}}
     );
 }

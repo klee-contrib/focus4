@@ -1,6 +1,6 @@
 {
     "name": "@focus4/tooling",
-    "version": "12.13.1",
+    "version": "12.13.2",
     "description": "Focus v4, tooling module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/tooling",
     "license": "MIT",
