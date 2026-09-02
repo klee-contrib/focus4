@@ -34,6 +34,8 @@ export interface ScrollspyContainerProps {
     children?: ReactNode;
     /** Ref vers le div de contenu. */
     contentRef?: RefObject<HTMLDivElement | null>;
+    /** Si le menu est initialement rétracté. */
+    initiallyRetracted?: boolean;
     /** Menu personnalisé pour le scrollspy. */
     MenuComponent?: ComponentType<ScrollspyMenuProps>;
     /**
@@ -65,6 +67,7 @@ export interface ScrollspyContainerRef {
 export function ScrollspyContainer({
     children,
     contentRef,
+    initiallyRetracted = false,
     MenuComponent = ScrollspyMenu,
     offsetTopOverride,
     ref,
@@ -138,6 +141,7 @@ export function ScrollspyContainer({
                 <MenuComponent
                     activeId={state.activeItem}
                     headerHeight={state.headerHeight}
+                    initiallyRetracted={initiallyRetracted}
                     panels={state.sortedPanels.map(([id, {title, icon}]) => ({
                         id,
                         title: (title && t(title)) ?? "",
@@ -179,6 +183,8 @@ export interface ScrollspyMenuProps {
     headerHeight: number;
     /** Liste des panels. */
     panels: {title: string; id: string; icon?: Icon}[];
+    /** Si le menu est initialement rétracté. */
+    initiallyRetracted?: boolean;
     /** Menu rétractable. */
     retractable?: boolean;
     /**
@@ -195,13 +201,14 @@ export interface ScrollspyMenuProps {
 export function ScrollspyMenu({
     activeId,
     headerHeight,
+    initiallyRetracted = false,
     panels,
     retractable = true,
     scrollToPanel,
     theme
 }: ScrollspyMenuProps) {
     return (
-        <LateralMenu headerHeight={headerHeight} retractable={retractable}>
+        <LateralMenu headerHeight={headerHeight} initiallyRetracted={initiallyRetracted} retractable={retractable}>
             <nav className={theme.menu()}>
                 <ul>
                     {panels.map(({title, id, icon}) => (

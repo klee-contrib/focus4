@@ -2,7 +2,7 @@ import {cleanup, render, RenderOptions, RenderResult} from "@testing-library/rea
 import i18next from "i18next";
 import {ReactElement} from "react";
 import {initReactI18next} from "react-i18next";
-import {afterAll, afterEach, beforeAll, vi} from "vitest";
+import {afterEach, beforeAll, vi} from "vitest";
 
 import {ThemeProvider} from "@focus4/styling";
 

@@ -40,6 +40,18 @@ const actionBarTheme = {
     selectionToggle: "action-bar-selection",
     "bar--selection": "action-bar-selection"
 };
+const facetTheme = {
+    checkbox: "facet-checkbox",
+    "checkbox--selected": "facet-checkbox-selected",
+    count: "facet-count",
+    facet: "facet",
+    icon: "facet-icon",
+    label: "facet-label",
+    "label--excluded": "facet-label-excluded",
+    show: "facet-show"
+};
+const facetBoxTheme = {facetBox: "facet-box", section: "facet-section"};
+const lateralMenuTheme = {button: "lateral-button", menu: "lateral-menu"};
 
 const store = makeLocalCollectionStore<Item>({
     facetDefinitions: [{code: "category", fieldName: "category", isMultiSelectable: true, label: "Category"}],
@@ -54,6 +66,34 @@ function ListComponent({store: listStore}: {store: CollectionStore<Item>}) {
 const listProps = {} as any;
 
 describe("AdvancedSearch", () => {
+    test("affiche les facettes dans un menu initialement rétracté", () => {
+        renderWithTheme(
+            <ThemeProvider
+                appTheme={{
+                    ...defaultAppTheme,
+                    facet: facetTheme,
+                    lateralMenu: lateralMenuTheme
+                }}
+            >
+                <AdvancedSearch
+                    facetBoxPosition="left-initiallyRetracted"
+                    facetBoxTheme={facetBoxTheme}
+                    hideActionBar
+                    listProps={listProps}
+                    ListComponent={ListComponent}
+                    searchOnMount={false}
+                    store={store}
+                    summaryTheme={summaryTheme}
+                    theme={advancedSearchTheme}
+                />
+            </ThemeProvider>
+        );
+
+        expect(screen.getByText("keyboard_arrow_right")).toBeTruthy();
+        fireEvent.click(screen.getByText("keyboard_arrow_right").closest("button")!);
+        expect(screen.getByText("keyboard_arrow_left")).toBeTruthy();
+    });
+
     test("assemble la recherche et met à jour la requête", () => {
         renderWithTheme(
             <ThemeProvider

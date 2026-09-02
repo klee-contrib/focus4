@@ -21,9 +21,10 @@ const theme = {
 
 const menuTheme = toBem(theme);
 
-function Menu({panels, scrollToPanel}: ScrollspyMenuProps) {
+function Menu({initiallyRetracted, panels, scrollToPanel}: ScrollspyMenuProps) {
     return (
         <div>
+            <span data-testid="initially-retracted">{String(initiallyRetracted)}</span>
             {panels.map(panel => (
                 <button key={panel.id} type="button" onClick={() => scrollToPanel(panel.id, true)}>
                     {panel.title}
@@ -47,7 +48,7 @@ function RegisteredPanel() {
     );
 }
 
-function renderScrollspy(scrollTo = vi.fn()) {
+function renderScrollspy(scrollTo = vi.fn(), initiallyRetracted = false) {
     return render(
         <ThemeProvider appTheme={{...defaultAppTheme, scrollspy: theme}}>
             <ScrollableContext.Provider
@@ -60,7 +61,7 @@ function renderScrollspy(scrollTo = vi.fn()) {
                     scrollTo
                 }}
             >
-                <ScrollspyContainer MenuComponent={Menu} theme={theme}>
+                <ScrollspyContainer MenuComponent={Menu} initiallyRetracted={initiallyRetracted} theme={theme}>
                     <RegisteredPanel />
                 </ScrollspyContainer>
             </ScrollableContext.Provider>
@@ -69,6 +70,12 @@ function renderScrollspy(scrollTo = vi.fn()) {
 }
 
 describe("ScrollspyContainer", () => {
+    test("transmet l'état de rétraction initiale au menu personnalisé", () => {
+        renderScrollspy(undefined, true);
+
+        expect(screen.getByTestId("initially-retracted").textContent).toBe("true");
+    });
+
     test("enregistre un panel et le sélectionne avec focus", () => {
         const scrollTo = vi.fn();
         renderScrollspy(scrollTo);
@@ -111,5 +118,24 @@ describe("ScrollspyContainer", () => {
         fireEvent.keyUp(active, {code: "Enter"});
         fireEvent.keyUp(active, {code: "Space"});
         expect(scrollToPanel.mock.calls).toEqual([["details"], ["details", true]]);
+    });
+
+    test("rétracte initialement le menu par défaut", () => {
+        render(
+            <ThemeProvider
+                appTheme={{...defaultAppTheme, lateralMenu: {button: "lateral-button", menu: "lateral-menu"}}}
+            >
+                <ScrollspyMenu
+                    activeId="details"
+                    headerHeight={12}
+                    initiallyRetracted
+                    panels={[]}
+                    scrollToPanel={vi.fn()}
+                    theme={menuTheme}
+                />
+            </ThemeProvider>
+        );
+
+        expect(screen.getByText("keyboard_arrow_right")).toBeTruthy();
     });
 });

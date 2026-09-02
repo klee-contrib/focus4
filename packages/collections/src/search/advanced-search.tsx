@@ -73,7 +73,7 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
     /** Désactive le caractère sticky du Summary et de l'ActionBar. */
     disableStickyTopRow?: boolean;
     /** Emplacement de la FacetBox. Par défaut : "left" */
-    facetBoxPosition?: "action-bar" | "left" | "left-fixed" | "none";
+    facetBoxPosition?: "action-bar" | "left" | "left-initiallyRetracted" | "left-fixed" | "none";
     /** CSS de la FacetBox (si position = "left") */
     facetBoxTheme?: CSSProp<FacetBoxCss>;
     /**
@@ -260,7 +260,11 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
 
         if (facetBoxPosition.includes("left")) {
             return (
-                <LateralMenu headerHeight={offsetTopOverride ?? headerHeight} retractable={facetBoxPosition === "left"}>
+                <LateralMenu
+                    headerHeight={offsetTopOverride ?? headerHeight}
+                    initiallyRetracted={facetBoxPosition === "left-initiallyRetracted"}
+                    retractable={facetBoxPosition === "left" || facetBoxPosition === "left-initiallyRetracted"}
+                >
                     {facetBox}
                 </LateralMenu>
             );

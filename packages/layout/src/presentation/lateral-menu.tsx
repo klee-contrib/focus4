@@ -15,6 +15,8 @@ export interface LateralMenuProps {
     children?: ReactNode;
     /** Taille du header, pour le 'position: sticky'. */
     headerHeight?: number;
+    /** Si le menu est initialement rétracté. */
+    initiallyRetracted?: boolean;
     /** Menu rétractable. */
     retractable?: boolean;
     /** CSS. */
@@ -26,9 +28,15 @@ export interface LateralMenuProps {
  *
  * Il doit être posé dans un conteneur avec un `display: flex`, et s'il est rétractable, alors son contenu devrait idéalement avoir une taille fixe.
  */
-export function LateralMenu({children, headerHeight = 0, retractable = true, theme: pTheme}: LateralMenuProps) {
+export function LateralMenu({
+    children,
+    headerHeight = 0,
+    initiallyRetracted = false,
+    retractable = true,
+    theme: pTheme
+}: LateralMenuProps) {
     const theme = useTheme("lateralMenu", lateralMenuCss, pTheme);
-    const [opened, setOpened] = useState(true);
+    const [opened, setOpened] = useState(!initiallyRetracted);
 
     return (
         <>
