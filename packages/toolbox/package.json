@@ -20,7 +20,7 @@
         "classnames": "^2.5.1",
         "es-toolkit": "^1.52.0",
         "luxon": "^3.7.2",
-        "motion": "^13.1.1",
+        "motion": "^13.3.0",
         "tslib": "^2.8.1"
     },
     "devDependencies": {
