@@ -12,8 +12,7 @@
     "type": "module",
     "main": "lib/focus4.styling.js",
     "scripts": {
-        "build": "tsdown",
-        "postinstall": "node postinstall.js"
+        "build": "tsdown"
     },
     "dependencies": {
         "@types/react": "^19.3.0",

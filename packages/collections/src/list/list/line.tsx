@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {ComponentType, Ref, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
@@ -41,7 +41,7 @@ export interface LineWrapperProps<T extends object> {
 }
 
 /** Wrapper de ligne dans une liste. */
-export function LineWrapper<T extends object>({
+export const LineWrapper = observer(function LineWrapper<T extends object>({
     domRef,
     LineComponent,
     mosaic,
@@ -81,7 +81,7 @@ export function LineWrapper<T extends object>({
         }
     }));
 
-    return useObserver(() => (
+    return (
         <li ref={domRef} className={(mosaic ? theme.mosaic : theme.line)({selected: state.isSelected})}>
             <LineComponent data={props.data} toggleDetail={toggleDetail} />
             {state.isSelectable ? (
@@ -97,5 +97,5 @@ export function LineWrapper<T extends object>({
                 </div>
             ) : null}
         </li>
-    ));
-}
+    );
+});

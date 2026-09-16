@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {Fragment} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -66,7 +66,7 @@ export interface FilArianeProps {
  *
  * Si vous voulez qu'une section ne soit pas affichée dans le fil d'Ariane, il suffit que son libellé soit vide.
  */
-export function FilAriane({
+export const FilAriane = observer(function FilAriane({
     i18nPrefix = "focus",
     maxDepth,
     paramResolver = (_, x) => `${x}`,
@@ -78,64 +78,58 @@ export function FilAriane({
     const {t} = useTranslation();
     const theme = useTheme("filAriane", filArianeCss, pTheme);
 
-    return useObserver(() => {
-        let currentRouter = router;
-        let currentRoute = currentRouter.get(x => x);
-        const routesList = [];
-        let key = currentRoute!;
+    let currentRouter = router;
+    let currentRoute = currentRouter.get(x => x);
+    const routesList = [];
+    let key = currentRoute!;
 
-        while (currentRoute !== undefined && (maxDepth === undefined || routesList.length < maxDepth)) {
-            const currentState = currentRouter.state[currentRoute];
-            if (
-                typeof currentState === "object" ||
-                typeof currentState === "number" ||
-                typeof currentState === "string"
-            ) {
-                routesList.push({
-                    route: currentRoute,
-                    dictionaryKey: t(`${routerI18nPrefix}.${key}.${rootName}`, {
-                        param:
-                            typeof currentState !== "object"
-                                ? (paramResolver(currentRoute, currentState) ?? currentState)
-                                : undefined
-                    }),
-                    url: currentRouter.href(x => x(typeof currentState === "object" ? currentRoute! : currentState))
-                });
+    while (currentRoute !== undefined && (maxDepth === undefined || routesList.length < maxDepth)) {
+        const currentState = currentRouter.state[currentRoute];
+        if (typeof currentState === "object" || typeof currentState === "number" || typeof currentState === "string") {
+            routesList.push({
+                route: currentRoute,
+                dictionaryKey: t(`${routerI18nPrefix}.${key}.${rootName}`, {
+                    param:
+                        typeof currentState !== "object"
+                            ? (paramResolver(currentRoute, currentState) ?? currentState)
+                            : undefined
+                }),
+                url: currentRouter.href(x => x(typeof currentState === "object" ? currentRoute! : currentState))
+            });
 
-                currentRouter = currentRouter.sub(x => x(currentRoute!) as UrlRouteDescriptor<any>);
-                currentRoute = currentRouter.get(x => x);
+            currentRouter = currentRouter.sub(x => x(currentRoute!) as UrlRouteDescriptor<any>);
+            currentRoute = currentRouter.get(x => x);
 
-                key += `.${currentRoute}`;
-            } else {
-                break;
-            }
+            key += `.${currentRoute}`;
+        } else {
+            break;
         }
+    }
 
-        if (!routesList.length && (maxDepth ?? Infinity) > 0) {
-            routesList.push({route: "/", dictionaryKey: t(`${routerI18nPrefix}.${rootName}`), url: "#/"});
-        }
+    if (!routesList.length && (maxDepth ?? Infinity) > 0) {
+        routesList.push({route: "/", dictionaryKey: t(`${routerI18nPrefix}.${rootName}`), url: "#/"});
+    }
 
-        const finalRoutes = routesList.filter(x => x.dictionaryKey);
-        return (
-            <span className={theme.container()}>
-                {finalRoutes.map((x, i) => (
-                    <Fragment key={x.route}>
-                        {i !== finalRoutes.length - 1 ? (
-                            <a className={theme.item()} href={x.url}>
-                                {x.dictionaryKey}
-                            </a>
-                        ) : (
-                            <span className={theme.item({active: true})}>{x.dictionaryKey}</span>
-                        )}
-                        {i !== finalRoutes.length - 1 ? (
-                            <FontIcon
-                                className={theme.separator()}
-                                icon={{i18nKey: `${i18nPrefix}.icons.filAriane.separator`}}
-                            />
-                        ) : null}
-                    </Fragment>
-                ))}
-            </span>
-        );
-    });
-}
+    const finalRoutes = routesList.filter(x => x.dictionaryKey);
+    return (
+        <span className={theme.container()}>
+            {finalRoutes.map((x, i) => (
+                <Fragment key={x.route}>
+                    {i !== finalRoutes.length - 1 ? (
+                        <a className={theme.item()} href={x.url}>
+                            {x.dictionaryKey}
+                        </a>
+                    ) : (
+                        <span className={theme.item({active: true})}>{x.dictionaryKey}</span>
+                    )}
+                    {i !== finalRoutes.length - 1 ? (
+                        <FontIcon
+                            className={theme.separator()}
+                            icon={{i18nKey: `${i18nPrefix}.icons.filAriane.separator`}}
+                        />
+                    ) : null}
+                </Fragment>
+            ))}
+        </span>
+    );
+});

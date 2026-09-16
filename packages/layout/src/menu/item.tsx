@@ -1,5 +1,5 @@
 import {action, toJS} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {
     createElement,
@@ -42,7 +42,7 @@ export interface MainMenuItemProps extends PointerEvents<HTMLButtonElement | HTM
 /**
  * Elément de menu, à poser comme enfant direct d'un `MainMenu` ou d'un autre `MainMenuItem` (pour faire un sous-menu).
  */
-export function MainMenuItem({
+export const MainMenuItem = observer(function MainMenuItem({
     children,
     href,
     icon,
@@ -98,65 +98,63 @@ export function MainMenuItem({
 
     const element = href ? "a" : "button";
 
-    return useObserver(() => {
-        const props = {
-            ref,
-            className: theme.item({active: route === context.activeRoute, opened: state.hasSubMenu}),
-            href,
-            onClick: onItemClick,
-            type: !href ? "button" : undefined
-        };
-        return (
-            <>
-                <li ref={li}>
-                    <Ripple
-                        onPointerDown={onPointerDown}
-                        onPointerEnter={onPointerEnter}
-                        onPointerLeave={handlePointerLeave}
-                        onPointerUp={handlePointerUp}
-                    >
-                        {createElement(
-                            element,
-                            props,
-                            icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
-                            label ? <span className={theme.label()}>{label}</span> : null
-                        )}
-                    </Ripple>
-                </li>
-                {context.renderSubMenu(
-                    <AnimatePresence>
-                        {state.hasSubMenu ? (
-                            <motion.div
-                                ref={panel}
-                                animate="visible"
-                                className={theme.panel()}
-                                exit="hidden"
-                                initial="hidden"
-                                style={toJS(state)}
-                                transition={getDefaultTransition()}
-                                variants={{
-                                    visible: {
-                                        width: "auto",
-                                        opacity: 1
-                                    },
-                                    hidden: {
-                                        width: 0,
-                                        opacity: 0.7
-                                    }
-                                }}
+    const props = {
+        ref,
+        className: theme.item({active: route === context.activeRoute, opened: state.hasSubMenu}),
+        href,
+        onClick: onItemClick,
+        type: !href ? "button" : undefined
+    };
+    return (
+        <>
+            <li ref={li}>
+                <Ripple
+                    onPointerDown={onPointerDown}
+                    onPointerEnter={onPointerEnter}
+                    onPointerLeave={handlePointerLeave}
+                    onPointerUp={handlePointerUp}
+                >
+                    {createElement(
+                        element,
+                        props,
+                        icon ? <FontIcon className={theme.icon()} icon={icon} /> : null,
+                        label ? <span className={theme.label()}>{label}</span> : null
+                    )}
+                </Ripple>
+            </li>
+            {context.renderSubMenu(
+                <AnimatePresence>
+                    {state.hasSubMenu ? (
+                        <motion.div
+                            ref={panel}
+                            animate="visible"
+                            className={theme.panel()}
+                            exit="hidden"
+                            initial="hidden"
+                            style={toJS(state)}
+                            transition={getDefaultTransition()}
+                            variants={{
+                                visible: {
+                                    width: "auto",
+                                    opacity: 1
+                                },
+                                hidden: {
+                                    width: 0,
+                                    opacity: 0.7
+                                }
+                            }}
+                        >
+                            <MainMenuList
+                                activeRoute={context.activeRoute}
+                                closePanel={() => (state.hasSubMenu = false)}
+                                theme={theme}
                             >
-                                <MainMenuList
-                                    activeRoute={context.activeRoute}
-                                    closePanel={() => (state.hasSubMenu = false)}
-                                    theme={theme}
-                                >
-                                    {children}
-                                </MainMenuList>
-                            </motion.div>
-                        ) : null}
-                    </AnimatePresence>
-                )}
-            </>
-        );
-    });
-}
+                                {children}
+                            </MainMenuList>
+                        </motion.div>
+                    ) : null}
+                </AnimatePresence>
+            )}
+        </>
+    );
+});

@@ -1,5 +1,5 @@
 import {action, reaction} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -73,7 +73,7 @@ export interface ActionBarProps<T extends object> {
  * Lorsqu'un élément au moins a été sélectionné, toutes les autres actions disparaissent pour afficher le nombre d'éléments sélectionnés à la place.
  * Ces mêmes actions sont absentes de l'ActionBar d'un groupe et le nom du groupe est affiché à la place.
  */
-export function ActionBar<T extends object>({
+export const ActionBar = observer(function ActionBar<T extends object>({
     additionalFacets,
     defaultFacetState,
     defaultFacetStates,
@@ -176,7 +176,7 @@ export function ActionBar<T extends object>({
         [displayFacetBox, hasFacetBox, showSingleValuedFacets, store]
     );
 
-    return useObserver(() => (
+    return (
         <div className={theme.container()}>
             {/* ActionBar en tant que telle. */}
             <div className={theme.bar({selection: !!store.selectedItems.size})}>
@@ -310,5 +310,5 @@ export function ActionBar<T extends object>({
                 </div>
             ) : null}
         </div>
-    ));
-}
+    );
+});

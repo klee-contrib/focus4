@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useCallback} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
@@ -49,7 +49,7 @@ const undefinedKey = "$$undefined$$";
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectRadio<const S extends ZodTypeSingle>({
+export const SelectRadio = observer(function SelectRadio<const S extends ZodTypeSingle>({
     disabled = false,
     error,
     hasUndefined,
@@ -74,47 +74,45 @@ export function SelectRadio<const S extends ZodTypeSingle>({
         [onChange, schema]
     );
 
-    return useObserver(() => {
-        let definitiveValues: any[] = values;
-        if (hasUndefined === "last-option") {
-            definitiveValues = [...values, {[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}];
-        }
-        if (hasUndefined === "first-option") {
-            definitiveValues = [{[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}, ...values];
-        }
+    let definitiveValues: any[] = values;
+    if (hasUndefined === "last-option") {
+        definitiveValues = [...values, {[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}];
+    }
+    if (hasUndefined === "first-option") {
+        definitiveValues = [{[$valueKey]: undefinedKey, [$labelKey]: undefinedLabel}, ...values];
+    }
 
-        return (
-            <div className={theme.select()}>
-                <RadioGroup
-                    allowUndefined={hasUndefined === "no-option"}
-                    disabled={disabled === true}
-                    onChange={handleChange}
-                    value={value === undefined ? undefinedKey : `${value}`}
-                >
-                    {definitiveValues.map(option => {
-                        const optVal = option[$valueKey];
-                        const optLabel = option[$labelKey];
+    return (
+        <div className={theme.select()}>
+            <RadioGroup
+                allowUndefined={hasUndefined === "no-option"}
+                disabled={disabled === true}
+                onChange={handleChange}
+                value={value === undefined ? undefinedKey : `${value}`}
+            >
+                {definitiveValues.map(option => {
+                    const optVal = option[$valueKey];
+                    const optLabel = option[$labelKey];
 
-                        return (
-                            <RadioButton
-                                key={optVal ?? "undefined"}
-                                disabled={Array.isArray(disabled) && disabled.includes(optVal)}
-                                label={t(optLabel)}
-                                name={`${name!}-${optVal}`}
-                                theme={theme}
-                                value={optVal?.toString() ?? ""}
-                            />
-                        );
-                    })}
-                </RadioGroup>
-                <SupportingText
-                    disabled={disabled === true}
-                    error={!!error}
-                    showSupportingText={showSupportingText}
-                    supportingText={error}
-                    theme={theme}
-                />
-            </div>
-        );
-    });
-}
+                    return (
+                        <RadioButton
+                            key={optVal ?? "undefined"}
+                            disabled={Array.isArray(disabled) && disabled.includes(optVal)}
+                            label={t(optLabel)}
+                            name={`${name!}-${optVal}`}
+                            theme={theme}
+                            value={optVal?.toString() ?? ""}
+                        />
+                    );
+                })}
+            </RadioGroup>
+            <SupportingText
+                disabled={disabled === true}
+                error={!!error}
+                showSupportingText={showSupportingText}
+                supportingText={error}
+                theme={theme}
+            />
+        </div>
+    );
+});

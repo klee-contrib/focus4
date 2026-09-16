@@ -1,5 +1,5 @@
 import {action} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {useCallback, useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -18,7 +18,7 @@ interface Notification {
 }
 
 /** Centre de message. Affiche les messages lorsqu'ils sont ajoutés dans le MessageStore. */
-export function MessageCenter({
+export const MessageCenter = observer(function MessageCenter({
     messageTypes = {success: 3000, error: 8000, info: 3000, warning: 3000}
 }: MessageCenterProps) {
     const {t} = useTranslation();
@@ -60,23 +60,21 @@ export function MessageCenter({
         [...(Object.keys(messageTypes) as unknown[]), ...Object.values(messageTypes)]
     );
 
-    return useObserver(() => {
-        const a = state.notifications[0]?.message.action;
-        return (
-            <Snackbar
-                action={a ? {label: t(a.label), onClick: a.onClick} : undefined}
-                active={state.active}
-                close={close}
-                level={
-                    state.notifications[0]?.type === "error" ||
-                    state.notifications[0]?.type === "success" ||
-                    state.notifications[0]?.type === "warning"
-                        ? state.notifications[0]?.type
-                        : undefined
-                }
-                message={t(state.notifications[0]?.message.label ?? "")}
-                onClose={onClose}
-            />
-        );
-    });
-}
+    const a = state.notifications[0]?.message.action;
+    return (
+        <Snackbar
+            action={a ? {label: t(a.label), onClick: a.onClick} : undefined}
+            active={state.active}
+            close={close}
+            level={
+                state.notifications[0]?.type === "error" ||
+                state.notifications[0]?.type === "success" ||
+                state.notifications[0]?.type === "warning"
+                    ? state.notifications[0]?.type
+                    : undefined
+            }
+            message={t(state.notifications[0]?.message.label ?? "")}
+            onClose={onClose}
+        />
+    );
+});

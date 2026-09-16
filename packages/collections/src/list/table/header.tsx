@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {action} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {ReactNode, useCallback} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -22,7 +22,7 @@ export interface TableColumn<T extends object> {
     title: string;
 }
 
-export function TableHeader<T extends object>({
+export const TableHeader = observer(function TableHeader<T extends object>({
     column: {title, className: cellClassName, sortKey},
     i18nPrefix,
     maxSort,
@@ -58,50 +58,48 @@ export function TableHeader<T extends object>({
         [maxSort, sortKey, store]
     );
 
-    return useObserver(() => {
-        const sortable = !!(store && store.totalCount > 0 && sortKey);
-        return (
-            <th
-                className={classNames(
-                    cellClassName,
-                    theme.heading({
-                        sortable,
-                        sorted: sortable && store.sort.some(({fieldName}) => fieldName === sortKey),
-                        multipleSort: maxSort > 1
-                    })
-                )}
-                onClick={sortable ? onSort : undefined}
-                tabIndex={sortable ? 0 : undefined}
-                onKeyDown={e => {
-                    if (e.code === "Space") {
-                        e.preventDefault();
-                    }
-                }}
-                onKeyUp={e => {
-                    if (e.code === "Space") {
-                        onSort();
-                    }
-                }}
-            >
-                {sortable && maxSort > 1 ? (
-                    <span className={theme.sortCount()}>{store.sort.findIndex(s => s.fieldName === sortKey) + 1}</span>
-                ) : null}
-                {sortable ? (
-                    <FontIcon
-                        className={theme.sortIcon()}
-                        icon={{
-                            i18nKey: `${i18nPrefix}.icons.table.sort${
-                                store.sort.length === 0 ||
-                                !store.sort.some(({fieldName}) => fieldName === sortKey) ||
-                                !store.sort.find(({fieldName}) => fieldName === sortKey)!.sortDesc
-                                    ? "Asc"
-                                    : "Desc"
-                            }`
-                        }}
-                    />
-                ) : null}
-                <span className={theme.label()}>{t(title)}</span>
-            </th>
-        );
-    });
-}
+    const sortable = !!(store && store.totalCount > 0 && sortKey);
+    return (
+        <th
+            className={classNames(
+                cellClassName,
+                theme.heading({
+                    sortable,
+                    sorted: sortable && store.sort.some(({fieldName}) => fieldName === sortKey),
+                    multipleSort: maxSort > 1
+                })
+            )}
+            onClick={sortable ? onSort : undefined}
+            tabIndex={sortable ? 0 : undefined}
+            onKeyDown={e => {
+                if (e.code === "Space") {
+                    e.preventDefault();
+                }
+            }}
+            onKeyUp={e => {
+                if (e.code === "Space") {
+                    onSort();
+                }
+            }}
+        >
+            {sortable && maxSort > 1 ? (
+                <span className={theme.sortCount()}>{store.sort.findIndex(s => s.fieldName === sortKey) + 1}</span>
+            ) : null}
+            {sortable ? (
+                <FontIcon
+                    className={theme.sortIcon()}
+                    icon={{
+                        i18nKey: `${i18nPrefix}.icons.table.sort${
+                            store.sort.length === 0 ||
+                            !store.sort.some(({fieldName}) => fieldName === sortKey) ||
+                            !store.sort.find(({fieldName}) => fieldName === sortKey)!.sortDesc
+                                ? "Asc"
+                                : "Desc"
+                        }`
+                    }}
+                />
+            ) : null}
+            <span className={theme.label()}>{t(title)}</span>
+        </th>
+    );
+});

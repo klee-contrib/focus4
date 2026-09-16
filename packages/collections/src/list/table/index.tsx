@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {KeyboardEvent, MouseEvent, useContext, useRef} from "react";
 
 import {ScrollableContext, useStickyClip} from "@focus4/layout";
@@ -84,7 +84,7 @@ export type TableProps<T extends object> = ListBaseProps<T> & {
  * mise en forme personnalisée), vous pouvez toujours revenir à un tableau HTML à la main... Vous pouvez cependant réutiliser la logique de pagination avec le
  * hook `useListBase` et le CSS du tableau en utilisant `tableCss`.
  */
-export function Table<T extends object>({
+export const Table = observer(function Table<T extends object>({
     baseTheme,
     columns,
     // @ts-expect-error - La prop est définie conditionnellement.
@@ -127,7 +127,7 @@ export function Table<T extends object>({
         store
     });
 
-    return useObserver(() => (
+    return (
         <>
             <table
                 className={theme.table({
@@ -206,8 +206,8 @@ export function Table<T extends object>({
                 theme={baseTheme}
             />
         </>
-    ));
-}
+    );
+});
 
 /**
  * `tableFor` permet de poser le composant `Table`, qui permet d'afficher des données sous forme d'un tableau simple.

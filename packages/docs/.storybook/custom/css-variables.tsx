@@ -1,13 +1,17 @@
 import {PureArgsTable, useOf} from "@storybook/addon-docs/blocks";
 import {toJS} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import React from "react";
 
 import {useDarkMode} from "./docs-container";
 
 type VariableDefinitions = Record<string, {main: string; dark?: string}>;
 
-export function CssVariables({cssVariables}: {cssVariables?: Record<string, VariableDefinitions>}) {
+export const CssVariables = observer(function CssVariables({
+    cssVariables
+}: {
+    cssVariables?: Record<string, VariableDefinitions>;
+}) {
     const meta = useOf<"meta">("meta");
     const dark = useDarkMode();
     const [ref, setRef] = React.useState<HTMLDivElement | null>(null);
@@ -74,11 +78,11 @@ export function CssVariables({cssVariables}: {cssVariables?: Record<string, Vari
         ) : null;
     }
 
-    return useObserver(() => (
+    return (
         <div ref={setRef}>
             {getTable("Locales", local)}
             {getTable("Partagées (utilisées par le composant)", common)}
             {getTable("Globales (utilisées par le composant)", global)}
         </div>
-    ));
-}
+    );
+});

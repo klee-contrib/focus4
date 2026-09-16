@@ -1,5 +1,5 @@
 import {chunk} from "es-toolkit";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {ZodType} from "zod";
 
 import {useDisplay, UseDisplayProps} from "@focus4/forms";
@@ -36,7 +36,7 @@ export interface DisplayProps<S extends ZodType> extends UseDisplayProps<S> {
  *
  * Il s'agit du [composant d'affichage par défaut de tous les domaines](/docs/composants-composants-par-défaut--docs)  (`DisplayComponent`).
  */
-export function Display<S extends ZodType>({
+export const Display = observer(function Display<S extends ZodType>({
     listChunkSize,
     multiValueDisplay = "lists-if-multiple",
     name,
@@ -47,7 +47,7 @@ export function Display<S extends ZodType>({
 
     const label = useDisplay(props);
 
-    return useObserver(() => (
+    return (
         <div className={theme.display()} data-name={name}>
             {Array.isArray(label) ? (
                 multiValueDisplay === "lists" || (multiValueDisplay === "lists-if-multiple" && label.length > 1) ? (
@@ -69,5 +69,5 @@ export function Display<S extends ZodType>({
                 label
             )}
         </div>
-    ));
-}
+    );
+});

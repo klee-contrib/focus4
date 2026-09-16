@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {ComponentType} from "react";
 import {ZodType} from "zod";
 
@@ -60,7 +60,7 @@ export type TimelineProps<T extends object> = ListBaseProps<T> & {
  *
  * Ce composant est très simple et assez limité dans ce qu'il peut faire. A n'utiliser que si son rendu vous intéresse et correspond exactement à votre besoin.
  */
-export function Timeline<T extends object>({
+export const Timeline = observer(function Timeline<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     baseTheme,
@@ -92,45 +92,43 @@ export function Timeline<T extends object>({
         store
     });
 
-    return useObserver(() =>
-        !state.isLoading && !state.displayedData.length ? (
-            <EmptyComponent addItemHandler={addItemHandler} i18nPrefix={i18nPrefix} store={store} />
-        ) : (
-            <ul className={theme.timeline()}>
-                {addItemHandler ? (
-                    <TimelineAddItem theme={theme}>
-                        <AddItemComponent
-                            addItemHandler={addItemHandler}
-                            i18nPrefix={i18nPrefix}
-                            mode="timeline"
-                            store={store}
-                        />
-                    </TimelineAddItem>
-                ) : null}
-                {state.displayedData.map((item, idx) => (
-                    <TimelineLine
-                        key={itemKey(item, idx)}
-                        data={item}
-                        dateSelector={dateSelector}
-                        domRef={getDomRef(idx)}
-                        LineComponent={TimelineComponent}
-                        theme={theme}
+    return !state.isLoading && !state.displayedData.length ? (
+        <EmptyComponent addItemHandler={addItemHandler} i18nPrefix={i18nPrefix} store={store} />
+    ) : (
+        <ul className={theme.timeline()}>
+            {addItemHandler ? (
+                <TimelineAddItem theme={theme}>
+                    <AddItemComponent
+                        addItemHandler={addItemHandler}
+                        i18nPrefix={i18nPrefix}
+                        mode="timeline"
+                        store={store}
                     />
-                ))}
-                <BottomRow
-                    {...pagination}
-                    i18nPrefix={i18nPrefix}
-                    paginationMode={paginationMode}
-                    perPage={perPage}
-                    showAllHandler={showAllHandler}
-                    state={state}
-                    store={store}
-                    theme={baseTheme}
+                </TimelineAddItem>
+            ) : null}
+            {state.displayedData.map((item, idx) => (
+                <TimelineLine
+                    key={itemKey(item, idx)}
+                    data={item}
+                    dateSelector={dateSelector}
+                    domRef={getDomRef(idx)}
+                    LineComponent={TimelineComponent}
+                    theme={theme}
                 />
-            </ul>
-        )
+            ))}
+            <BottomRow
+                {...pagination}
+                i18nPrefix={i18nPrefix}
+                paginationMode={paginationMode}
+                perPage={perPage}
+                showAllHandler={showAllHandler}
+                state={state}
+                store={store}
+                theme={baseTheme}
+            />
+        </ul>
     );
-}
+});
 
 /**
  * Le composant `Timeline`, généralement posé par la fonction `timelineFor`, permet d'afficher des données sous forme d'une liste avec une timeline sur la gauche.

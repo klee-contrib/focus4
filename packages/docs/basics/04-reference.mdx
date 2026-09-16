@@ -23,7 +23,11 @@ interface TypeDroit {
 
 // `valueKey` est la propriété de l'objet qui représente la clé primaire
 // `labelKey` est la propriété de l'objet qui représente le libellé
-const typeDroit = {type: {} as TypeDroit, valueKey: "code", labelKey: "libelle"};
+const typeDroit = {
+    type: {} as TypeDroit,
+    valueKey: "code",
+    labelKey: "libelle"
+};
 ```
 
 ---
@@ -53,8 +57,8 @@ Les listes de référence peuvent ensuite être lues via `referenceStore.droit` 
 Cela s'intègre en particulier nativement dans le rendu d'un composant React :
 
 ```tsx
-function Component() {
-    return useObserver(() => (
+const Component = observer(function Component() {
+    return (
         <ul>
             {referenceStore.droit.map(droit => (
                 <li>{droit.code}</li>
@@ -63,8 +67,8 @@ function Component() {
                 <li>{typeDroit.code}</li>
             ))}
         </ul>
-    ));
-}
+    );
+});
 ```
 
 Ce composant sera initialement rendu 3 fois :

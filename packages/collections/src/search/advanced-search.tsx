@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {ComponentType, ElementType, useContext, useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -178,7 +178,10 @@ export interface AdvancedSearchProps<T extends object, P extends ListBaseProps<T
  *
  * L'intégralité des props de ces composants se retrouve dans ses props, souvent avec le même nom ou parfois avec un nom un peu différent (exemple : `hideFacets` dans le `Summary`, `hideSummaryFacets` dans l'`AdvancedSearch`).
  */
-export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
+export const AdvancedSearch = observer(function AdvancedSearch<
+    T extends object,
+    P extends ListBaseProps<T> = ListProps<T>
+>({
     actionBarMenuPositions,
     actionBarTheme,
     AddItemComponent = DefaultAddItemComponent,
@@ -275,7 +278,7 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
 
     const {MosaicComponent, LineComponent} = listProps as any as ListProps<T>;
 
-    return useObserver(() => (
+    return (
         <div className={theme.search()}>
             {renderFacetBox()}
             <div className={theme.resultContainer()}>
@@ -374,8 +377,8 @@ export function AdvancedSearch<T extends object, P extends ListBaseProps<T> = Li
                 </ListContext.Provider>
             </div>
         </div>
-    ));
-}
+    );
+});
 
 /**
  * Crée un composant de recherche avancée.

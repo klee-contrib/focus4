@@ -1,5 +1,5 @@
 import {debounce} from "es-toolkit";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {FocusEvent, useCallback, useEffect, useId, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
@@ -73,7 +73,10 @@ const defaultGetKey = (x: any) => x.key?.toString();
  *     }))
  * ```
  */
-export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key: string; label: string}>({
+export const AutocompleteSearch = observer(function AutocompleteSearch<
+    const S extends ZodTypeSingle,
+    TSource = {key: string; label: string}
+>({
     disabled,
     error,
     getKey = defaultGetKey,
@@ -178,7 +181,7 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
         onFocus?.(e);
     }
 
-    return useObserver(() => (
+    return (
         <Autocomplete
             {...props}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
@@ -198,5 +201,5 @@ export function AutocompleteSearch<const S extends ZodTypeSingle, TSource = {key
             value={value !== undefined ? `${value}` : undefined}
             values={values}
         />
-    ));
-}
+    );
+});

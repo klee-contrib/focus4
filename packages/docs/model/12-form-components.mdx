@@ -45,7 +45,7 @@ Après avoir passé `{...actions.panelProps}` au `Panel`, vous pouvez utiliser (
 Un formulaire simple complet ressemblera donc à :
 
 ```tsx
-export function BasicForm() {
+export const BasicForm = observer(function BasicForm() {
     const entity = useFormNode(utilisateurStore.utilisateur);
 
     const actions = useFormActions(entity, a =>
@@ -56,7 +56,7 @@ export function BasicForm() {
             .on("save", () => utilisateurStore.load())
     );
 
-    return useObserver(() => (
+    return (
         <Form {...actions.formProps}>
             <Panel title="Utilisateur" {...actions.panelProps}>
                 {fieldFor(entity.prenom)}
@@ -64,6 +64,6 @@ export function BasicForm() {
                 {selectFor(entity.typeUtilisateur, referenceStore.typeUtilisateur)}
             </Panel>
         </Form>
-    ));
-}
+    );
+});
 ```

@@ -1,5 +1,5 @@
 import {action, comparer, observable, reaction} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {ElementType, MouseEvent, ReactElement, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -67,7 +67,7 @@ const noAdditionalFacets = {};
  *
  * Par défaut, les facettes n'ayant qu'une seule valeur ne sont pas affichées ; il est possible de forcer leur affichage avec la prop `showSingleValuedFacets`.
  */
-export function FacetBox<T extends object>({
+export const FacetBox = observer(function FacetBox<T extends object>({
     additionalFacets = noAdditionalFacets,
     customFacetComponents = {},
     defaultFacetState = "opened",
@@ -160,94 +160,92 @@ export function FacetBox<T extends object>({
         }
     });
 
-    return useObserver(() => {
-        const facets = [...store.facets];
+    const facets = [...store.facets];
 
-        for (const [code, def] of Object.entries(additionalFacets)) {
-            facets.splice(def.position ?? 0, 0, {
-                code,
-                label: code,
-                canExclude: false,
-                isMultiSelectable: false,
-                isMultiValued: false,
-                values: []
-            });
+    for (const [code, def] of Object.entries(additionalFacets)) {
+        facets.splice(def.position ?? 0, 0, {
+            code,
+            label: code,
+            canExclude: false,
+            isMultiSelectable: false,
+            isMultiValued: false,
+            values: []
+        });
+    }
+
+    const filteredFacets = facets.filter(
+        facet =>
+            facet.code in additionalFacets ||
+            (shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount) &&
+                facet.code !== store.groupingKey)
+    );
+
+    let sectionElements: ReactElement[] | undefined;
+    if (sections) {
+        if (sections.filter(s => !s.facets).length > 1) {
+            throw new Error("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
         }
 
-        const filteredFacets = facets.filter(
-            facet =>
-                facet.code in additionalFacets ||
-                (shouldDisplayFacet(facet, store.inputFacets, showSingleValuedFacets, store.totalCount) &&
-                    facet.code !== store.groupingKey)
-        );
+        let remainingFacets = [...filteredFacets];
 
-        let sectionElements: ReactElement[] | undefined;
-        if (sections) {
-            if (sections.filter(s => !s.facets).length > 1) {
-                throw new Error("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
-            }
+        sectionElements = sections
+            .filter(s => !!s.facets && s.facets.length)
+            .map(s => {
+                const fs = s
+                    .facets!.map(code => {
+                        const facet = filteredFacets.find(f => f.code === code);
+                        if (facet) {
+                            remainingFacets = remainingFacets.filter(f => facet !== f);
+                            return renderFacet(facet);
+                        } else {
+                            return null;
+                        }
+                    })
+                    .filter(x => x);
+                if (fs.length) {
+                    return (
+                        <div key={s.name} className={theme.section()}>
+                            <h5>{s.name}</h5>
+                            {fs}
+                        </div>
+                    );
+                } else {
+                    return null;
+                }
+            })
+            .filter(x => x) as ReactElement[];
 
-            let remainingFacets = [...filteredFacets];
-
-            sectionElements = sections
-                .filter(s => !!s.facets && s.facets.length)
-                .map(s => {
-                    const fs = s
-                        .facets!.map(code => {
-                            const facet = filteredFacets.find(f => f.code === code);
-                            if (facet) {
-                                remainingFacets = remainingFacets.filter(f => facet !== f);
-                                return renderFacet(facet);
-                            } else {
-                                return null;
-                            }
-                        })
-                        .filter(x => x);
-                    if (fs.length) {
-                        return (
-                            <div key={s.name} className={theme.section()}>
-                                <h5>{s.name}</h5>
-                                {fs}
-                            </div>
-                        );
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(x => x) as ReactElement[];
-
-            const restSection = sections.find(s => !s.facets && !!remainingFacets.length);
-            if (restSection) {
-                sectionElements.splice(
-                    sections.indexOf(restSection),
-                    0,
-                    <div key={restSection.name} className={theme.section()}>
-                        {restSection.name ? <h4>{restSection.name}</h4> : null}
-                        {remainingFacets.map(renderFacet)}
-                    </div>
-                );
-            }
-        }
-
-        const opened = [...facetStateMap.values()].some(v => v !== "collapsed");
-
-        const shouldDisplayClear =
-            Object.values(store.inputFacets).some(l => l.selected ?? l.excluded) ||
-            Object.values(additionalFacets).some(({fields = [], initialValues = []}) =>
-                fields.some((field, idx) => field.value !== initialValues[idx])
+        const restSection = sections.find(s => !s.facets && !!remainingFacets.length);
+        if (restSection) {
+            sectionElements.splice(
+                sections.indexOf(restSection),
+                0,
+                <div key={restSection.name} className={theme.section()}>
+                    {restSection.name ? <h4>{restSection.name}</h4> : null}
+                    {remainingFacets.map(renderFacet)}
+                </div>
             );
+        }
+    }
 
-        return (
-            <div className={theme.facetBox()}>
-                <h3 onClick={() => toggleAll(opened ? "collapsed" : "opened")}>
-                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
-                    <span>{t(`${i18nPrefix}.search.facets.title`)}</span>
-                    {shouldDisplayClear ? (
-                        <IconButton icon={{i18nKey: `${i18nPrefix}.icons.searchBar.clear`}} onClick={clearFacets} />
-                    ) : null}
-                </h3>
-                {sectionElements ?? filteredFacets.map(renderFacet)}
-            </div>
+    const opened = [...facetStateMap.values()].some(v => v !== "collapsed");
+
+    const shouldDisplayClear =
+        Object.values(store.inputFacets).some(l => l.selected ?? l.excluded) ||
+        Object.values(additionalFacets).some(({fields = [], initialValues = []}) =>
+            fields.some((field, idx) => field.value !== initialValues[idx])
         );
-    });
-}
+
+    return (
+        <div className={theme.facetBox()}>
+            <h3 onClick={() => toggleAll(opened ? "collapsed" : "opened")}>
+                <IconButton icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}} />
+                <span>{t(`${i18nPrefix}.search.facets.title`)}</span>
+                {shouldDisplayClear ? (
+                    <IconButton icon={{i18nKey: `${i18nPrefix}.icons.searchBar.clear`}} onClick={clearFacets} />
+                ) : null}
+            </h3>
+            {sectionElements ?? filteredFacets.map(renderFacet)}
+        </div>
+    );
+});

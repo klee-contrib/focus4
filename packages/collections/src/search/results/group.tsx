@@ -1,5 +1,5 @@
 import {ObservableMap} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {ComponentType, useContext} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -52,7 +52,7 @@ export interface GroupProps<T extends object, P extends ListBaseProps<T> = ListP
 }
 
 /** Composant de groupe, affiche une ActionBar (si plusieurs groupes) et une StoreList. */
-export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
+export const Group = observer(function Group<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
     group,
     GroupHeader = DefaultGroupHeader,
     groupOperationList,
@@ -84,7 +84,7 @@ export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T
         }
     }));
 
-    return useObserver(() => (
+    return (
         <>
             {useGroupActionBars ? (
                 <ActionBar
@@ -117,22 +117,24 @@ export function Group<T extends object, P extends ListBaseProps<T> = ListProps<T
                 />
             ) : null}
         </>
-    ));
-}
+    );
+});
 
-export function DefaultGroupHeader<T>({group, i18nPrefix = "focus", openedMap}: GroupHeaderProps<T>) {
+export const DefaultGroupHeader = observer(function DefaultGroupHeader<T>({
+    group,
+    i18nPrefix = "focus",
+    openedMap
+}: GroupHeaderProps<T>) {
     const {t} = useTranslation();
 
-    return useObserver(() => {
-        const opened = openedMap.get(group.code);
-        return (
-            <>
-                <IconButton
-                    icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}}
-                    onClick={() => openedMap.set(group.code, !opened)}
-                />
-                <strong>{`${t(group.label)} (${group.totalCount})`}</strong>
-            </>
-        );
-    });
-}
+    const opened = openedMap.get(group.code);
+    return (
+        <>
+            <IconButton
+                icon={{i18nKey: `${i18nPrefix}.icons.facets.${opened ? "close" : "open"}`}}
+                onClick={() => openedMap.set(group.code, !opened)}
+            />
+            <strong>{`${t(group.label)} (${group.totalCount})`}</strong>
+        </>
+    );
+});

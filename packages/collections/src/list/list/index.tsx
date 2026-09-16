@@ -1,5 +1,5 @@
 import {autorun, comparer, observable, reaction} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {AnimatePresence} from "motion/react";
 import {ComponentType, Fragment, useContext, useEffect} from "react";
 
@@ -88,7 +88,7 @@ export type ListProps<T extends object> = ListBaseProps<T> & {
  * **Ce composant n'a d'intérêt que si vous avez besoin d'une des fonctionnalités listées dans cette description** (la plupart du temps, il s'agit de la pagination, de
  * la sélection, ou des actions de ligne). Sans ça, il n'a aucun avantage sur un simple `list.map()` React classique et apporte une complexité inutile.
  */
-export function List<T extends object>({
+export const List = observer(function List<T extends object>({
     AddItemComponent = DefaultAddItemComponent,
     addItemHandler,
     baseTheme,
@@ -194,127 +194,125 @@ export function List<T extends object>({
         store
     });
 
-    return useObserver(() => {
-        /** Réaction pour fermer le détail si la liste change. */
-        useEffect(
-            () =>
-                reaction(() => state.displayedData.map(itemKey), listState.closeDetail, {
-                    fireImmediately: true,
-                    equals: comparer.structural
-                }),
-            []
-        );
+    /** Réaction pour fermer le détail si la liste change. */
+    useEffect(
+        () =>
+            reaction(() => state.displayedData.map(itemKey), listState.closeDetail, {
+                fireImmediately: true,
+                equals: comparer.structural
+            }),
+        []
+    );
 
-        /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
-        const isAddItemShown = !!(!hideAdditionalItems && listState.addItemHandler && listState.mode === "mosaic");
+    /** Affiche ou non l'ajout d'élément dans la liste (en mosaïque). */
+    const isAddItemShown = !!(!hideAdditionalItems && listState.addItemHandler && listState.mode === "mosaic");
 
-        let Component: ComponentType<LineProps<T>>;
-        if (listState.mode === "list" && LineComponent) {
-            Component = LineComponent;
-        } else if (listState.mode === "mosaic" && MosaicComponent) {
-            Component = MosaicComponent;
-        } else {
-            throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
-        }
+    let Component: ComponentType<LineProps<T>>;
+    if (listState.mode === "list" && LineComponent) {
+        Component = LineComponent;
+    } else if (listState.mode === "mosaic" && MosaicComponent) {
+        Component = MosaicComponent;
+    } else {
+        throw new Error("Aucun component de ligne ou de mosaïque n'a été précisé.");
+    }
 
-        const detailIdx =
-            listState.displayedIdx !== undefined
-                ? listState.mode === "list"
-                    ? listState.displayedIdx
-                    : Math.min(
-                          (Math.floor((listState.displayedIdx + (isAddItemShown ? 1 : 0)) / listState.byLine) + 1) *
-                              listState.byLine -
-                              (isAddItemShown ? 1 : 0) -
-                              1,
-                          state.displayedData.length - 1
-                      )
-                : undefined;
+    const detailIdx =
+        listState.displayedIdx !== undefined
+            ? listState.mode === "list"
+                ? listState.displayedIdx
+                : Math.min(
+                      (Math.floor((listState.displayedIdx + (isAddItemShown ? 1 : 0)) / listState.byLine) + 1) *
+                          listState.byLine -
+                          (isAddItemShown ? 1 : 0) -
+                          1,
+                      state.displayedData.length - 1
+                  )
+            : undefined;
 
-        const lines = state.displayedData.map((item, idx) => (
-            <Fragment key={itemKey(item, idx)}>
-                <LineWrapper
-                    data={item}
-                    domRef={getDomRef(idx)}
-                    hasSelection={store ? hasSelection : undefined}
-                    LineComponent={Component}
-                    mosaic={listState.mode === "mosaic" ? mosaic : undefined}
-                    operationList={operationList}
-                    store={store}
-                    theme={theme}
-                    toggleDetail={
-                        canOpenDetail(item) && DetailComponent
-                            ? (callbacks?: object) => listState.toggleDetail(idx, callbacks)
-                            : undefined
-                    }
-                />
-                {DetailComponent ? (
-                    <AnimatePresence mode="wait">
-                        {listState.displayedIdx !== undefined && idx === detailIdx ? (
-                            <DetailWrapper
-                                key={`detail-${listState.displayedIdx}`}
-                                byLine={listState.byLine}
-                                closeDetail={listState.closeDetail}
-                                DetailComponent={DetailComponent}
-                                displayedIdx={listState.displayedIdx}
-                                isAddItemShown={isAddItemShown}
-                                item={state.displayedData[listState.displayedIdx]}
-                                mode={listState.mode}
-                                mosaic={mosaic}
-                                theme={theme}
+    const lines = state.displayedData.map((item, idx) => (
+        <Fragment key={itemKey(item, idx)}>
+            <LineWrapper
+                data={item}
+                domRef={getDomRef(idx)}
+                hasSelection={store ? hasSelection : undefined}
+                LineComponent={Component}
+                mosaic={listState.mode === "mosaic" ? mosaic : undefined}
+                operationList={operationList}
+                store={store}
+                theme={theme}
+                toggleDetail={
+                    canOpenDetail(item) && DetailComponent
+                        ? (callbacks?: object) => listState.toggleDetail(idx, callbacks)
+                        : undefined
+                }
+            />
+            {DetailComponent ? (
+                <AnimatePresence mode="wait">
+                    {listState.displayedIdx !== undefined && idx === detailIdx ? (
+                        <DetailWrapper
+                            key={`detail-${listState.displayedIdx}`}
+                            byLine={listState.byLine}
+                            closeDetail={listState.closeDetail}
+                            DetailComponent={DetailComponent}
+                            displayedIdx={listState.displayedIdx}
+                            isAddItemShown={isAddItemShown}
+                            item={state.displayedData[listState.displayedIdx]}
+                            mode={listState.mode}
+                            mosaic={mosaic}
+                            theme={theme}
+                        />
+                    ) : null}
+                </AnimatePresence>
+            ) : null}
+        </Fragment>
+    ));
+
+    return (
+        <div
+            className={theme.list({
+                mosaic: listState.mode === "mosaic",
+                selected: (store && store.selectionStatus !== "none") ?? false
+            })}
+        >
+            {/* Gestion de l'empty state. */}
+            {!state.isLoading && !hideAdditionalItems && !state.displayedData.length ? (
+                <EmptyComponent addItemHandler={listState.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
+            ) : (
+                <ul
+                    ref={ul => {
+                        listState.ulRef = ul;
+                    }}
+                >
+                    {/* On regarde si on doit ajouter l'élément d'ajout. */}
+                    {isAddItemShown ? (
+                        <li
+                            key="mosaic-add"
+                            className={theme.mosaic()}
+                            style={{width: mosaic.width, height: mosaic.height}}
+                        >
+                            <AddItemComponent
+                                addItemHandler={listState.addItemHandler}
+                                i18nPrefix={i18nPrefix}
+                                mode="mosaic"
                             />
-                        ) : null}
-                    </AnimatePresence>
-                ) : null}
-            </Fragment>
-        ));
-
-        return (
-            <div
-                className={theme.list({
-                    mosaic: listState.mode === "mosaic",
-                    selected: (store && store.selectionStatus !== "none") ?? false
-                })}
-            >
-                {/* Gestion de l'empty state. */}
-                {!state.isLoading && !hideAdditionalItems && !state.displayedData.length ? (
-                    <EmptyComponent addItemHandler={listState.addItemHandler} i18nPrefix={i18nPrefix} store={store} />
-                ) : (
-                    <ul
-                        ref={ul => {
-                            listState.ulRef = ul;
-                        }}
-                    >
-                        {/* On regarde si on doit ajouter l'élément d'ajout. */}
-                        {isAddItemShown ? (
-                            <li
-                                key="mosaic-add"
-                                className={theme.mosaic()}
-                                style={{width: mosaic.width, height: mosaic.height}}
-                            >
-                                <AddItemComponent
-                                    addItemHandler={listState.addItemHandler}
-                                    i18nPrefix={i18nPrefix}
-                                    mode="mosaic"
-                                />
-                            </li>
-                        ) : null}
-                        {lines}
-                    </ul>
-                )}
-                <BottomRow
-                    {...pagination}
-                    i18nPrefix={i18nPrefix}
-                    paginationMode={paginationMode}
-                    perPage={perPage}
-                    showAllHandler={showAllHandler}
-                    state={state}
-                    store={store}
-                    theme={baseTheme}
-                />
-            </div>
-        );
-    });
-}
+                        </li>
+                    ) : null}
+                    {lines}
+                </ul>
+            )}
+            <BottomRow
+                {...pagination}
+                i18nPrefix={i18nPrefix}
+                paginationMode={paginationMode}
+                perPage={perPage}
+                showAllHandler={showAllHandler}
+                state={state}
+                store={store}
+                theme={baseTheme}
+            />
+        </div>
+    );
+});
 
 /**
  * `listFor` permet de poser le composant `List`, qui permet d'afficher des données sous forme d'une liste simple.

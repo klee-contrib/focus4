@@ -2,7 +2,7 @@ import classNames from "classnames";
 import {range} from "es-toolkit";
 import {FocusTrap} from "focus-trap-react";
 import {autorun, observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {
     ReactElement,
@@ -64,7 +64,7 @@ export interface ScrollableProps {
  *
  * Le `Scrollable` **pose son propre contexte de scroll sur la page**. En particulier, pour celui du [`Layout`](/docs/mise-en-page-layout--docs), il faut bien comprendre que le scroll général de l'application n'est pas celui de la page mais celui du `Scrollable` qui prend 100% de l'espace de l'écran (sauf la partie dédiée au [`MainMenu`](/docs/mise-en-page-menu-principal--docs) s'il y en a un). Il faut bien prendre cela en compte lorsque vous essayerez de personnaliser le CSS général de votre application.
  */
-export function Scrollable({
+export const Scrollable = observer(function Scrollable({
     backToTopOffset = 300,
     className,
     children,
@@ -96,11 +96,11 @@ export function Scrollable({
     const registerHeaderElement = useCallback((node: HTMLElement) => {
         const update = () => headerState.elements.set(node, node.clientHeight);
         update();
-        const observer = new ResizeObserver(update);
-        observer.observe(node);
+        const resizeObserver = new ResizeObserver(update);
+        resizeObserver.observe(node);
         return () => {
             headerState.elements.delete(node);
-            observer.disconnect();
+            resizeObserver.disconnect();
         };
     }, []);
 
@@ -183,7 +183,7 @@ export function Scrollable({
         return () => scrollableNode.current?.removeEventListener("scroll", onScroll);
     }, [backToTopOffset]);
 
-    return useObserver(() => (
+    return (
         <ScrollableContext.Provider
             value={useMemo(
                 () => ({
@@ -229,5 +229,5 @@ export function Scrollable({
                 </div>
             </FocusTrap>
         </ScrollableContext.Provider>
-    ));
-}
+    );
+});

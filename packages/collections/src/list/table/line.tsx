@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import {observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {KeyboardEvent, MouseEvent, useEffect} from "react";
 
 import {CollectionStore} from "@focus4/stores";
@@ -14,7 +14,7 @@ import {TableColumn} from "./header";
 import {TableCss} from "../__style__/table.css";
 
 /** Ligne de tableau. */
-export function TableLine<T extends object>({
+export const TableLine = observer(function TableLine<T extends object>({
     className,
     columns,
     domRef,
@@ -77,7 +77,7 @@ export function TableLine<T extends object>({
         }
     }));
 
-    return useObserver(() => (
+    return (
         <tr
             ref={domRef}
             className={classNames(
@@ -113,5 +113,5 @@ export function TableLine<T extends object>({
                 </td>
             ) : null}
         </tr>
-    ));
-}
+    );
+});

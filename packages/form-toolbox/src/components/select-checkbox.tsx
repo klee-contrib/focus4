@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
@@ -44,7 +44,7 @@ export interface SelectCheckboxProps<S extends ZodTypeMultiple> {
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) sur un champ liste.
  */
-export function SelectCheckbox<const S extends ZodTypeMultiple>({
+export const SelectCheckbox = observer(function SelectCheckbox<const S extends ZodTypeMultiple>({
     disabled = false,
     error,
     id,
@@ -63,7 +63,7 @@ export function SelectCheckbox<const S extends ZodTypeMultiple>({
         pTheme
     );
 
-    return useObserver(() => (
+    return (
         <div className={theme.select()}>
             <ul>
                 {values.map(option => {
@@ -108,5 +108,5 @@ export function SelectCheckbox<const S extends ZodTypeMultiple>({
                 theme={theme}
             />
         </div>
-    ));
-}
+    );
+});

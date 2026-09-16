@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "`useObserver` => `observer` (7 ans plus tard... 🙄)",
+    "packageName": "@focus4/collections",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

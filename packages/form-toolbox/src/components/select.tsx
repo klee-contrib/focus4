@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
@@ -32,7 +32,7 @@ export interface SelectProps<S extends ZodTypeSingle> extends Omit<
  *
  * Il s'agit du [composant par défaut de tous les domaines de type `string`, `number` et `boolean`](/docs/composants-composants-par-défaut--docs) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
-export function Select<const S extends ZodTypeSingle>({
+export const Select = observer(function Select<const S extends ZodTypeSingle>({
     disabled,
     error,
     i18nPrefix = "focus",
@@ -47,7 +47,7 @@ export function Select<const S extends ZodTypeSingle>({
 }: SelectProps<S>) {
     const {t} = useTranslation();
     const {$labelKey, $valueKey} = values;
-    return useObserver(() => (
+    return (
         <Dropdown
             {...props}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
@@ -62,5 +62,5 @@ export function Select<const S extends ZodTypeSingle>({
             value={value !== undefined ? `${value}` : undefined}
             values={[...values]}
         />
-    ));
-}
+    );
+});

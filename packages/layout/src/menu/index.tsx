@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {PropsWithChildren, useContext} from "react";
 
 import {CSSProp, useTheme} from "@focus4/styling";
@@ -35,7 +35,7 @@ export interface MainMenuProps {
  *
  * Il est possible de gérer des sous menus : pour se faire, il suffit de passer d'autres `MainMenuItem` en enfants d'un `MainMenuItem`. Comme pour le `MainMenu`, il est possible également de passer d'autres éléments en enfant d'un `MainMenuItem`.
  */
-export function MainMenu({
+export const MainMenu = observer(function MainMenu({
     activeRoute,
     children,
     showOverlay = false,
@@ -43,12 +43,12 @@ export function MainMenu({
 }: PropsWithChildren<MainMenuProps>) {
     const theme = useTheme<MainMenuCss>("mainMenu", mainMenuCss, pTheme);
     const overlay = useContext(OverlayContext);
-    return useObserver(() => (
+    return (
         <nav className={theme.menu()}>
             <MainMenuList activeRoute={activeRoute} theme={theme}>
                 {children}
             </MainMenuList>
             {showOverlay ? <Overlay active={overlay.activeLevel >= 0} close={overlay.close} /> : null}
         </nav>
-    ));
-}
+    );
+});

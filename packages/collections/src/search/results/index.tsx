@@ -1,5 +1,5 @@
 import {comparer, observable, reaction} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {ComponentType, useEffect, useRef, useState} from "react";
 
 import {useStickyClip} from "@focus4/layout";
@@ -64,7 +64,7 @@ export interface ResultsProps<T extends object, P extends ListBaseProps<T> = Lis
  *
  * Toutes les listes sont des [`listFor`](/docs/listes-composants-de-listes-listfor--list) (par défaut, on peut également utiliser un autre composant de liste) et peuvent donc utiliser toutes leurs fonctionnalités.
  */
-export function Results<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
+export const Results = observer(function Results<T extends object, P extends ListBaseProps<T> = ListProps<T>>({
     defaultFoldedGroups,
     GroupHeader,
     groupOperationList,
@@ -110,7 +110,7 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
     const ref = useRef<HTMLDivElement>(null);
     useStickyClip(ref);
 
-    return useObserver(() => (
+    return (
         <div ref={ref} data-focus="results">
             {store.groups.length ? (
                 <List
@@ -149,5 +149,5 @@ export function Results<T extends object, P extends ListBaseProps<T> = ListProps
                 />
             )}
         </div>
-    ));
-}
+    );
+});

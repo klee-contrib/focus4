@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
@@ -93,7 +93,10 @@ const defaultGetLabel = (x: any) => x.label;
  *
  * Il s'agit du [composant par défaut de tous les domaines de type `array` de primitives](/docs/composants-composants-par-défaut--docs) pour [`autocompleteFor`](/docs/modèle-métier-afficher-des-champs--docs#autocompleteforfield-options) (`AutocompleteComponent`).
  */
-export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {key: string; label: string}>({
+export const AutocompleteChips = observer(function AutocompleteChips<
+    const S extends ZodTypeMultiple,
+    TSource = {key: string; label: string}
+>({
     chipTheme,
     direction,
     disabled = false,
@@ -193,7 +196,7 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
         [getKey, querySearcher, keepSelectedValuesInAutocomplete, value]
     );
 
-    return useObserver(() => (
+    return (
         <div className={theme.select()}>
             <AutocompleteSearch<S["element"], TSource>
                 clearQueryOnChange
@@ -257,5 +260,5 @@ export function AutocompleteChips<const S extends ZodTypeMultiple, TSource = {ke
                 theme={theme}
             />
         </div>
-    ));
-}
+    );
+});

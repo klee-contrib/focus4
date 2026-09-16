@@ -159,16 +159,16 @@ Pour un store local, puisque la propriété `list` est directement renseignée, 
 Vous pouvez néanmoins reconstruire un `StoreNode` dans votre composant de ligne si cela simplifie l'affichage de vos champs, par exemple :
 
 ```tsx
-export function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
+export const ItemLine = observer(function ItemLine({data, onClick}: {data: Item; onClick?: () => void}) {
     const node = makeStoreNode(ItemEntity, data);
-    return useObserver(() => (
+    return (
         <div onClick={onClick}>
             {stringFor(node.nom)}
             {stringFor(node.codes, referenceStore.code)}
             {stringFor(node.date)}
         </div>
-    ));
-}
+    );
+});
 ```
 
 Vous pouvez aussi utiliser `makeField` (en consultation) directement en récupérant la définition du champ dans l'entité, par exemple dans un `tableFor` :

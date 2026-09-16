@@ -1,5 +1,5 @@
 import {difference} from "es-toolkit";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {AnimatePresence, motion} from "motion/react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -41,7 +41,7 @@ export interface SearchBarProps<T extends object> {
  * Le composant agit naturellement sur le champ `query`, mais également sur les critères personnalisés `criteria`, qu'il va par défaut ajouter dans le champ texte pour une saisie manuelle (du genre `criteriaName:criteriaValue` ; ce comportement est désactivable via la prop `disableInputCriteria`).
  * Il est possible également de lui passer un composant personnalisé de saisie des critères qu'il va pouvoir afficher à la demande pour saisir de manière plus précise les différents critères.
  */
-export function SearchBar<T extends object>({
+export const SearchBar = observer(function SearchBar<T extends object>({
     criteriaComponent,
     enableInputCriteria,
     i18nPrefix = "focus",
@@ -203,7 +203,7 @@ export function SearchBar<T extends object>({
 
     const theme = useTheme("searchBar", searchBarCss, pTheme);
 
-    return useObserver(() => (
+    return (
         <div data-focus="search-bar" style={{position: "relative"}}>
             <div className={theme.bar({error: !!state.error})}>
                 <div className={theme.input()}>
@@ -301,5 +301,5 @@ export function SearchBar<T extends object>({
                 ) : null}
             </AnimatePresence>
         </div>
-    ));
-}
+    );
+});

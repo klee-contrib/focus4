@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useCallback, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
@@ -39,7 +39,7 @@ const undefinedKey = "$$undefined$$";
  *
  * S'utilise avec [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options).
  */
-export function SelectAutocomplete<const S extends ZodTypeSingle>({
+export const SelectAutocomplete = observer(function SelectAutocomplete<const S extends ZodTypeSingle>({
     disabled,
     error,
     hasUndefined = true,
@@ -70,7 +70,7 @@ export function SelectAutocomplete<const S extends ZodTypeSingle>({
         [i18nPrefix, t, values.$labelKey]
     );
 
-    return useObserver(() => (
+    return (
         <Autocomplete
             {...props}
             disabled={Array.isArray(disabled) ? disabled.map(v => `${v}`) : disabled}
@@ -91,5 +91,5 @@ export function SelectAutocomplete<const S extends ZodTypeSingle>({
             value={value !== undefined ? `${value}` : undefined}
             values={finalValues}
         />
-    ));
-}
+    );
+});

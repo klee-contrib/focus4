@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 
 import {FieldEntry} from "@focus4/entities";
 import {useField, UseFieldProps} from "@focus4/forms";
@@ -26,38 +26,36 @@ declare global {
 export interface FieldProps<F extends FieldEntry> extends UseFieldProps<F>, FieldOptions<F> {}
 
 /** Composant pour poser un champ, utilisé par `fieldFor` et consorts. */
-export function Field<F extends FieldEntry>(props: FieldProps<F>) {
-    return useObserver(() => {
-        const fieldProps = props.field.$field.domain.fieldProps as FieldProps<F> | undefined;
-        const {
-            labelWidth = fieldProps?.labelWidth,
-            valueWidth = fieldProps?.valueWidth,
-            field: {
-                $field: {
-                    domain: {className = ""}
-                }
+export const Field = observer(function Field<F extends FieldEntry>(props: FieldProps<F>) {
+    const fieldProps = props.field.$field.domain.fieldProps as FieldProps<F> | undefined;
+    const {
+        labelWidth = fieldProps?.labelWidth,
+        valueWidth = fieldProps?.valueWidth,
+        field: {
+            $field: {
+                domain: {className = ""}
             }
-        } = props;
-
-        const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
-
-        const {label, value, valueRef} = useField({...props, labelClassName: theme.label()});
-
-        const style: Record<string, string> = {};
-        if (labelWidth) {
-            style["--field-label-width"] = labelWidth;
         }
-        if (valueWidth) {
-            style["--field-value-width"] = valueWidth;
-        }
+    } = props;
 
-        return (
-            <div className={classNames(theme.field(), className)} style={style}>
-                {label}
-                <div ref={valueRef} className={classNames(theme.value(), className)}>
-                    {value}
-                </div>
+    const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
+
+    const {label, value, valueRef} = useField({...props, labelClassName: theme.label()});
+
+    const style: Record<string, string> = {};
+    if (labelWidth) {
+        style["--field-label-width"] = labelWidth;
+    }
+    if (valueWidth) {
+        style["--field-value-width"] = valueWidth;
+    }
+
+    return (
+        <div className={classNames(theme.field(), className)} style={style}>
+            {label}
+            <div ref={valueRef} className={classNames(theme.value(), className)}>
+                {value}
             </div>
-        );
-    });
-}
+        </div>
+    );
+});

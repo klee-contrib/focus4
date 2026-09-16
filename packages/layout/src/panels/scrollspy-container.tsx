@@ -1,6 +1,6 @@
 import {sortBy} from "es-toolkit";
 import {observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {
     ComponentType,
     ReactNode,
@@ -64,7 +64,7 @@ export interface ScrollspyContainerRef {
 /**
  * Le `ScrollspyContainer` est un composant du mise en page qui permet d'affiche un menu sur la gauche qui recapitule les titres de tous les [`Panel`](/docs/mise-en-page-panel--docs) posés à l'intérieur, avec la possibilité de naviguer vers eux en cliquant dessus.
  */
-export function ScrollspyContainer({
+export const ScrollspyContainer = observer(function ScrollspyContainer({
     children,
     contentRef,
     initiallyRetracted = false,
@@ -135,7 +135,7 @@ export function ScrollspyContainer({
 
     useImperativeHandle(ref, () => ({scrollToPanel}), [scrollTo]);
 
-    return useObserver(() => (
+    return (
         <div ref={innerRef} className={theme.scrollspy()}>
             <ScrollspyContext.Provider value={scrollSpyContext}>
                 <MenuComponent
@@ -156,8 +156,8 @@ export function ScrollspyContainer({
                 </div>
             </ScrollspyContext.Provider>
         </div>
-    ));
-}
+    );
+});
 
 /**
  * Récupère l'offset d'un noeud HTML (un panel) par rapport au top du document.

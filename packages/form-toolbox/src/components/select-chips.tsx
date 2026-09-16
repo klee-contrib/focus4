@@ -1,4 +1,4 @@
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useCallback, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
@@ -93,7 +93,7 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
  *
  * Il s'agit du [composant par défaut de tous les domaines de type `array` de primitives](/docs/composants-composants-par-défaut--docs) pour [`selectFor`](/docs/modèle-métier-afficher-des-champs--docs#selectforfield-values-options) (`SelectComponent`).
  */
-export function SelectChips<const S extends ZodTypeMultiple>({
+export const SelectChips = observer(function SelectChips<const S extends ZodTypeMultiple>({
     autocomplete = false,
     chipTheme,
     direction,
@@ -221,7 +221,7 @@ export function SelectChips<const S extends ZodTypeMultiple>({
         [keepSelectedValuesInSelect, unselectable, value, values, values.length]
     );
 
-    return useObserver(() => (
+    return (
         <div className={theme.select()}>
             {autocomplete ? (
                 <SelectAutocomplete<S["element"]>
@@ -302,5 +302,5 @@ export function SelectChips<const S extends ZodTypeMultiple>({
                 theme={theme}
             />
         </div>
-    ));
-}
+    );
+});

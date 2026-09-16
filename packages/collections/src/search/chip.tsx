@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useObserver} from "mobx-react";
+import {observer} from "mobx-react";
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -50,7 +50,7 @@ export interface SearchChipProps {
 }
 
 /** Chip avec un keyResolver. */
-export function SearchChip(props: SearchChipProps) {
+export const SearchChip = observer(function SearchChip(props: SearchChipProps) {
     const {t} = useTranslation();
 
     const {
@@ -82,31 +82,27 @@ export function SearchChip(props: SearchChipProps) {
         }
     }, [values]);
 
-    return useObserver(() => {
-        const tCodeLabel = t(codeLabel);
-        const tValueLabel = values
-            ?.map(
-                value =>
-                    `${value.invert ? `${t(`${i18nPrefix}.search.summary.not`)} ` : ""}"${t(
-                        valueLabels.get(value.code)!
-                    )}"`
-            )
-            .join(` ${t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
-        return (
-            <Chip
-                className={className}
-                color="light"
-                label={!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
-                onDeleteClick={deletable ? onDeleteClick : undefined}
-                theme={themeable(
-                    theme,
-                    themer?.(
-                        type,
-                        code,
-                        values?.map(v => v.code)
-                    ) ?? {}
-                )}
-            />
-        );
-    });
-}
+    const tCodeLabel = t(codeLabel);
+    const tValueLabel = values
+        ?.map(
+            value =>
+                `${value.invert ? `${t(`${i18nPrefix}.search.summary.not`)} ` : ""}"${t(valueLabels.get(value.code)!)}"`
+        )
+        .join(` ${t(`${i18nPrefix}.search.summary.${valueOperator}`)} `);
+    return (
+        <Chip
+            className={className}
+            color="light"
+            label={!tValueLabel ? tCodeLabel : `${tCodeLabel} : ${tValueLabel}`}
+            onDeleteClick={deletable ? onDeleteClick : undefined}
+            theme={themeable(
+                theme,
+                themer?.(
+                    type,
+                    code,
+                    values?.map(v => v.code)
+                ) ?? {}
+            )}
+        />
+    );
+});

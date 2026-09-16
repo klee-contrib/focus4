@@ -1,5 +1,5 @@
 import {observable} from "mobx";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {observer, useLocalObservable} from "mobx-react";
 import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -74,7 +74,7 @@ export interface SummaryProps<T extends object> {
  * (Note : le tri et le groupe ne sont jamais effectifs en même temps)
  */
 
-export function Summary<T extends object>({
+export const Summary = observer(function Summary<T extends object>({
     canRemoveSort = true,
     chipKeyResolver,
     chipThemer,
@@ -202,84 +202,82 @@ export function Summary<T extends object>({
         state.store = store;
     }, [hideCriteria, orderableColumnList, store]);
 
-    return useObserver(() => {
-        const {groupingKey, totalCount, query} = store;
-        return (
-            <div className={theme.summary()}>
-                {/* Nombre de résultats. */}
-                {!hideResults ? (
-                    <span>
-                        <strong>{totalCount}&nbsp;</strong>
-                        {t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
-                    </span>
-                ) : null}
+    const {groupingKey, totalCount, query} = store;
+    return (
+        <div className={theme.summary()}>
+            {/* Nombre de résultats. */}
+            {!hideResults ? (
+                <span>
+                    <strong>{totalCount}&nbsp;</strong>
+                    {t(`${i18nPrefix}.search.summary.result`, {count: totalCount})}
+                </span>
+            ) : null}
 
-                {/* Texte de recherche. */}
-                {!hideQuery && query && query.trim().length > 0 ? (
-                    <span>{`${t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
-                ) : null}
+            {/* Texte de recherche. */}
+            {!hideQuery && query && query.trim().length > 0 ? (
+                <span>{`${t(`${i18nPrefix}.search.summary.for`)} "${query}"`}</span>
+            ) : null}
 
-                {/* Liste des filtres (facettes + critères) */}
-                {state.includeList.length ? (
-                    <>
-                        <span>{t(`${i18nPrefix}.search.summary.by`)}</span>
-                        {state.includeList.map(({key, ...chip}) => (
-                            <SearchChip
-                                key={key}
-                                {...chip}
-                                className={theme.chip()}
-                                deletable
-                                keyResolver={chipKeyResolver}
-                                themer={chipThemer}
-                            />
-                        ))}
-                    </>
-                ) : null}
-
-                {/* Groupe. */}
-                {groupingKey && !hideGroup ? (
-                    <>
-                        <span>{t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}</span>
+            {/* Liste des filtres (facettes + critères) */}
+            {state.includeList.length ? (
+                <>
+                    <span>{t(`${i18nPrefix}.search.summary.by`)}</span>
+                    {state.includeList.map(({key, ...chip}) => (
                         <SearchChip
+                            key={key}
+                            {...chip}
                             className={theme.chip()}
-                            code={groupingKey}
-                            codeLabel={store.groupingLabel!}
                             deletable
-                            onDeleteClick={() => (store.groupingKey = undefined)}
+                            keyResolver={chipKeyResolver}
                             themer={chipThemer}
-                            type="group"
                         />
-                    </>
-                ) : null}
+                    ))}
+                </>
+            ) : null}
 
-                {/* Tri. */}
-                {state.currentSort && !hideSort && totalCount > 1 ? (
-                    <>
-                        <span>{t(`${i18nPrefix}.search.summary.sortBy`)}</span>
-                        <SearchChip
-                            className={theme.chip()}
-                            code={state.currentSort.sort.map(({fieldName}) => fieldName).join("|")}
-                            codeLabel={state.currentSort.label}
-                            deletable={canRemoveSort}
-                            onDeleteClick={canRemoveSort ? () => (store.sort = []) : undefined}
-                            themer={chipThemer}
-                            type="sort"
-                        />
-                    </>
-                ) : null}
+            {/* Groupe. */}
+            {groupingKey && !hideGroup ? (
+                <>
+                    <span>{t(`${i18nPrefix}.search.summary.group`, {count: totalCount})}</span>
+                    <SearchChip
+                        className={theme.chip()}
+                        code={groupingKey}
+                        codeLabel={store.groupingLabel!}
+                        deletable
+                        onDeleteClick={() => (store.groupingKey = undefined)}
+                        themer={chipThemer}
+                        type="group"
+                    />
+                </>
+            ) : null}
 
-                {/* Action d'export. */}
-                {exportAction ? (
-                    <div className={theme.print()}>
-                        <Button
-                            icon={{i18nKey: `${i18nPrefix}.icons.summary.export`}}
-                            label={t(`${i18nPrefix}.search.summary.export`)}
-                            onClick={exportAction}
-                            type="button"
-                        />
-                    </div>
-                ) : null}
-            </div>
-        );
-    });
-}
+            {/* Tri. */}
+            {state.currentSort && !hideSort && totalCount > 1 ? (
+                <>
+                    <span>{t(`${i18nPrefix}.search.summary.sortBy`)}</span>
+                    <SearchChip
+                        className={theme.chip()}
+                        code={state.currentSort.sort.map(({fieldName}) => fieldName).join("|")}
+                        codeLabel={state.currentSort.label}
+                        deletable={canRemoveSort}
+                        onDeleteClick={canRemoveSort ? () => (store.sort = []) : undefined}
+                        themer={chipThemer}
+                        type="sort"
+                    />
+                </>
+            ) : null}
+
+            {/* Action d'export. */}
+            {exportAction ? (
+                <div className={theme.print()}>
+                    <Button
+                        icon={{i18nKey: `${i18nPrefix}.icons.summary.export`}}
+                        label={t(`${i18nPrefix}.search.summary.export`)}
+                        onClick={exportAction}
+                        type="button"
+                    />
+                </div>
+            ) : null}
+        </div>
+    );
+});
