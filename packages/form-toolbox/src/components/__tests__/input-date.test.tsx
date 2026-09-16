@@ -215,4 +215,82 @@ describe("InputDate component", () => {
 
         expect(onChange).not.toHaveBeenCalled();
     });
+
+    test.each(["bottom", "top", "right", "auto"] as const)("ouvre le calendrier en position %s", calendarPosition => {
+        render(
+            <InputDate
+                calendarPosition={calendarPosition}
+                inputProps={{theme: textFieldTheme}}
+                onChange={() => undefined}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.focus(screen.getByRole("textbox"));
+
+        expect(document.querySelectorAll("[data-date]").length).toBeGreaterThan(0);
+    });
+
+    test("ouvre le calendrier avec les flèches et sélectionne une date", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                referenceValue="2024-10-24"
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        const input = screen.getByRole("textbox");
+        fireEvent.keyDown(input, {key: "ArrowDown"});
+        fireEvent.click(document.querySelector<HTMLButtonElement>("[data-date='2024-10-24']")!);
+
+        expect(onChange).toHaveBeenCalledWith("2024-10-24");
+    });
+
+    test("respecte les formats année et mois", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                calendarFormat="yyyy-MM"
+                inputFormat="MM/yyyy"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("textbox"), {target: {value: "10/2024"}});
+
+        expect(onChange).toHaveBeenCalledWith(expect.stringMatching(/^2024-10-\d{2}$/u));
+    });
+
+    test.each(["utc-midnight", "local-midnight", "local-utc-midnight"] as const)(
+        "normalise les heures avec le format datetime %s",
+        ISOStringFormat => {
+            const onChange = vi.fn();
+            render(
+                <InputDate
+                    ISOStringFormat={ISOStringFormat}
+                    inputFormat="dd/MM/yyyy HH:mm"
+                    inputProps={{theme: textFieldTheme}}
+                    onChange={onChange}
+                    schema={z.iso.datetime()}
+                    theme={inputDateTheme}
+                    value={undefined}
+                />
+            );
+
+            fireEvent.change(screen.getByRole("textbox"), {target: {value: "24/10/2024 13:45"}});
+
+            expect(onChange).toHaveBeenLastCalledWith(expect.stringMatching(/^2024-10-24T\d{2}:45/u));
+        }
+    );
 });

@@ -1,7 +1,9 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
-import {renderWithTheme, setupComponentTest} from "../../__tests__/test-utils";
+import {ThemeProvider} from "@focus4/styling";
+
+import {defaultAppTheme, renderWithTheme, setupComponentTest} from "../../__tests__/test-utils";
 import {TextField} from "../text-field";
 
 const textFieldTheme = {
@@ -110,5 +112,87 @@ describe("TextField component", () => {
         render(<TextField onChange={() => undefined} theme={textFieldTheme} type="email" value="" />);
 
         expect(screen.getByRole<HTMLInputElement>("textbox").type).toBe("email");
+    });
+
+    test("limite la saisie et affiche les préfixes et suffixes après focus", () => {
+        const onChange = vi.fn();
+        const {container} = render(
+            <TextField
+                maxLength={3}
+                onChange={onChange}
+                prefix="$"
+                showPrefixAndSuffixOnEmptyValue
+                suffix="€"
+                theme={textFieldTheme}
+                value=""
+            />
+        );
+
+        expect(screen.getByText("$")).toBeTruthy();
+        expect(screen.getByText("€")).toBeTruthy();
+        fireEvent.change(container.querySelector("input")!, {target: {value: "abcd"}});
+        expect(onChange).toHaveBeenCalledWith("abc", expect.any(Object));
+    });
+
+    test("affiche le chargement et transmet les événements du champ", () => {
+        const handlers = {
+            onBlur: vi.fn(),
+            onClick: vi.fn(),
+            onContextMenu: vi.fn(),
+            onFocus: vi.fn(),
+            onKeyDown: vi.fn(),
+            onKeyUp: vi.fn(),
+            onPaste: vi.fn(),
+            onPointerDown: vi.fn(),
+            onPointerEnter: vi.fn(),
+            onPointerLeave: vi.fn(),
+            onPointerUp: vi.fn()
+        };
+        const {container} = render(
+            <ThemeProvider
+                appTheme={{
+                    ...defaultAppTheme,
+                    progressIndicator: {circular: "progress", indicator: "progress-indicator", track: "progress-track"}
+                }}
+            >
+                <TextField {...handlers} hint="Search" icon="search" loading theme={textFieldTheme} value="" />
+            </ThemeProvider>
+        );
+
+        const input = container.querySelector("input")!;
+        fireEvent.focus(input);
+        fireEvent.click(container.querySelector(".tf-field")!);
+        fireEvent.contextMenu(input);
+        fireEvent.keyDown(input);
+        fireEvent.keyUp(input);
+        fireEvent.paste(input);
+        fireEvent.pointerDown(input);
+        fireEvent.pointerEnter(input);
+        fireEvent.pointerLeave(input);
+        fireEvent.pointerUp(input);
+        fireEvent.blur(input, {relatedTarget: document.body});
+
+        expect(screen.getByRole("progressbar")).toBeTruthy();
+        for (const handler of Object.values(handlers)) {
+            expect(handler).toHaveBeenCalled();
+        }
+    });
+
+    test("affiche les icônes simples avec tooltip et respecte noFocusOnClick", () => {
+        const onClick = vi.fn();
+        renderWithTheme(
+            <TextField
+                onChange={() => undefined}
+                theme={textFieldTheme}
+                trailing={[
+                    {icon: "info", tooltip: "Information"},
+                    {icon: "clear", noFocusOnClick: true, onClick}
+                ]}
+                value="value"
+            />
+        );
+
+        fireEvent.click(screen.getByRole("button"));
+        expect(onClick).toHaveBeenCalledOnce();
     });
 });

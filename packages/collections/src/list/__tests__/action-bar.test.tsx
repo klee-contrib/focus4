@@ -122,4 +122,48 @@ describe("ActionBar", () => {
         store.selectedItems.add(store.list[0]);
         expect(screen.queryByRole("button", {name: /Grouper/})).toBeNull();
     });
+
+    test("efface une requête existante depuis la barre d'action", () => {
+        const store = createStore();
+        store.query = "alpha";
+        renderWithTheme(<ActionBar hasSearchBar store={store} theme={actionBarTheme} />);
+
+        fireEvent.click(screen.getByRole("button", {name: "clear"}));
+
+        expect(store.query).toBe("");
+    });
+
+    test("respecte la liste des facettes groupables", () => {
+        const store = createStore();
+        renderWithTheme(<ActionBar groupableFacets={["category"]} hasGrouping store={store} theme={actionBarTheme} />);
+
+        fireEvent.click(screen.getByRole("button", {name: /Grouper/}));
+        expect(screen.getByText("Category")).toBeTruthy();
+    });
+
+    test("affiche une opération même sans sélection", () => {
+        const store = createStore();
+        const operation = vi.fn();
+        renderWithTheme(
+            <ThemeProvider
+                appTheme={{
+                    ...defaultAppTheme,
+                    contextualActions: {
+                        fab: "contextual-actions-fab",
+                        item: "contextual-actions-item",
+                        text: "contextual-actions-text"
+                    }
+                }}
+            >
+                <ActionBar
+                    operationList={[{action: operation, label: "Create", showIfNoData: true, type: "label"}]}
+                    store={store}
+                    theme={actionBarTheme}
+                />
+            </ThemeProvider>
+        );
+
+        fireEvent.click(screen.getByRole("button", {name: "Create"}));
+        expect(operation).toHaveBeenCalledWith([]);
+    });
 });

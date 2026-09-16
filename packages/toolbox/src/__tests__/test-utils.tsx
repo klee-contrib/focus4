@@ -33,7 +33,15 @@ export function setupComponentTest(translations: Record<string, unknown> = {}): 
 
 /** Thème global à injecter via un `ThemeProvider` pour couvrir tous les sous-composants Focus utilisés en test. */
 export const defaultAppTheme = {
-    button: {button: "btn", icon: "btn-icon", label: "btn-label", spinner: "btn-spinner"},
+    button: {
+        button: "btn",
+        "button--filled": "btn-filled",
+        "button--outlined": "btn-outlined",
+        "button--primary": "btn-primary",
+        icon: "btn-icon",
+        label: "btn-label",
+        spinner: "btn-spinner"
+    },
     checkbox: {
         check: "cb-check",
         checkbox: "cb",

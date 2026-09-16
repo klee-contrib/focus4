@@ -20,7 +20,13 @@ interface Item {
 function createStore() {
     const store = makeLocalCollectionStore<Item>({
         facetDefinitions: [
-            {canExclude: true, code: "category", fieldName: "category", isMultiSelectable: true, label: "Category"},
+            {
+                canExclude: true,
+                code: "category",
+                fieldName: "category",
+                isMultiSelectable: true,
+                label: "Category"
+            },
             {code: "tags", fieldName: "tags", isMultiSelectable: true, label: "Tags"}
         ]
     });
@@ -163,5 +169,37 @@ describe("FacetBox", () => {
                 sections: [{name: "First"}, {name: "Second"}]
             })
         ).toThrow("Il ne peut y avoir qu'une seule section de facettes non renseignées.");
+    });
+
+    test("exclut puis réinclut une valeur", () => {
+        const store = renderFacetBox();
+        const categoryFacet = getFacet("category");
+
+        const excludeButtons = within(categoryFacet).getAllByRole("button");
+        fireEvent.click(excludeButtons.at(-1)!);
+        expect(store.inputFacets.category?.excluded).toContain("B");
+
+        fireEvent.click(within(categoryFacet).getByText("B"));
+        expect(store.inputFacets.category).toBeUndefined();
+    });
+
+    test("affiche le compteur d'une facette repliée et limite une facette simple", () => {
+        renderFacetBox({defaultFacetState: "collapsed"});
+
+        expect(screen.getByRole("heading", {level: 3})).toBeTruthy();
+        expect(screen.queryByText("A")).toBeNull();
+    });
+
+    test("désactive l'exclusion d'une valeur déjà sélectionnée", () => {
+        const store = renderFacetBox();
+        fireEvent.click(screen.getByText("A"));
+
+        const categoryFacet = getFacet("category");
+        const disabledExcludes = within(categoryFacet)
+            .getAllByRole("button")
+            .filter(button => (button as HTMLButtonElement).disabled);
+
+        expect(disabledExcludes.length).toBeGreaterThan(0);
+        expect(store.inputFacets.category?.selected).toEqual(["A"]);
     });
 });

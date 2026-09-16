@@ -1,8 +1,11 @@
 import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
+import z from "zod";
 
-import {makeLocalCollectionStore} from "@focus4/stores";
+import {e, entity} from "@focus4/entities";
+import {domain} from "@focus4/form-toolbox";
+import {makeLocalCollectionStore, makeServerCollectionStore} from "@focus4/stores";
 
 import {i18nCollections} from "../../translation";
 import {Summary} from "../summary";
@@ -115,5 +118,25 @@ describe("Summary", () => {
         expect(screen.queryByText(/result/)).toBeNull();
         expect(screen.queryByText(/alpha/)).toBeNull();
         expect(screen.queryByText("A")).toBeNull();
+    });
+
+    test("affiche les critères serveur avec leurs formatters et permet de les effacer", () => {
+        const criteria = entity({
+            code: e.field(domain(z.string(), {displayFormatter: value => `Code-${value}`})),
+            status: e.field(domain(z.string(), {displayFormatter: "focus.criteria.status"}))
+        });
+        const store = makeServerCollectionStore<{name: string}, typeof criteria>(
+            async () => ({facets: [], list: [], totalCount: 0}),
+            criteria
+        );
+        (store.criteria.code as any).value = "A";
+        (store.criteria.status as any).value = "active";
+
+        renderWithTheme(<Summary hideCriteria={["status"]} store={store} theme={summaryTheme} />);
+
+        expect(screen.getByText(': "Code-A"')).toBeTruthy();
+        expect(screen.queryByText("active")).toBeNull();
+        fireEvent.click(screen.getAllByRole("button")[0]);
+        expect((store.criteria.code as any).value).toBeUndefined();
     });
 });

@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, test} from "vitest";
+import {afterEach, beforeEach, describe, expect, test, vi} from "vitest";
 
 import {makeRouter, param} from "../index";
 
@@ -281,5 +281,65 @@ describe("makeRouter", () => {
         await waitForNavigation();
 
         expect(window.location.hash).not.toBe("#/users/not-a-number");
+    });
+
+    test("génère la racine quand aucun segment n'est fourni", () => {
+        const router = makeRouter({users: {}});
+
+        expect(router.href(() => undefined)).toBe("#/");
+    });
+
+    test("remplace une navigation et nettoie une query", async () => {
+        const router = makeRouter({users: {}, posts: {}}, undefined, {page: "number"});
+        await router.start();
+
+        router.to(r => r("users"), false, {page: 2});
+        await waitForNavigation();
+        router.query.page = undefined;
+        await waitForNavigation();
+        router.to(r => r("posts"), true);
+        await waitForNavigation();
+
+        expect(window.location.hash).toBe("#/posts");
+        expect(router.query.page).toBeUndefined();
+    });
+
+    test("ignore les valeurs NaN des paramètres et des queries", async () => {
+        const router = makeRouter({users: param("id", b => b.number())}, undefined, {page: "number"});
+        await router.start();
+
+        router.to(r => r("users")(1));
+        await waitForNavigation();
+        router.state.users.id = Number.NaN;
+        router.query.page = Number.NaN;
+
+        expect(window.location.hash).not.toContain("NaN");
+        expect(router.query.page).toBeUndefined();
+    });
+
+    test("refuse de modifier un paramètre qui n'est pas dans la route active", async () => {
+        const router = makeRouter({users: param("id", b => b.string()), posts: {}});
+        await router.start();
+
+        router.to(r => r("posts"));
+        await waitForNavigation();
+        router.state.users.id = "ignored";
+
+        expect(router.state.users.id).toBeUndefined();
+    });
+
+    test("execute plusieurs callbacks save lors du commit", async () => {
+        const callbacks = [vi.fn(async () => undefined), vi.fn(async () => undefined)];
+        const router = makeRouter({users: {}, posts: {}});
+        await router.start();
+
+        router.confirmation.toggle("first", true, callbacks[0]);
+        router.confirmation.toggle("second", true, callbacks[1]);
+        router.to(r => r("posts"));
+        await waitForNavigation();
+        await router.confirmation.commit(true);
+
+        expect(callbacks[0]).toHaveBeenCalledOnce();
+        expect(callbacks[1]).toHaveBeenCalledOnce();
     });
 });

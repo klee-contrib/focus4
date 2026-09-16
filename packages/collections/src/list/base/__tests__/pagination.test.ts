@@ -3,6 +3,7 @@ import {createElement} from "react";
 import {describe, expect, test, vi} from "vitest";
 
 import {ScrollableContext} from "@focus4/layout";
+import {makeServerCollectionStore, QueryInput, QueryOutput} from "@focus4/stores";
 
 import {usePagination} from "../pagination";
 
@@ -61,9 +62,12 @@ describe("usePagination", () => {
     });
 
     test("enregistre le sentinel pour la pagination automatique", () => {
-        const registerIntersect = vi.fn(
-            (_node: HTMLElement, _onIntersect: (ratio: number, isIntersecting: boolean) => void) => () => undefined
-        );
+        let onIntersect: ((ratio: number, isIntersecting: boolean) => void) | undefined;
+        const unregister = vi.fn();
+        const registerIntersect = vi.fn((_node: HTMLElement, callback: typeof onIntersect) => {
+            onIntersect = callback;
+            return unregister;
+        });
         const {result} = renderHook(() => usePagination<Item>({data, paginationMode: "single-auto", perPage: 2}), {
             wrapper: ({children}) =>
                 createElement(
@@ -91,6 +95,26 @@ describe("usePagination", () => {
 
         expect(registerIntersect).toHaveBeenCalledWith(node, expect.any(Function));
         act(() => result.current.getDomRef(1)?.(null));
+        act(() => onIntersect?.(0, false));
+        act(() => onIntersect?.(0, true));
+        expect(unregister).toHaveBeenCalled();
+    });
+
+    test("charge la page suivante pour un store serveur", async () => {
+        const service = vi
+            .fn<(input: QueryInput) => Promise<QueryOutput<Item>>>()
+            .mockResolvedValueOnce({facets: [], list: data.slice(0, 2), totalCount: data.length})
+            .mockResolvedValueOnce({facets: [], list: data.slice(0, 4), totalCount: data.length});
+        const store = makeServerCollectionStore(service);
+        await store.search();
+        const search = vi.spyOn(store, "search");
+        const {result} = renderHook(() => usePagination<Item>({paginationMode: "single-manual", perPage: 2, store}));
+
+        expect(result.current.state.hasMoreToLoad).toBe(true);
+        await act(() => result.current.handleNext());
+
+        expect(search).toHaveBeenCalledWith(true);
+        expect(result.current.state.displayedEnd).toBe(4);
     });
 
     test("ne pagine pas sans perPage", async () => {

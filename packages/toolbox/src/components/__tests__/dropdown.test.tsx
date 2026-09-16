@@ -56,6 +56,13 @@ function getReadonlyInput(container: HTMLElement) {
     return container.querySelector("span.dropdown-input")!;
 }
 
+function resolvedMenuPosition() {
+    const list = screen.getByRole("list");
+    const vertical = list.style.top ? "bottom" : "top";
+    const horizontal = list.style.left ? "left" : list.style.right ? "right" : "";
+    return horizontal ? `${vertical}-${horizontal}` : vertical;
+}
+
 describe("Dropdown component", () => {
     setupComponentTest();
 
@@ -121,5 +128,123 @@ describe("Dropdown component", () => {
         expect(listbox.ariaDisabled).toBe("false");
         expect(screen.getByRole("option", {name: "Deux"}).classList.contains("dropdown-value-disabled")).toBe(true);
         expect(listbox.classList.contains("dropdown-single-line")).toBe(true);
+    });
+
+    test("ouvre le menu avec Entrée et sélectionne une option", () => {
+        const onChange = vi.fn();
+        const {container} = renderDropdown(<Dropdown onChange={onChange} theme={dropdownTheme} values={values} />);
+        const input = getReadonlyInput(container);
+
+        fireEvent.focus(input);
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+
+        fireEvent.keyDown(document, {key: "Enter"});
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+
+        fireEvent.click(screen.getByRole("option", {name: "Deux"}));
+
+        expect(onChange).toHaveBeenCalledWith("two");
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+    });
+
+    test("conserve le menu ouvert après une sélection et accepte un libellé personnalisé", () => {
+        const onChange = vi.fn();
+        const LineComponent = ({item}: {item: {key: string; label: string}}) => <strong>{item.label} custom</strong>;
+        const {container} = renderDropdown(
+            <Dropdown
+                LineComponent={LineComponent}
+                getKey={item => item.key}
+                getLabel={item => item.label}
+                noCloseOnChange
+                onChange={onChange}
+                theme={dropdownTheme}
+                value="one"
+                values={values}
+            />
+        );
+
+        fireEvent.click(getReadonlyInput(container));
+        fireEvent.click(screen.getByRole("option", {name: "Deux"}));
+
+        expect(onChange).toHaveBeenCalledWith("two");
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+        expect(screen.getByRole("option", {name: "Deux"}).querySelector("strong")!.textContent).toBe("Deux custom");
+    });
+
+    test("ouvre le menu avec Espace mais reste marquée désactivée", () => {
+        const onChange = vi.fn();
+        const {container} = renderDropdown(
+            <Dropdown disabled theme={dropdownTheme} onChange={onChange} values={values} />
+        );
+
+        fireEvent.focus(getReadonlyInput(container));
+        fireEvent.keyDown(document, {key: "Space"});
+
+        const listbox = screen.getByRole("listbox");
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+        expect([listbox.ariaDisabled, listbox.classList.contains("dropdown-disabled")]).toEqual(["true", true]);
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    // En jsdom toutes les `BoundingClientRect` valent 0, donc les positions "auto" tombent toujours en bas à gauche.
+    test.each([
+        ["auto", "fit-to-field-and-wrap", "bottom"],
+        ["auto", "no-fit-single-line", "bottom-left"],
+        ["up", "fit-to-field-single-line", "top"],
+        ["up", "no-fit-single-line", "top-left"],
+        ["down", "fit-to-field-and-wrap", "bottom"],
+        ["down", "fit-to-values", "bottom-left"]
+    ] as const)("positionne le menu en %s / %s sur %s", (direction, sizing, expected) => {
+        const {container} = renderDropdown(
+            <Dropdown direction={direction} sizing={sizing} theme={dropdownTheme} values={values} />
+        );
+
+        fireEvent.click(getReadonlyInput(container));
+
+        expect(resolvedMenuPosition()).toBe(expected);
+        expect(screen.getByRole("list").classList.contains("menu-full")).toBe(!expected.includes("-"));
+        expect(screen.getByRole("listbox").classList.contains("dropdown-single-line")).toBe(
+            sizing !== "fit-to-field-and-wrap"
+        );
+    });
+
+    test("affiche le libellé, rend la valeur sélectionnée via LineComponent et ferme le menu au clic sur un trailing", () => {
+        const onTrailingClick = vi.fn();
+        const LineComponent = ({item}: {item: {key: string; label: string}}) => <strong>{item.label}</strong>;
+        const {container} = renderDropdown(
+            <Dropdown
+                LineComponent={LineComponent}
+                label="Choix"
+                onChange={() => undefined}
+                theme={dropdownTheme}
+                trailing={{icon: "clear", onClick: onTrailingClick}}
+                value="one"
+                values={values}
+            />
+        );
+
+        fireEvent.click(getReadonlyInput(container));
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+
+        expect(screen.getByText("Choix").classList.contains("dropdown-label")).toBe(true);
+        expect(getReadonlyInput(container).querySelector("strong")!.textContent).toBe("Un");
+
+        fireEvent.click(container.querySelector("button")!);
+
+        expect(onTrailingClick).toHaveBeenCalledOnce();
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+    });
+
+    test("sélectionne l'option undefined quand elle est autorisée", () => {
+        const onChange = vi.fn();
+        const {container} = renderDropdown(
+            <Dropdown onChange={onChange} theme={dropdownTheme} value="one" values={values} />
+        );
+
+        fireEvent.click(getReadonlyInput(container));
+        fireEvent.click(screen.getByRole("option", {name: ""}));
+
+        expect(onChange).toHaveBeenCalledWith(undefined);
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
     });
 });

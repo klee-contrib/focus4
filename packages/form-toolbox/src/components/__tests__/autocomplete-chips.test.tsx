@@ -1,4 +1,4 @@
-import {fireEvent, render, screen, within} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
@@ -184,5 +184,73 @@ describe("AutocompleteChips component", () => {
 
         // 3 boutons trailing : unselectAll + les 2 customs.
         expect(container.querySelectorAll("button")).toHaveLength(3);
+    });
+
+    test("ajoute une suggestion trouvée par le service", async () => {
+        const onChange = vi.fn();
+        const querySearcher = vi.fn(async () => [{key: "A", label: "Alpha"}]);
+        render(
+            <AutocompleteChips
+                onChange={onChange}
+                querySearcher={querySearcher}
+                schema={z.array(z.string())}
+                searchDelay={0}
+                theme={acChipsTheme}
+            />
+        );
+
+        const input = screen.getByRole("combobox");
+        fireEvent.focus(input);
+        fireEvent.change(input, {target: {value: "al"}});
+        await waitFor(() => expect(screen.getByRole("option", {name: "Alpha"})).toBeTruthy());
+        fireEvent.click(screen.getByRole("option", {name: "Alpha"}));
+
+        expect(querySearcher).toHaveBeenCalledWith("al", expect.any(Object));
+        expect(onChange).toHaveBeenCalledWith(["A"]);
+    });
+
+    test("respecte maxSelectable et filtre les valeurs déjà sélectionnées", async () => {
+        const onChange = vi.fn();
+        const querySearcher = vi.fn(async () => [
+            {key: "A", label: "Alpha"},
+            {key: "B", label: "Beta"}
+        ]);
+        render(
+            <AutocompleteChips
+                maxSelectable={1}
+                onChange={onChange}
+                querySearcher={querySearcher}
+                schema={z.array(z.string())}
+                searchDelay={0}
+                theme={acChipsTheme}
+                value={["A"]}
+            />
+        );
+
+        fireEvent.focus(screen.getByRole("combobox"));
+        fireEvent.change(screen.getByRole("combobox"), {target: {value: "a"}});
+        await waitFor(() => expect(querySearcher).toHaveBeenCalled());
+        expect(screen.queryByRole("option", {name: "Alpha"})).toBeNull();
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test("conserve les valeurs sélectionnées dans les suggestions quand demandé", async () => {
+        const querySearcher = vi.fn(async () => [{key: "A", label: "Alpha"}]);
+        render(
+            <AutocompleteChips
+                keepSelectedValuesInAutocomplete
+                onChange={() => undefined}
+                querySearcher={querySearcher}
+                schema={z.array(z.string())}
+                searchDelay={0}
+                theme={acChipsTheme}
+                value={["A"]}
+            />
+        );
+
+        fireEvent.focus(screen.getByRole("combobox"));
+        fireEvent.change(screen.getByRole("combobox"), {target: {value: "a"}});
+        await waitFor(() => expect(screen.getByRole("option", {name: "Alpha"})).toBeTruthy());
+        expect(screen.getByText("Alpha")).toBeTruthy();
     });
 });

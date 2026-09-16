@@ -12,12 +12,12 @@ export default defineConfig({
             exclude: [
                 "**/*.css.d.ts",
                 "**/translation/**",
-                "focus4.core.ts",
-                "focus4.form-toolbox.ts",
-                "legacy/src",
-                "styling/src/config.ts",
-                "styling/src/theme/common.ts",
-                "tooling/src"
+                "packages/core/src/focus4.core.ts",
+                "packages/form-toolbox/src/focus4.form-toolbox.ts",
+                "packages/legacy/src",
+                "packages/styling/src/config.ts",
+                "packages/styling/src/theme/common.ts",
+                "packages/tooling/src"
             ]
         },
         projects: ["packages/*"]

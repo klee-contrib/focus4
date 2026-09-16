@@ -46,4 +46,11 @@ describe("UserStore", () => {
         expect(store.hasRole("editor")).toBe(false);
         expect(store.hasRole("admin", "editor")).toBe(true);
     });
+
+    test("tolère une liste de rôles absente", () => {
+        const store = new UserStore();
+        store.roles = undefined as unknown as string[];
+
+        expect(store.hasRole("admin")).toBe(false);
+    });
 });
