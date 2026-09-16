@@ -12,13 +12,13 @@
     },
     "type": "module",
     "dependencies": {
-        "@focus4/collections": "12.13.2",
+        "@focus4/collections": "12.13.3",
         "@focus4/core": "12.11.3",
         "@focus4/forms": "12.13.2",
-        "@focus4/layout": "12.11.9",
+        "@focus4/layout": "12.11.10",
         "@focus4/stores": "12.13.2",
-        "@focus4/styling": "12.11.1",
-        "@focus4/toolbox": "12.11.4"
+        "@focus4/styling": "12.11.2",
+        "@focus4/toolbox": "12.11.5"
     },
     "devDependencies": {
         "@focus4/tooling": "12.13.2",
