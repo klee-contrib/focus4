@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "[Layout] Fix fallbackFocus manquant sur les focus trap",
-    "packageName": "@focus4/layout",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

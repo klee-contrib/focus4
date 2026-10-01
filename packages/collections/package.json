@@ -1,6 +1,6 @@
 {
     "name": "@focus4/collections",
-    "version": "12.13.3",
+    "version": "12.13.4",
     "description": "Focus v4, collections module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/collections",
     "license": "MIT",
@@ -18,7 +18,7 @@
         "@focus4/entities": "12.13.0",
         "@focus4/form-toolbox": "12.13.3",
         "@focus4/forms": "12.13.2",
-        "@focus4/layout": "12.11.10",
+        "@focus4/layout": "12.11.11",
         "@focus4/stores": "12.13.2",
         "@focus4/styling": "12.11.2",
         "@focus4/toolbox": "12.11.5",
