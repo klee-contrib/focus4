@@ -202,7 +202,8 @@ export const Scrollable = observer(function Scrollable({
                 focusTrapOptions={{
                     allowOutsideClick: true,
                     escapeDeactivates: false,
-                    initialFocus: `.${theme.container()}`
+                    initialFocus: `.${theme.container()}`,
+                    fallbackFocus: `.${theme.container()}`
                 }}
             >
                 <div ref={containerNode} className={classNames(theme.container(), className)} tabIndex={-1}>
