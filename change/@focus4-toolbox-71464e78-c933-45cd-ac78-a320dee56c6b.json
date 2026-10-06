@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Motion version updated to ^14.0.0",
+    "packageName": "@focus4/toolbox",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
