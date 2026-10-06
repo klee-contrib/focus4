@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Autorise `actions.init()` à renseigner des champs ajoutés (et amélioration des tests sur le sujet)",
-    "packageName": "@focus4/stores",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
