@@ -1,10 +1,9 @@
-import {merge} from "es-toolkit";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, observable, runInAction} from "mobx";
 
 import {messageStore, requestStore} from "@focus4/core";
 
-import {LoadRegistration} from "../store";
-import {FormListNode, FormNode, isFormEntityField, isFormNode, isStoreNode, SourceNodePartialType} from "../types";
+import {LoadRegistration, replaceNode, setNode} from "../store";
+import {FormListNode, FormNode, isFormEntityField, isFormNode, SourceNodePartialType} from "../types";
 
 import {FormActionsBuilder} from "./builders";
 
@@ -180,16 +179,10 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
 
                     if (response && typeof response === "object" && !(response instanceof Response)) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.
-                        if (isStoreNode(this.formNode.sourceNode)) {
-                            this.formNode.sourceNode.replace(response);
-                        } else {
-                            this.formNode.sourceNode.replaceNodes(response as any);
-                        }
-                        // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
-                    } else if (isFormNode(this.formNode)) {
-                        this.formNode.sourceNode.replace(this.formNode);
+                        replaceNode.call<any, [any], void>(this.formNode.sourceNode, response);
                     } else {
-                        this.formNode.sourceNode.replaceNodes(this.formNode);
+                        // Si on a pas de retour du serveur, on sauvegarde à la place les données du formulaire dans le noeud de store.
+                        replaceNode.call<any, [any], void>(this.formNode.sourceNode, this.formNode);
                     }
                 }
             );
@@ -258,13 +251,11 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                       )
                     : ({} as SourceNodePartialType<FormListNode | FormNode>);
 
-                this.formNode.form._initialData = merge(this.formNode.form._initialData ?? {}, initData);
-
-                if (isFormNode(this.formNode)) {
-                    this.formNode.sourceNode.replace(this.formNode.form._initialData!);
-                } else {
-                    this.formNode.sourceNode.replaceNodes(this.formNode.form._initialData!);
-                }
+                runInAction(() => {
+                    setNode.call<any, [any], void>(this.formNode, initData);
+                    this.formNode.form._initialData = this.formNode.getValues(true, true);
+                    replaceNode.call<any, [any], void>(this.formNode.sourceNode, this.formNode.form._initialData);
+                });
 
                 for (const handler of this.builder.handlers.init ?? []) {
                     handler("init", initData);

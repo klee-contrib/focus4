@@ -5,6 +5,7 @@ import {decorators} from "@focus4/tooling";
 export default defineConfig({
     plugins: [decorators()],
     test: {
-        environment: "jsdom"
+        environment: "jsdom",
+        isolate: false
     }
 });
