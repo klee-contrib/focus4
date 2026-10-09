@@ -27,6 +27,7 @@ Selon le schéma, cette fonction va non seulement renseigner des composants, mai
 
 - [`Input`](/docs/composants-focus4∕form-toolbox-input--docs) comme `InputComponent`.
 - Si l'`InputComponent` n'est pas surchargé dans le domaine, alors la prop `noNegativeNumbers` de l'`Input` sera prérenseignée avec `true` si `nonnegative()` ou `min(>= 0)` a été renseigné .
+- Le `displayFormatter` sera prérenseigné avec un objet vide, ce qui indiquera que `Intl.NumberFormat` devra être utilisé avec les options par défaut.
 
 ## Pour les schémas `boolean`
 

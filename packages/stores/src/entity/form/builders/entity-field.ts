@@ -44,9 +44,9 @@ export interface Metadata<
     /**
      * Formatteur pour l'affichage du champ en consulation.
      *
-     * Peut être une fonction de la valeur, ou une clé i18n qui sera appelée avec la variable `value`.
+     * Peut être une fonction de la valeur, une clé i18n qui sera appelée avec la variable `value`, ou des options de formatage pour `Intl.NumberFormat`.
      */
-    displayFormatter?: ((value: T | undefined) => string) | string;
+    displayFormatter?: ((value: T | undefined) => string) | string | Intl.NumberFormatOptions;
     /** Champ obligatoire. */
     isRequired?: boolean;
     /** Libellé du champ. */

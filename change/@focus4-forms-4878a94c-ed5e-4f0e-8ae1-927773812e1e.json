@@ -3,5 +3,5 @@
     "comment": "useInput qui utilise la langue i18n au lieu de celle du navigateur",
     "packageName": "@focus4/forms",
     "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
+    "dependentChangeType": "minor"
 }

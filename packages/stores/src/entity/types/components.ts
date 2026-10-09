@@ -35,7 +35,7 @@ export interface BaseAutocompleteProps<S extends ZodType> extends BaseInputProps
 }
 
 export interface BaseDisplayProps<S extends ZodType> extends BaseComponentProps {
-    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string;
+    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string | Intl.NumberFormatOptions;
     keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
     schema?: S;
     value?: output<S>;

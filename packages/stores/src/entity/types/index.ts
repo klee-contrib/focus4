@@ -73,9 +73,9 @@ declare global {
         /**
          * Formatteur pour l'affichage du champ en consulation.
          *
-         * Peut être une fonction de la valeur, ou une clé i18n qui sera appelée avec la variable `value`.
+         * Peut être une fonction de la valeur, une clé i18n qui sera appelée avec la variable `value`, ou des options de formatage pour `Intl.NumberFormat`.
          */
-        displayFormatter?: ((value: output<S> | undefined) => string) | string;
+        displayFormatter?: ((value: output<S> | undefined) => string) | string | Intl.NumberFormatOptions;
         /**
          * Liste des validateurs.
          *

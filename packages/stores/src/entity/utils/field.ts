@@ -30,7 +30,7 @@ interface ReadonlyFieldOptions<
     className?: string;
     comment?: ReactNode;
     domain?: Domain<S, any, any, any, DCDProps, LCDProps, FProps>;
-    displayFormatter?: ((value: T | undefined) => string) | string;
+    displayFormatter?: ((value: T | undefined) => string) | string | Intl.NumberFormatOptions;
     DisplayComponent?: ComponentType<DCProps>;
     label?: string;
     LabelComponent?: ComponentType<LCProps>;

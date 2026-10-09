@@ -1,5 +1,6 @@
+import {isFunction} from "es-toolkit";
 import {autorun} from "mobx";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {output, ZodType} from "zod";
 
@@ -9,7 +10,7 @@ import {getDefaultFormatter, ReferenceList} from "@focus4/stores";
 /** Props pour `useDisplay`. */
 export interface UseDisplayProps<S extends ZodType> {
     /** Formatteur. */
-    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string;
+    formatter?: ((value: output<SingleZodType<S>> | undefined) => string) | string | Intl.NumberFormatOptions;
     /** Service de résolution de code. */
     keyResolver?: (key: output<SingleZodType<S>>) => Promise<string | undefined>;
     /** Schéma du champ (celui du domaine). */
@@ -32,13 +33,36 @@ export function useDisplay<S extends ZodType>({
     value,
     values
 }: UseDisplayProps<S>) {
-    const {t} = useTranslation();
+    const {
+        t,
+        i18n: {language}
+    } = useTranslation();
+
+    const numberFormat = useMemo(
+        () =>
+            typeof formatter === "object" && !isFunction(formatter)
+                ? new Intl.NumberFormat(language, formatter)
+                : undefined,
+        [formatter, language]
+    );
 
     const format = useCallback(
         function format(v?: output<SingleZodType<S>>) {
-            return t(typeof formatter === "string" ? formatter : formatter(v), {value: v ?? ""});
+            if (typeof formatter === "string") {
+                return t(formatter, {value: v ?? ""});
+            }
+
+            if (numberFormat) {
+                return typeof v === "number" ? numberFormat.format(v) : "";
+            }
+
+            if (isFunction(formatter)) {
+                return t(formatter(v));
+            }
+
+            return v?.toString() ?? "";
         },
-        [formatter, t]
+        [formatter, numberFormat, t]
     );
 
     const [label, setLabel] = useState<string[] | string>();

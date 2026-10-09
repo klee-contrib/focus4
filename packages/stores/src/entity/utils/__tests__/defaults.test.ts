@@ -17,6 +17,13 @@ describe("default entity helpers", () => {
         expect(getDefaultFormatter(schema)).toBe(expected);
     });
 
+    test.each([z.number(), z.int()])("retourne des options numériques stables", schema => {
+        const formatter = getDefaultFormatter(schema);
+
+        expect(formatter).toEqual({});
+        expect(getDefaultFormatter(schema)).toBe(formatter);
+    });
+
     test("retourne un formatter texte pour les autres schémas", () => {
         const formatter = getDefaultFormatter(z.string());
 

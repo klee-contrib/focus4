@@ -1,6 +1,7 @@
+import {isFunction} from "es-toolkit";
 import i18next from "i18next";
 
-import {FieldEntry} from "@focus4/entities";
+import {FieldEntry, isNumberSchema} from "@focus4/entities";
 
 import {ReferenceList} from "../../reference";
 import {EntityField} from "../types";
@@ -24,7 +25,13 @@ export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: R
     } = field;
     const found = values.find(val => val[values.$valueKey] === value);
     const processedValue = found?.[values.$labelKey] ?? value;
-    return i18next.t(typeof displayFormatter === "string" ? displayFormatter : displayFormatter(processedValue), {
-        value: processedValue ?? ""
-    });
+    return typeof displayFormatter === "string"
+        ? i18next.t(displayFormatter, {
+              value: processedValue ?? ""
+          })
+        : !isFunction(displayFormatter)
+          ? isNumberSchema(schema) && processedValue !== undefined
+              ? new Intl.NumberFormat(i18next.language, displayFormatter).format(processedValue)
+              : ""
+          : i18next.t(displayFormatter(processedValue));
 }

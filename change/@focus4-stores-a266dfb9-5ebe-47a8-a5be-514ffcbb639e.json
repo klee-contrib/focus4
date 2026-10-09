@@ -1,0 +1,7 @@
+{
+    "type": "minor",
+    "comment": "Ajout format Intl.Number au displayFormatter (pour les domaines number) + valeur par défaut",
+    "packageName": "@focus4/stores",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "minor"
+}

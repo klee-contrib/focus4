@@ -1,6 +1,6 @@
 import z from "zod";
 
-import {isBooleanSchema, isDateSchema, isDateTimeSchema} from "@focus4/entities";
+import {isBooleanSchema, isDateSchema, isDateTimeSchema, isNumberSchema} from "@focus4/entities";
 
 /** Composant de domaine/champ non défini (vide). */
 export function UndefinedComponent() {
@@ -8,6 +8,8 @@ export function UndefinedComponent() {
 }
 
 const toString = (x: any) => `${x ?? ""}`;
+
+const numberFormat = {};
 
 /** Retourne le formatter par défaut pour un schéma donné. */
 export function getDefaultFormatter(schema: z.ZodType) {
@@ -17,5 +19,7 @@ export function getDefaultFormatter(schema: z.ZodType) {
           ? "focus.date"
           : isDateTimeSchema(schema)
             ? "focus.datetime"
-            : toString;
+            : isNumberSchema(schema)
+              ? numberFormat
+              : toString;
 }
