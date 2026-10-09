@@ -1,6 +1,7 @@
 import {takeWhile} from "es-toolkit";
 import numberParser from "intl-number-parser";
 import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
 import {isIntSchema, isNumberSchema, ZodTypeSingle} from "@focus4/entities";
@@ -66,16 +67,20 @@ export function useInput<const S extends ZodTypeSingle>({
     onPaste,
     value
 }: UseInputProps<S>) {
+    const {
+        i18n: {language}
+    } = useTranslation();
+
     const numberFormat = useMemo(
         () =>
-            new Intl.NumberFormat(navigator.language, {
+            new Intl.NumberFormat(language, {
                 useGrouping: hasThousandsSeparator,
                 maximumFractionDigits: maxDecimals
             }),
-        [hasThousandsSeparator, maxDecimals]
+        [hasThousandsSeparator, language, maxDecimals]
     );
 
-    const parseNumber = useMemo(() => numberParser(navigator.language, numberFormat.resolvedOptions()), [numberFormat]);
+    const parseNumber = useMemo(() => numberParser(language, numberFormat.resolvedOptions()), [numberFormat]);
 
     const [numberStringValue, setNumberStringValue] = useState(
         schema.type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
@@ -107,7 +112,7 @@ export function useInput<const S extends ZodTypeSingle>({
             } else {
                 let newNumberStringValue = numberStringValue;
 
-                if (navigator.language.toLowerCase().startsWith("fr")) {
+                if (language.toLowerCase().startsWith("fr")) {
                     v = v.replace(".", ",");
                 }
 
@@ -134,7 +139,7 @@ export function useInput<const S extends ZodTypeSingle>({
                     const newValue =
                         (isNegative ? "-" : "") + // Ajoute le "-" s'il faut.
                         (left
-                            ? new Intl.NumberFormat(navigator.language, {
+                            ? new Intl.NumberFormat(language, {
                                   minimumIntegerDigits: left.replaceAll(thousands, "").length,
                                   maximumFractionDigits: maxDecimals,
                                   useGrouping: hasThousandsSeparator

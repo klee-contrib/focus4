@@ -1,12 +1,24 @@
-import {renderHook} from "@testing-library/react";
-import {describe, expect, test, vi} from "vitest";
+import {renderHook as renderHookWithOptions} from "@testing-library/react";
+import {createInstance} from "i18next";
+import {createElement, PropsWithChildren} from "react";
+import {I18nextProvider} from "react-i18next";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 import {z} from "zod";
 
 import {useInput} from "../input";
 
 import {asInputChangeEvent, createInput} from "./test-utils";
 
+const i18n = createInstance();
+const wrapper = ({children}: PropsWithChildren) => createElement(I18nextProvider, {i18n}, children);
+const renderHook: typeof renderHookWithOptions = (render, options) =>
+    renderHookWithOptions(render, {wrapper, ...options});
+
 describe("useInput", () => {
+    beforeEach(async () => {
+        await i18n.init({lng: "en-US", resources: {}});
+    });
+
     test.each([
         {schema: z.string(), label: "string"},
         {schema: z.number(), label: "number"}
@@ -133,12 +145,12 @@ describe("useInput", () => {
             expect(onChange).not.toHaveBeenCalled();
         });
 
-        test("supporte le séparateur décimal français", () => {
+        test("supporte le séparateur décimal français", async () => {
             let changedValue: number | undefined;
             const onChange = (value?: number) => {
                 changedValue = value;
             };
-            const languageSpy = vi.spyOn(navigator, "language", "get").mockReturnValue("fr-FR");
+            await i18n.changeLanguage("fr-FR");
 
             const {result} = renderHook(() =>
                 useInput({
@@ -154,7 +166,6 @@ describe("useInput", () => {
             result.current.handleChange("12.5", event);
 
             expect(changedValue).toBe(12.5);
-            languageSpy.mockRestore();
         });
     });
 
