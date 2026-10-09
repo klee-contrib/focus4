@@ -23,7 +23,7 @@ export interface BooleanRadioProps {
     /** Name for input field. */
     name?: string;
     /** Call with each value change. */
-    onChange: (value?: boolean) => void;
+    onChange?: (value?: boolean) => void;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
     showSupportingText?: "always" | "auto" | "never";
     /** CSS. */
@@ -57,7 +57,7 @@ export function BooleanRadio({
                 allowUndefined={allowUndefined}
                 className={theme.boolean()}
                 disabled={disabled}
-                onChange={x => onChange(x === "true" ? true : x === "false" ? false : undefined)}
+                onChange={x => onChange?.(x === "true" ? true : x === "false" ? false : undefined)}
                 value={value === true ? "true" : value === false ? "false" : undefined}
             >
                 <RadioButton label={t(labelYes)} name={`${name}-yes`} theme={theme} value="true" />

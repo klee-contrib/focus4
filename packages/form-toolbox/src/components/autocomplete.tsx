@@ -32,7 +32,7 @@ export interface AutocompleteSearchProps<S extends ZodTypeSingle, TSource = {key
      * En plus de passer la valeur choisie comme tout composant de saisie, le composant envoie aussi en second paramètre l'objet source entier qui correspond à cette valeur.
      * Même si la signature de `onChange` de `autocompleteFor` ne vous le dit pas, vous pouvez quand même la récupérer par ici dans votre composant.
      */
-    onChange: (key: output<S> | undefined, value?: TSource) => void;
+    onChange?: (key: output<S> | undefined, value?: TSource) => void;
     /** Service de recherche. */
     querySearcher?: (text: string, options?: RequestInit) => Promise<TSource[]>;
     /** Schéma du champ (celui du domaine). */

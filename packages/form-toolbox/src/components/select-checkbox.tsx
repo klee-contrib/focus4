@@ -26,7 +26,7 @@ export interface SelectCheckboxProps<S extends ZodTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: output<S>) => void;
+    onChange?: (value?: output<S>) => void;
     /** Schéma du champ (celui du domaine). */
     schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
@@ -87,9 +87,9 @@ export const SelectCheckbox = observer(function SelectCheckbox<const S extends Z
                                 onChange={() => {
                                     if (!isDisabled) {
                                         if (isSelected) {
-                                            onChange((value ? value.filter(val => val !== optVal) : []) as output<S>);
+                                            onChange?.((value ? value.filter(val => val !== optVal) : []) as output<S>);
                                         } else {
-                                            onChange((value ? [...value, optVal] : [optVal]) as output<S>);
+                                            onChange?.((value ? [...value, optVal] : [optVal]) as output<S>);
                                         }
                                     }
                                 }}

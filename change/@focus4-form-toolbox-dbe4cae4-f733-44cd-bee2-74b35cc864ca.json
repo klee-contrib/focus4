@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix onChange nullable",
+    "packageName": "@focus4/form-toolbox",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

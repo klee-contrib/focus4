@@ -58,7 +58,7 @@ export interface AutocompleteChipsProps<S extends ZodTypeMultiple, TSource = {ke
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: output<S>) => void;
+    onChange?: (value?: output<S>) => void;
     /** Préfixe à poser devant le texte saisi. */
     prefix?: string;
     /** Service de recherche. */
@@ -145,7 +145,7 @@ export const AutocompleteChips = observer(function AutocompleteChips<
     const handleAddValue = useCallback(
         function handleAddValue(v?: boolean | number | string) {
             if (v && (!maxSelectable || (value?.length ?? 0) < maxSelectable)) {
-                onChange([...(value ?? []), v] as output<S>);
+                onChange?.([...(value ?? []), v] as output<S>);
             }
         },
         [onChange, maxSelectable, value]
@@ -153,14 +153,14 @@ export const AutocompleteChips = observer(function AutocompleteChips<
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: boolean | number | string) {
-            onChange((value ?? []).filter(i => i !== v) as output<S>);
+            onChange?.((value ?? []).filter(i => i !== v) as output<S>);
         },
         [onChange, value]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange([] as output<S>);
+            onChange?.([] as output<S>);
         },
         [onChange]
     );

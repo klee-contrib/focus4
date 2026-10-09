@@ -27,7 +27,7 @@ export interface SelectRadioProps<S extends ZodTypeSingle> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: output<S>) => void;
+    onChange?: (value?: output<S>) => void;
     /** Schéma du champ (celui du domaine). */
     schema: S;
     /** Contrôle l'affichage du texte en dessous du champ, quelque soit la valeur de `supportingText` ou `maxLength`. Par défaut : "always". */
@@ -69,7 +69,7 @@ export const SelectRadio = observer(function SelectRadio<const S extends ZodType
 
     const handleChange = useCallback(
         (newValue?: string) => {
-            onChange(stringToSchemaOutput(newValue === undefinedKey ? undefined : newValue, schema));
+            onChange?.(stringToSchemaOutput(newValue === undefinedKey ? undefined : newValue, schema));
         },
         [onChange, schema]
     );

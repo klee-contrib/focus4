@@ -55,7 +55,7 @@ export interface SelectChipsProps<S extends ZodTypeMultiple> {
     /** Nom de l'input. */
     name?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: output<S>) => void;
+    onChange?: (value?: output<S>) => void;
     /** Préfixe à poser devant le texte saisi. */
     prefix?: string;
     /** Schéma du champ (celui du domaine). */
@@ -130,7 +130,7 @@ export const SelectChips = observer(function SelectChips<const S extends ZodType
 
     const handleRemoveValue = useCallback(
         function handleRemoveValue(v: output<SingleZodType<S>>) {
-            onChange((value?.filter(i => i !== v) as output<S>) ?? []);
+            onChange?.((value?.filter(i => i !== v) as output<S>) ?? []);
         },
         [onChange, value]
     );
@@ -145,7 +145,7 @@ export const SelectChips = observer(function SelectChips<const S extends ZodType
                 (!maxSelectable || (value?.length ?? 0) < maxSelectable) &&
                 values.some(i => i[values.$valueKey] === v)
             ) {
-                onChange([...(value ?? []), v] as output<S>);
+                onChange?.([...(value ?? []), v] as output<S>);
             } else if (hasValue) {
                 handleRemoveValue(v);
             }
@@ -155,14 +155,14 @@ export const SelectChips = observer(function SelectChips<const S extends ZodType
 
     const handleAddAll = useCallback(
         function handleRemoveAll() {
-            onChange(values.map(i => i[values.$valueKey]) as output<S>);
+            onChange?.(values.map(i => i[values.$valueKey]) as output<S>);
         },
         [onChange, values]
     );
 
     const handleRemoveAll = useCallback(
         function handleRemoveAll() {
-            onChange([] as output<S>);
+            onChange?.([] as output<S>);
         },
         [onChange]
     );

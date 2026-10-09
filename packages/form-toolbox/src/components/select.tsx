@@ -18,7 +18,7 @@ export interface SelectProps<S extends ZodTypeSingle> extends Omit<
     /** Préfixe i18n. Par défaut : "focus". */
     i18nPrefix?: string;
     /** Est appelé à chaque changement de valeur. */
-    onChange: (value?: output<S>) => void;
+    onChange?: (value?: output<S>) => void;
     /** Schéma du champ (celui du domaine). */
     schema: S;
     /** Valeur. */
@@ -55,7 +55,7 @@ export const Select = observer(function Select<const S extends ZodTypeSingle>({
             label={undefined}
             getKey={v => `${v[$valueKey]}`}
             getLabel={v => t((v[$labelKey] as string) ?? `${i18nPrefix}.select.noLabel`)}
-            onChange={val => onChange(stringToSchemaOutput(val, schema))}
+            onChange={val => onChange?.(stringToSchemaOutput(val, schema))}
             showSupportingText={showSupportingText}
             supportingText={error ?? supportingText}
             undefinedLabel={typeof undefinedLabel === "string" ? t(undefinedLabel) : undefinedLabel}
