@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Fix type TextField onChange",
-    "packageName": "@focus4/toolbox",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

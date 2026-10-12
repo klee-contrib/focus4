@@ -1,6 +1,6 @@
 {
     "name": "@focus4/toolbox",
-    "version": "12.11.6",
+    "version": "12.11.7",
     "description": "Focus v4, toolbox module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/toolbox",
     "license": "MIT",
@@ -20,7 +20,7 @@
         "classnames": "^2.5.1",
         "es-toolkit": "^1.52.0",
         "luxon": "^3.7.2",
-        "motion": "^14.0.0",
+        "motion": "^14.1.0",
         "tslib": "^2.8.1"
     },
     "devDependencies": {
