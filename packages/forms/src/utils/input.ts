@@ -1,6 +1,14 @@
 import {takeWhile} from "es-toolkit";
 import numberParser from "intl-number-parser";
-import {ClipboardEventHandler, FormEvent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState} from "react";
+import {
+    ChangeEvent,
+    ClipboardEventHandler,
+    KeyboardEventHandler,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
 import {useTranslation} from "react-i18next";
 import {output} from "zod";
 
@@ -80,19 +88,15 @@ export function useInput<const S extends ZodTypeSingle>({
         [hasThousandsSeparator, language, maxDecimals]
     );
 
-    const parseNumber = useMemo(() => numberParser(language, numberFormat.resolvedOptions()), [numberFormat]);
-
-    const [numberStringValue, setNumberStringValue] = useState(
-        schema.type === "number" ? (value !== undefined ? numberFormat.format(value as number) : "") : undefined
+    const getNumberStringValue = useCallback(
+        (num: typeof value) =>
+            schema.type === "number" ? (num !== undefined ? numberFormat.format(num as number) : "") : undefined,
+        [numberFormat]
     );
+    const [numberStringValue, setNumberStringValue] = useState(getNumberStringValue(value));
     useEffect(() => {
-        if (
-            schema.type === "number" &&
-            (!numberStringValue || (value ?? undefined) !== parseNumber(numberStringValue))
-        ) {
-            setNumberStringValue(value !== undefined ? numberFormat.format(value as number) : "");
-        }
-    }, [numberFormat, parseNumber, value]);
+        setNumberStringValue(getNumberStringValue(value));
+    }, [getNumberStringValue, value]);
 
     const {handleKeyDown, handlePaste, stringValue} = useMask({
         onChange: onChange as (value: string) => void,
@@ -102,8 +106,10 @@ export function useInput<const S extends ZodTypeSingle>({
         ...mask
     });
 
+    const parseNumber = useMemo(() => numberParser(language, numberFormat.resolvedOptions()), [numberFormat]);
+
     const handleChange = useCallback(
-        (v: string, e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        (v: string, e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             if (schema.type !== "number") {
                 onChange(v === "" ? undefined : (v as output<S>));
             } else if (v === "") {

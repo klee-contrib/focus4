@@ -6,7 +6,6 @@ import {
     ClipboardEventHandler,
     FocusEvent,
     FocusEventHandler,
-    FormEvent,
     KeyboardEventHandler,
     MouseEvent,
     MouseEventHandler,
@@ -84,7 +83,7 @@ export interface TextFieldProps extends PointerEvents<HTMLInputElement | HTMLTex
     /** Au blur du champ texte. */
     onBlur?: FocusEventHandler<HTMLInputElement | HTMLSpanElement | HTMLTextAreaElement>;
     /** Handler appelé à chaque modification du texte dans le champ. */
-    onChange?: (value: string, event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onChange?: (value: string, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     /** Au clic sur le champ texte. */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /** Au clic-droit dans le champ texte. */
