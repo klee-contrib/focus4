@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "hasUndefined initialisé par required sur les dropdowns",
-    "packageName": "@focus4/toolbox",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}

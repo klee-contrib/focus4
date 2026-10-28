@@ -1,6 +1,6 @@
 {
     "name": "@focus4/layout",
-    "version": "12.11.13",
+    "version": "12.11.14",
     "description": "Focus v4, layout module",
     "homepage": "https://github.com/klee-contrib/focus4/tree/master/packages/layout",
     "license": "MIT",
@@ -17,7 +17,7 @@
     "dependencies": {
         "@focus4/core": "12.11.3",
         "@focus4/styling": "12.11.2",
-        "@focus4/toolbox": "12.11.7",
+        "@focus4/toolbox": "12.11.8",
         "classnames": "^2.5.1",
         "es-toolkit": "^1.52.0",
         "focus-trap-react": "^12.0.3",
