@@ -30,7 +30,7 @@ export function stringFor<F extends FieldEntry>(field: EntityField<F>, values: R
               value: processedValue ?? ""
           })
         : !isFunction(displayFormatter)
-          ? isNumberSchema(schema) && processedValue !== undefined
+          ? isNumberSchema(schema) && typeof processedValue === "number"
               ? new Intl.NumberFormat(i18next.language, displayFormatter).format(processedValue)
               : ""
           : i18next.t(displayFormatter(processedValue));

@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Fix formattage sur les ids appliqué à tort",
+    "packageName": "@focus4/forms",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

@@ -52,8 +52,8 @@ export function useDisplay<S extends ZodType>({
                 return t(formatter, {value: v ?? ""});
             }
 
-            if (numberFormat) {
-                return typeof v === "number" ? numberFormat.format(v) : "";
+            if (numberFormat && typeof v === "number") {
+                return numberFormat.format(v);
             }
 
             if (isFunction(formatter)) {
