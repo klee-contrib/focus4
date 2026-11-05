@@ -12,9 +12,9 @@
     },
     "type": "module",
     "dependencies": {
-        "@focus4/collections": "12.14.1",
+        "@focus4/collections": "12.14.2",
         "@focus4/core": "12.11.3",
-        "@focus4/forms": "12.14.1",
+        "@focus4/forms": "12.14.2",
         "@focus4/layout": "12.11.14",
         "@focus4/stores": "12.14.1",
         "@focus4/styling": "12.11.2",

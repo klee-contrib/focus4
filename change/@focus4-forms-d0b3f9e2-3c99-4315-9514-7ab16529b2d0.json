@@ -1,7 +1,0 @@
-{
-    "type": "patch",
-    "comment": "Refonte gestion du focus de la valeur du champ, pour que ça marche tout le temps",
-    "packageName": "@focus4/forms",
-    "email": "damien.frikha@kleegroup.com",
-    "dependentChangeType": "patch"
-}
