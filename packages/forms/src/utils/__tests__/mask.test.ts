@@ -20,7 +20,7 @@ describe("useMask", () => {
         },
         {label: "transforme en majuscules avec A", pattern: "AAA", value: "abc", expected: "ABC"},
         {label: "transforme en majuscules avec #", pattern: "###", value: "a1b", expected: "A1B"},
-        {label: "gère les caractères échappés", pattern: "\\111", value: "123", expected: "123"}
+        {label: "gère les caractères échappés", pattern: String.raw`\111`, value: "123", expected: "123"}
     ])("formate $label", ({pattern, value, expected, opts}) => {
         const {result} = renderHook(() =>
             useMask({

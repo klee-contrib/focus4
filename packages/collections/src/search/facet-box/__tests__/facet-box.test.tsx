@@ -67,7 +67,7 @@ function renderFacetBox(props: Partial<FacetBoxProps<Item>> = {}) {
 function getFacetBox() {
     const facetBox = screen.getByRole("heading", {level: 3}).parentElement;
     if (!(facetBox instanceof HTMLDivElement)) {
-        throw new Error("Facet box container not found");
+        throw new TypeError("Facet box container not found");
     }
     return facetBox;
 }

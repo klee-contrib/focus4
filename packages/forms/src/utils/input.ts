@@ -166,7 +166,7 @@ export function useInput<const S extends ZodTypeSingle>({
                     const ajustedEnd =
                         Math.max(
                             0,
-                            v.slice(0, end).replace(invalidCharRegex, "").replaceAll(new RegExp(thousands, "gu"), "")
+                            v.slice(0, end).replaceAll(invalidCharRegex, "").replaceAll(new RegExp(thousands, "gu"), "")
                                 .length +
                                 [...newNumberStringValue!].filter(c => c === "0").length -
                                 [...v].filter(c => c === "0").length
