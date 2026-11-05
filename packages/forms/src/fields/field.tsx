@@ -1,6 +1,6 @@
 import {upperFirst} from "es-toolkit";
 import {action} from "mobx";
-import {Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {FocusEvent, Ref, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 
 import {FieldEntry} from "@focus4/entities";
@@ -52,6 +52,8 @@ export interface UseFieldProps<F extends FieldEntry>
     inputType?: "autocomplete" | "input" | "select";
     /** Classe CSS à ajouter au label. */
     labelClassName?: string;
+    /** Classe CSS à ajouter à la valeur. */
+    valueClassName?: string;
 }
 
 /* Garde en mémoire tous les champs affichés avec le nom du field associé. */
@@ -75,7 +77,8 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         inputProps = {},
         inputType = "input",
         selectProps = {},
-        showErrorWhenFocused = false
+        showErrorWhenFocused = false,
+        valueClassName
     } = props;
 
     const onChange = useCallback(
@@ -110,27 +113,39 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
         []
     );
 
-    // Détermine si le champ a (eu) le focus ou non.
-    const valueRef = useRef<HTMLDivElement>(null);
+    // Pour gérer le fait que la valeur du champ a (déjà eu) le focus, utilisé pour savoir si on affiche l'erreur ou non.
     const [hasFocus, setHasFocus] = useState(false);
     const [hasHadFocus, setHasHadFocus] = useState(false);
     useEffect(() => setHasHadFocus(false), [errorDisplay]);
-    useLayoutEffect(() => {
-        function focusin() {
-            setHasFocus(true);
-            setHasHadFocus(true);
-        }
 
-        function focusout() {
+    const onFocus = useCallback(() => {
+        setHasFocus(true);
+        setHasHadFocus(true);
+    }, []);
+
+    const onBlur = useCallback((event: FocusEvent<HTMLDivElement>) => {
+        const nextTarget = event.relatedTarget;
+        // On ne dit que la valeur n'a plus le focus que si le blur à est lancé par un élément externe.
+        if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
             setHasFocus(false);
         }
+    }, []);
 
-        valueRef.current?.addEventListener("focusin", focusin);
-        valueRef.current?.addEventListener("focusout", focusout);
-        return () => {
-            valueRef.current?.removeEventListener("focusin", focusin);
-            valueRef.current?.removeEventListener("focusout", focusout);
-        };
+    /*
+      On doit poser un MutationObserver sur la valeur pour détecter aussi une perte de focus si le focus était sur un
+      élément contenu dans la valeur qui se fait retirer du DOM (par exemple, un clic sur le calendrier de l'InputDate).
+     */
+    const valueRef = useCallback((element: HTMLDivElement) => {
+        if (!element) {
+            return;
+        }
+        const observer = new MutationObserver(() => {
+            if (!element.contains(element.ownerDocument.activeElement)) {
+                setHasFocus(false);
+            }
+        });
+        observer.observe(element, {childList: true, subtree: true});
+        return () => observer.disconnect();
     }, []);
 
     // Détermine si on affiche l'erreur du champ ou non.
@@ -238,42 +253,45 @@ export function useField<F extends FieldEntry>(props: UseFieldProps<F>) {
                 theme={themeable({label: labelClassName}, domainLCP.theme ?? {}, labelProps.theme ?? {})}
             />
         ) : null,
-        value: isEdit ? (
-            inputType === "select" ? (
-                <SelectComponent
-                    {...domainSCP}
-                    {...selectProps}
-                    {...iProps}
-                    theme={themeable(domainSCP.theme ?? {}, selectProps.theme ?? {})}
-                />
-            ) : inputType === "autocomplete" ? (
-                <AutocompleteComponent
-                    {...domainACP}
-                    {...autocompleteProps}
-                    {...iProps}
-                    theme={themeable(domainACP.theme ?? {}, autocompleteProps.theme ?? {})}
-                />
-            ) : (
-                <InputComponent
-                    {...domainICP}
-                    {...inputProps}
-                    {...iProps}
-                    theme={themeable(domainICP.theme ?? {}, inputProps.theme ?? {})}
-                />
-            )
-        ) : (
-            <DisplayComponent
-                {...domainDCP}
-                {...displayProps}
-                {...baseProps}
-                formatter={displayFormatter}
-                keyResolver={autocompleteProps.keyResolver}
-                schema={schema}
-                theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
-                value={value}
-                values={selectProps.values}
-            />
-        ),
-        valueRef
+        value: (
+            <div ref={valueRef} className={valueClassName} onBlur={onBlur} onFocus={onFocus}>
+                {isEdit ? (
+                    inputType === "select" ? (
+                        <SelectComponent
+                            {...domainSCP}
+                            {...selectProps}
+                            {...iProps}
+                            theme={themeable(domainSCP.theme ?? {}, selectProps.theme ?? {})}
+                        />
+                    ) : inputType === "autocomplete" ? (
+                        <AutocompleteComponent
+                            {...domainACP}
+                            {...autocompleteProps}
+                            {...iProps}
+                            theme={themeable(domainACP.theme ?? {}, autocompleteProps.theme ?? {})}
+                        />
+                    ) : (
+                        <InputComponent
+                            {...domainICP}
+                            {...inputProps}
+                            {...iProps}
+                            theme={themeable(domainICP.theme ?? {}, inputProps.theme ?? {})}
+                        />
+                    )
+                ) : (
+                    <DisplayComponent
+                        {...domainDCP}
+                        {...displayProps}
+                        {...baseProps}
+                        formatter={displayFormatter}
+                        keyResolver={autocompleteProps.keyResolver}
+                        schema={schema}
+                        theme={themeable(domainDCP.theme ?? {}, displayProps.theme ?? {})}
+                        value={value}
+                        values={selectProps.values}
+                    />
+                )}
+            </div>
+        )
     };
 }

@@ -40,7 +40,11 @@ export const Field = observer(function Field<F extends FieldEntry>(props: FieldP
 
     const theme = useTheme("field", fieldCss, fieldProps?.theme, props.theme);
 
-    const {label, value, valueRef} = useField({...props, labelClassName: theme.label()});
+    const {label, value} = useField({
+        ...props,
+        labelClassName: theme.label(),
+        valueClassName: classNames(theme.value(), className)
+    });
 
     const style: Record<string, string> = {};
     if (labelWidth) {
@@ -53,9 +57,7 @@ export const Field = observer(function Field<F extends FieldEntry>(props: FieldP
     return (
         <div className={classNames(theme.field(), className)} style={style}>
             {label}
-            <div ref={valueRef} className={classNames(theme.value(), className)}>
-                {value}
-            </div>
+            {value}
         </div>
     );
 });

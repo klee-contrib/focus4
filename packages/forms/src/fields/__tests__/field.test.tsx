@@ -1,4 +1,4 @@
-import {cleanup, fireEvent, render, screen, within} from "@testing-library/react";
+import {act, cleanup, fireEvent, render, screen, waitFor, within} from "@testing-library/react";
 import {afterEach, beforeAll, describe, expect, test, vi} from "vitest";
 import z from "zod";
 
@@ -12,7 +12,12 @@ const LabelComponent = vi.fn((props: {id: string; label: string}) => (
     <label data-testid={`label-${props.id}`}>{props.label}</label>
 ));
 const InputComponent = vi.fn((props: {error?: string; value?: unknown}) => (
-    <input data-testid="input" data-error={props.error ?? ""} defaultValue={`${props.value ?? ""}`} />
+    <>
+        <input data-testid="input" data-error={props.error ?? ""} defaultValue={`${props.value ?? ""}`} />
+        <span data-testid="action-container">
+            <button type="button">Action</button>
+        </span>
+    </>
 ));
 const SelectComponent = vi.fn((props: {value?: unknown}) => <div data-testid="select">{`${props.value ?? ""}`}</div>);
 const AutocompleteComponent = vi.fn((props: {value?: unknown}) => (
@@ -53,14 +58,12 @@ function InnerHarness({
     hasLabel?: boolean;
     showErrorWhenFocused?: boolean;
 }) {
-    const {label, value, valueRef} = useField({field, inputType, hasLabel, showErrorWhenFocused});
+    const {label, value} = useField({field, inputType, hasLabel, showErrorWhenFocused});
 
     return (
         <>
             <div>{label}</div>
-            <div ref={valueRef} data-testid="value-container">
-                {value}
-            </div>
+            {value}
         </>
     );
 }
@@ -143,21 +146,114 @@ describe("useField", () => {
         const field = makeFormField("value", {isEdit: true, errors: ["err.test"]});
         const view = render(<Harness field={field} errorDisplay="after-focus" />);
 
-        const container = within(view.container).getByTestId("value-container");
-        expect(within(view.container).getByTestId("input").dataset.error).toBe("");
+        const input = within(view.container).getByTestId("input");
+        expect(input.dataset.error).toBe("");
 
-        fireEvent.focusIn(container);
-        fireEvent.focusOut(container);
+        fireEvent.focusIn(input);
+        fireEvent.focusOut(input);
 
-        expect(within(view.container).getByTestId("input").dataset.error).toContain("err.test");
+        expect(input.dataset.error).toContain("err.test");
+    });
+
+    test("masque l'erreur pendant le focus et la réaffiche à la sortie du champ", () => {
+        const field = makeFormField("value", {errors: ["err.test"]});
+        render(
+            <>
+                <Harness field={field} errorDisplay="always" />
+                <button type="button">Autre champ</button>
+            </>
+        );
+
+        const input = screen.getByTestId("input");
+        expect(input.dataset.error).toContain("err.test");
+
+        fireEvent.focusIn(input);
+        expect(input.dataset.error).toBe("");
+
+        fireEvent.focusOut(input, {relatedTarget: screen.getByText("Autre champ")});
+        expect(input.dataset.error).toContain("err.test");
+    });
+
+    test("garde l'erreur masquée quand le focus se déplace entre enfants du champ", () => {
+        const field = makeFormField("value", {errors: ["err.test"]});
+        render(<Harness field={field} />);
+
+        const input = screen.getByTestId("input");
+        const button = screen.getByText("Action");
+        fireEvent.focusIn(input);
+        fireEvent.focusOut(input, {relatedTarget: button});
+        expect(input.dataset.error).toBe("");
+
+        fireEvent.focusIn(button, {relatedTarget: input});
+        expect(input.dataset.error).toBe("");
+
+        fireEvent.focusOut(button);
+        expect(input.dataset.error).toContain("err.test");
+    });
+
+    test("accepte une cible de sortie qui n'est pas un noeud DOM", () => {
+        const field = makeFormField("value", {errors: ["err.test"]});
+        render(<Harness field={field} />);
+
+        const input = screen.getByTestId("input");
+        fireEvent.focusIn(input);
+        fireEvent.focusOut(input, {relatedTarget: new window.EventTarget()});
+
+        expect(input.dataset.error).toContain("err.test");
+    });
+
+    test.each(["button", "action-container"])(
+        "réaffiche l'erreur quand %s contenant le focus est retiré du DOM sans blur",
+        async target => {
+            const field = makeFormField("value", {errors: ["err.test"]});
+            render(<Harness field={field} />);
+
+            const input = screen.getByTestId("input");
+            const button = screen.getByText("Action");
+            const onBlur = vi.fn();
+            button.addEventListener("blur", onBlur);
+
+            act(() => button.focus());
+            expect(document.activeElement).toBe(button);
+            expect(input.dataset.error).toBe("");
+
+            act(() => {
+                (target === "button" ? button : screen.getByTestId(target)).remove();
+            });
+
+            expect(onBlur).not.toHaveBeenCalled();
+            await waitFor(() => {
+                expect(input.dataset.error).toContain("err.test");
+            });
+        }
+    );
+
+    test("garde le focus si un autre enfant le récupère après le retrait de l'élément focalisé", async () => {
+        const field = makeFormField("value", {errors: ["err.test"]});
+        render(<Harness field={field} />);
+
+        const input = screen.getByTestId("input");
+        const button = screen.getByText("Action");
+        act(() => button.focus());
+
+        await act(async () => {
+            button.remove();
+            input.focus();
+        });
+
+        expect(document.activeElement).toBe(input);
+        expect(input.dataset.error).toBe("");
+
+        act(() => input.blur());
+        expect(input.dataset.error).toContain("err.test");
     });
 
     test("showErrorWhenFocused garde l'erreur visible pendant le focus", () => {
         const field = makeFormField("value", {isEdit: true, errors: ["err.test"]});
         const view = render(<Harness field={field} errorDisplay="always" showErrorWhenFocused />);
 
-        const container = within(view.container).getByTestId("value-container");
-        fireEvent.focusIn(container);
+        const input = within(view.container).getByTestId("input");
+        fireEvent.focusIn(input);
 
         expect(within(view.container).getByTestId("input").dataset.error).toContain("err.test");
     });

@@ -48,12 +48,12 @@ describe("useDisplay", () => {
         });
     });
 
-    test("ignore une valeur non numérique avec les options numériques", async () => {
+    test.each(["12", "alpha"])("conserve la valeur textuelle %s avec les options numériques", async value => {
         const formatter = {};
-        const {result} = renderHook(() => useDisplay({schema: z.string(), formatter, value: "12"}), {wrapper});
+        const {result} = renderHook(() => useDisplay({schema: z.string(), formatter, value}), {wrapper});
 
         await waitFor(() => {
-            expect(result.current).toBe("");
+            expect(result.current).toBe(value);
         });
     });
 
