@@ -2,7 +2,16 @@ import {describe, expect, test} from "vitest";
 import {z} from "zod";
 
 import {e, entity} from "../builders";
-import {stringToSchemaOutput} from "../utils";
+import {
+    isArraySchema,
+    isBooleanSchema,
+    isDateSchema,
+    isDateTimeSchema,
+    isIntSchema,
+    isNumberSchema,
+    isStringSchema,
+    stringToSchemaOutput
+} from "../utils";
 
 const LIBELLE = {
     schema: z.string()
@@ -345,6 +354,29 @@ describe("stringToSchemaOutput", () => {
         const result = stringToSchemaOutput(undefined, z.boolean());
 
         expect(result).toBeUndefined();
+    });
+});
+
+describe("schema helpers", () => {
+    test("identifie chaque famille de schéma", () => {
+        expect(isArraySchema(z.array(z.string()))).toBe(true);
+        expect(isBooleanSchema(z.boolean())).toBe(true);
+        expect(isDateSchema(z.iso.date())).toBe(true);
+        expect(isDateTimeSchema(z.iso.datetime())).toBe(true);
+        expect(isIntSchema(z.int32())).toBe(true);
+        expect(isIntSchema(z.number().int())).toBe(true);
+        expect(isNumberSchema(z.number())).toBe(true);
+        expect(isStringSchema(z.string())).toBe(true);
+    });
+
+    test("rejette les schémas qui ne correspondent pas", () => {
+        expect(isArraySchema(z.string())).toBe(false);
+        expect(isBooleanSchema(z.string())).toBe(false);
+        expect(isDateSchema(z.string())).toBe(false);
+        expect(isDateTimeSchema(z.iso.date())).toBe(false);
+        expect(isIntSchema(z.number())).toBe(false);
+        expect(isNumberSchema(z.string())).toBe(false);
+        expect(isStringSchema(z.number())).toBe(false);
     });
 });
 

@@ -112,6 +112,10 @@ describe("useField", () => {
         render(<Harness field={field} inputType={inputType} />);
 
         expect(screen.getByTestId(testId).tagName).toBe(tagName);
+        expect(screen.getByTestId(testId).textContent).toContain(inputType === "input" ? "" : "value");
+        expect(
+            inputType === "input" ? InputComponent : inputType === "select" ? SelectComponent : AutocompleteComponent
+        ).toHaveBeenLastCalledWith(expect.objectContaining({value: "value"}), undefined);
     });
 
     test("render display en mode consultation", () => {
@@ -119,6 +123,7 @@ describe("useField", () => {
         render(<Harness field={field} inputType="input" />);
 
         expect(screen.getByTestId("display").tagName).toBe("DIV");
+        expect(DisplayComponent).toHaveBeenLastCalledWith(expect.objectContaining({value: "value"}), undefined);
     });
 
     test("masque le label si hasLabel=false", () => {
@@ -299,6 +304,14 @@ describe("useField", () => {
         field._isEdit = false;
         render(<Harness field={field} inputType="input" />);
 
-        expect(console.warn).toHaveBeenCalled();
+        const warnings = vi.mocked(console.warn).mock.calls.map((args: any[]) => args[0] as string);
+        expect(warnings).toHaveLength(8);
+        expect([...new Set(warnings)]).toEqual([
+            "Le champ 'warnField' essaie d'afficher un 'LabelComponent' qui n'a pas été défini.",
+            "Le champ 'warnField' essaie d'afficher un 'InputComponent' qui n'a pas été défini.",
+            "Le champ 'warnField' essaie d'afficher un 'SelectComponent' qui n'a pas été défini.",
+            "Le champ 'warnField' essaie d'afficher un 'AutocompleteComponent' qui n'a pas été défini.",
+            "Le champ 'warnField' essaie d'afficher un 'DisplayComponent' qui n'a pas été défini."
+        ]);
     });
 });

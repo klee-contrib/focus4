@@ -17,7 +17,7 @@ function refValues() {
 
 const acTheme = {supportingText: "st"};
 
-describe("SelectAutocomplete component", () => {
+describe("SelectAutocomplete", () => {
     setupComponentTest({"focus.select.unselected": "—"});
 
     test("Affiche la valeur initiale en tant que texte de l'input", () => {

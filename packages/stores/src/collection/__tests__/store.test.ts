@@ -385,8 +385,8 @@ describe("CollectionStore", () => {
 
             await store.search();
 
-            expect(service).toHaveBeenCalled();
-            const callArgs = vi.mocked(service).mock.calls[0][0] as QueryInput;
+            expect(service).toHaveBeenCalledOnce();
+            const [callArgs] = vi.mocked(service).mock.calls[0] as [QueryInput];
             expect(callArgs.criteria?.query).toBe("test");
             expect(callArgs.top).toBe(25);
         });
@@ -568,8 +568,8 @@ describe("CollectionStore", () => {
 
             await store.search();
 
-            expect(service).toHaveBeenCalled();
-            const callArgs = service.mock.calls[0][0] as QueryInput;
+            expect(service).toHaveBeenCalledOnce();
+            const [callArgs] = service.mock.calls[0] as [QueryInput];
             expect(callArgs.criteria).toMatchObject({category: "A"});
             expect(callArgs.criteria).not.toHaveProperty("name");
         });
@@ -600,7 +600,10 @@ describe("CollectionStore", () => {
 
                 await vi.advanceTimersByTimeAsync(20);
 
-                expect(service).toHaveBeenCalled();
+                expect(service).toHaveBeenCalledOnce();
+                expect(service).toHaveBeenCalledWith(expect.objectContaining({criteria: {query: "new-query"}}), {
+                    signal: expect.any(AbortSignal)
+                });
             } finally {
                 vi.useRealTimers();
             }
@@ -1331,6 +1334,43 @@ describe("CollectionStore", () => {
             store.setProperties({groupingKey: "category", searchFields: ["category"]});
             expect(store.groupingKey).toBe("category");
             expect(store.searchFields).toEqual(["category"]);
+        });
+
+        test("filtre les nombres, booléens, champs entité et valeurs de tableau", () => {
+            interface Mixed {
+                bool?: boolean;
+                count?: number;
+                field?: {$field: object; value: string};
+                tags?: string[];
+            }
+            const store = makeLocalCollectionStore<Mixed>({
+                facetDefinitions: [
+                    {code: "bool", label: "Bool", fieldName: "bool"},
+                    {code: "count", label: "Count", fieldName: "count"},
+                    {code: "field", label: "Field", fieldName: "field"},
+                    {code: "tags", label: "Tags", fieldName: "tags"}
+                ],
+                searchFields: ["field"]
+            });
+            store.list = [
+                {bool: true, count: 0, field: {$field: {}, value: "Alpha"}, tags: []},
+                {bool: false, count: 2, field: {$field: {}, value: "Beta"}, tags: ["x"]}
+            ];
+
+            store.query = "alpha";
+            expect(store.list).toHaveLength(1);
+            store.query = "";
+            store.setProperties({
+                inputFacets: {bool: {selected: ["true"]}}
+            });
+            expect(store.list).toHaveLength(1);
+            store.setProperties({inputFacets: {count: {selected: ["2"]}}});
+            expect(store.list.map(item => item.count)).toEqual([2]);
+            store.setProperties({inputFacets: {field: {selected: ["Alpha"]}}});
+            expect(store.list[0].field?.value).toBe("Alpha");
+            store.setProperties({inputFacets: {tags: {selected: ["<null>"]}}});
+            expect(store.list[0].tags).toEqual([]);
+            expect(store.facets.find(f => f.code === "tags")!.values[0].label).toBe("focus.search.results.missing");
         });
     });
 });

@@ -46,7 +46,7 @@ function getInput() {
     return screen.getByRole("combobox") as HTMLInputElement;
 }
 
-describe("Autocomplete component", () => {
+describe("Autocomplete", () => {
     setupComponentTest();
 
     test("Rend la valeur sélectionnée et ouvre les suggestions au focus", () => {
@@ -220,5 +220,56 @@ describe("Autocomplete component", () => {
         expect(onChange).toHaveBeenCalledWith("one", values[0]);
         expect(input.value).toBe("Un");
         expect(input.ariaExpanded).toBe("false");
+    });
+
+    test.each([
+        ["auto", "fit-to-field-single-line", "bottom"],
+        ["auto", "no-fit-single-line", "bottom-left"],
+        ["down", "fit-to-field-single-line", "bottom"],
+        ["down", "no-fit-single-line", "bottom-left"],
+        ["up", "fit-to-field-single-line", "top"],
+        ["up", "no-fit-single-line", "top-left"]
+    ] as const)("positionne les suggestions %s / %s en %s", (direction, sizing, expected) => {
+        renderAutocomplete(<Autocomplete direction={direction} sizing={sizing} values={values} />);
+        fireEvent.click(getInput());
+
+        const list = screen.getByRole("listbox");
+        const actual = `${list.style.top ? "bottom" : "top"}${list.style.left ? "-left" : list.style.right ? "-right" : ""}`;
+        expect(actual).toBe(expected);
+    });
+
+    test("rend un composant de ligne personnalisé et réinitialise la sélection avec la valeur", () => {
+        const {rerender} = renderAutocomplete(
+            <Autocomplete
+                LineComponent={({item}) => <strong>{`Option ${item.label}`}</strong>}
+                value="one"
+                values={values}
+            />
+        );
+
+        fireEvent.focus(getInput());
+        expect(screen.getByRole("option", {name: "Un"}).querySelector("strong")?.textContent).toBe("Option Un");
+
+        rerender(
+            <ThemeProvider appTheme={{...defaultAppTheme, autocomplete: autocompleteTheme, menu: menuTheme}}>
+                <Autocomplete
+                    LineComponent={({item}) => <strong>{`Option ${item.label}`}</strong>}
+                    value={undefined}
+                    values={values}
+                />
+            </ThemeProvider>
+        );
+        expect(getInput().value).toBe("");
+    });
+
+    test("ne change pas le store quand Tab confirme sans query ni sélection", () => {
+        const onChange = vi.fn();
+        renderAutocomplete(<Autocomplete noSuggestionsOnEmptyQuery onChange={onChange} values={values} />);
+        const input = getInput();
+
+        fireEvent.focus(input);
+        fireEvent.keyDown(input, {key: "Tab"});
+
+        expect(onChange).toHaveBeenCalledWith(undefined, undefined);
     });
 });

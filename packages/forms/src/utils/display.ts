@@ -1,4 +1,4 @@
-import {isFunction} from "es-toolkit";
+import {isEqual, isFunction} from "es-toolkit";
 import {autorun} from "mobx";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -65,7 +65,12 @@ export function useDisplay<S extends ZodType>({
         [formatter, numberFormat, t]
     );
 
-    const [label, setLabel] = useState<string[] | string>();
+    const [label, setLabelB] = useState<string[] | string>();
+    const setLabel = useCallback(
+        (newLabel?: string[] | string) => setLabelB(oldLabel => (isEqual(oldLabel, newLabel) ? oldLabel : newLabel)),
+        []
+    );
+
     useEffect(
         () =>
             autorun(() => {

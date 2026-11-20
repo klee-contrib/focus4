@@ -1,11 +1,11 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {makeLocalCollectionStore} from "@focus4/stores";
 import {ThemeProvider} from "@focus4/styling";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {ActionBar} from "../action-bar";
 
 const actionBarTheme = {
@@ -32,7 +32,7 @@ function createStore() {
 }
 
 describe("ActionBar", () => {
-    setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+    setupCollectionsTest();
 
     test("met à jour la requête et ouvre le menu de tri", () => {
         const store = createStore();
@@ -165,5 +165,38 @@ describe("ActionBar", () => {
 
         fireEvent.click(screen.getByRole("button", {name: "Create"}));
         expect(operation).toHaveBeenCalledWith([]);
+    });
+
+    test("ouvre et ferme le panneau de facettes", () => {
+        const store = createStore();
+        const {container} = renderWithTheme(
+            <ThemeProvider
+                appTheme={{
+                    ...defaultAppTheme,
+                    facet: {
+                        checkbox: "facet-checkbox",
+                        count: "facet-count",
+                        facet: "facet",
+                        icon: "facet-icon",
+                        label: "facet-label"
+                    }
+                }}
+            >
+                <ActionBar
+                    additionalFacets={{
+                        extra: {
+                            Component: () => <span>facette supplémentaire</span>
+                        }
+                    }}
+                    hasFacetBox
+                    store={store}
+                    theme={actionBarTheme}
+                />
+            </ThemeProvider>
+        );
+
+        fireEvent.click(screen.getByRole("button", {name: /Filtrer/}));
+        expect(screen.getByText("facette supplémentaire")).toBeTruthy();
+        fireEvent.click(container.querySelectorAll(".action-bar-facet-box-container button")[0]);
     });
 });

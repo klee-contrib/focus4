@@ -10,7 +10,7 @@ const checkboxTheme = {
     checked: "checkbox-checked"
 };
 
-describe("FormCheckbox component", () => {
+describe("FormCheckbox", () => {
     setupComponentTest();
 
     test("Rend un input de type checkbox", () => {
@@ -19,16 +19,13 @@ describe("FormCheckbox component", () => {
         expect(screen.getByRole("checkbox")).toBeInstanceOf(HTMLInputElement);
     });
 
-    test("La checkbox est cochée quand value=true", () => {
-        render(<FormCheckbox onChange={() => undefined} theme={checkboxTheme} value />);
+    test.each([
+        {checked: true, value: true},
+        {checked: false, value: undefined}
+    ])("Expose checked=$checked pour value=$value", ({checked, value}) => {
+        render(<FormCheckbox onChange={() => undefined} theme={checkboxTheme} value={value} />);
 
-        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
-    });
-
-    test("La checkbox est décochée quand value est undefined", () => {
-        render(<FormCheckbox onChange={() => undefined} theme={checkboxTheme} />);
-
-        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(false);
+        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(checked);
     });
 
     test("onChange est appelé avec la nouvelle valeur au clic", () => {
@@ -37,8 +34,8 @@ describe("FormCheckbox component", () => {
 
         fireEvent.click(screen.getByRole("checkbox"));
 
-        expect(onChange).toHaveBeenCalled();
-        expect(onChange.mock.calls[0][0]).toBe(true);
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith(true, expect.any(Object));
     });
 
     test("La checkbox est désactivée quand disabled=true", () => {

@@ -9,7 +9,7 @@ const booleanRadioTheme = {
     field: "supporting-field"
 };
 
-describe("BooleanRadio component", () => {
+describe("BooleanRadio", () => {
     setupComponentTest({
         "focus.bool.true": "Oui",
         "focus.bool.false": "Non",

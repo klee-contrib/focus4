@@ -1,14 +1,14 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import type {ReactElement} from "react";
 import {describe, expect, test, vi} from "vitest";
 
 import {ThemeProvider} from "@focus4/styling";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {DefaultAddItemComponent, DefaultEmptyComponent} from "../shared";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 function renderShared(ui: ReactElement) {
     return renderWithTheme(

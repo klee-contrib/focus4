@@ -42,7 +42,7 @@ function resolvedPosition(list: HTMLElement) {
     return horizontal ? `${vertical}-${horizontal}` : vertical;
 }
 
-describe("Menu component", () => {
+describe("Menu", () => {
     setupComponentTest();
 
     test("MenuItem rend ses icônes et son état disabled", () => {
@@ -277,5 +277,116 @@ describe("Menu component", () => {
 
         expect(screen.queryByText("Un") !== null).toBe(keepItems);
         expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+    });
+
+    test.each(["20vh", "120px"])("applique --menu-max-height exprimé en %s", maxHeight => {
+        const {getComputedStyle} = window;
+        vi.spyOn(window, "getComputedStyle").mockImplementation(element => {
+            const style = getComputedStyle(element);
+            const getPropertyValue = style.getPropertyValue.bind(style);
+            return new Proxy(style, {
+                get(target, property) {
+                    if (property === "getPropertyValue") {
+                        return (name: string) => (name === "--menu-max-height" ? maxHeight : getPropertyValue(name));
+                    }
+                    return Reflect.get(target, property, target);
+                }
+            });
+        });
+
+        render(<AnchoredMenu position="bottom" />);
+
+        const expected = maxHeight.endsWith("vh")
+            ? (Number(maxHeight.slice(0, -2)) / 100) * window.innerHeight
+            : Number(maxHeight.slice(0, -2));
+        expect(Number(screen.getByRole("list").style.maxHeight.replace("px", ""))).toBeCloseTo(expected);
+    });
+
+    test("refuse une hauteur CSS non reconnue sans masquer le menu", () => {
+        const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+        const {getComputedStyle} = window;
+        vi.spyOn(window, "getComputedStyle").mockImplementation(element => {
+            const style = getComputedStyle(element);
+            const getPropertyValue = style.getPropertyValue.bind(style);
+            return new Proxy(style, {
+                get(target, property) {
+                    if (property === "getPropertyValue") {
+                        return (name: string) => (name === "--menu-max-height" ? "invalid" : getPropertyValue(name));
+                    }
+                    return Reflect.get(target, property, target);
+                }
+            });
+        });
+
+        render(<AnchoredMenu position="bottom" />);
+
+        expect(error).toHaveBeenCalledWith(expect.stringContaining("Value should be in 'px' or 'vh'"));
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+    });
+
+    test.each([
+        ["auto-fill", "top"],
+        ["auto-fit", "top-right"],
+        ["auto-left", "top-left"],
+        ["auto-right", "top-right"],
+        ["bottom-auto", "bottom-right"],
+        ["top-auto", "top-right"]
+    ] as const)("résout %s en bascule haut/droite", (position, expected) => {
+        vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+            bottom: 700,
+            height: 50,
+            left: 900,
+            right: 950,
+            top: 650,
+            width: 50,
+            x: 900,
+            y: 650,
+            toJSON: () => undefined
+        });
+        Object.defineProperty(window, "innerHeight", {configurable: true, value: 768});
+        Object.defineProperty(window, "innerWidth", {configurable: true, value: 1024});
+
+        render(<AnchoredMenu position={position} />);
+
+        expect(resolvedPosition(screen.getByRole("list"))).toBe(expected);
+    });
+
+    test("ne ferme pas sur le label associé à l'input ancré", () => {
+        const menu = useMenu;
+        function LabelledMenu() {
+            const state = useMenu();
+            useEffect(() => state.open(), []);
+            return (
+                <>
+                    <label htmlFor="anchored-input">Libellé</label>
+                    <div ref={state.anchor}>
+                        <input id="anchored-input" />
+                    </div>
+                    <Menu {...state} theme={menuTheme}>
+                        <MenuItem key="one" caption="Un" theme={menuTheme} />
+                    </Menu>
+                </>
+            );
+        }
+        expect(menu).toBeDefined();
+        render(<LabelledMenu />);
+
+        fireEvent.pointerDown(screen.getByText("Libellé"));
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(true);
+    });
+
+    test("réinitialise les pointer-events après la navigation clavier", () => {
+        Element.prototype.scrollIntoView = vi.fn();
+        render(
+            <Menu {...createMenu()} theme={menuTheme}>
+                <MenuItem key="one" caption="Un" theme={menuTheme} />
+            </Menu>
+        );
+        const list = screen.getByRole("list");
+
+        fireEvent.keyDown(document, {key: "ArrowDown"});
+        expect(list.style.pointerEvents).toBe("none");
+        fireEvent.pointerMove(document);
+        expect(list.style.pointerEvents).toBe("");
     });
 });

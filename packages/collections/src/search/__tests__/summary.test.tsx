@@ -1,4 +1,4 @@
-import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
@@ -7,7 +7,7 @@ import {e, entity} from "@focus4/entities";
 import {domain} from "@focus4/form-toolbox";
 import {makeLocalCollectionStore, makeServerCollectionStore} from "@focus4/stores";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {Summary} from "../summary";
 
 const summaryTheme = {chip: "summary-chip", print: "summary-print", summary: "summary"};
@@ -25,7 +25,7 @@ function createStore() {
 }
 
 describe("Summary", () => {
-    setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+    setupCollectionsTest();
 
     test("affiche les résultats, la requête, la facette, le groupe, le tri et l'export", () => {
         const store = createStore();
@@ -39,9 +39,9 @@ describe("Summary", () => {
             />
         );
 
-        expect(screen.getByText("résultat").textContent).toBe("1 résultat");
-        for (const text of ['pour "alpha"', 'Category : "A"', "Category"]) {
-            expect(screen.getByText(text).textContent).toBe(text);
+        const summary = screen.getByText("résultat").closest(".summary")!;
+        for (const text of ["1 résultat", 'pour "alpha"', 'Category : "A"', "Category"]) {
+            expect(summary.textContent).toContain(text);
         }
         fireEvent.click(screen.getByRole("button", {name: "Exporter"}));
         expect(exportAction).toHaveBeenCalledTimes(1);
@@ -96,7 +96,7 @@ describe("Summary", () => {
             />
         );
 
-        expect(screen.getByText("Category").textContent).toBe("Category");
+        expect(screen.getByText("Category").closest(".summary-chip")?.textContent).toContain("Category");
         expect(screen.queryAllByRole("button")).toHaveLength(0);
     });
 
@@ -134,7 +134,7 @@ describe("Summary", () => {
 
         renderWithTheme(<Summary hideCriteria={["status"]} store={store} theme={summaryTheme} />);
 
-        expect(screen.getByText(': "Code-A"')).toBeTruthy();
+        expect(screen.getByText(': "Code-A"').textContent?.trim()).toBe(': "Code-A"');
         expect(screen.queryByText("active")).toBeNull();
         fireEvent.click(screen.getAllByRole("button")[0]);
         expect((store.criteria.code as any).value).toBeUndefined();

@@ -54,6 +54,8 @@ describe("Dialog", () => {
         expect(screen.getByText("Contenu").textContent).toBe("Contenu");
         fireEvent.click(screen.getByRole("button", {name: "Valider"}));
         expect(onClick).toHaveBeenCalledOnce();
+        expect(screen.getByRole("heading", {level: 5, name: "Confirmation"})).toBeInstanceOf(HTMLHeadingElement);
+        expect(screen.getByText("Contenu")).toBeInstanceOf(HTMLElement);
     });
 
     test("ne rend rien lorsqu'il est inactif", () => {

@@ -31,7 +31,7 @@ function setRect(element: HTMLElement, rect: Partial<DOMRect>) {
     } as DOMRect);
 }
 
-describe("Tooltip component", () => {
+describe("Tooltip", () => {
     setupComponentTest();
 
     afterEach(() => {
@@ -106,5 +106,40 @@ describe("Tooltip component", () => {
 
         expect(onPointerUp).toHaveBeenCalledTimes(1);
         expect(screen.getByText("Aide").parentElement!.classList.contains("tooltip-top")).toBe(true);
+    });
+
+    test("retire la tooltip après la transition de sortie", async () => {
+        vi.useFakeTimers();
+        render(
+            <Tooltip clickBehavior="hide" theme={tooltipTheme} tooltip="Aide">
+                <button type="button">Info</button>
+            </Tooltip>
+        );
+        const button = screen.getByRole("button", {name: "Info"});
+        setRect(button, {top: 10, left: 20, width: 80, height: 30});
+
+        fireEvent.pointerEnter(button);
+        await act(() => vi.advanceTimersByTime(100));
+        fireEvent.pointerUp(button);
+        fireEvent.transitionEnd(screen.getByText("Aide").parentElement!, {propertyName: "transform"});
+
+        expect(screen.queryByText("Aide")).toBeNull();
+    });
+
+    test("annule une activation encore en attente au départ du pointeur", () => {
+        vi.useFakeTimers();
+        render(
+            <Tooltip theme={tooltipTheme} tooltip="Aide">
+                <button type="button">Info</button>
+            </Tooltip>
+        );
+        const button = screen.getByRole("button", {name: "Info"});
+        setRect(button, {top: 10, left: 20, width: 80, height: 30});
+
+        fireEvent.pointerEnter(button);
+        fireEvent.pointerLeave(button);
+        act(() => vi.advanceTimersByTime(100));
+
+        expect(screen.queryByText("Aide")).toBeNull();
     });
 });

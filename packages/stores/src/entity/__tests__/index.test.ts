@@ -2,6 +2,8 @@ import i18next from "i18next";
 import {isObservableArray} from "mobx";
 import {describe, expect, test, vi} from "vitest";
 
+import {e, entity} from "@focus4/entities";
+
 import {FormNodeBuilder} from "../form";
 import {clearNode, defaultLoad, getValues, makeStoreNode, replaceNode, setNode} from "../store";
 
@@ -85,6 +87,21 @@ describe("EntityStore — Structure et création", () => {
     test("Un sous-store est directement accessible via ses entrées", () => {
         const store = getStore();
         expect(store.subStore.structure.id.$field).toEqual(StructureEntity.id);
+    });
+
+    test("initialise les listes récursives et le chargement par défaut", async () => {
+        const recursive = entity({name: e.field(DO_STRING), children: e.recursiveList()});
+        const list = makeStoreNode([recursive], [{name: "root", children: [{name: "child"}]}]);
+        const store = makeStoreNode(recursive, {name: "root"});
+
+        expect(list[0].name.value).toBe("root");
+        expect(list[0].children[0].name.value).toBe("child");
+        await store.load();
+        expect(store.name.value).toBeUndefined();
+
+        Reflect.set(list, "sourceNode", list);
+        list.clear();
+        expect(list).toHaveLength(0);
     });
 });
 
@@ -365,6 +382,29 @@ describe("FormNode — Création et structure", () => {
         expect(formNode.getValues()).toEqual({structure: {}});
         expect(formNode2.getValues()).toEqual({ligneList: []});
         expect(formNode.form.hasChanged).toBe(true);
+    });
+
+    test("gère les flags ajoutés et les champs sans état d'édition préalable", () => {
+        const source = makeStoreNode(OperationEntity);
+        Reflect.set(source, "$added", true);
+        Reflect.deleteProperty(source.id, "_isEdit");
+        const formNode = new FormNodeBuilder(source).build();
+
+        expect(formNode.form._added).toBe(true);
+        expect(formNode.form.hasChanged).toBe(false);
+        expect(formNode.id.error).toBeUndefined();
+        formNode.id.isEdit = false;
+        expect(formNode.id.isEdit).toBe(false);
+    });
+
+    test("propage le flag d'item ajouté et ses changements", () => {
+        const {entry2, formNode2} = getFormNodes();
+        entry2.replace(projetTest);
+        formNode2.ligneList.pushNode({id: 8});
+        const added = formNode2.ligneList.at(-1)!;
+
+        expect(added.form._addedListItem).toBe(true);
+        expect(added.form.hasChanged).toBe(true);
     });
 });
 

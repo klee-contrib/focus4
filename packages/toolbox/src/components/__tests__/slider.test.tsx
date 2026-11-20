@@ -1,9 +1,10 @@
-import {act, createEvent, fireEvent, screen} from "@testing-library/react";
+import {act, createEvent, fireEvent, renderHook, screen} from "@testing-library/react";
 import {afterAll, beforeAll, describe, expect, test, vi} from "vitest";
 
 import {ThemeProvider} from "@focus4/styling";
 
 import {defaultAppTheme, renderWithTheme, setupComponentTest} from "../../__tests__/test-utils";
+import {useInputRef} from "../../utils/use-input-ref";
 import {Slider} from "../slider";
 
 const sliderTheme = {
@@ -40,7 +41,7 @@ function setRect(element: Element, left: number, width: number) {
 
 let resizeTrack: (() => void) | undefined;
 
-describe("Slider component", () => {
+describe("Slider", () => {
     setupComponentTest();
 
     beforeAll(() => {
@@ -133,5 +134,56 @@ describe("Slider component", () => {
         fireEvent.keyDown(document, {key: "ArrowRight"});
 
         expect(getSlider().ariaValueNow).toBe("25");
+    });
+
+    test("suit le pointeur puis retire les listeners au relâchement", () => {
+        const onChange = vi.fn();
+        renderWithTheme(
+            <ThemeProvider appTheme={{...defaultAppTheme, ripple: {ripple: "slider-ripple"}}}>
+                <Slider max={100} onChange={onChange} theme={sliderTheme} value={0} />
+            </ThemeProvider>
+        );
+        const slider = getSlider();
+        const track = slider.querySelector(".slider-track")!;
+        setRect(track, 0, 100);
+        act(() => resizeTrack?.());
+
+        const pointerDown = createEvent.pointerDown(slider);
+        Object.defineProperty(pointerDown, "pageX", {value: 25});
+        fireEvent(slider, pointerDown);
+        const pointerMove = createEvent.pointerMove(document);
+        Object.defineProperty(pointerMove, "pageX", {value: 75});
+        fireEvent(document, pointerMove);
+        fireEvent.pointerUp(document);
+        fireEvent.pointerMove(document, {pageX: 100});
+        fireEvent.blur(slider.querySelector(".slider-state")!);
+
+        expect(onChange).toHaveBeenCalledTimes(2);
+        expect(onChange).toHaveBeenNthCalledWith(1, 25);
+        expect(onChange).toHaveBeenNthCalledWith(2, 75);
+    });
+
+    test("useInputRef relaie les événements et mémorise une valeur chargée", () => {
+        const onChange = vi.fn();
+        const onPointerLeave = vi.fn();
+        const onPointerUp = vi.fn();
+        const {result, rerender} = renderHook(
+            ({value}: {value?: boolean}) => useInputRef({onChange, onPointerLeave, onPointerUp, value}),
+            {initialProps: {value: undefined as boolean | undefined}}
+        );
+        const element = document.createElement("button");
+        const blur = vi.spyOn(element, "blur");
+        result.current.ref.current = element;
+
+        result.current.handlePointerUp({} as any);
+        result.current.handlePointerLeave({} as any);
+        result.current.handleOnClick({pageX: 1, pageY: 1} as any);
+        rerender({value: true});
+
+        expect(blur).toHaveBeenCalledTimes(3);
+        expect(onPointerUp).toHaveBeenCalledOnce();
+        expect(onPointerLeave).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith(true, expect.anything());
+        expect(result.current.loaded).toBe(true);
     });
 });

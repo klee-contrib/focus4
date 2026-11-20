@@ -67,7 +67,7 @@ describe("LoadRegistration", () => {
         const builder = new NodeLoadBuilder<UnknownStore>()
             .params(() => ["x"] as const)
             .load(async (_arg: string, request?: RequestInit) => {
-                expect(request?.signal).toBeDefined();
+                expect(request?.signal).toBeInstanceOf(AbortSignal);
                 return {id: 1};
             })
             .trackingId("other")
@@ -78,7 +78,12 @@ describe("LoadRegistration", () => {
 
         await registration.load();
 
-        expect(core.requestStore.track).toHaveBeenCalled();
+        expect(core.requestStore.track).toHaveBeenCalledOnce();
+        expect(core.requestStore.track).toHaveBeenCalledWith(
+            ["track-3", "other"],
+            expect.any(Function),
+            expect.any(Function)
+        );
         expect(replace).toHaveBeenCalledWith({id: 1});
         expect(onLoad).toHaveBeenCalledWith("load", {id: 1});
     });

@@ -230,4 +230,23 @@ describe("useDisplay", () => {
         });
         expect(keyResolver).not.toHaveBeenCalled();
     });
+
+    test("résout et formate les valeurs d'un tableau depuis une liste de référence", async () => {
+        const values = makeReferenceList([
+            {code: "A", label: "Alpha"},
+            {code: "B", label: "Beta"},
+            {code: "C", label: "Charlie"}
+        ]);
+        const {result} = renderHook(
+            () =>
+                useDisplay({
+                    schema: z.array(z.string()),
+                    value: ["C", "A"],
+                    values
+                }),
+            {wrapper}
+        );
+
+        await waitFor(() => expect(result.current).toEqual(["Alpha", "Charlie"]));
+    });
 });

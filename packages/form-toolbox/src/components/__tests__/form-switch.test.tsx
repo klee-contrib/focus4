@@ -10,7 +10,7 @@ const switchTheme = {
     checked: "switch-checked"
 };
 
-describe("FormSwitch component", () => {
+describe("FormSwitch", () => {
     setupComponentTest();
 
     test("Rend un input de type checkbox (rôle switch en HTML natif)", () => {
@@ -19,16 +19,13 @@ describe("FormSwitch component", () => {
         expect(screen.getByRole("checkbox")).toBeInstanceOf(HTMLInputElement);
     });
 
-    test("Le switch est activé quand value=true", () => {
-        render(<FormSwitch onChange={() => undefined} theme={switchTheme} value />);
+    test.each([
+        {checked: true, value: true},
+        {checked: false, value: undefined}
+    ])("Expose checked=$checked pour value=$value", ({checked, value}) => {
+        render(<FormSwitch onChange={() => undefined} theme={switchTheme} value={value} />);
 
-        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
-    });
-
-    test("Le switch est désactivé quand value est undefined", () => {
-        render(<FormSwitch onChange={() => undefined} theme={switchTheme} />);
-
-        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(false);
+        expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(checked);
     });
 
     test("onChange est appelé au clic", () => {
@@ -37,8 +34,8 @@ describe("FormSwitch component", () => {
 
         fireEvent.click(screen.getByRole("checkbox"));
 
-        expect(onChange).toHaveBeenCalled();
-        expect(onChange.mock.calls[0][0]).toBe(true);
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith(true, expect.any(Object));
     });
 
     test("Le switch est désactivé quand disabled=true", () => {

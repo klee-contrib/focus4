@@ -20,7 +20,7 @@ function setRect(element: HTMLElement, rect: Partial<DOMRect>) {
     Object.defineProperty(element, "offsetHeight", {configurable: true, value: rect.height});
 }
 
-describe("Ripple component", () => {
+describe("Ripple", () => {
     setupComponentTest();
 
     test("Ajoute un ripple au pointer down et propage les handlers", () => {
@@ -73,5 +73,29 @@ describe("Ripple component", () => {
 
         expect(target.querySelector<HTMLDivElement>(".custom-ripple")?.style.left).toBe("20px");
         expect(target.querySelector<HTMLDivElement>(".custom-ripple")?.style.top).toBe("10px");
+    });
+
+    test("termine et retire un ripple après le départ du pointeur", () => {
+        const listeners: (() => void)[] = [];
+        vi.spyOn(Element.prototype, "animate").mockImplementation(
+            () =>
+                ({
+                    addEventListener: (_type: string, listener: () => void) => listeners.push(listener)
+                }) as unknown as Animation
+        );
+        render(
+            <Ripple className="custom-ripple" onPointerEnter={vi.fn()} onPointerLeave={vi.fn()}>
+                <button type="button">Cliquer</button>
+            </Ripple>
+        );
+        const button = screen.getByRole("button", {name: "Cliquer"});
+        setRect(button, {top: 0, left: 0, width: 80, height: 30});
+
+        fireEvent.pointerEnter(button);
+        fireEvent.pointerDown(button, {offsetX: 5, offsetY: 5});
+        fireEvent.pointerLeave(button);
+        listeners.at(-1)?.();
+
+        expect(button.querySelector(".custom-ripple")).toBeNull();
     });
 });

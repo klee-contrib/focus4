@@ -94,10 +94,13 @@ describe("usePagination", () => {
         sentinelRef?.(node);
 
         expect(registerIntersect).toHaveBeenCalledWith(node, expect.any(Function));
+        expect(unregister).not.toHaveBeenCalled();
         act(() => result.current.getDomRef(1)?.(null));
+        expect(unregister).not.toHaveBeenCalled();
         act(() => onIntersect?.(0, false));
+        expect(unregister).not.toHaveBeenCalled();
         act(() => onIntersect?.(0, true));
-        expect(unregister).toHaveBeenCalled();
+        expect(unregister).toHaveBeenCalledOnce();
     });
 
     test("charge la page suivante pour un store serveur", async () => {

@@ -13,7 +13,7 @@ const acChipsTheme = {
     field: "supporting-field"
 };
 
-describe("AutocompleteChips component", () => {
+describe("AutocompleteChips", () => {
     setupComponentTest();
 
     test("Ne rend aucun chip quand value est vide", () => {

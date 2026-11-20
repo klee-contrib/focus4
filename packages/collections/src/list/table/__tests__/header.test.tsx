@@ -1,16 +1,15 @@
-import {setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 
 import {makeLocalCollectionStore} from "@focus4/stores";
 import {toBem, type ToBem} from "@focus4/styling";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {type TableColumn, TableHeader} from "../header";
 
 import type {TableCss} from "../../__style__/table.css";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 const theme = toBem({
     heading: "table-heading",

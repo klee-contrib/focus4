@@ -15,7 +15,7 @@ const displayTheme = {
 
 const wrapper = ({children}: PropsWithChildren) => createElement(I18nextProvider, {i18n: i18next}, children);
 
-describe("Display component", () => {
+describe("Display", () => {
     setupComponentTest({beta: "Beta"});
 
     test("Affiche la valeur retournée par le formatter", () => {

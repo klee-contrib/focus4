@@ -4,7 +4,7 @@ import {describe, expect, test} from "vitest";
 import {setupComponentTest} from "../../__tests__/test-utils";
 import {FontIcon} from "../font-icon";
 
-describe("FontIcon component", () => {
+describe("FontIcon", () => {
     setupComponentTest({
         "custom.icon": {
             name: "star",

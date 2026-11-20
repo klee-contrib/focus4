@@ -10,7 +10,7 @@ const iconButtonTheme = {
     spinner: "ib-spinner"
 };
 
-describe("IconButton component", () => {
+describe("IconButton", () => {
     setupComponentTest();
 
     test("Rend un <button> avec l'icône passée en prop", () => {

@@ -1,5 +1,5 @@
 import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
-import {fireEvent, screen} from "@testing-library/react";
+import {fireEvent, screen, waitFor} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {InputFile} from "../input-file";
@@ -65,5 +65,42 @@ describe("InputFile", () => {
         fireEvent.change(screen.getByDisplayValue(""), {target: {files: [file]}});
         expect(onChange).not.toHaveBeenCalled();
         expect(screen.getByText("a.txt").textContent).toBe("a.txt");
+    });
+
+    test("accepte un fichier valide déposé et gère les états de drag", async () => {
+        const onChange = vi.fn();
+        const file = new File(["a"], "note.txt", {type: "text/plain"});
+        const {container} = renderWithTheme(
+            <InputFile accept="text/*,.txt" maxFiles={2} onChange={onChange} theme={theme} />
+        );
+        const label = container.querySelector("label")!;
+
+        fireEvent.dragEnter(label);
+        expect(label.classList.contains("input-file-drag-over")).toBe(true);
+        fireEvent.dragOver(label);
+        fireEvent.dragLeave(label);
+        expect(label.classList.contains("input-file-drag-over")).toBe(false);
+        fireEvent.drop(label, {dataTransfer: {files: [file]}});
+
+        await waitFor(() => expect(onChange).toHaveBeenCalledWith([file]));
+        expect(screen.getByText("note.txt")).toBeTruthy();
+        expect(label.classList.contains("input-file-drag-over")).toBe(false);
+    });
+
+    test("ouvre le sélecteur avec Entrée et applique l'icône personnalisée", () => {
+        const file = new File(["a"], "note.txt", {type: "text/plain"});
+        const icon = {className: "", name: "article"};
+        const {container} = renderWithTheme(
+            <InputFile iconSelector={() => icon} maxFiles={1} value={file} theme={theme} />
+        );
+        const label = container.querySelector("label")!;
+        const input = screen.getByDisplayValue("") as HTMLInputElement;
+        const click = vi.spyOn(input, "click");
+
+        fireEvent.keyDown(label, {key: "Enter"});
+        fireEvent.keyDown(label, {key: "Escape"});
+
+        expect(click).toHaveBeenCalledOnce();
+        expect(screen.getByText("article").textContent).toBe("article");
     });
 });

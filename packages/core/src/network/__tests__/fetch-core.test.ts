@@ -137,7 +137,11 @@ describe("coreFetch integration hooks", () => {
 
         await expect(coreFetch.get(`${baseUrl}/problem`).json()).rejects.toBeInstanceOf(HTTPDetailedError);
 
-        expect(consoleError).toHaveBeenCalled();
+        expect(consoleError).toHaveBeenCalledOnce();
+        expect(consoleError).toHaveBeenCalledWith(
+            "Détails :",
+            expect.objectContaining({detail: "Validation failed", status: 400, title: "Invalid request"})
+        );
     });
 
     test("transforme application/json en ProblemDetails", async () => {
@@ -157,12 +161,14 @@ describe("coreFetch integration hooks", () => {
     });
 
     test("gère une erreur réseau avec message technique", async () => {
+        vi.spyOn(requestStore, "startRequest").mockResolvedValue("req-network-error");
         const endSpy = vi.spyOn(requestStore, "endRequest").mockImplementation(() => undefined);
 
         await expect(coreFetch.get("http://127.0.0.1:1/network-error").json()).rejects.toThrow(
             "Une erreur technique non gérée"
         );
 
-        expect(endSpy).toHaveBeenCalled();
+        expect(endSpy).toHaveBeenCalledOnce();
+        expect(endSpy).toHaveBeenCalledWith("req-network-error");
     });
 });

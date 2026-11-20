@@ -19,7 +19,7 @@ const fabTheme = {
     label: "fab-label"
 };
 
-describe("FloatingActionButton component", () => {
+describe("FloatingActionButton", () => {
     setupComponentTest();
 
     test("Rend un bouton iconifié avec aria-label", () => {

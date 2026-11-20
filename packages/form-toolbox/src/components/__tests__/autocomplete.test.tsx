@@ -5,7 +5,7 @@ import z from "zod";
 import {setupComponentTest} from "../../__tests__/test-utils";
 import {AutocompleteSearch} from "../autocomplete";
 
-describe("AutocompleteSearch component", () => {
+describe("AutocompleteSearch", () => {
     setupComponentTest();
 
     test("Rend un input", () => {
@@ -44,7 +44,10 @@ describe("AutocompleteSearch component", () => {
         await new Promise(resolve => {
             setTimeout(resolve, 30);
         });
-        expect(querySearcher).toHaveBeenCalled();
+        expect(querySearcher).toHaveBeenCalledOnce();
+        expect(querySearcher).toHaveBeenCalledWith("al", {
+            signal: expect.any(AbortSignal)
+        });
     });
 
     test("onQueryChange est appelé lors de la saisie", () => {
@@ -120,7 +123,10 @@ describe("AutocompleteSearch component", () => {
         await new Promise(resolve => {
             setTimeout(resolve, 30);
         });
-        expect(querySearcher).toHaveBeenCalled();
+        expect(querySearcher).toHaveBeenCalledOnce();
+        expect(querySearcher).toHaveBeenCalledWith("", {
+            signal: expect.any(AbortSignal)
+        });
     });
 
     test("Ne lance pas la recherche pour une query vide sans searchOnEmptyQuery", async () => {
@@ -192,5 +198,50 @@ describe("AutocompleteSearch component", () => {
         );
 
         expect(screen.getByText("Aide").textContent).toBe("Aide");
+    });
+
+    test("recherche le libellé résolu quand la valeur est inconnue de la liste", async () => {
+        const querySearcher = vi.fn(async () => [{key: "A", label: "Alpha"}]);
+        render(
+            <AutocompleteSearch
+                keyResolver={async () => "Alpha recherchée"}
+                onChange={() => undefined}
+                querySearcher={querySearcher}
+                schema={z.string()}
+                searchDelay={0}
+                value="A"
+            />
+        );
+
+        await new Promise(resolve => {
+            setTimeout(resolve, 30);
+        });
+        expect(querySearcher).toHaveBeenCalledWith("Alpha recherchée");
+    });
+
+    test("ignore les erreurs d'abandon de la recherche", async () => {
+        const abort = new DOMException("Aborted", "AbortError");
+        const querySearcher = vi.fn(async () => {
+            throw abort;
+        });
+        render(
+            <AutocompleteSearch
+                onChange={() => undefined}
+                querySearcher={querySearcher}
+                schema={z.string()}
+                searchDelay={0}
+            />
+        );
+
+        fireEvent.change(screen.getByRole("combobox"), {target: {value: "alpha"}});
+        await expect(
+            new Promise(resolve => {
+                setTimeout(resolve, 30);
+            })
+        ).resolves.toBeUndefined();
+        expect(querySearcher).toHaveBeenCalledOnce();
+        expect(querySearcher).toHaveBeenCalledWith("alpha", {
+            signal: expect.any(AbortSignal)
+        });
     });
 });

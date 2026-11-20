@@ -60,6 +60,21 @@ describe("FormActions", () => {
         expect(onCancel).toHaveBeenCalledWith("cancel");
     });
 
+    test("expose les props de formulaire et de panel", () => {
+        const formNode = makeFormNode();
+        const actions = makeFormActions(formNode, a => a);
+
+        formNode.form.isEdit = true;
+        expect(actions.formProps).toEqual({errorDisplay: actions.errorDisplay, save: actions.save});
+        expect(actions.panelProps).toMatchObject({
+            editing: true,
+            loading: false,
+            onClickCancel: actions.onClickCancel,
+            onClickEdit: actions.onClickEdit,
+            save: actions.save
+        });
+    });
+
     test("save retourne sans rien faire si chargement en cours ou sans service", async () => {
         const formNode = makeFormNode();
         vi.mocked(requestStore.isLoading).mockReturnValue(true);
@@ -101,6 +116,21 @@ describe("FormActions", () => {
         expect(onUpdate).toHaveBeenCalledWith("update", {field: "updated"});
     });
 
+    test("save met à jour les données initiales et restaure errorDisplay", async () => {
+        const formNode = makeFormNode();
+        formNode.form._initialData = {field: "old"};
+        formNode.form.isEdit = true;
+        formNode.field.value = "new";
+        const actions = makeFormActions(formNode, a =>
+            a.errorDisplay("after-focus").save(async () => ({field: "saved"}))
+        );
+
+        await actions.save();
+
+        expect(formNode.form._initialData).toEqual({field: "new"});
+        expect(actions.errorDisplay).toBe("after-focus");
+    });
+
     test("save utilise createService sans params", async () => {
         const onCreate = vi.fn();
         const createService = vi.fn(async (_d: unknown) => ({field: "created"}));
@@ -134,11 +164,22 @@ describe("FormActions", () => {
         const onError = vi.fn();
         const formNode = makeFormNode();
         const actions = makeFormActions(formNode, a => a.on("error", onError).save(async () => ({field: "ok"})));
+        formNode.form.isEdit = true;
+        formNode.form._initialData = {field: "initial"};
+        formNode.field.value = "edited";
 
         vi.mocked(requestStore.track).mockRejectedValueOnce(boom);
 
         await expect(actions.save()).rejects.toThrow("boom");
         expect(onError).toHaveBeenCalledWith("error", "save", boom);
+        expect(formNode.form.isEdit).toBe(true);
+        expect(formNode.field.value).toBe("edited");
+        expect(formNode.sourceNode.field.value).toBeUndefined();
+        expect(formNode.form._initialData).toEqual({field: "initial"});
+
+        await actions.save();
+        expect(formNode.sourceNode.field.value).toBe("ok");
+        expect(formNode.form.isEdit).toBe(false);
     });
 
     test("save avec une réponse Response réinjecte le formulaire", async () => {

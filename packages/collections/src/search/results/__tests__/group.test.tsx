@@ -1,14 +1,13 @@
-import {setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {observable} from "mobx";
 import {describe, expect, test} from "vitest";
 
 import {type CollectionStore, makeLocalCollectionStore} from "@focus4/stores";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {DefaultGroupHeader, Group, type GroupHeaderProps} from "../group";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     category: string;

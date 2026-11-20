@@ -1,6 +1,6 @@
 import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
-import {ReactNode, useContext, useState} from "react";
+import {ReactNode, useContext, useEffect, useState} from "react";
 import {describe, expect, test, vi} from "vitest";
 
 import {ScrollableContext} from "../../utils/contexts";
@@ -67,6 +67,26 @@ function Controls() {
     );
 }
 
+function ObservableControls() {
+    const {registerHeaderElement, registerIntersect} = useContext(ScrollableContext);
+    useEffect(() => {
+        const header = screen.getByTestId("header");
+        const target = screen.getByTestId("target");
+        const disposeHeader = registerHeaderElement(header);
+        const disposeIntersect = registerIntersect(target, () => undefined);
+        return () => {
+            disposeHeader();
+            disposeIntersect();
+        };
+    }, []);
+    return (
+        <>
+            <div data-testid="header" />
+            <div data-testid="target" />
+        </>
+    );
+}
+
 function renderScrollable(children: ReactNode, props = {}) {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
@@ -103,5 +123,55 @@ describe("Scrollable", () => {
         expect(screen.getByRole("button").tagName).toBe("BUTTON");
         fireEvent.click(screen.getByRole("button"));
         expect(scrollTo).toHaveBeenCalledWith({behavior: "smooth", top: 0});
+    });
+
+    test("observe les en-têtes et intersections puis nettoie les observateurs", () => {
+        let onResize: ResizeObserverCallback | undefined;
+        let onIntersect: IntersectionObserverCallback | undefined;
+        const disconnectResize = vi.fn();
+        const disconnectIntersect = vi.fn();
+        const observe = vi.fn();
+        const unobserve = vi.fn();
+        vi.stubGlobal(
+            "ResizeObserver",
+            class {
+                constructor(callback: ResizeObserverCallback) {
+                    onResize = callback;
+                }
+                disconnect = disconnectResize;
+                observe = observe;
+            }
+        );
+        vi.stubGlobal(
+            "IntersectionObserver",
+            class {
+                constructor(callback: IntersectionObserverCallback) {
+                    onIntersect = callback;
+                }
+                disconnect = disconnectIntersect;
+                observe = observe;
+                unobserve = unobserve;
+            }
+        );
+        const result = renderWithTheme(
+            <Scrollable theme={theme}>
+                <ObservableControls />
+            </Scrollable>
+        );
+        const header = screen.getByTestId("header");
+        const target = screen.getByTestId("target");
+
+        onResize?.([], {} as ResizeObserver);
+        onIntersect?.(
+            [{intersectionRatio: 0.456, isIntersecting: true, target}] as unknown as IntersectionObserverEntry[],
+            {} as IntersectionObserver
+        );
+        result.unmount();
+
+        expect(observe).toHaveBeenCalledWith(header);
+        expect(observe).toHaveBeenCalledWith(target);
+        expect(disconnectResize).toHaveBeenCalled();
+        expect(disconnectIntersect).toHaveBeenCalled();
+        expect(unobserve).toHaveBeenCalledWith(target);
     });
 });

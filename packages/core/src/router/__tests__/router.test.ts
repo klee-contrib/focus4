@@ -174,6 +174,15 @@ describe("makeRouter", () => {
 
         expect(router.confirmation.pending).toBe(false);
         expect(router.is(x => x("users"))).toBe(true);
+        expect(window.location.hash).toBe("#/users");
+
+        router.to(x => x("posts"));
+        await waitForNavigation();
+        await router.confirmation.commit();
+
+        expect(router.confirmation.pending).toBe(false);
+        expect(router.is(x => x("posts"))).toBe(true);
+        expect(window.location.hash).toBe("#/posts");
 
         router.confirmation.toggle("guard", false);
     });
@@ -341,5 +350,76 @@ describe("makeRouter", () => {
 
         expect(callbacks[0]).toHaveBeenCalledOnce();
         expect(callbacks[1]).toHaveBeenCalledOnce();
+    });
+
+    test("met à jour l'URL lorsqu'un paramètre actif change manuellement", async () => {
+        const router = makeRouter({users: param("id", b => b.string())});
+        await router.start();
+        const internal = router as typeof router & {_activeParams: Record<string, string>; _activeRoute: string};
+        internal._activeRoute = "/users/:id";
+        internal._activeParams = {id: "first"};
+        window.location.hash = "#/users/first";
+
+        router.state.users.id = "second";
+        expect(internal._activeParams.id).toBe("second");
+    });
+
+    test("expose les helpers d'un sous-routeur avec les paramètres actifs", async () => {
+        const router = makeRouter({
+            users: param("userId", b => b.string(), {posts: {details: {}}})
+        });
+        await router.start();
+        const internal = router as typeof router & {_activeParams: Record<string, string>; _activeRoute: string};
+        internal._activeRoute = "/users/:userId/posts/details";
+        internal._activeParams = {userId: "abc"};
+
+        const sub = router.sub(r => r("users")("userId"));
+        expect(sub.href(r => r("posts")("details"), {})).toBe("#/users/abc/posts/details");
+        expect(sub.is(r => r("posts")("details"))).toBe(true);
+
+        sub.to(r => r("posts")("details"), true);
+        sub.sub(r => r("posts")("details")).start();
+        expect(sub.href()).toBe("#/users/abc");
+    });
+
+    test("expose le segment actif avec get et protège le déchargement", async () => {
+        const router = makeRouter({users: {posts: {}}, admin: {}});
+        await router.start();
+        const internal = router as typeof router & {_activeRoute: string};
+        internal._activeRoute = "/users/posts";
+
+        expect(router.get(r => r("users"))).toBe("posts");
+        router.confirmation.toggle("guard", true);
+        const event = new Event("beforeunload", {cancelable: true});
+        window.dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(true);
+        router.confirmation.toggle("guard", false);
+    });
+
+    test("valide aussi les query params number en navigation", async () => {
+        const router = makeRouter({users: {}}, undefined, {page: "number"});
+        await router.start();
+        const internal = router as typeof router & {_activeRoute: string; _activeQuery: Record<string, string>};
+        internal._activeRoute = "/users";
+        internal._activeQuery = {page: "1"};
+
+        window.location.hash = "#/users?page=not-a-number";
+        await waitForNavigation();
+
+        expect(window.location.hash).not.toBe("#/users?page=not-a-number");
+    });
+
+    test("commit réinitialise les paramètres et queries de la navigation en attente", async () => {
+        const router = makeRouter({users: param("id", b => b.string())}, undefined, {page: "number"});
+        await router.start();
+        router.confirmation.toggle("guard", true);
+        router.to(r => r("users")("42"), false, {page: 3});
+        await waitForNavigation();
+
+        await router.confirmation.commit();
+
+        expect(router.state.users.id).toBe("42");
+        expect(router.query.page).toBe(3);
+        router.confirmation.toggle("guard", false);
     });
 });

@@ -71,4 +71,31 @@ describe("RequestStore", () => {
         expect(store.isLoading("users")).toBe(false);
         expect(store.getPendingCount("users")).toBe(0);
     });
+
+    test("reste en chargement tant qu'une requête suivie est encore active", async () => {
+        const store = new RequestStore();
+        let resolveFirst: () => void = () => undefined;
+        let resolveSecond: () => void = () => undefined;
+        const first = new Promise<void>(resolve => {
+            resolveFirst = resolve;
+        });
+        const second = new Promise<void>(resolve => {
+            resolveSecond = resolve;
+        });
+
+        const trackedFirst = store.track("users", () => first);
+        const trackedSecond = store.track("users", () => second);
+        await vi.runAllTimersAsync();
+        expect(store.getPendingCount("users")).toBe(2);
+
+        resolveFirst();
+        await trackedFirst;
+        expect(store.isLoading("users")).toBe(true);
+        expect(store.getPendingCount("users")).toBe(1);
+
+        resolveSecond();
+        await trackedSecond;
+        expect(store.isLoading("users")).toBe(false);
+        expect(store.getPendingCount("users")).toBe(0);
+    });
 });

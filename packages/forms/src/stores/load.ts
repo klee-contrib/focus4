@@ -54,5 +54,6 @@ export function useReferenceTracking<T extends Record<string, ReferenceDefinitio
     useEffect(() => {
         dispose.current();
         dispose.current = referenceStore.track(trackingIds, ...refNames);
+        return () => dispose.current();
     }, [...(Array.isArray(trackingIds) ? trackingIds : [trackingIds]), ...refNames]);
 }

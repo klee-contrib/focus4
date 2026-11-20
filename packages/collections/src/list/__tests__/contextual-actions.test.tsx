@@ -1,8 +1,8 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {ContextualActions, type OperationListItem} from "../contextual-actions";
 
 const theme = {
@@ -30,7 +30,7 @@ function renderActions<T>(operationList: OperationListItem<T>[], data: T, isMosa
 }
 
 describe("ContextualActions", () => {
-    setupComponentTest({focus: {icons: i18nCollections.icons}});
+    setupCollectionsTest();
 
     test("exécute une action principale avec ses données", () => {
         const action = vi.fn();

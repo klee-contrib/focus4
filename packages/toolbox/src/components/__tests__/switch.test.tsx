@@ -14,7 +14,7 @@ const switchTheme = {
     track: "sw-track"
 };
 
-describe("Switch component", () => {
+describe("Switch", () => {
     setupComponentTest();
 
     test("Rend un input[type=checkbox] désactivé quand value=false", () => {

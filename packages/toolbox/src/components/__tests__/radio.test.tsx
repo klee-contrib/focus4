@@ -13,7 +13,7 @@ const radioTheme = {
     state: "rb-state"
 };
 
-describe("Radio components", () => {
+describe("Radio", () => {
     setupComponentTest();
 
     test("Rend un input[type=radio] par bouton", () => {

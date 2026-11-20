@@ -1,14 +1,13 @@
-import {setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {makeLocalCollectionStore, makeServerCollectionStore} from "@focus4/stores";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {BottomRow, type BottomRowProps} from "../bottom-row";
 import type {PaginationState} from "../pagination";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     id: number;

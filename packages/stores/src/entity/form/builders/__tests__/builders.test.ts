@@ -125,14 +125,14 @@ describe("FormNodeBuilder.remove / removeAllBut", () => {
 
         expect(form.name).toBeUndefined();
         expect(form.list).toBeUndefined();
-        expect(form.inner).toBeDefined();
+        expect(form.inner.$entity).toEqual(InnerEntity);
     });
 
     test("removeAllBut conserve uniquement les champs listés", () => {
         const store = makeStoreNode({o: OuterEntity});
         const form = new FormNodeBuilder(store.o).removeAllBut("name").build() as any;
 
-        expect(form.name).toBeDefined();
+        expect(form.name.$field).toEqual(OuterEntity.name);
         expect(form.inner).toBeUndefined();
         expect(form.list).toBeUndefined();
     });
@@ -143,15 +143,13 @@ describe("FormNodeBuilder.add", () => {
         const store = makeStoreNode({o: InnerEntity});
         const form = new FormNodeBuilder(store.o).add("extra", f => f.field(e.field(DO_STRING))).build() as any;
 
-        expect(form.extra).toBeDefined();
-        expect(form.extra.$field).toBeDefined();
+        expect(form.extra.$field).toMatchObject({domain: DO_STRING, name: "extra"});
     });
 
     test("add(f => f.object(Entity)) crée un sous-noeud à partir d'une entité", () => {
         const store = makeStoreNode({o: InnerEntity});
         const form = new FormNodeBuilder(store.o).add("child", f => f.object(InnerEntity)).build() as any;
 
-        expect(form.child).toBeDefined();
         expect(form.child.$entity).toEqual(InnerEntity);
     });
 
@@ -168,7 +166,6 @@ describe("FormNodeBuilder.add", () => {
         const store = makeStoreNode({o: InnerEntity});
         const form = new FormNodeBuilder(store.o).add("children", f => f.list(InnerEntity)).build() as any;
 
-        expect(form.children).toBeDefined();
         expect(Array.isArray(form.children)).toBe(true);
         expect(form.children.$entity).toEqual(InnerEntity);
     });
@@ -189,11 +186,11 @@ describe("FormNodeBuilder.patchAllTo", () => {
         const form = new FormNodeBuilder(store.o).patchAllTo(AltEntity).build() as any;
 
         // "added" doit avoir été ajouté (n'existait pas sur OuterEntity)
-        expect(form.added).toBeDefined();
+        expect(form.added.$field).toMatchObject({domain: DO_NUMBER, isRequired: true, name: "added"});
         // Les champs communs sont conservés
-        expect(form.name).toBeDefined();
-        expect(form.inner).toBeDefined();
-        expect(form.list).toBeDefined();
+        expect(form.name.$field).toMatchObject({domain: DO_STRING, name: "name"});
+        expect(form.inner.$entity).toBe(AltEntity.inner.entity);
+        expect(form.list.$entity).toBe(AltEntity.list.entity);
         // Les champs qui n'existent pas dans AltEntity sont retirés
         expect(form.optionalInner).toBeUndefined();
         expect(form.optionalList).toBeUndefined();
@@ -271,7 +268,7 @@ describe("FormNodeBuilder branches additionnelles", () => {
         });
         const form = new FormNodeBuilder(store.o).patchAllTo(AltWithNewFieldDef).build() as any;
 
-        expect(form.name).toBeDefined();
+        expect(form.name.$field).toMatchObject({domain: DO_NUMBER, name: "name"});
         expect(form.inner.form.isRequired).toBe(false);
         expect(form.list.form.isRequired).toBe(false);
     });
@@ -303,8 +300,7 @@ describe("FormNodeBuilder branches additionnelles", () => {
             extra: e.field(DO_NUMBER)
         });
         const form = new FormNodeBuilder(store.o).patchAllTo(Target).build() as any;
-        expect(form.extra).toBeDefined();
-        expect(form.extra.$field).toBeDefined();
+        expect(form.extra.$field).toMatchObject({domain: DO_NUMBER, name: "extra"});
     });
 
     test("patchAllTo ajoute un objet manquant depuis targetEntity", () => {
@@ -319,8 +315,8 @@ describe("FormNodeBuilder branches additionnelles", () => {
             inner: e.object(InnerEntity)
         });
         const form = new FormNodeBuilder(store.o).patchAllTo(Target).build() as any;
-        expect(form.inner).toBeDefined();
-        expect(form.inner.form).toBeDefined();
+        expect(form.inner.$entity).toBe(Target.inner.entity);
+        expect(form.inner.form.isRequired).toBe(true);
     });
 
     test("patchAllTo ajoute une liste manquante depuis targetEntity", () => {
@@ -331,8 +327,8 @@ describe("FormNodeBuilder branches additionnelles", () => {
             items: e.list(InnerEntity)
         });
         const form = new FormNodeBuilder(store.o).patchAllTo(Target).build() as any;
-        expect(form.items).toBeDefined();
         expect(Array.isArray(form.items)).toBe(true);
+        expect(form.items.$entity).toBe(Target.items.entity);
     });
 
     test("patchAllTo écrase la définition d'un champ commun", () => {

@@ -1,16 +1,16 @@
-import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
-import {fireEvent, screen} from "@testing-library/react";
-import {describe, expect, test} from "vitest";
+import {renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
+import {fireEvent, screen, waitFor} from "@testing-library/react";
+import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
 import {e, entity} from "@focus4/entities";
 import {domain} from "@focus4/form-toolbox";
 import {makeLocalCollectionStore, makeServerCollectionStore} from "@focus4/stores";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {SearchBar} from "../search-bar";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 const searchBarTheme = {
     bar: "search-bar",
@@ -76,5 +76,39 @@ describe("SearchBar", () => {
 
         fireEvent.click(screen.getByRole("checkbox", {name: "checkTout sélectionner"}));
         expect(store.searchFields).toEqual(["name", "code"]);
+    });
+
+    test("ferme le panneau au clic extérieur et réinitialise depuis ses actions", async () => {
+        const store = makeLocalCollectionStore<{name: string}>({searchFields: ["name"]});
+        store.query = "alpha";
+        const {container} = renderWithTheme(
+            <>
+                <SearchBar criteriaComponent={<span>critères</span>} store={store} theme={searchBarTheme} />
+                <button type="button">extérieur</button>
+            </>
+        );
+
+        fireEvent.click(container.querySelector(".search-bar .btn")!);
+        expect(screen.getByText("critères")).toBeTruthy();
+
+        fireEvent.pointerDown(screen.getByRole("button", {name: "extérieur"}));
+        await waitFor(() => expect(store.query).toBe("alpha"));
+
+        fireEvent.click(container.querySelector(".search-bar .btn")!);
+        fireEvent.click(screen.getByRole("button", {name: "Réinitialiser"}));
+        expect(store.query).toBe("");
+    });
+
+    test("affiche une erreur de critère et masque son bouton de panneau fermé", () => {
+        const criteria = entity({label: e.field(domain(z.string()))});
+        const store = makeServerCollectionStore<{name: string}, any>(
+            () => Promise.resolve({facets: [], list: [], totalCount: 0}),
+            criteria
+        );
+        vi.spyOn(store.criteria.form, "errors", "get").mockReturnValue({label: "invalide"});
+
+        renderWithTheme(<SearchBar store={store} theme={searchBarTheme} />);
+
+        expect(screen.getByText(/erreur.*label/iu).textContent).toContain("label");
     });
 });

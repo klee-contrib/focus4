@@ -46,12 +46,11 @@ describe("makeReferenceStore", () => {
     test("Crée un store avec la structure attendue", () => {
         const referenceStore = getStore();
 
-        expect(referenceStore).toBeDefined();
-        expect(referenceStore.status).toBeDefined();
-        expect(referenceStore.get).toBeDefined();
-        expect(referenceStore.reload).toBeDefined();
-        expect(referenceStore.track).toBeDefined();
-        expect(referenceStore.isLoading).toBeFalsy();
+        expect([...referenceStore.status]).toEqual([]);
+        expect(referenceStore.get).toEqual(expect.any(Function));
+        expect(referenceStore.reload).toEqual(expect.any(Function));
+        expect(referenceStore.track).toEqual(expect.any(Function));
+        expect(referenceStore.isLoading).toBe(false);
     });
 
     test("Charge les données lors de l'accès à une référence", async () => {
@@ -110,39 +109,47 @@ describe("makeReferenceStore", () => {
         expect(referenceStore.status2.getLabel("E")).toBeUndefined();
     });
 
-    test("reload() vide le cache et recharge les données", async () => {
-        const referenceStore = getStore();
+    test.each([
+        {argument: "status" as const, expectedCalls: [["status"]], withClearer: true},
+        {argument: "status" as const, expectedCalls: [], withClearer: false},
+        {argument: undefined, expectedCalls: [[]], withClearer: true},
+        {argument: undefined, expectedCalls: [], withClearer: false}
+    ])(
+        "reload($argument, clearer=$withClearer) vide et recharge le cache",
+        async ({argument, expectedCalls, withClearer}) => {
+            const clearer = vi.fn().mockResolvedValue(undefined);
+            const store = makeReferenceStore(
+                referenceLoader,
+                {
+                    status: {
+                        valueKey: "code" as const,
+                        labelKey: "label" as const,
+                        type: {} as {code: string; label: string}
+                    },
+                    status2: {
+                        valueKey: "code2" as const,
+                        labelKey: "label2" as const,
+                        list: [{code2: "C", label2: "Gamma"}]
+                    }
+                },
+                withClearer ? clearer : undefined
+            );
 
-        await referenceStore.get("status");
-        expect(referenceStore.status.length).toBe(2);
+            await store.get("status");
+            await store.reload(argument);
+            await store.get("status");
 
-        // Recharger
-        await referenceStore.reload("status");
-
-        // Le cache est vidé, donc un nouvel accès devrait recharger
-        await referenceStore.get("status");
-        expect(referenceStore.status.length).toBe(2);
-    });
-
-    test("reload() sans paramètre recharge toutes les références", async () => {
-        const referenceStore = getStore();
-
-        await referenceStore.get("status");
-        await referenceStore.reload();
-
-        await referenceStore.get("status");
-        expect(referenceStore.status.length).toBe(2);
-    });
+            expect(store.status).toHaveLength(2);
+            expect(clearer.mock.calls).toEqual(expectedCalls);
+        }
+    );
 
     test("track() ajoute des IDs de suivi", () => {
         const referenceStore = getStore();
 
         const untrack = referenceStore.track("tracking-id-1", "status");
 
-        expect(untrack).toBeDefined();
-        expect(typeof untrack).toBe("function");
-
-        // Appeler untrack pour nettoyer
+        expect(untrack).toEqual(expect.any(Function));
         untrack();
     });
 
@@ -151,7 +158,7 @@ describe("makeReferenceStore", () => {
 
         const untrack = referenceStore.track("tracking-id-1");
 
-        expect(untrack).toBeDefined();
+        expect(untrack).toEqual(expect.any(Function));
         untrack();
     });
 
@@ -165,42 +172,6 @@ describe("makeReferenceStore", () => {
         expect(referenceStore.priority.length).toBe(2);
         expect(referenceStore.status.getLabel("A")).toBe("Alpha");
         expect(referenceStore.priority.getLabel(1)).toBe("High");
-    });
-
-    test("reload(refName) appelle referenceClearer avec le nom", async () => {
-        const clearer = vi.fn().mockResolvedValue(undefined);
-        const store = makeReferenceStore(
-            referenceLoader,
-            {
-                status: {
-                    valueKey: "code" as const,
-                    labelKey: "label" as const,
-                    type: {} as {code: string; label: string}
-                }
-            },
-            clearer
-        );
-        await store.get("status");
-        await store.reload("status");
-        expect(clearer).toHaveBeenCalledWith("status");
-    });
-
-    test("reload() sans argument appelle referenceClearer sans argument", async () => {
-        const clearer = vi.fn().mockResolvedValue(undefined);
-        const store = makeReferenceStore(
-            referenceLoader,
-            {
-                status: {
-                    valueKey: "code" as const,
-                    labelKey: "label" as const,
-                    type: {} as {code: string; label: string}
-                }
-            },
-            clearer
-        );
-        await store.get("status");
-        await store.reload();
-        expect(clearer).toHaveBeenCalledWith();
     });
 
     test("valueKey et labelKey utilisent les valeurs par défaut", () => {

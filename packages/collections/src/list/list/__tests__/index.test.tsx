@@ -1,11 +1,10 @@
-import {setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {List} from "../index";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     id: number;

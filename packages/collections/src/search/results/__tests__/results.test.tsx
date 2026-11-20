@@ -1,4 +1,4 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {render, screen} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 
@@ -6,9 +6,10 @@ import {makeLocalCollectionStore} from "@focus4/stores";
 import {ThemeProvider} from "@focus4/styling";
 
 import {Results} from "..";
+import {setupCollectionsTest} from "../../../../test-utils";
 
 describe("Results", () => {
-    setupComponentTest();
+    setupCollectionsTest();
 
     test("affiche la liste injectée lorsqu'il n'y a pas de groupes", () => {
         const store = makeLocalCollectionStore<{name: string}>();

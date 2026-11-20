@@ -11,7 +11,7 @@ const labelTheme = {
     icon: "label-icon"
 };
 
-describe("Label component", () => {
+describe("Label", () => {
     setupComponentTest({
         "form.name": "Nom",
         "focus.label.required": "*",

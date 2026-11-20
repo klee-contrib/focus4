@@ -1,4 +1,4 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen, within} from "@testing-library/react";
 import {describe, expect, test} from "vitest";
 import z from "zod";
@@ -8,9 +8,9 @@ import {type FormEntityField, makeField, makeLocalCollectionStore} from "@focus4
 import {ThemeProvider} from "@focus4/styling";
 
 import {FacetBox, type FacetBoxProps} from "..";
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     category: string;

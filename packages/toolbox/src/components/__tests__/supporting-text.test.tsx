@@ -8,7 +8,7 @@ const supportingTextTheme = {
     supportingText: "st"
 };
 
-describe("SupportingText component", () => {
+describe("SupportingText", () => {
     setupComponentTest();
 
     test("Affiche le texte quand supportingText est renseigné", () => {

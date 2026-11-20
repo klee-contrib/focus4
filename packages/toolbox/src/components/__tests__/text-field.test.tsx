@@ -22,7 +22,7 @@ const textFieldTheme = {
     trailingButton: "tf-trailingButton"
 };
 
-describe("TextField component", () => {
+describe("TextField", () => {
     setupComponentTest();
 
     test("Rend un <input type='text'> par défaut", () => {
@@ -70,18 +70,20 @@ describe("TextField component", () => {
             />
         );
 
-        expect(screen.getByText("Format invalide").textContent).toBe("Format invalide");
+        expect(screen.getByRole<HTMLInputElement>("textbox").ariaInvalid).toBe("true");
+        expect(screen.getByText("Format invalide").parentElement?.classList.contains("tf-supportingText")).toBe(true);
     });
 
     test("Affiche le label", () => {
         render(<TextField label="Nom" onChange={() => undefined} theme={textFieldTheme} value="" />);
 
-        expect(screen.getByText("Nom").textContent).toBe("Nom");
+        expect(screen.getByText("Nom").classList.contains("tf-label")).toBe(true);
     });
 
     test("Affiche le compteur de caractères quand maxLength est renseigné", () => {
         render(<TextField maxLength={10} onChange={() => undefined} theme={textFieldTheme} value="abc" />);
 
+        expect(screen.getByRole<HTMLInputElement>("textbox").maxLength).toBe(10);
         expect(screen.getByText("3/10").textContent).toBe("3/10");
     });
 
@@ -89,7 +91,7 @@ describe("TextField component", () => {
         const {container} = render(<TextField onChange={() => undefined} readonly theme={textFieldTheme} value="ro" />);
 
         expect(container.querySelector("input")).toBeNull();
-        expect(container.textContent).toBe("ro");
+        expect(screen.getByText("ro")).toBeInstanceOf(HTMLElement);
     });
 
     test("Rend une icône trailing cliquable et déclenche son onClick", () => {
@@ -128,8 +130,8 @@ describe("TextField component", () => {
             />
         );
 
-        expect(screen.getByText("$")).toBeTruthy();
-        expect(screen.getByText("€")).toBeTruthy();
+        expect(screen.getByText("$").textContent).toBe("$");
+        expect(screen.getByText("€").textContent).toBe("€");
         fireEvent.change(container.querySelector("input")!, {target: {value: "abcd"}});
         expect(onChange).toHaveBeenCalledWith("abc", expect.any(Object));
     });
@@ -172,10 +174,18 @@ describe("TextField component", () => {
         fireEvent.pointerUp(input);
         fireEvent.blur(input, {relatedTarget: document.body});
 
-        expect(screen.getByRole("progressbar")).toBeTruthy();
-        for (const handler of Object.values(handlers)) {
-            expect(handler).toHaveBeenCalled();
-        }
+        expect(screen.getByRole("progressbar").getAttribute("aria-valuetext")).toBeNull();
+        expect(handlers.onFocus).toHaveBeenCalledWith(expect.objectContaining({type: "focus"}));
+        expect(handlers.onClick).toHaveBeenCalledWith(expect.objectContaining({type: "click"}));
+        expect(handlers.onContextMenu).toHaveBeenCalledWith(expect.objectContaining({type: "contextmenu"}));
+        expect(handlers.onKeyDown).toHaveBeenCalledWith(expect.objectContaining({type: "keydown"}));
+        expect(handlers.onKeyUp).toHaveBeenCalledWith(expect.objectContaining({type: "keyup"}));
+        expect(handlers.onPaste).toHaveBeenCalledWith(expect.objectContaining({type: "paste"}));
+        expect(handlers.onPointerDown).toHaveBeenCalledWith(expect.objectContaining({type: "pointerdown"}));
+        expect(handlers.onPointerEnter).toHaveBeenCalledWith(expect.objectContaining({type: "pointerenter"}));
+        expect(handlers.onPointerLeave).toHaveBeenCalledWith(expect.objectContaining({type: "pointerleave"}));
+        expect(handlers.onPointerUp).toHaveBeenCalledWith(expect.objectContaining({type: "pointerup"}));
+        expect(handlers.onBlur).toHaveBeenCalledWith(expect.objectContaining({type: "blur"}));
     });
 
     test("affiche les icônes simples avec tooltip et respecte noFocusOnClick", () => {

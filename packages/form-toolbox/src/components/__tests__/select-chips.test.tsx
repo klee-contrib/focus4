@@ -23,7 +23,7 @@ function refs() {
     ]);
 }
 
-describe("SelectChips component", () => {
+describe("SelectChips", () => {
     setupComponentTest({
         "ref.a": "Alpha",
         "ref.b": "Beta",
@@ -94,17 +94,21 @@ describe("SelectChips component", () => {
     });
 
     test("hasSelectAll affiche une action de sélection globale", () => {
-        const {container} = render(
+        const onChange = vi.fn();
+        render(
             <SelectChips
                 hasSelectAll
-                onChange={() => undefined}
+                onChange={onChange}
                 schema={z.array(z.string())}
                 theme={selectChipsTheme}
                 values={refs()}
             />
         );
 
-        expect(container.querySelector("[aria-label*='select']")).not.toBeNull();
+        const selectAll = screen.getByRole("button", {name: "focus.select.selectAll"});
+        fireEvent.click(selectAll);
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith(["A", "B", "C"]);
     });
 
     test("Affiche l'erreur en supportingText", () => {
@@ -215,7 +219,7 @@ describe("SelectChips component", () => {
         const buttons = container.querySelectorAll("button");
         expect(buttons.length).toBeGreaterThanOrEqual(1);
         fireEvent.click(buttons.item(buttons.length - 1));
-        expect(onClick).toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledOnce();
     });
 
     test("trailing accepte un tableau", () => {
@@ -239,7 +243,49 @@ describe("SelectChips component", () => {
         // Les deux derniers boutons sont les trailings custom.
         fireEvent.click(trailingButtons.at(-2)!);
         fireEvent.click(trailingButtons.at(-1)!);
-        expect(onClickA).toHaveBeenCalled();
-        expect(onClickB).toHaveBeenCalled();
+        expect(onClickA).toHaveBeenCalledOnce();
+        expect(onClickB).toHaveBeenCalledOnce();
+    });
+
+    test("ajoute une valeur puis la retire depuis le sélecteur", () => {
+        const onChange = vi.fn();
+        const {rerender} = render(
+            <SelectChips onChange={onChange} schema={z.array(z.string())} theme={selectChipsTheme} values={refs()} />
+        );
+
+        fireEvent.click(screen.getByRole("option", {name: "Alpha"}));
+        expect(onChange).toHaveBeenCalledWith(["A"]);
+
+        rerender(
+            <SelectChips
+                keepSelectedValuesInSelect
+                onChange={onChange}
+                schema={z.array(z.string())}
+                theme={selectChipsTheme}
+                value={["A"]}
+                values={refs()}
+            />
+        );
+        fireEvent.click(screen.getByRole("option", {name: "Alpha"}));
+        expect(onChange).toHaveBeenLastCalledWith([]);
+    });
+
+    test("sélectionne et désélectionne toutes les valeurs", () => {
+        const onChange = vi.fn();
+        const {container} = render(
+            <SelectChips
+                hasSelectAll
+                onChange={onChange}
+                schema={z.array(z.string())}
+                theme={selectChipsTheme}
+                values={refs()}
+            />
+        );
+        const buttons = container.querySelectorAll("button");
+
+        fireEvent.click(buttons[0]);
+        expect(onChange).toHaveBeenCalledWith(["A", "B", "C"]);
+        fireEvent.click(buttons[1]);
+        expect(onChange).toHaveBeenLastCalledWith([]);
     });
 });

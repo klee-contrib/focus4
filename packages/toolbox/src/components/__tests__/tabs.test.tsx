@@ -18,7 +18,7 @@ const tabsTheme = {
     "tabs--secondary": "tabs-secondary"
 };
 
-describe("Tabs component", () => {
+describe("Tabs", () => {
     setupComponentTest();
 
     test("Rend les tabs et le contenu associé", () => {
@@ -39,10 +39,10 @@ describe("Tabs component", () => {
 
     test("Appelle onChange au clic et à Entrée", () => {
         const onChange = vi.fn();
-        render(
+        const {rerender} = render(
             <Tabs onChange={onChange} theme={tabsTheme}>
-                <Tab label="Premier" />
-                <Tab label="Deuxième" />
+                <Tab label="Premier">Contenu 1</Tab>
+                <Tab label="Deuxième">Contenu 2</Tab>
             </Tabs>
         );
 
@@ -53,6 +53,15 @@ describe("Tabs component", () => {
         expect(onChange).toHaveBeenCalledTimes(2);
         expect(onChange).toHaveBeenNthCalledWith(1, 1);
         expect(onChange).toHaveBeenNthCalledWith(2, 1);
+
+        rerender(
+            <Tabs index={1} onChange={onChange} theme={tabsTheme}>
+                <Tab label="Premier">Contenu 1</Tab>
+                <Tab label="Deuxième">Contenu 2</Tab>
+            </Tabs>
+        );
+        expect(secondTab.ariaSelected).toBe("true");
+        expect(screen.getAllByRole("tabpanel")[1].style.transform).toBe("translateX(-100%)");
     });
 
     test("N'appelle pas onChange sur un tab désactivé", () => {

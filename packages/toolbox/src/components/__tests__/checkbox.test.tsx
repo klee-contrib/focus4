@@ -13,7 +13,7 @@ const checkboxTheme = {
     state: "cb-state"
 };
 
-describe("Checkbox component", () => {
+describe("Checkbox", () => {
     setupComponentTest();
 
     test("Rend un input[type=checkbox] non coché quand value=false", () => {

@@ -21,7 +21,7 @@ function refs() {
     ]);
 }
 
-describe("SelectCheckbox component", () => {
+describe("SelectCheckbox", () => {
     setupComponentTest({
         "ref.a": "Alpha",
         "ref.b": "Beta",
@@ -62,7 +62,7 @@ describe("SelectCheckbox component", () => {
 
     test("Ajoute une valeur à la sélection au clic", () => {
         const onChange = vi.fn();
-        render(
+        const {rerender} = render(
             <SelectCheckbox
                 id="sel"
                 name="sel"
@@ -77,11 +77,28 @@ describe("SelectCheckbox component", () => {
         fireEvent.click(screen.getByText("Beta"));
 
         expect(onChange).toHaveBeenCalledWith(["A", "B"]);
+
+        rerender(
+            <SelectCheckbox
+                id="sel"
+                name="sel"
+                onChange={onChange}
+                schema={z.array(z.string())}
+                theme={selectCheckboxTheme}
+                value={["A", "B"]}
+                values={refs()}
+            />
+        );
+        expect((screen.getAllByRole("checkbox") as HTMLInputElement[]).map(checkbox => checkbox.checked)).toEqual([
+            true,
+            true,
+            false
+        ]);
     });
 
     test("Retire une valeur de la sélection au clic sur un item déjà coché", () => {
         const onChange = vi.fn();
-        render(
+        const {rerender} = render(
             <SelectCheckbox
                 id="sel"
                 name="sel"
@@ -96,6 +113,23 @@ describe("SelectCheckbox component", () => {
         fireEvent.click(screen.getByText("Alpha"));
 
         expect(onChange).toHaveBeenCalledWith(["B"]);
+
+        rerender(
+            <SelectCheckbox
+                id="sel"
+                name="sel"
+                onChange={onChange}
+                schema={z.array(z.string())}
+                theme={selectCheckboxTheme}
+                value={["B"]}
+                values={refs()}
+            />
+        );
+        expect((screen.getAllByRole("checkbox") as HTMLInputElement[]).map(checkbox => checkbox.checked)).toEqual([
+            false,
+            true,
+            false
+        ]);
     });
 
     test("Désactive toutes les checkboxes quand disabled=true", () => {

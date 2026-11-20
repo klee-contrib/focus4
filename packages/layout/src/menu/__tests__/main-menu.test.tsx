@@ -72,7 +72,7 @@ describe("MainMenu", () => {
             </MainMenuList>
         );
 
-        const parent = screen.getByRole("button", {name: "Parent"});
+        const parent = screen.getAllByRole("button", {name: "Parent"}).at(-1)!;
         fireEvent.click(parent);
 
         expect(parent.classList.contains("main-menu-item-opened")).toBe(true);
@@ -81,6 +81,40 @@ describe("MainMenu", () => {
         fireEvent.click(parent);
 
         expect(parent.classList.contains("main-menu-item-opened")).toBe(false);
+    });
+
+    test("ferme le sous-menu au clic extérieur sans appuyer sur le parent", () => {
+        render(
+            <>
+                <MainMenuList theme={mainMenuTheme}>
+                    <MainMenuItem label="Parent" theme={mainMenuTheme}>
+                        <MainMenuItem label="Enfant" theme={mainMenuTheme} />
+                    </MainMenuItem>
+                </MainMenuList>
+                <button type="button">Extérieur</button>
+            </>
+        );
+        const parent = screen.getAllByRole("button", {name: "Parent"}).at(-1)!;
+        fireEvent.click(parent);
+        fireEvent.mouseUp(screen.getByRole("button", {name: "Extérieur"}));
+
+        expect(parent.classList.contains("main-menu-item-opened")).toBe(false);
+    });
+
+    test("ferme le panneau principal après une action", () => {
+        const onClick = vi.fn();
+        const closePanel = vi.fn();
+        const {container} = render(
+            <MainMenuList closePanel={closePanel} theme={mainMenuTheme}>
+                <MainMenuItem label="Action" onClick={onClick} theme={mainMenuTheme} />
+            </MainMenuList>
+        );
+
+        fireEvent.click(screen.getByRole("button", {name: "Action"}));
+
+        expect(onClick).toHaveBeenCalledOnce();
+        expect(closePanel).toHaveBeenCalledOnce();
+        expect(container.querySelector(".main-menu-item-opened")).toBeNull();
     });
 
     test("affiche le menu principal avec son overlay", () => {

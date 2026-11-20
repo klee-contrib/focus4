@@ -145,4 +145,45 @@ describe("validateField", () => {
 
         expect(validateField(field)).toEqual([]);
     });
+
+    test.each([null, undefined])("ne valide pas le contenu vide %j si le champ est optionnel", value => {
+        expect(
+            validateField(
+                makeTestField({
+                    value,
+                    validator: [{regex: /^\d+$/u}, {type: "email"}, {type: "date"}, {type: "number"}]
+                })
+            )
+        ).toEqual([]);
+    });
+
+    test("utilise les messages de validation par défaut", () => {
+        const invalid = makeTestField({
+            value: "x",
+            validator: [{regex: /^\d+$/u}, {type: "email"}, {type: "date"}, {type: "number"}]
+        });
+
+        expect(validateField(invalid)).toEqual([
+            "focus.validation.regex",
+            "focus.validation.email",
+            "focus.validation.date",
+            "focus.validation.number"
+        ]);
+    });
+
+    test("ignore les validateurs dont le type de valeur ne correspond pas", () => {
+        const field = makeTestField({
+            value: 12,
+            validator: [{regex: /^\d+$/u}, {type: "email"}]
+        });
+
+        expect(validateField(field)).toEqual([]);
+    });
+
+    test("accepte les valeurs valides avec messages par défaut", () => {
+        expect(validateField(makeTestField({value: "abc123", validator: {regex: /^\w+$/u}}))).toEqual([]);
+        expect(validateField(makeTestField({value: "user@example.com", validator: {type: "email"}}))).toEqual([]);
+        expect(validateField(makeTestField({value: "valid", validator: {type: "string"}}))).toEqual([]);
+        expect(validateField(makeTestField({value: "2.5", validator: {type: "number"}}))).toEqual([]);
+    });
 });

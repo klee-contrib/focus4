@@ -14,7 +14,7 @@ const snackbarTheme = {
     "snackbar--warning": "snackbar-warning"
 };
 
-describe("Snackbar component", () => {
+describe("Snackbar", () => {
     setupComponentTest();
 
     test("Rend un message de statut quand elle est active", () => {

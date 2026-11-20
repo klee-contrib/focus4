@@ -14,7 +14,7 @@ const textFieldTheme = {
     input: "textField-input"
 };
 
-describe("InputDate component", () => {
+describe("InputDate", () => {
     setupComponentTest();
 
     test("render un input", () => {
@@ -231,6 +231,63 @@ describe("InputDate component", () => {
         fireEvent.focus(screen.getByRole("textbox"));
 
         expect(document.querySelectorAll("[data-date]").length).toBeGreaterThan(0);
+    });
+
+    test.each(["left", "right"] as const)("ne commit pas lors d'un blur interne (%s)", calendarPosition => {
+        const onChange = vi.fn();
+        const {container} = render(
+            <InputDate
+                calendarPosition={calendarPosition}
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                schema={z.iso.date()}
+                theme={inputDateTheme}
+                value={undefined}
+            />
+        );
+        const input = screen.getByRole("textbox");
+        fireEvent.focus(input);
+        fireEvent.blur(input, {relatedTarget: container.querySelector("[data-focus='input-date']")});
+
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test.each([
+        ["Europe/Paris", "2024-10-24T00:00:00.000+02:00"],
+        ["America/New_York", "2024-10-24T00:00:00.000-04:00"]
+    ])("applique la zone %s à la valeur initiale", (timezoneCode, value) => {
+        render(
+            <InputDate
+                inputFormat="dd/MM/yyyy HH:mm"
+                inputProps={{theme: textFieldTheme}}
+                onChange={() => undefined}
+                schema={z.iso.datetime()}
+                theme={inputDateTheme}
+                timezoneCode={timezoneCode}
+                value={value}
+            />
+        );
+
+        expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("24/10/2024 00:00");
+    });
+
+    test("normalise une sélection calendrier en UTC local-minuit", () => {
+        const onChange = vi.fn();
+        render(
+            <InputDate
+                ISOStringFormat="local-utc-midnight"
+                inputProps={{theme: textFieldTheme}}
+                onChange={onChange}
+                referenceValue="2024-10-24"
+                schema={z.iso.datetime()}
+                theme={inputDateTheme}
+                value="2024-10-24T15:30:00.000Z"
+            />
+        );
+
+        fireEvent.focus(screen.getByRole("textbox"));
+        fireEvent.click(document.querySelector<HTMLButtonElement>("[data-date='2024-10-25']")!);
+        expect(onChange).toHaveBeenCalledWith("2024-10-25T15:30:00Z");
     });
 
     test("ouvre le calendrier avec les flèches et sélectionne une date", () => {

@@ -1,4 +1,4 @@
-import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import {z} from "zod";
@@ -6,10 +6,10 @@ import {z} from "zod";
 import type {FieldEntry} from "@focus4/entities";
 import type {EntityField} from "@focus4/stores";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {Timeline, timelineFor} from "../index";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     date: string;

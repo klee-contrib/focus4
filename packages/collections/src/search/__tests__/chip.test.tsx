@@ -1,12 +1,12 @@
-import {renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {SearchChip} from "../chip";
 
 describe("SearchChip", () => {
-    setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+    setupCollectionsTest();
 
     test("affiche les valeurs inversées et supprime le chip", () => {
         const onDeleteClick = vi.fn();

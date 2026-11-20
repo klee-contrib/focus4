@@ -102,4 +102,18 @@ describe("useReferenceTracking", () => {
         expect(dispose1).toHaveBeenCalledTimes(1);
         expect(track).toHaveBeenLastCalledWith(["a", "c"], "roles");
     });
+
+    test("nettoie le tracking à la destruction", () => {
+        const dispose = vi.fn();
+        const track = vi.fn(() => dispose);
+        const referenceStore = {track} as unknown as TestReferenceStore;
+
+        const {unmount} = renderHook(() => useReferenceTracking(["a", "b"], referenceStore, "roles"));
+
+        const initialDisposeCount = dispose.mock.calls.length;
+        unmount();
+
+        expect(track).toHaveBeenCalled();
+        expect(dispose).toHaveBeenCalledTimes(initialDisposeCount + 1);
+    });
 });

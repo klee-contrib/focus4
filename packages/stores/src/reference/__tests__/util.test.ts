@@ -14,8 +14,10 @@ describe("makeReferenceList", () => {
         expect(refList).toContainEqual({code: "B", label: "Beta"});
         expect(refList.$valueKey).toBe("code");
         expect(refList.$labelKey).toBe("label");
-        expect(refList.getLabel).toBeDefined();
-        expect(refList.filter).toBeDefined();
+        expect(refList.getLabel("A")).toBe("Alpha");
+        const filtered = refList.filter(item => item.code === "B");
+        expect(filtered).toHaveLength(1);
+        expect(filtered[0]).toEqual({code: "B", label: "Beta"});
     });
 
     test("Crée une liste de référence avec valueKey personnalisé", () => {
@@ -98,8 +100,8 @@ describe("emptyReferenceList", () => {
         expect(refList).toHaveLength(0);
         expect(refList.$valueKey).toBe("code");
         expect(refList.$labelKey).toBe("label");
-        expect(refList.getLabel).toBeDefined();
-        expect(refList.filter).toBeDefined();
+        expect(refList.getLabel("missing")).toBeUndefined();
+        expect(refList.filter(() => true)).toHaveLength(0);
     });
 });
 

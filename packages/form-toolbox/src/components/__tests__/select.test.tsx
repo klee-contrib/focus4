@@ -19,7 +19,7 @@ function refs() {
     ]);
 }
 
-describe("Select component", () => {
+describe("Select", () => {
     setupComponentTest({
         "ref.a": "Alpha",
         "ref.b": "Beta",

@@ -1,14 +1,14 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {type CollectionStore, makeLocalCollectionStore} from "@focus4/stores";
 import {ThemeProvider} from "@focus4/styling";
 
-import {i18nCollections} from "../../translation";
+import {setupCollectionsTest} from "../../../test-utils";
 import {AdvancedSearch} from "../advanced-search";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     category: string;
@@ -144,5 +144,50 @@ describe("AdvancedSearch", () => {
         fireEvent.click(screen.getByRole("button", {name: /Ajouter/}));
         expect(addItemHandler).toHaveBeenCalledOnce();
         expect(screen.queryByRole("textbox")).toBeNull();
+    });
+
+    test("permet de passer du mode liste au mode mosaïque", () => {
+        renderWithTheme(
+            <AdvancedSearch
+                addItemHandler={vi.fn()}
+                facetBoxPosition="none"
+                hideActionBar
+                listProps={
+                    {
+                        LineComponent: () => <span>Ligne</span>,
+                        MosaicComponent: () => <span>Mosaïque</span>
+                    } as any
+                }
+                ListComponent={ListComponent}
+                searchOnMount={false}
+                store={store}
+                summaryTheme={summaryTheme}
+                theme={advancedSearchTheme}
+            />
+        );
+
+        const [listButton, mosaicButton] = screen.getAllByRole("button");
+        fireEvent.click(mosaicButton);
+        expect(screen.queryByRole("button", {name: /Ajouter/})).toBeNull();
+        fireEvent.click(listButton);
+        fireEvent.click(screen.getByRole("button", {name: /Ajouter/}));
+        expect(screen.getByRole("button", {name: /Ajouter/})).toBeInstanceOf(HTMLButtonElement);
+    });
+
+    test("declenche la recherche au montage quand elle est demandée", () => {
+        const local = makeLocalCollectionStore<Item>();
+        const search = vi.spyOn(local, "search");
+        renderWithTheme(
+            <AdvancedSearch
+                facetBoxPosition="none"
+                hideActionBar
+                listProps={listProps}
+                ListComponent={ListComponent}
+                store={local}
+                summaryTheme={summaryTheme}
+                theme={advancedSearchTheme}
+            />
+        );
+        expect(search).toHaveBeenCalledOnce();
     });
 });

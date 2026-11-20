@@ -63,7 +63,7 @@ function resolvedMenuPosition() {
     return horizontal ? `${vertical}-${horizontal}` : vertical;
 }
 
-describe("Dropdown component", () => {
+describe("Dropdown", () => {
     setupComponentTest();
 
     test("Rend la valeur sélectionnée et l'option undefined", () => {
@@ -190,10 +190,16 @@ describe("Dropdown component", () => {
     test.each([
         ["auto", "fit-to-field-and-wrap", "bottom"],
         ["auto", "no-fit-single-line", "bottom-left"],
+        ["auto", "fit-to-values", "bottom-left"],
+        ["auto", "fit-to-field-single-line", "bottom"],
         ["up", "fit-to-field-single-line", "top"],
         ["up", "no-fit-single-line", "top-left"],
+        ["up", "fit-to-values", "top-left"],
+        ["up", "fit-to-field-and-wrap", "top"],
         ["down", "fit-to-field-and-wrap", "bottom"],
-        ["down", "fit-to-values", "bottom-left"]
+        ["down", "fit-to-values", "bottom-left"],
+        ["down", "fit-to-field-single-line", "bottom"],
+        ["down", "no-fit-single-line", "bottom-left"]
     ] as const)("positionne le menu en %s / %s sur %s", (direction, sizing, expected) => {
         const {container} = renderDropdown(
             <Dropdown direction={direction} sizing={sizing} theme={dropdownTheme} values={values} />
@@ -246,5 +252,65 @@ describe("Dropdown component", () => {
 
         expect(onChange).toHaveBeenCalledWith(undefined);
         expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+    });
+
+    test("relaie focus et blur puis ferme le menu hors du champ", () => {
+        const onFocus = vi.fn();
+        const onBlur = vi.fn();
+        const {container} = renderDropdown(
+            <>
+                <Dropdown onBlur={onBlur} onFocus={onFocus} theme={dropdownTheme} values={values} />
+                <button type="button">Outside</button>
+            </>
+        );
+        const input = getReadonlyInput(container);
+        fireEvent.focus(input);
+        fireEvent.blur(input, {relatedTarget: screen.getByRole("button", {name: "Outside"})});
+
+        expect(onFocus).toHaveBeenCalledOnce();
+        expect(onBlur).toHaveBeenCalledOnce();
+        expect(screen.getByRole("list").classList.contains("menu-active")).toBe(false);
+    });
+
+    test("calcule la largeur quand le menu s'ajuste aux valeurs", () => {
+        const {container, rerender} = renderDropdown(
+            <Dropdown sizing="fit-to-values" theme={dropdownTheme} values={values} />
+        );
+        const list = screen.getByRole("list");
+        Object.defineProperty(list, "clientWidth", {configurable: true, value: 240});
+
+        rerender(
+            <ThemeProvider appTheme={{...defaultAppTheme, menu: menuTheme}}>
+                <Dropdown sizing="fit-to-values" theme={dropdownTheme} values={[...values]} />
+            </ThemeProvider>
+        );
+        expect(screen.getByRole("listbox").style.width).toBe("240px");
+        fireEvent.click(getReadonlyInput(container));
+    });
+
+    test("respecte le blur interne et adapte les espacements avec icône et trailing multiple", () => {
+        const onBlur = vi.fn();
+        const {container} = renderDropdown(
+            <Dropdown
+                icon="search"
+                id="select"
+                onBlur={onBlur}
+                sizing="no-fit-single-line"
+                theme={dropdownTheme}
+                trailing={[{icon: "one"}, {icon: "two"}]}
+                values={values}
+            />
+        );
+        const input = getReadonlyInput(container);
+        const inside = input;
+
+        fireEvent.focus(input);
+        fireEvent.blur(input, {relatedTarget: inside});
+        expect(onBlur).not.toHaveBeenCalled();
+
+        fireEvent.click(input);
+        const option = screen.getByRole("option", {name: "Un"});
+        expect(option.style.paddingLeft).toContain("text-field-icon-padding");
+        expect(option.style.paddingRight).toContain("0 *");
     });
 });

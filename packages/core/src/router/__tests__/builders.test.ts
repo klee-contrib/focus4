@@ -82,4 +82,18 @@ describe("buildParamsMap", () => {
         expect(object.users.userId).toBe("123");
         expect(object.users.postId).toBe(456);
     });
+
+    test("met à jour tous les setters quand un nom de paramètre est répété", () => {
+        const config = {
+            first: param("id", b => b.string()),
+            second: param("id", b => b.number())
+        };
+        const object = {first: {id: undefined}, second: {id: undefined}} as unknown as ParamObject<typeof config>;
+        const map = buildParamsMap(config, object);
+
+        map.id("42");
+
+        expect(object.first.id).toBe("42");
+        expect(object.second.id).toBe(42);
+    });
 });

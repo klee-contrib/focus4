@@ -11,7 +11,7 @@ const buttonTheme = {
     spinner: "btn-spinner"
 };
 
-describe("Button component", () => {
+describe("Button", () => {
     setupComponentTest();
 
     test("Rend un <button> par défaut avec le libellé passé en prop", () => {

@@ -1,9 +1,12 @@
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import {range} from "es-toolkit";
 import {DateTime} from "luxon";
+import {createRef} from "react";
 import {describe, expect, test, vi} from "vitest";
 
-import {renderWithTheme, setupComponentTest} from "../../__tests__/test-utils";
+import {ThemeProvider} from "@focus4/styling";
+
+import {defaultAppTheme, renderWithTheme, setupComponentTest} from "../../__tests__/test-utils";
 import {Calendar} from "../calendar";
 
 const calendarTheme = {
@@ -36,7 +39,7 @@ function displayedDates(view: "days" | "months" | "years") {
     return [...document.querySelectorAll(`.calendar-${view} [data-date]`)].map(d => (d as HTMLElement).dataset.date);
 }
 
-describe("Calendar component", () => {
+describe("Calendar", () => {
     setupComponentTest();
 
     test("affiche six semaines et sélectionne une date", () => {
@@ -198,5 +201,109 @@ describe("Calendar component", () => {
             !hide,
             !hide
         ]);
+    });
+
+    test("suit les changements de valeur entre vues mois et années", () => {
+        const {rerender} = renderWithTheme(
+            <Calendar format="yyyy-MM" referenceValue="2020-01-01" theme={calendarTheme} value="2020-01" />
+        );
+
+        rerender(
+            <ThemeProvider appTheme={defaultAppTheme}>
+                <Calendar format="yyyy-MM" referenceValue="2020-01-01" theme={calendarTheme} value="2021-01" />
+            </ThemeProvider>
+        );
+        expect(headerLabel()).toBe("2021");
+
+        rerender(
+            <ThemeProvider appTheme={defaultAppTheme}>
+                <Calendar format="yyyy" referenceValue="2020-01-01" theme={calendarTheme} value="2035" />
+            </ThemeProvider>
+        );
+        expect(headerLabel()).toBe("2035");
+    });
+
+    test("expose focus et ignore une navigation désactivée", async () => {
+        const ref = createRef<{focus(): void}>();
+        renderWithTheme(
+            <Calendar
+                max="2020-03-15"
+                min="2020-03-15"
+                ref={ref}
+                referenceValue="2020-03-15"
+                theme={calendarTheme}
+                value="2020-03-15"
+            />
+        );
+        ref.current?.focus();
+        expect(document.activeElement?.classList.contains("calendar")).toBe(true);
+
+        fireEvent.keyDown(document, {key: "ArrowRight"});
+        await waitFor(() => expect((document.activeElement as HTMLElement).dataset.date).toBeUndefined());
+    });
+
+    test("construit les semaines de transition entre deux années", () => {
+        const {rerender} = renderWithTheme(
+            <Calendar referenceValue="2020-12-31" theme={calendarTheme} value="2020-12-31" />
+        );
+        expect(displayedDates("days")).toContain("2021-01-01");
+
+        rerender(
+            <ThemeProvider appTheme={defaultAppTheme}>
+                <Calendar referenceValue="2021-01-01" theme={calendarTheme} value="2021-01-01" />
+            </ThemeProvider>
+        );
+        expect(displayedDates("days")).toContain("2020-12-31");
+    });
+
+    test.each([
+        ["yyyy-MM-dd", "2020-03-01", "ArrowLeft", "2020-02-29"],
+        ["yyyy-MM-dd", "2020-03-31", "ArrowRight", "2020-04-01"],
+        ["yyyy-MM", "2020-03", "ArrowUp", "2019-12"],
+        ["yyyy-MM", "2020-12", "ArrowDown", "2021-03"],
+        ["yyyy", "2020", "ArrowLeft", "2019"],
+        ["yyyy", "2029", "ArrowRight", "2030"]
+    ] as const)("navigation clavier %s depuis %s avec %s", async (format, value, key, expected) => {
+        renderWithTheme(<Calendar format={format} referenceValue={value} theme={calendarTheme} value={value} />);
+        fireEvent.focus(document.querySelector(".calendar")!);
+        fireEvent.keyDown(document, {key});
+
+        await waitFor(() => expect((document.activeElement as HTMLElement).dataset.date).toBe(expected));
+    });
+
+    test.each([
+        ["yyyy-MM-dd", "2020-03-15", "2020-02-15", "Février 2020"],
+        ["yyyy-MM-dd", "2020-03-15", "2020-04-15", "Avril 2020"],
+        ["yyyy-MM", "2020-03", "2019-03", "2019"],
+        ["yyyy-MM", "2020-03", "2021-03", "2021"],
+        ["yyyy", "2025", "2015", "2010 - 2019"],
+        ["yyyy", "2025", "2035", "2030 - 2039"]
+    ] as const)("repositionne la vue %s de %s vers %s", (format, from, to, expectedHeader) => {
+        const {rerender} = renderWithTheme(
+            <Calendar format={format} referenceValue={from} theme={calendarTheme} value={from} />
+        );
+
+        rerender(
+            <ThemeProvider appTheme={defaultAppTheme}>
+                <Calendar format={format} referenceValue={from} theme={calendarTheme} value={to} />
+            </ThemeProvider>
+        );
+
+        expect(headerLabel()).toBe(expectedHeader);
+    });
+
+    test.each([
+        ["yyyy-MM", "PageUp", "2019-03"],
+        ["yyyy-MM", "PageDown", "2021-03"],
+        ["yyyy", "PageUp", "2010"],
+        ["yyyy", "PageDown", "2030"]
+    ] as const)("déplace le focus de vue %s avec %s", async (format, key, expected) => {
+        renderWithTheme(
+            <Calendar format={format} referenceValue="2020-03-15" theme={calendarTheme} value="2020-03-15" />
+        );
+        fireEvent.focus(document.querySelector(".calendar")!);
+        fireEvent.keyDown(document, {key});
+
+        await waitFor(() => expect((document.activeElement as HTMLElement).dataset.date).toBe(expected));
     });
 });

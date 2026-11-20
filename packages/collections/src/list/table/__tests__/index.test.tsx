@@ -1,14 +1,14 @@
-import {defaultAppTheme, renderWithTheme, setupComponentTest} from "@focus4/toolbox/src/__tests__/test-utils";
+import {defaultAppTheme, renderWithTheme} from "@focus4/toolbox/src/__tests__/test-utils";
 import {fireEvent, screen} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 
 import {makeLocalCollectionStore} from "@focus4/stores";
 import {ThemeProvider} from "@focus4/styling";
 
-import {i18nCollections} from "../../../translation";
+import {setupCollectionsTest} from "../../../../test-utils";
 import {Table, tableFor, type TableProps} from "../index";
 
-setupComponentTest({focus: {...i18nCollections.fr, icons: i18nCollections.icons}});
+setupCollectionsTest();
 
 interface Item {
     id: number;
@@ -131,5 +131,22 @@ describe("Table", () => {
 
         expect(screen.getByRole("table").classList.contains("table-empty")).toBe(true);
         expect(screen.queryByRole("row", {name: /Alpha/})).toBeNull();
+    });
+
+    test("active une ligne au clavier sans actions disponibles", () => {
+        const onLineClick = vi.fn();
+        renderTable({
+            baseTheme,
+            columns,
+            data: items,
+            itemKey: item => item.id,
+            onLineClick,
+            theme: tableTheme
+        });
+
+        const row = screen.getByRole("cell", {name: "Alpha"}).closest("tr")!;
+        fireEvent.keyUp(row, {key: "Enter"});
+        expect(onLineClick).toHaveBeenCalledWith(items[0], expect.anything());
+        expect(screen.queryAllByRole("button")).toHaveLength(0);
     });
 });

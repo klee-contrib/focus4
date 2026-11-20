@@ -11,7 +11,7 @@ const chipTheme = {
     label: "chip-label"
 };
 
-describe("Chip component", () => {
+describe("Chip", () => {
     setupComponentTest();
 
     test("Rend un <span> quand ni onClick ni href", () => {

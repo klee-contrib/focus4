@@ -22,7 +22,7 @@ function refs() {
     ]);
 }
 
-describe("SelectRadio component", () => {
+describe("SelectRadio", () => {
     setupComponentTest({
         "ref.a": "Alpha",
         "ref.b": "Beta",

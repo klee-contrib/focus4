@@ -11,7 +11,7 @@ const progressTheme = {
     track: "pi-track"
 };
 
-describe("ProgressIndicator components", () => {
+describe("ProgressIndicator", () => {
     setupComponentTest();
 
     test("CircularProgressIndicator: rôle 'progressbar' avec aria-valuenow", () => {
