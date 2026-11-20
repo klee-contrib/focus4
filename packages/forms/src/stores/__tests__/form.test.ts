@@ -75,6 +75,54 @@ describe("useFormNode", () => {
             expect(result.current.id.value).toBe(expected.id);
             expect(result.current.name.value).toBe(expected.name);
         });
+
+        test("détecte les modifications locales d'un StoreNode prérempli avec true", () => {
+            const storeValues = {
+                name: "Parent",
+                profile: {name: "Profil"},
+                children: [
+                    {id: 1, label: "Item 1"},
+                    {id: 2, label: "Item 2"}
+                ]
+            };
+            const store = makeStoreNode(
+                entity({name: e.field(DO_STRING), profile: TestEntity, children: [TestListEntity]}),
+                storeValues
+            );
+            const {result} = renderHook(() => useFormNode(store, undefined, true));
+            const form = result.current;
+
+            expect(form.getValues()).toEqual(storeValues);
+            expect(form.children[0].sourceNode).toBe(store.children[0]);
+            expect(form.children[1].sourceNode).toBe(store.children[1]);
+            expect(form.form.hasChanged).toBe(false);
+
+            form.set({name: "Parent modifié"});
+            expect(form.form.hasChanged).toBe(true);
+            expect(store.name.value).toBe("Parent");
+            form.set({name: "Parent"});
+            expect(form.form.hasChanged).toBe(false);
+
+            form.profile.set({email: "profil@example.com"});
+            expect(form.profile.form.hasChanged).toBe(true);
+            expect(form.form.hasChanged).toBe(true);
+            expect(store.profile.email.value).toBeUndefined();
+            form.profile.set({email: undefined});
+            expect(form.form.hasChanged).toBe(false);
+
+            form.children[1].set({label: "Brouillon"});
+            expect(form.children[1].form.hasChanged).toBe(true);
+            expect(form.children.form.hasChanged).toBe(true);
+            expect(form.form.hasChanged).toBe(true);
+            expect(store.children[1].label.value).toBe("Item 2");
+            form.children[1].set({label: "Item 2"});
+            expect(form.form.hasChanged).toBe(false);
+
+            form.children.splice(0, 1);
+            expect(form.children.map(row => row.id.value)).toEqual([2]);
+            expect(form.form.hasChanged).toBe(true);
+            expect(store.getValues()).toEqual(storeValues);
+        });
     });
 
     describe("avec StoreListNode", () => {
@@ -101,6 +149,44 @@ describe("useFormNode", () => {
             expect(result.current[0].id.value).toBe(1);
             expect(result.current[0].label.value).toBe("Item 1");
             expect(result.current.form.isEmpty).toBe(false);
+        });
+
+        test("détecte les modifications locales d'une liste préremplie avec true", () => {
+            const store = makeStoreNode(
+                [TestListEntity],
+                [
+                    {id: 1, label: "Item 1"},
+                    {id: 2, label: "Item 2"},
+                    {id: 3, label: "Item 3"}
+                ]
+            );
+            const {result} = renderHook(() => useFormNode(store, undefined, true));
+            const form = result.current;
+
+            expect(form.map(row => row.id.value)).toEqual([1, 2, 3]);
+            for (const [index, row] of form.entries()) {
+                expect(row.sourceNode).toBe(store[index]);
+                expect(row.form.hasChanged).toBe(false);
+            }
+            expect(form.form.hasChanged).toBe(false);
+
+            form[0].set({label: "Brouillon"});
+            expect(form[0].form.hasChanged).toBe(true);
+            expect(form.form.hasChanged).toBe(true);
+
+            form[0].set({label: "Item 1"});
+            expect(form.form.hasChanged).toBe(false);
+
+            form.pushNode({id: 4, label: "Brouillon"});
+            expect(form[3].form.hasChanged).toBe(true);
+            expect(form.form.hasChanged).toBe(true);
+
+            form.splice(3, 1);
+            expect(form.form.hasChanged).toBe(false);
+
+            form.splice(1, 1);
+            expect(form.map(item => item.id.value)).toEqual([1, 3]);
+            expect(form.form.hasChanged).toBe(true);
         });
     });
 

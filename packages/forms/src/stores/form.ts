@@ -72,16 +72,12 @@ export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: an
         if (isStoreListNode(node)) {
             fn = builder(new FormListNodeBuilder(node)).build();
             if (initialData) {
-                fn.setNodes(
-                    initialData === true ? node.getValues(true) : isFunction(initialData) ? initialData() : initialData
-                );
+                fn.setNodes(initialData === true ? node : isFunction(initialData) ? initialData() : initialData);
             }
         } else {
             fn = builder(new FormNodeBuilder(node)).build();
             if (initialData) {
-                fn.set(
-                    initialData === true ? node.getValues(true) : isFunction(initialData) ? initialData() : initialData
-                );
+                fn.set(initialData === true ? node : isFunction(initialData) ? initialData() : initialData);
             }
         }
         fn.form._initialData = fn.getValues(true, true);
