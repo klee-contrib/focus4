@@ -25,7 +25,7 @@ describe("useStickyClip", () => {
         Object.defineProperty(content, "offsetTop", {value: 5});
 
         fireEvent.scroll(parent);
-        expect(content.style.clipPath).toBe("inset(25px 0 0)");
+        expect(content.style.clipPath).toBe("inset(25px 0px 0px)");
         unmount();
         fireEvent.scroll(parent);
     });
