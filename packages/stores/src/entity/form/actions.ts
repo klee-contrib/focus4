@@ -3,7 +3,7 @@ import {action, autorun, computed, observable, runInAction} from "mobx";
 import {messageStore, requestStore} from "@focus4/core";
 
 import {LoadRegistration, replaceNode, setNode} from "../store";
-import {FormListNode, FormNode, isFormEntityField, isFormNode, SourceNodePartialType} from "../types";
+import {FormListNode, FormNode, isFormEntityField, isFormListNode, isFormNode, SourceNodePartialType} from "../types";
 
 import {FormActionsBuilder} from "./builders";
 
@@ -171,11 +171,18 @@ export class FormActions<A extends readonly any[] = never> extends LoadRegistrat
                                     (target as any)[key] = item.value;
                                 } else if (isFormNode(item) && (key in target || item.form._added)) {
                                     updateInitialData(item, (target as any)[key]);
+                                } else if (isFormListNode(item)) {
+                                    (target as any)[key] = [];
                                 }
                             }
                         }
                     }
-                    updateInitialData(this.formNode, this.formNode.form._initialData);
+
+                    if (isFormListNode(this.formNode)) {
+                        this.formNode.form._initialData = [];
+                    } else {
+                        updateInitialData(this.formNode, this.formNode.form._initialData);
+                    }
 
                     if (response && typeof response === "object" && !(response instanceof Response)) {
                         // En sauvegardant le retour du serveur dans le noeud de store, l'état du formulaire va se réinitialiser.

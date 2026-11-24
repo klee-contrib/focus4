@@ -8,7 +8,7 @@ import {domain} from "../../../__tests__/test-utils";
 import {makeStoreNode} from "../../store/node";
 import {FormListNode, FormNode, SourceNodeType} from "../../types";
 import {FormActions} from "../actions";
-import {FormActionsBuilder, FormNodeBuilder} from "../builders";
+import {FormActionsBuilder, FormListNodeBuilder, FormNodeBuilder} from "../builders";
 
 const abortMock = vi.fn();
 
@@ -129,6 +129,36 @@ describe("FormActions", () => {
 
         expect(formNode.form._initialData).toEqual({field: "new"});
         expect(actions.errorDisplay).toBe("after-focus");
+    });
+
+    test("save réinitialise les données initiales d'un formulaire liste", async () => {
+        const item = entity({field: e.field(domain(z.string()))});
+        const sourceNode = makeStoreNode([item]);
+        const formNode = new FormListNodeBuilder(sourceNode).build();
+        sourceNode.replaceNodes([{field: "old"}]);
+        formNode.form._initialData = [{field: "old"}];
+        formNode[0].field.value = "new";
+        const actions = makeFormActions(formNode, a => a.save(async () => [{field: "saved"}]));
+
+        await actions.save();
+
+        expect(formNode.form._initialData).toEqual([]);
+        expect(formNode.getValues()).toEqual([{field: "saved"}]);
+    });
+
+    test("save réinitialise les données initiales d'une liste imbriquée", async () => {
+        const item = entity({field: e.field(domain(z.string()))});
+        const sourceNode = makeStoreNode(entity({items: e.list(item)}));
+        const formNode = new FormNodeBuilder(sourceNode).build();
+        sourceNode.replace({items: [{field: "old"}]});
+        formNode.form._initialData = {items: [{field: "old"}]};
+        formNode.items[0].field.value = "new";
+        const actions = makeFormActions(formNode, a => a.save(async () => ({items: [{field: "saved"}]})));
+
+        await actions.save();
+
+        expect(formNode.form._initialData).toEqual({items: []});
+        expect(formNode.getValues()).toEqual({items: [{field: "saved"}]});
     });
 
     test("save utilise createService sans params", async () => {

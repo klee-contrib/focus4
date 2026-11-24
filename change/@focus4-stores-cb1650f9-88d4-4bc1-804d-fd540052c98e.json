@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Clear des listes après la sauvegarde dans _initialData",
+    "packageName": "@focus4/stores",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}
