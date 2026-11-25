@@ -133,10 +133,9 @@ describe("useFormActions", () => {
         const store = makeStoreNode({test: TestEntity});
         const {result: formNodeResult} = renderHook(() => useFormNode(store.test));
         const init = vi.spyOn(FormActions.prototype, "init");
-        const {rerender} = renderHook(
-            ({dependency}) => useFormActions(formNodeResult.current, s => s, [dependency]),
-            {initialProps: {dependency: 1}}
-        );
+        const {rerender} = renderHook(({dependency}) => useFormActions(formNodeResult.current, s => s, [dependency]), {
+            initialProps: {dependency: 1}
+        });
 
         rerender({dependency: 2});
 
