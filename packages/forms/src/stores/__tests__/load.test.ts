@@ -2,8 +2,9 @@ import {renderHook, waitFor} from "@testing-library/react";
 import {describe, expect, test, vi} from "vitest";
 import z from "zod";
 
+import {requestStore} from "@focus4/core";
 import {e, entity} from "@focus4/entities";
-import {makeStoreNode, ReferenceDefinition, ReferenceStore} from "@focus4/stores";
+import {makeReferenceStore, makeStoreNode} from "@focus4/stores";
 
 import {useLoad, useReferenceTracking} from "../load";
 
@@ -70,50 +71,69 @@ describe("useLoad", () => {
 });
 
 describe("useReferenceTracking", () => {
-    type TestReferenceStore = ReferenceStore<Record<string, ReferenceDefinition>>;
+    function createReferenceStore() {
+        return makeReferenceStore(async () => [{code: "admin", label: "Admin"}], {
+            roles: {valueKey: "code", labelKey: "label", type: {} as {code: string; label: string}},
+            groups: {valueKey: "code", labelKey: "label", type: {} as {code: string; label: string}}
+        });
+    }
 
-    test("accepte un trackingId simple", () => {
-        const dispose = vi.fn();
-        const track = vi.fn(() => dispose);
-        const referenceStore = {track} as unknown as TestReferenceStore;
+    test("accepte un trackingId simple et suit toutes les références", async () => {
+        const referenceStore = createReferenceStore();
+        const track = vi.spyOn(requestStore, "track");
 
-        renderHook(() => useReferenceTracking("form", referenceStore));
-
-        expect(track).toHaveBeenCalledWith("form");
+        try {
+            renderHook(() => useReferenceTracking("form", referenceStore));
+            await referenceStore.get("groups");
+            expect(track).toHaveBeenCalledWith(
+                expect.arrayContaining(["form"]),
+                expect.any(Function),
+                expect.any(Function)
+            );
+        } finally {
+            track.mockRestore();
+        }
     });
 
-    test("réenregistre le tracking avec ids multiples et références", () => {
-        const dispose1 = vi.fn();
-        const dispose2 = vi.fn();
-        const track = vi.fn().mockReturnValueOnce(dispose1).mockReturnValueOnce(dispose2);
-        const referenceStore = {track} as unknown as TestReferenceStore;
+    test("réenregistre le tracking avec ids multiples et références", async () => {
+        const referenceStore = createReferenceStore();
+        const track = vi.spyOn(requestStore, "track");
 
-        const {rerender} = renderHook(
-            ({ids, names}) => useReferenceTracking(ids, referenceStore, ...(names as ["roles"])),
-            {
-                initialProps: {ids: ["a", "b"], names: ["roles"]}
-            }
-        );
+        try {
+            const {rerender} = renderHook(({ids}) => useReferenceTracking(ids, referenceStore, "roles"), {
+                initialProps: {ids: ["a", "b"]}
+            });
+            rerender({ids: ["a", "c"]});
+            await referenceStore.get("roles");
+            const ids = track.mock.calls.at(-1)![0];
+            expect(ids).toEqual(expect.arrayContaining(["a", "c"]));
+            expect(ids).not.toContain("b");
 
-        expect(track).toHaveBeenCalledWith(["a", "b"], "roles");
-
-        rerender({ids: ["a", "c"], names: ["roles"]});
-
-        expect(dispose1).toHaveBeenCalledTimes(1);
-        expect(track).toHaveBeenLastCalledWith(["a", "c"], "roles");
+            await referenceStore.get("groups");
+            expect(track.mock.calls.at(-1)![0]).not.toContain("a");
+        } finally {
+            track.mockRestore();
+        }
     });
 
-    test("nettoie le tracking à la destruction", () => {
-        const dispose = vi.fn();
-        const track = vi.fn(() => dispose);
-        const referenceStore = {track} as unknown as TestReferenceStore;
+    test("nettoie le tracking à la destruction", async () => {
+        const referenceStore = createReferenceStore();
+        const track = vi.spyOn(requestStore, "track");
 
-        const {unmount} = renderHook(() => useReferenceTracking(["a", "b"], referenceStore, "roles"));
+        try {
+            const {unmount} = renderHook(() => useReferenceTracking(["a", "b"], referenceStore, "roles"));
+            await referenceStore.get("roles");
+            expect(track.mock.calls.at(-1)![0]).toEqual(expect.arrayContaining(["a", "b"]));
+            await referenceStore.reload("roles");
 
-        const initialDisposeCount = dispose.mock.calls.length;
-        unmount();
-
-        expect(track).toHaveBeenCalled();
-        expect(dispose).toHaveBeenCalledTimes(initialDisposeCount + 1);
+            unmount();
+            expect(referenceStore.roles).toHaveLength(1);
+            await track.mock.results.at(-1)!.value;
+            const ids = track.mock.calls.at(-1)![0];
+            expect(ids).not.toContain("a");
+            expect(ids).not.toContain("b");
+        } finally {
+            track.mockRestore();
+        }
     });
 });

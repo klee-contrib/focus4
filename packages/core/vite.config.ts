@@ -6,6 +6,7 @@ export default defineConfig({
     plugins: [decorators()],
     test: {
         environment: "jsdom",
-        isolate: false
+        isolate: false,
+        setupFiles: ["../../vitest.setup.ts"]
     }
 });
