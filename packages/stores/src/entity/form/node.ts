@@ -29,10 +29,18 @@ import {validateField} from "./validation";
  * @param node Le FormNode en cours de création.
  * @param parentNode Le node parent.
  */
-export function nodeToFormNode<E extends Entity = any>(
+export function nodeToFormNode<E extends Entity, E0 extends Entity>(
+    node: StoreListNode<E>,
+    parentNode?: FormListNode | FormNode
+): FormListNode<E, E0>;
+export function nodeToFormNode<E extends Entity, E0 extends Entity>(
+    node: StoreNode<E>,
+    parentNode?: FormListNode | FormNode
+): FormNode<E, E0>;
+export function nodeToFormNode<E extends Entity, E0 extends Entity>(
     node: StoreListNode<E> | StoreNode<E>,
     parentNode?: FormListNode | FormNode
-) {
+): FormListNode<E, E0> | FormNode<E, E0> {
     let {$added, $addedListItem, $edit, $required} = node as StoreNode;
     if ($added !== undefined) {
         delete node.$added;
@@ -235,7 +243,7 @@ export function nodeToFormNode<E extends Entity = any>(
             if (isEntityField(child)) {
                 addFormFieldProperties(child as BuildingFormEntityField, node);
             } else if (isAnyStoreNode(child)) {
-                nodeToFormNode(child, node);
+                nodeToFormNode(child as StoreNode, node);
             }
         }
         extendObservable(node.form, {
@@ -279,6 +287,8 @@ export function nodeToFormNode<E extends Entity = any>(
             }
         });
     }
+
+    return node as any;
 }
 
 /** Ajoute les champs erreurs et d'édition sur un EntityField. */

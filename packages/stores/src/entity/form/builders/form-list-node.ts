@@ -1,6 +1,6 @@
 import {isFunction} from "es-toolkit";
 
-import {Entity} from "@focus4/entities";
+import {Entity, EntityToPartialType} from "@focus4/entities";
 
 import {FormListNode, StoreListNode} from "../../types";
 import {nodeToFormNode} from "../node";
@@ -17,14 +17,21 @@ export class FormListNodeBuilder<E extends Entity, E0 extends Entity = E> {
 
     /**
      * Construit le FormListNode à partir de la configuration renseignée.
+     * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
      */
-    build(): FormListNode<E, E0> {
+    build(initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[]) | true): FormListNode<E, E0> {
         this.node.$edit ??= false;
 
-        nodeToFormNode(this.node);
+        const node = nodeToFormNode<E, E0>(this.node);
+        if (initialData === true) {
+            node.form._initialData = node.getValues(true, true);
+            node.setNodes(node.sourceNode as any);
+        } else if (initialData) {
+            node.setNodes(isFunction(initialData) ? initialData() : initialData);
+            node.form._initialData = node.getValues(true, true);
+        }
 
-        // @ts-expect-error - Impossible de vérifier le type générique.
-        return this.node;
+        return node;
     }
 
     /**

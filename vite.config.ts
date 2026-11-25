@@ -14,7 +14,6 @@ export default defineConfig({
                 "**/translation/**",
                 "packages/core/src/focus4.core.ts",
                 "packages/form-toolbox/src/focus4.form-toolbox.ts",
-                "packages/legacy/src",
                 "packages/styling/src/config.ts",
                 "packages/styling/src/theme/common.ts",
                 "packages/tooling/src"

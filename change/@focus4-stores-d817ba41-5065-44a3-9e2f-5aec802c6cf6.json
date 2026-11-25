@@ -1,0 +1,7 @@
+{
+    "type": "patch",
+    "comment": "Gestion de initialdata dans stores + pas de initialdata avec useFormNode(..., true) + coverage",
+    "packageName": "@focus4/stores",
+    "email": "damien.frikha@kleegroup.com",
+    "dependentChangeType": "patch"
+}

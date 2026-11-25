@@ -1,9 +1,9 @@
 import {renderHook} from "@testing-library/react";
-import {describe, expect, test} from "vitest";
+import {afterEach, describe, expect, test, vi} from "vitest";
 import z from "zod";
 
 import {e, entity} from "@focus4/entities";
-import {makeStoreNode} from "@focus4/stores";
+import {FormActions, FormListNodeBuilder, FormNodeBuilder, makeStoreNode} from "@focus4/stores";
 
 import {useFormActions, useFormNode} from "../form";
 
@@ -26,211 +26,86 @@ const TestListEntity = entity({
     label: e.field(DO_STRING)
 });
 
+afterEach(() => {
+    vi.restoreAllMocks();
+});
+
 describe("useFormNode", () => {
-    describe("avec StoreNode", () => {
-        test("crée un FormNode à partir d'un StoreNode", () => {
-            const store = makeStoreNode({test: TestEntity});
-            const {result} = renderHook(() => useFormNode(store.test));
+    test("construit un FormNode à partir d'un StoreNode", () => {
+        const store = makeStoreNode({test: TestEntity});
+        const {result} = renderHook(() => useFormNode(store.test));
 
-            expect(result.current.form).toBeDefined();
-            expect(result.current.form.isEdit).toBe(false);
-            expect(result.current.form.isEmpty).toBe(true);
-            expect(result.current.sourceNode).toBe(store.test);
-        });
-
-        test("initialise avec initialData", () => {
-            const store = makeStoreNode({test: TestEntity});
-            const {result} = renderHook(() =>
-                useFormNode(store.test, undefined, {id: 1, name: "Test", email: "test@test.com"})
-            );
-
-            expect(result.current.id.value).toBe(1);
-            expect(result.current.name.value).toBe("Test");
-            expect(result.current.email.value).toBe("test@test.com");
-            expect(result.current.form.isEmpty).toBe(false);
-        });
-
-        test.each([
-            {
-                label: "initialData = true",
-                setup: (store: ReturnType<typeof makeStoreNode<{test: typeof TestEntity}>>) => {
-                    store.test.replace({id: 1, name: "Test"});
-                },
-                initialData: true as const,
-                expected: {id: 1, name: "Test"}
-            },
-            {
-                label: "fonction initialData",
-                setup: () => {
-                    /** */
-                },
-                initialData: () => ({id: 2, name: "Test2"}),
-                expected: {id: 2, name: "Test2"}
-            }
-        ])("initialise avec $label", ({setup, initialData, expected}) => {
-            const store = makeStoreNode({test: TestEntity});
-            setup(store);
-            const {result} = renderHook(() => useFormNode(store.test, undefined, initialData));
-
-            expect(result.current.id.value).toBe(expected.id);
-            expect(result.current.name.value).toBe(expected.name);
-        });
-
-        test("détecte les modifications locales d'un StoreNode prérempli avec true", () => {
-            const storeValues = {
-                name: "Parent",
-                profile: {name: "Profil"},
-                children: [
-                    {id: 1, label: "Item 1"},
-                    {id: 2, label: "Item 2"}
-                ]
-            };
-            const store = makeStoreNode(
-                entity({name: e.field(DO_STRING), profile: TestEntity, children: [TestListEntity]}),
-                storeValues
-            );
-            const {result} = renderHook(() => useFormNode(store, undefined, true));
-            const form = result.current;
-
-            expect(form.getValues()).toEqual(storeValues);
-            expect(form.children[0].sourceNode).toBe(store.children[0]);
-            expect(form.children[1].sourceNode).toBe(store.children[1]);
-            expect(form.form.hasChanged).toBe(false);
-
-            form.set({name: "Parent modifié"});
-            expect(form.form.hasChanged).toBe(true);
-            expect(store.name.value).toBe("Parent");
-            form.set({name: "Parent"});
-            expect(form.form.hasChanged).toBe(false);
-
-            form.profile.set({email: "profil@example.com"});
-            expect(form.profile.form.hasChanged).toBe(true);
-            expect(form.form.hasChanged).toBe(true);
-            expect(store.profile.email.value).toBeUndefined();
-            form.profile.set({email: undefined});
-            expect(form.form.hasChanged).toBe(false);
-
-            form.children[1].set({label: "Brouillon"});
-            expect(form.children[1].form.hasChanged).toBe(true);
-            expect(form.children.form.hasChanged).toBe(true);
-            expect(form.form.hasChanged).toBe(true);
-            expect(store.children[1].label.value).toBe("Item 2");
-            form.children[1].set({label: "Item 2"});
-            expect(form.form.hasChanged).toBe(false);
-
-            form.children.splice(0, 1);
-            expect(form.children.map(row => row.id.value)).toEqual([2]);
-            expect(form.form.hasChanged).toBe(true);
-            expect(store.getValues()).toEqual(storeValues);
-        });
+        expect(result.current.sourceNode).toBe(store.test);
+        expect(result.current.form.isEdit).toBe(false);
     });
 
-    describe("avec StoreListNode", () => {
-        test("crée un FormListNode à partir d'un StoreListNode", () => {
-            const store = makeStoreNode({testList: [TestListEntity]});
-            const {result} = renderHook(() => useFormNode(store.testList));
+    test("construit un FormListNode à partir d'un StoreListNode", () => {
+        const store = makeStoreNode({testList: [TestListEntity]});
+        const {result} = renderHook(() => useFormNode(store.testList));
 
-            expect(result.current.form).toBeDefined();
-            expect(result.current.form.isEdit).toBe(false);
-            expect(result.current.form.isEmpty).toBe(true);
-            expect(result.current.sourceNode).toBe(store.testList);
-        });
-
-        test("initialise avec initialData", () => {
-            const store = makeStoreNode({testList: [TestListEntity]});
-            const {result} = renderHook(() =>
-                useFormNode(store.testList, undefined, [
-                    {id: 1, label: "Item 1"},
-                    {id: 2, label: "Item 2"}
-                ])
-            );
-
-            expect(result.current.length).toBe(2);
-            expect(result.current[0].id.value).toBe(1);
-            expect(result.current[0].label.value).toBe("Item 1");
-            expect(result.current.form.isEmpty).toBe(false);
-        });
-
-        test("détecte les modifications locales d'une liste préremplie avec true", () => {
-            const store = makeStoreNode(
-                [TestListEntity],
-                [
-                    {id: 1, label: "Item 1"},
-                    {id: 2, label: "Item 2"},
-                    {id: 3, label: "Item 3"}
-                ]
-            );
-            const {result} = renderHook(() => useFormNode(store, undefined, true));
-            const form = result.current;
-
-            expect(form.map(row => row.id.value)).toEqual([1, 2, 3]);
-            for (const [index, row] of form.entries()) {
-                expect(row.sourceNode).toBe(store[index]);
-                expect(row.form.hasChanged).toBe(false);
-            }
-            expect(form.form.hasChanged).toBe(false);
-
-            form[0].set({label: "Brouillon"});
-            expect(form[0].form.hasChanged).toBe(true);
-            expect(form.form.hasChanged).toBe(true);
-
-            form[0].set({label: "Item 1"});
-            expect(form.form.hasChanged).toBe(false);
-
-            form.pushNode({id: 4, label: "Brouillon"});
-            expect(form[3].form.hasChanged).toBe(true);
-            expect(form.form.hasChanged).toBe(true);
-
-            form.splice(3, 1);
-            expect(form.form.hasChanged).toBe(false);
-
-            form.splice(1, 1);
-            expect(form.map(item => item.id.value)).toEqual([1, 3]);
-            expect(form.form.hasChanged).toBe(true);
-        });
+        expect(result.current.sourceNode).toBe(store.testList);
+        expect(result.current.form.isEdit).toBe(false);
     });
 
-    describe("avec entity", () => {
-        test("crée un FormNode à partir d'une entité", () => {
-            const {result} = renderHook(() => useFormNode(TestEntity));
+    test("transmet initialData au FormNodeBuilder", () => {
+        const store = makeStoreNode({test: TestEntity});
+        const build = vi.spyOn(FormNodeBuilder.prototype, "build");
 
-            expect(result.current.form).toBeDefined();
-            expect(result.current.id).toBeDefined();
-            expect(result.current.name).toBeDefined();
-        });
+        renderHook(() => useFormNode(store.test, undefined, {name: "Test"}));
 
-        test("initialise avec initialData", () => {
-            const {result} = renderHook(() => useFormNode(TestEntity, undefined, {name: "Test"}));
-
-            expect(result.current.name.value).toBe("Test");
-        });
+        expect(build).toHaveBeenCalledWith({name: "Test"});
     });
 
-    describe("avec entity liste", () => {
-        test("crée un FormListNode à partir d'une entité liste", () => {
-            const {result} = renderHook(() => useFormNode([TestListEntity]));
+    test("transmet initialData au FormListNodeBuilder", () => {
+        const store = makeStoreNode({testList: [TestListEntity]});
+        const build = vi.spyOn(FormListNodeBuilder.prototype, "build");
 
-            expect(result.current.form).toBeDefined();
-            expect(Array.isArray(result.current)).toBe(true);
-        });
+        renderHook(() => useFormNode(store.testList, undefined, [{id: 1, label: "Test"}]));
 
-        test("initialise avec initialData", () => {
-            const {result} = renderHook(() => useFormNode([TestListEntity], undefined, [{id: 1, label: "Test"}]));
-
-            expect(result.current.length).toBe(1);
-            expect(result.current[0].id.value).toBe(1);
-        });
+        expect(build).toHaveBeenCalledWith([{id: 1, label: "Test"}]);
     });
 
-    describe("avec builder", () => {
-        test("utilise le builder pour configurer le FormNode", () => {
-            const store = makeStoreNode({test: TestEntity});
-            const {result} = renderHook(() =>
-                useFormNode(store.test, s => s.patch("name", f => f.metadata({label: "Nom"})))
-            );
+    test("crée un StoreNode à partir d'une entité", () => {
+        const {result} = renderHook(() => useFormNode(TestEntity));
 
-            expect(result.current.name.$field.label).toBe("Nom");
+        expect(result.current.$entity).toBe(TestEntity);
+        expect(result.current.id).toBeDefined();
+        expect(result.current.name).toBeDefined();
+    });
+
+    test("crée un StoreListNode à partir d'une entité liste", () => {
+        const {result} = renderHook(() => useFormNode([TestListEntity]));
+
+        expect(result.current.$entity).toBe(TestListEntity);
+        expect(Array.isArray(result.current)).toBe(true);
+    });
+
+    test("transmet le builder fourni", () => {
+        const store = makeStoreNode({test: TestEntity});
+        const {result} = renderHook(() =>
+            useFormNode(store.test, s => s.patch("name", f => f.metadata({label: "Nom"})))
+        );
+
+        expect(result.current.name.$field.label).toBe("Nom");
+    });
+
+    test("dispose le FormNode au démontage", () => {
+        const store = makeStoreNode({test: TestEntity});
+        const {build} = FormNodeBuilder.prototype;
+        const dispose = vi.fn();
+        vi.spyOn(FormNodeBuilder.prototype, "build").mockImplementation(function b(
+            this: FormNodeBuilder<any>,
+            initialData
+        ) {
+            const node = build.call(this, initialData);
+            node.dispose = dispose;
+            return node;
         });
+        const {unmount} = renderHook(() => useFormNode(store.test));
+
+        unmount();
+
+        expect(dispose).toHaveBeenCalledOnce();
     });
 });
 
@@ -245,13 +120,26 @@ describe("useFormActions", () => {
         expect(result.current.load).toBeDefined();
     });
 
-    test("crée des FormActions avec builder", () => {
+    test("transmet le builder fourni", () => {
         const store = makeStoreNode({test: TestEntity});
         const {result: formNodeResult} = renderHook(() => useFormNode(store.test));
-        const {result} = renderHook(() =>
-            useFormActions(formNodeResult.current, s => s.save(() => Promise.resolve()), [])
-        );
+        const save = () => Promise.resolve();
+        const {result} = renderHook(() => useFormActions(formNodeResult.current, s => s.save(save), []));
 
         expect(result.current.save).toBeDefined();
+    });
+
+    test("n'initialise pas à nouveau les actions lors d'un rerender", () => {
+        const store = makeStoreNode({test: TestEntity});
+        const {result: formNodeResult} = renderHook(() => useFormNode(store.test));
+        const init = vi.spyOn(FormActions.prototype, "init");
+        const {rerender} = renderHook(
+            ({dependency}) => useFormActions(formNodeResult.current, s => s, [dependency]),
+            {initialProps: {dependency: 1}}
+        );
+
+        rerender({dependency: 2});
+
+        expect(init).toHaveBeenCalledOnce();
     });
 });

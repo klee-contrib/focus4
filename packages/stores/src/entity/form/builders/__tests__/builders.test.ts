@@ -34,6 +34,79 @@ const AltEntity = entity({
     inner: e.object(InnerEntity)
 });
 
+describe("FormNodeBuilder.build", () => {
+    test("initialise le noeud et ses données initiales", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const form = new FormNodeBuilder(store.o).build({name: "Initial"});
+
+        expect(form.name.value).toBe("Initial");
+        expect(store.o.name.value).toBeUndefined();
+        expect(form.form._initialData).toEqual({
+            name: "Initial",
+            inner: {},
+            list: []
+        });
+    });
+
+    test("évalue une fonction fournissant les données initiales", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const form = new FormNodeBuilder(store.o).build(() => ({name: "Initial"}));
+
+        expect(form.name.value).toBe("Initial");
+        expect(store.o.name.value).toBeUndefined();
+        expect(form.form._initialData).toEqual({
+            name: "Initial",
+            inner: {},
+            list: []
+        });
+    });
+
+    test("initialise depuis la source avec true", () => {
+        const source = {
+            name: "Parent",
+            inner: {id: 1, label: "Inner"},
+            list: [
+                {id: 1, label: "Item 1"},
+                {id: 2, label: "Item 2"}
+            ]
+        };
+        const store = makeStoreNode(OuterEntity, source);
+        const form = new FormNodeBuilder(store).build(true);
+
+        expect(form.getValues()).toEqual(source);
+        expect(form.form._initialData).toEqual({inner: {}, list: []});
+        expect(form.list[0].sourceNode).toBe(store.list[0]);
+        expect(form.form.hasChanged).toBe(false);
+
+        form.name.value = "Modifié";
+        expect(form.form.hasChanged).toBe(true);
+        expect(store.name.value).toBe("Parent");
+
+        form.name.value = "Parent";
+        expect(form.form.hasChanged).toBe(false);
+
+        form.inner.set({label: "Brouillon"});
+        expect(form.inner.form.hasChanged).toBe(true);
+        expect(form.form.hasChanged).toBe(true);
+        expect(store.inner.label.value).toBe("Inner");
+        form.inner.set({label: "Inner"});
+        expect(form.form.hasChanged).toBe(false);
+
+        form.list.splice(0, 1);
+        expect(form.list.map(item => item.id.value)).toEqual([2]);
+        expect(form.form.hasChanged).toBe(true);
+        expect(store.getValues()).toEqual(source);
+    });
+
+    test("ne définit pas de données initiales sans paramètre", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const form = new FormNodeBuilder(store.o).build();
+
+        expect(form.name.value).toBeUndefined();
+        expect(form.form._initialData).toBeUndefined();
+    });
+});
+
 describe("FormNodeBuilder.edit", () => {
     test("edit(boolean) fixe $edit sur le noeud entier", () => {
         const store = makeStoreNode({o: OuterEntity});
@@ -65,6 +138,13 @@ describe("FormNodeBuilder.edit", () => {
         form.form.isEdit = true;
 
         expect(form.name.isEdit).toBe(true);
+    });
+
+    test("edit ignore une clé qui ne correspond à aucune entrée", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const builder = new FormNodeBuilder(store.o);
+
+        expect(builder.edit(true, "inconnue" as any)).toBe(builder);
     });
 });
 
@@ -115,6 +195,13 @@ describe("FormNodeBuilder.patch", () => {
         const form = new FormNodeBuilder(store.o).patch("list", l => l.required(false)).build();
 
         expect(form.list.form.isRequired).toBe(false);
+    });
+
+    test("patch ignore une clé qui ne correspond à aucune entrée", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const builder = new FormNodeBuilder(store.o);
+
+        expect((builder as any).patch("inconnue", (value: any) => value)).toBe(builder);
     });
 });
 
@@ -195,6 +282,104 @@ describe("FormNodeBuilder.patchAllTo", () => {
         expect(form.optionalInner).toBeUndefined();
         expect(form.optionalList).toBeUndefined();
     });
+
+    test("conserve une liste déclarée avec sa forme courte", () => {
+        const source = entity({items: [InnerEntity]});
+        const target = entity({items: [InnerEntity]});
+        const form = new FormNodeBuilder(makeStoreNode(source)).patchAllTo(target).build();
+
+        expect(form.items.sourceNode.$entity).toBe(InnerEntity);
+    });
+
+    test("conserve un objet déclaré avec sa forme courte", () => {
+        const source = entity({inner: e.object(InnerEntity)});
+        const target = entity({inner: InnerEntity});
+        const form = new FormNodeBuilder(makeStoreNode(source)).patchAllTo(target).build();
+
+        expect(form.inner.form.isRequired).toBe(true);
+        expect(form.inner.sourceNode.$entity).toBe(InnerEntity);
+    });
+
+    test("remplace les entrées communes incompatibles", () => {
+        const OtherEntity = entity({value: e.field(DO_STRING)});
+        const source = entity({name: e.field(DO_STRING), items: e.list(InnerEntity)});
+        const target = entity({name: e.object(OtherEntity), items: [OtherEntity]});
+        const form = new FormNodeBuilder(makeStoreNode(source)).patchAllTo(target).build() as any;
+
+        expect(form.name.$entity).toBe(OtherEntity);
+        expect(form.items.$entity).toBe(OtherEntity);
+    });
+
+    test("ajoute une liste récursive manquante", () => {
+        const target = entity({children: e.recursiveList()});
+        const form = new FormNodeBuilder(makeStoreNode(entity({}))).patchAllTo(target).build() as any;
+
+        expect(form.children.$entity).toBe(target);
+    });
+});
+
+describe("FormListNodeBuilder.build", () => {
+    test("initialise le noeud et ses données initiales", () => {
+        const store = makeStoreNode({l: [InnerEntity]});
+        const initialData = [
+            {id: 1, label: "Item 1"},
+            {id: 2, label: "Item 2"}
+        ];
+        const form = new FormListNodeBuilder(store.l).build(initialData);
+
+        expect(form.map(item => item.getValues())).toEqual(initialData);
+        expect(store.l).toHaveLength(0);
+        expect(form.form._initialData).toEqual(initialData);
+    });
+
+    test("évalue une fonction fournissant les données initiales", () => {
+        const store = makeStoreNode({l: [InnerEntity]});
+        const initialData = [{id: 1, label: "Item 1"}];
+        const form = new FormListNodeBuilder(store.l).build(() => initialData);
+
+        expect(form.map(item => item.getValues())).toEqual(initialData);
+        expect(store.l).toHaveLength(0);
+        expect(form.form._initialData).toEqual(initialData);
+    });
+
+    test("initialise depuis la source avec true", () => {
+        const initialData = [
+            {id: 1, label: "Item 1"},
+            {id: 2, label: "Item 2"}
+        ];
+        const store = makeStoreNode([InnerEntity], initialData);
+        const form = new FormListNodeBuilder(store).build(true);
+
+        expect(form.map(item => item.getValues())).toEqual(initialData);
+        expect(form.form._initialData).toEqual([]);
+        expect(form.form.hasChanged).toBe(false);
+        expect(form[0].sourceNode).toBe(store[0]);
+
+        form[0].label.value = "Modifié";
+        expect(form.form.hasChanged).toBe(true);
+
+        form[0].label.value = "Item 1";
+        expect(form.form.hasChanged).toBe(false);
+
+        form.pushNode({id: 3, label: "Item 3"});
+        expect(form[2].form.hasChanged).toBe(true);
+        expect(form.form.hasChanged).toBe(true);
+
+        form.splice(2, 1);
+        expect(form.form.hasChanged).toBe(false);
+
+        form.splice(1, 1);
+        expect(form.map(item => item.id.value)).toEqual([1]);
+        expect(form.form.hasChanged).toBe(true);
+    });
+
+    test("ne définit pas de données initiales sans paramètre", () => {
+        const store = makeStoreNode({l: [InnerEntity]});
+        const form = new FormListNodeBuilder(store.l).build();
+
+        expect(form).toHaveLength(0);
+        expect(form.form._initialData).toBeUndefined();
+    });
 });
 
 describe("FormListNodeBuilder", () => {
@@ -257,6 +442,13 @@ describe("FormNodeBuilder branches additionnelles", () => {
 
         expect(form.inner.form.isRequired).toBe(false);
         expect(form.list.form.isRequired).toBe(false);
+    });
+
+    test("required ignore une clé qui ne correspond à aucune entrée", () => {
+        const store = makeStoreNode({o: OuterEntity});
+        const builder = new FormNodeBuilder(store.o);
+
+        expect(builder.required(false, "inconnue" as any)).toBe(builder);
     });
 
     test("patchAllTo garde les champs communs et remplace la définition", () => {

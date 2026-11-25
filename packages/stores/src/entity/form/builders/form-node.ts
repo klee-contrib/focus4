@@ -3,6 +3,7 @@ import {extendObservable, observable} from "mobx";
 
 import {
     Entity,
+    EntityToPartialType,
     EntryToEntity,
     EntryToRequired,
     FieldEntry,
@@ -73,14 +74,21 @@ export class FormNodeBuilder<E extends Entity, E0 extends Entity = E> {
 
     /**
      * Construit le FormNode à partir de la configuration renseignée.
+     * @param initialData Les données initiales du formulaire (ou `true` pour initialiser avec le contenu du noeud de base).
      */
-    build(): FormNode<E, E0> {
+    build(initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>) | true): FormNode<E, E0> {
         this.node.$edit ??= false;
 
-        nodeToFormNode(this.node);
+        const node = nodeToFormNode<E, E0>(this.node);
+        if (initialData === true) {
+            node.form._initialData = node.getValues(true, true);
+            node.set(node.sourceNode as any);
+        } else if (initialData) {
+            node.set(isFunction(initialData) ? initialData() : initialData);
+            node.form._initialData = node.getValues(true, true);
+        }
 
-        // @ts-expect-error - Impossible de valider le type générique.
-        return this.node;
+        return node;
     }
 
     /**

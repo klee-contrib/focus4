@@ -1,4 +1,3 @@
-import {isFunction} from "es-toolkit";
 import {disposeOnUnmount} from "mobx-react";
 import {Component} from "react";
 
@@ -31,7 +30,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreListNode<E>,
     builder?: (s: FormListNodeBuilder<E, E>) => FormListNodeBuilder<NE, E>,
-    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[])
+    initialData?: EntityToPartialType<E>[] | (() => EntityToPartialType<E>[]) | true
 ): FormListNode<NE, E>;
 /**
  * Construit un FormNode à partir d'un StoreNode.
@@ -46,7 +45,7 @@ export function makeFormNode<E extends Entity, NE extends Entity = E>(
     componentClass: Component | null,
     node: StoreNode<E>,
     builder?: (s: FormNodeBuilder<E, E>) => FormNodeBuilder<NE, E>,
-    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>)
+    initialData?: EntityToPartialType<E> | (() => EntityToPartialType<E>) | true
 ): FormNode<NE, E>;
 /**
  * Construit un FormListNode à partir d'une définition d'entité
@@ -84,17 +83,10 @@ export function makeFormNode(
 
     let formNode;
     if (isStoreListNode(node)) {
-        formNode = builder(new FormListNodeBuilder(node)).build();
-        if (initialData) {
-            formNode.setNodes(isFunction(initialData) ? initialData() : initialData);
-        }
+        formNode = builder(new FormListNodeBuilder(node)).build(initialData);
     } else {
-        formNode = builder(new FormNodeBuilder(node)).build();
-        if (initialData) {
-            formNode.set(isFunction(initialData) ? initialData() : initialData);
-        }
+        formNode = builder(new FormNodeBuilder(node)).build(initialData);
     }
-    formNode.form._initialData = formNode.getValues(true, true);
     if (componentClass && formNode.dispose) {
         disposeOnUnmount(componentClass, formNode.dispose);
     }

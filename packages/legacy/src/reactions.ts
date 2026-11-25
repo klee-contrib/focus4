@@ -41,14 +41,19 @@ function patchClass<T extends RCL>(
     context.addInitializer(function initializer(this: T) {
         function UNSAFE_componentWillMount(this: T) {
             const r = targetMethod.bind(this);
-            (this as any)[`${type}_${propertyKey}`] =
-                type === "autorun"
-                    ? autorun(r)
-                    : type === "reaction"
-                      ? reaction(expression!(this), r, opts)
-                      : type === "when"
-                        ? when(expression!(this), r)
-                        : undefined;
+            switch (type) {
+                case "autorun":
+                    (this as any)[`${type}_${propertyKey}`] = autorun(r);
+                    break;
+                case "reaction":
+                    (this as any)[`${type}_${propertyKey}`] = reaction(expression!(this), r, opts);
+                    break;
+                case "when":
+                    (this as any)[`${type}_${propertyKey}`] = when(expression!(this), r);
+                    break;
+                default:
+                    break;
+            }
         }
 
         function componentWillUnmount(this: T) {

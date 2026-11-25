@@ -1,4 +1,3 @@
-import {isFunction} from "es-toolkit";
 import {useEffect, useId, useRef, useState} from "react";
 
 import {Entity, EntityToPartialType} from "@focus4/entities";
@@ -68,20 +67,10 @@ export function useFormNode<E extends Entity, NE extends Entity = E>(
 export function useFormNode(entityOrNode: any, builder: (x: any) => any = (x: any) => x, initialData: any = undefined) {
     const [node] = useState(() => (isAnyStoreNode(entityOrNode) ? entityOrNode : makeStoreNode(entityOrNode)));
     const [formNode] = useState(() => {
-        let fn;
         if (isStoreListNode(node)) {
-            fn = builder(new FormListNodeBuilder(node)).build();
-            if (initialData) {
-                fn.setNodes(initialData === true ? node : isFunction(initialData) ? initialData() : initialData);
-            }
-        } else {
-            fn = builder(new FormNodeBuilder(node)).build();
-            if (initialData) {
-                fn.set(initialData === true ? node : isFunction(initialData) ? initialData() : initialData);
-            }
+            return builder(new FormListNodeBuilder(node)).build(initialData);
         }
-        fn.form._initialData = fn.getValues(true, true);
-        return fn;
+        return builder(new FormNodeBuilder(node)).build(initialData);
     });
     useEffect(() => formNode.dispose, []);
     return formNode;
